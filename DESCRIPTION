@@ -46,4 +46,4 @@ Suggests:
     pdftools,
     magick
 Config/testthat/edition: 3
-Config/Needs/website: here
+Config/Needs/website: here, quarto
