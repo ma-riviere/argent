@@ -1,0 +1,449 @@
+---
+title: "Google Gemini Provider"
+format: html
+execute:
+  echo: true
+  eval: false
+---
+
+```{r}
+#| eval: true
+#| echo: false
+#| output: false
+
+devtools::load_all()
+```
+
+# Getting Started
+
+Here is a quick example using the Google Gemini provider:
+
+```{r}
+gemini <- Google$new(api_key = Sys.getenv("GEMINI_API_KEY"))
+```
+
+You can customize the rate limit when initializing with the `rate_limit` parameter.
+
+## Basic Completion
+
+```{r}
+gemini$chat(
+    "What is the R programming language? Answer in two sentences.",
+    model = "gemini-2.5-flash"
+)
+```
+
+The chat history can be visualized by printing the provider object:
+
+```{r gemini-print}
+print(gemini)
+```
+
+## Tool Calling + Structured Output + Thinking
+
+First, define some web-related tools (search, crawl, fetch, and a general-use tool) bundled in a `web_tools` list:
+
+```{=html}
+<details>
+<summary>Web Tools Implementation</summary>
+```
+
+{{< include "_web.qmd" >}}
+
+</details>
+
+Then, let's define the schema for the output using `schema()`:
+
+```{r package-info-schema}
+package_info_schema <- schema(
+    name = "package_info",
+    description = "Information about an R package release",
+    release_version = "string* The release version of the package",
+    release_date = "string* The release date of the `release_version`"
+)
+```
+
+::: {.callout-note appearance="simple"}
+Tools and schemas are automatically converted to the provider's specific format internally.
+:::
+
+Run the agent:
+
+```{r}
+#| eval: false
+
+gemini$chat(
+    "When was the first release of the R 'ellmer' package on GitHub?",
+    model = "gemini-2.5-flash",
+    thinking_budget = 512,
+    include_thoughts = TRUE,
+    tools = list(as_tool(web_search), as_tool(web_fetch)),
+    output_schema = package_info_schema
+)
+```
+
+```{verbatim}
+$release_version
+[1] "ellmer_0.1.0"
+
+$release_date
+[1] "2025-01-09"
+```
+
+The model will use the tools provided (searching and fetching web pages) repeatedly until it has enough information to answer the question, and return structured JSON output.
+
+### Server-side Tools
+
+Providers like Google, Anthropic, and OpenAI have server-side tools. Those are tools you can call without having to define them yourself.
+
+For example, Google Gemini has a server-side `google_search` tool that will offer similar capabilities as our client-side `web_search` tool.
+
+```{r}
+#| eval: false
+
+gemini$chat(
+    "When was the last version of the R 'ragnar' package released on GitHub?",
+    model = "gemini-2.5-flash",
+    tools = list("google_search"),
+    output_schema = package_info_schema
+)
+```
+
+```{verbatim}
+$release_version
+[1] "0.2.1"
+
+$release_date
+[1] "August 19, 2025"
+```
+
+
+### Multimodal Input
+
+All providers support multimodal inputs (to some degree). 
+You can pass text, images, PDFs, data files, URLs, remote files, and R objects to the model in a single request.
+
+#### Passing Files or URLs
+
+Example with an URL to a PDF file:
+
+```{r}
+#| eval: false
+
+gemini$chat(
+    "What's my favorite programming language ?",
+    "https://ma-riviere.com/res/cv.pdf",
+    model = "gemini-2.5-flash"
+)
+```
+
+```{verbatim}
+Based on your resume, your favorite programming language appears to be **R**.
+```
+
+*Damn right!*
+
+::: {.callout-note appearance="simple"}
+Here, the URL was automatically detected, downloaded in a temporary file, and converted to base64, before being passed to the model.
+
+Other providers may have different behavior. For example, Anthropic supports passing PDF files URLs directly.
+
+You can use the `as_text_content(url)` helper to force the conversion to text content.
+:::
+
+::: {.callout-tip appearance="simple"}
+If you want to include an URL that you do not want to be parsed and converted (for example to be used by the `url_context` server tool), add it within a text block.
+:::
+
+#### Passing R Objects
+
+You can pass any R object to `chat()` as is:
+
+```{r}
+#| eval: false
+
+lm_obj <- lm(body_mass ~ species + sex, data = datasets::penguins)
+
+google_gemini$chat(
+    "What can we deduct from this regression model ?",
+    lm_obj,
+    model = "gemini-2.5-flash"
+)
+```
+
+```{verbatim}
+From the provided regression model output, we can deduce the following three points:
+
+1.  **Model Type and Purpose**: This is a linear regression model (`lm_obj`) attempting to explain or predict `body_mass` based on two categorical predictor variables: `species` and `sex`. The model was fitted using the `datasets::penguins` dataset.
+2.  **Intercept and Reference Group Body Mass**: The estimated intercept is 3372.4. Given that `contr.treatment` was used for both categorical variables, this intercept represents the estimated average `body_mass` (likely in grams) for the baseline group: an **Adelie female penguin**.
+3.  **Estimated Effects of Predictors**:
+    *   **Species Effect**: Compared to Adelie penguins (the reference species), Chinstrap penguins are estimated to have an average `body_mass` that is 26.9 units higher, and Gentoo penguins are estimated to have an average `body_mass` that is 1377.9 units higher, assuming sex is held constant.
+    *   **Sex Effect**: Compared to female penguins (the reference sex), male penguins are estimated to have an average `body_mass` that is 667.6 units higher, assuming species is held constant.
+```	
+
+::: {.callout-note appearance="simple"}
+The object will be captured automatically and converted to JSON (or text if JSON conversion fails), with some added information like the name of the object and its classes.
+:::
+
+#### Passing Uploaded Files
+
+Upload a file and reference it with `as_file_content()`:
+
+```{r}
+#| eval: false
+
+file_metadata <- gemini$upload_file("https://ma-riviere.com/res/cv.pdf")
+
+multipart_prompt <- list(
+    "What are my two favorite frameworks/tools ?",
+    as_file_content(file_metadata$name)
+)
+
+gemini$chat(!!!multipart_prompt, model = "gemini-2.5-flash")
+
+gemini$delete_file(file_metadata$name)
+```
+
+```{verbatim}
+Based on the "Frameworks & Tools" section and the overall context of the resume, your two favorite frameworks/tools appear to be:
+
+1.  **Shiny**
+2.  **Quarto, R Markdown**
+```
+
+::: {.callout-note appearance="simple"}
+Here, using `as_file_content()` is necessary to signal to the model to use this as a remote file reference, rather than just some text content.
+:::
+
+::: {.callout-tip appearance="simple"}
+You can use `$list_files()` to list all uploaded files and their metadata.
+:::
+
+
+## Documentation
+
+### Provider Guides
+
+Detailed guides for each provider:
+
+- [Google Gemini](articles/google-gemini.html)
+- [Anthropic Claude](articles/anthropic.html)
+- [OpenRouter](articles/openrouter.html)
+- [Local LLMs](articles/local-llm.html)
+
+#### OpenAI APIs
+
+Guides for OpenAI's three different APIs:
+
+- [Chat Completions API](articles/openai-completions.html) - Standard OpenAI chat interface
+- [Responses API](articles/openai-responses.html) - Newest API combining the functionalities of the Chat Completions and Assistants
+- [Assistants API](articles/openai-assistants.html) - Deprecated
+
+#### Other Providers
+
+- [Using Other Compatible APIs](articles/other-providers.html) - Use argent classes with compatible services (e.g., Minimax instead of Claude)
+
+
+## Other Topics
+
+## Chat History Management
+
+All providers (except OpenAI Assistants) support client-side chat history management. The main methods to interact with the chat history are:
+
+- `get_chat_history()` - retrieve only the chat history (i.e. the cumulative inputs and answers from the LLM)
+- `get_session_history()` - retrieve only the session history (i.e. the unprocessed API calls and responses)
+- `reset_history()` - clear the object's history
+- `load_history()` - load history from a JSON file
+
+The chat history maintains a list of messages exchanged between the user and the model to be resent at each successive API call.
+
+```{r chat-history}
+#| eval: false
+
+google_gemini <- Google$new()
+
+google_gemini$chat(
+    prompt = "My name is Alice",
+    model = "gemini-2.5-flash"
+)
+#> [1] "Hello Alice! It's nice to meet you. How can I assist you today?"
+
+google_gemini$chat(
+    prompt = "What's my name?",
+    model = "gemini-2.5-flash"
+)
+#> [1] "Your name is Alice."
+```
+
+Check the chat history:
+
+```{r}
+#| eval: false
+
+cat(google_gemini$get_chat_history(format_to = "yaml"))
+```
+
+```json
+[
+  {
+    "role": "user",
+    "parts": [
+      {
+        "text": "My name is Alice"
+      }
+    ]
+  },
+  {
+    "parts": [
+      {
+        "text": "Hello Alice! It's nice to meet you. How can I assist you today?"
+      }
+    ],
+    "role": "model"
+  },
+  {
+    "role": "user",
+    "parts": [
+      {
+        "text": "What's my name?"
+      }
+    ]
+  },
+  {
+    "parts": [
+      {
+        "text": "Your name is Alice."
+      }
+    ],
+    "role": "model"
+  }
+]
+```
+
+See the total tokens used at last API call:
+
+```{r}
+#| eval: false
+
+google_gemini$get_session_last_token_count() # Total (input + output) tokens used at last API call
+google_gemini$get_session_cumulative_token_count() # Cumulative tokens used in this chat session
+```
+
+Reset the object's history:
+
+```{r}
+#| eval: false
+
+google_gemini$reset_history()
+```
+
+#### Automatic History Persistence
+
+By default, history is automatically saved to timestamped JSON files in `data/history/{provider}/`. You can:
+
+- Change the directory via the `argent.history_dir` option
+- Disable auto-save by setting `auto_save_history = FALSE` when initializing the provider object
+- Toggle auto-save after initialization via `set_auto_save_history(TRUE/FALSE)`
+- Check current setting via `get_auto_save_history()`
+
+```{r}
+#| eval: false
+
+options(
+    argent.history_dir = "data/history/"  # Default
+)
+
+google_gemini <- Google$new(
+    auto_save_history = FALSE  # Disable automatic saving
+)
+```
+
+::: {.callout-note appearance="simple"}
+Resetting the history dumps the current history (if non-empty) into the current JSON history file in `{argent.history_dir}/{provider}/`. Subsequent chats will be saved to a new file.
+:::
+
+#### Loading Previous Conversations
+
+```{r}
+#| eval: false
+
+current_history_file_path <- google_gemini$get_history_file_path()
+
+google_gemini <- Google$new() # Equivalent of resetting the provider object
+
+google_gemini$load_history(current_history_file_path)
+```
+
+**A neater way to visualize the chat history is to print the provider object:**
+
+```{r}
+#| eval: false
+
+print(google_gemini)
+```
+
+
+### Structured Outputs
+
+`argent` supports structured outputs on **all providers**, even those without native support, using a "forced tool call" mechanism:
+
+```{r}
+#| eval: false
+
+# Define schema using direct specification
+response_schema <- schema(
+    name = "response_format",
+    description = "Schema description",
+    field1 = "string* Required string field",
+    field2 = "number Optional numeric field"
+)
+
+result <- provider$chat(
+    "Your question here",
+    output_schema = response_schema
+)
+```
+
+### Tool Calling
+
+Define tools using direct specification or annotations:
+
+**Option 1:** Define the function and tool definition separately:
+
+```{r}
+my_function <- function(arg1) {
+    return(arg1)
+}
+
+my_tool <- tool(
+    name = "my_function", # Has to match the actual R function to be called
+    description = "What the function does",
+    arg1 = "string* Required string argument description"
+)
+my_tool
+```
+
+**Option 2:** 2-in-1: Define the function and tool definition in one go by adding plumber-style annotations:
+
+```{r}
+#| eval: false
+
+my_function <- function(arg1) {
+    #' @description What the function does
+    #' @param arg1:string* Required string argument description
+
+    return(arg1)
+}
+my_tool <- as_tool(my_function)
+```
+
+And then, use the tool within a chat:
+
+```{r}
+#| eval: false
+
+gemini$chat(
+    "Use the tool to answer this",
+    tools = list(my_tool)
+)
+```

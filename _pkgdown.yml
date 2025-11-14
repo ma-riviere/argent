@@ -1,0 +1,101 @@
+url: https://ma-riviere.github.io/argent/
+
+home:
+  title: Creating AI Agents in R
+  description: A unified R6-based interface for interacting with Large Language Models (LLMs) from multiple providers, specialized for creating AI agents with tool calling, multimodal inputs, and structured outputs.
+
+authors:
+  Marc-Aurèle Rivière:
+    href: https://ma-riviere.com
+
+template:
+  bootstrap: 5
+  bslib:
+    font_scale: 1.0
+    bg: "#fcfbf9" # Match
+    fg: "#231F20"
+    primary: "#272b30"
+    secondary: "#BED4E2"
+    link-color: "#437597"
+    info: "#BED4E2"
+    headings-color: "#336688"
+    # Navbar
+    navbar-bg: "#fcfbf9" # Match
+    navbar-light-color: "#272b30"
+    navbar-light-hover-color: "#336688"
+  opengraph:
+    # image:
+    #   src: man/figures/argent.png
+    #   alt: "argent package in R"
+    twitter:
+      creator: "@mariviere1"
+      card: summary
+
+destination: docs
+
+llm-docs: false # Crashes on the README.qmd
+
+development:
+  mode: auto
+
+articles:
+- title: Provider Guides
+  desc: Detailed guides for each LLM provider
+  navbar: ~
+  contents:
+  - articles/google-gemini
+  - articles/anthropic
+  - articles/openrouter
+  - articles/local-llm
+
+- title: OpenAI APIs
+  desc: Guides for different OpenAI API interfaces
+  navbar: ~
+  contents:
+  - articles/openai-responses
+  - articles/openai-completions
+  - articles/openai-assistants
+
+- title: Other Providers
+  desc: Using argent classes with compatible APIs
+  navbar: ~
+  contents:
+  - articles/other-providers
+
+- title: Advanced Use
+  desc: Advanced features and techniques
+  navbar: ~
+  contents:
+  - articles/usecase-rag
+
+reference:
+- title: Core Provider Classes
+  desc: R6 classes for different LLM providers
+  contents:
+  - starts_with("Google")
+  - starts_with("Anthropic")
+  - starts_with("OpenAI")
+  - starts_with("OpenRouter")
+  - starts_with("LocalLLM")
+
+- title: Multimodal Content Functions
+  desc: Functions for processing different types of inputs
+  contents:
+  - as_text_content
+  - as_image_content
+  - as_pdf_content
+  - as_json_content
+  - as_file_content
+
+- title: Tool & Schema Functions
+  desc: Define tools and schemas for structured outputs using annotations or direct specification
+  contents:
+  - tool
+  - as_tool
+  - schema
+  - as_schema
+
+- title: Common Provider Methods
+  desc: Core R6 methods available on all Provider instances
+  contents:
+  - Provider

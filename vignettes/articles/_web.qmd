@@ -1,0 +1,95 @@
+
+**Search:**
+
+```{r}
+web_search <- function(query) {
+    #' @description Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or any data not in your training data.
+    #' @param query:string* The search query string. Be specific and use keywords that will yield the most relevant results.
+    
+    return(web_search_tavily(query))
+}
+
+web_search_tavily <- function(query) {
+    res <- httr2::request("https://api.tavily.com/search") |> 
+        httr2::req_body_json(list(
+            query = query,
+            search_depth = "basic",
+            include_answer = FALSE,
+            max_results = 10,
+            api_key = Sys.getenv("TAVILY_API_KEY")
+        )) |> 
+        httr2::req_error(is_error = \(resp) FALSE) |> 
+        httr2::req_throttle(rate = 20/60, realm = "tavily") |> 
+        httr2::req_perform() |> 
+        httr2::resp_body_json() |> 
+        purrr::discard_at(c("response_time", "follow_up_questions", "images"))
+
+    results <- purrr::map(res$results, \(x) purrr::discard_at(x, "raw_content"))
+
+    return(jsonlite::toJSON(results, pretty = FALSE, auto_unbox = TRUE))
+}
+```
+
+**Fetch:**
+
+```{r}
+web_fetch <- function(url) {
+    #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content. Automatically falls back to alternative methods if the primary fetch fails.
+    #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
+    
+    res <- web_fetch_trafilatura(url)
+
+    could_not_fetch <- c(
+        "Impossible to fetch the contents of this web page",
+        "Please reload this page",
+        "There was an error while loading",
+        "404"
+    )
+    if (is.null(res) || is.na(res) || nchar(res) == 0 ||
+        any(stringr::str_detect(res, stringr::fixed(could_not_fetch, ignore_case = TRUE)))) {
+        res <- web_fetch_rvest(url)
+    }
+    return(res)
+}
+
+web_fetch_trafilatura <- function(url) {
+    # pip install trafilatura
+    tryCatch({
+        res <- paste0("trafilatura -u ", url, " --markdown --no-comments --links ") |> 
+            system(intern = TRUE) |> 
+            purrr::keep(nzchar) |>
+            paste0(collapse = "\n")
+        
+        return(res)
+    },
+    error = function(e) {
+        return("Impossible to fetch the contents of this web page. It might not allow scraping")
+    })
+}
+
+web_fetch_rvest <- function(url) {
+    tags_to_ignore <- c(
+        "a", "script", "code", "img", "svg", "footer", "g", "path", "polygon", "label", "button", "form", "input", "select", 
+        "style", "link", "meta", "noscript", "iframe", "embed", "object", "param", "video", "audio", "track", "source", 
+        "canvas", "map", "area", "math", "col", "colgroup", "dl", "dt", "dd", "hr", "pre", "address", "figure", "figcaption",
+        "dfn", "em", "kbd", "samp", "var", "del", "ins", "mark", "circle"
+    )
+
+    remove_tags <- function(xml, tags) {
+        purrr::walk(tags, \(tag) purrr::walk(xml2::xml_find_all(xml, paste0(".//", tag)), \(node) xml2::xml_remove(node)))
+        return(xml)
+    }
+
+    cleaned_contents <- tryCatch(
+        rvest::read_html(url)
+        |> rvest::html_element("body")
+        |> remove_tags(tags_to_ignore)
+        |> rvest::html_children()
+        |> rvest::html_text2()
+        |> purrr::discard(\(x) x == "")
+        |> paste0(collapse = "\n\n"),
+        error = \(e) return("")
+    )
+    return(cleaned_contents)
+}
+```

@@ -1,0 +1,11 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.lintr$
+TODO.md
+CLAUDE.md
+^\.env$
+^\.claude$
+data/
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

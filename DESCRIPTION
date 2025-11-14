@@ -1,0 +1,49 @@
+Package: argent
+Title: Argent: LLM Agents in R
+Version: 0.0.0.9000
+Authors@R: 
+    person(
+        given = "Marc-Aurèle",
+        family = "Rivière",
+        email = "marc.aurele.riviere@gmail.com", 
+        role = c("aut", "cre"),
+        comment = c(ORCID = "0000-0002-5108-3382")
+    )
+Description: Provides a unified R6-based interface for creating AI agents that can interact with multiple Large Language 
+    Model (LLM) providers including Google Gemini, Anthropic Claude, OpenAI GPT, OpenRouter, and 
+    local LLM servers. Supports chat completions, function calling, structured outputs, conversation 
+    history, and advanced features like prompt caching and vector stores.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+URL: https://ma-riviere.github.io/argent, https://github.com/ma-riviere/argent
+Depends:
+    R (>= 4.2.0)
+Imports:
+    base64enc,
+    cli,
+    curl,
+    dplyr,
+    httr2,
+    jsonlite,
+    lubridate,
+    mime,
+    purrr,
+    R6,
+    rlang,
+    stringr,
+    tidyr,
+    tibble,
+    tidyselect,
+    here,
+    fs,
+    uuid,
+    yaml,
+    xml2
+Suggests:
+    rvest,
+    pdftools,
+    magick
+Config/testthat/edition: 3
+Config/Needs/website: here

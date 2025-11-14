@@ -1,0 +1,271 @@
+---
+title: "Local LLM Provider"
+format: html
+execute:
+  echo: true
+  eval: false
+---
+
+```{r}
+#| eval: true
+#| echo: false
+#| output: false
+
+devtools::load_all()
+
+options(argent.timeout = 120)
+```
+
+# Introduction
+
+This article covers using local LLM servers with argent. The `LocalLLM` provider works with any OpenAI-compatible local server, including llama.cpp, Ollama, vLLM, and others.
+
+# Supported Servers
+
+- **llama.cpp** (llama-server)
+- **Ollama**
+- **vLLM**
+- **LM Studio**
+- **text-generation-webui**
+- Any other OpenAI-compatible server
+
+# Setup
+
+## Starting a Local Server
+
+```{bash}
+llama.cpp/build/bin/llama-server \
+  --host 127.0.0.1 \
+  --port 5000 \
+  --flash-attn 1 \
+  --n-gpu-layers 999 --n-gpu-layers-draft 999 \
+  --model gemma-3-27b-it-IQ4_XS.gguf \
+  --model-draft gemma-3-4b-it-IQ4_XS.gguf \
+  --cache-type-k q8_0 --cache-type-v q8_0 \
+  --ctx-size 64000 --ctx-size-draft 64000 \
+  --draft-max 8 --draft-min 4 \
+  --jinja \
+  --reasoning-format deepseek \
+  --reasoning-budget -1 \
+  --mmproj mmproj-BF16.gguf
+```
+
+## Connecting to the Server
+
+```{r local-init}
+local_llama <- LocalLLM$new(base_url = "http://localhost:5000")
+#> ✔ [LocalLLM] Auto-detected model: gemma-3-4b-it-IQ4_XS.gguf
+```
+
+On initialization, `argent` will automatically detect the available model from the server and set it as the default model for all future `chat()` calls.
+You can check the current default model with `get_default_model_id()`:
+
+# Basic Completion
+
+```{r}
+local_llama$chat("What's the R programming language? Answer in three sentences.")
+```
+
+# Tool Calling + Structured Output
+
+First, define some web-related tools (search, crawl, fetch, and a general-use tool) bundled in a `web_tools` list:
+
+```{=html}
+<details>
+<summary>Web Tools Implementation</summary>
+```
+
+{{< include "_web.qmd" >}}
+
+</details>
+
+Then, let's define a JSON schema for the structured output using `schema()`:
+
+```{r}
+package_info_schema <- schema(
+    name = "package_info",
+    description = "Information about an R package release",
+    release_version = "string* The release version of the package",
+    release_date = "string* The release date of the `release_version`"
+)
+```
+
+```{r}
+local_llama$chat(
+    "When was the first release of the R 'ellmer' package on GitHub?",
+    tools = list(as_tool(web_search), as_tool(web_fetch)),
+    output_schema = package_info_schema
+)
+```
+
+```{verbatim}
+$release_version
+[1] "0.2.0"
+
+$release_date
+[1] "2025-05-01"
+```
+
+*Wrong answer, but it used the tools and returned a structured output. Not too bad for a small local model.*
+
+::: {.callout-note appearance="simple"}
+Structured output works on ANY model that supports tool calling, even if they don't support structured outputs or response formats natively. `argent` handles this through a "forced tool call" mechanism.
+:::
+
+::: {.callout-note appearance="simple"}
+Depending on your local machine's speed, you may need to increase the request timeout to let the server complete the task. You can do this by setting the `argent.timeout` option:
+
+```{r}
+options(argent.timeout = 120)
+```
+
+:::
+
+# Reasoning/Thinking
+
+If available, you can extract reasoning from the response using `get_reasoning_text()`:
+
+```{r}
+cat(local_llama$get_reasoning_text())
+```
+
+Alternatively, simply `print(local_llama)` to see the reasoning and answers' text in the console, turn by turn.
+
+::: {.callout-note appearance="simple"}
+`get_reasoning_text()` and `get_content_text()` use the last API response (`local_llama$get_last_response()`) by default.
+:::
+
+::: {.callout-tip appearance="simple"}
+
+Reasoning capabilities for local models are controlled at the **server level**, not through API parameters. For llama.cpp, use these flags when starting the server:
+
+- `--reasoning-format`: Specify the reasoning format (e.g., `deepseek`)
+- `--reasoning-budget`: `-1` for unlimited budget, `0` for no budget
+
+:::
+
+
+# Multimodal Inputs
+
+What types of media you can send will depend on the model you are using. In general, you can send any type of text content (and files/objects automatically converted to text).
+
+Some models support vision, to which you can send images and possibly PDFs. Some models will need you to convert the PDF to an image first (which you can do by passing the PDF path to `as_image_content()`).
+
+## Image Comprehension
+
+```{r}
+#| output: false
+#| code-fold: true
+#| code-summary: "Downloading an example image"
+
+bsg04_cast_image_url <- "https://upload.wikimedia.org/wikipedia/en/1/1a/Battlestar_Galactica_%282004%29_cast.jpg"
+bsg04_cast_image_path <- download_temp_file(bsg04_cast_image_url)
+```
+
+**Sending a local image:**
+
+```{r}
+local_llama$chat(    
+    "Who are the characters in this image, and what show is it from?",
+    bsg04_cast_image_path
+)
+```
+
+```{verbatim}
+Based on the image, the characters are from the science fiction television series *Battlestar Galactica*. 
+
+From left to right, the characters appear to be:
+
+*   **William Adama** (Edward James Olmos)
+*   **Laura Roslin** (Mary McDonnell)
+*   **Lee Adama** (Jamie Bamber)
+*   **Kara "Starbuck" Thrace** (Katee Sackhoff)
+*   **Number Six** (Tricia Helfer)
+*   **Daniel "Crashdown" Tyrol** (Aaron D'Alessandro)
+*   **Sharon "Boomer" Valerii/Sharon "Athena" Agathon** (Grace Park)
+
+I am confident in this identification, as the image is a promotional photo associated with the show and its primary cast.
+```
+
+*So say we all!*
+
+**Sending an image URL:**
+
+```{r}
+local_llama$chat(
+    "Who are the characters in this image, and what show is it from?",
+    bsg04_cast_image_url
+)
+```
+
+## PDF Comprehension
+
+::: {.callout-note appearance="simple"}
+Some models don't support PDF processing natively. You can either convert the PDF to text using `as_text_content()` (which will use `pdftools::pdf_convert()`), or convert the PDF to an image using `as_image_content()` and hope the model has better image comprehension capabilities than the tool you used to convert the PDF to text.
+:::
+
+Let's send two PDF URLs and use the `as_text_content()` helper to have `pdftools::pdf_convert()` parse the PDFs and pass the text content to the model instead of passing base64.
+
+```{r}
+r6_pdf_url <- "https://cran.r-project.org/web/packages/R6/R6.pdf"
+s7_pdf_url <- "https://cran.r-project.org/web/packages/S7/S7.pdf"
+
+multimodal_prompt <- list(
+    "Give a 3 sentences summary of the advantages of S7 over R6",
+    as_text_content(r6_pdf_url),
+    as_text_content(s7_pdf_url),
+    "And give me the current versions of both packages" # To make sure you actually read the PDFs
+)
+
+local_llama$chat(!!!multimodal_prompt)
+```
+
+```{verbatim}
+Here's a 3-sentence summary of the advantages of S7 over R6, based on the provided documentation:
+
+S7 offers a more formal and robust object-oriented programming system compared to R6, designed as a successor to both S3 and S4, and incorporates formal class and method specification with a limited form of multiple dispatch. Unlike R6's reliance on environments, S7 aims to provide a more structured approach with explicit class definitions and inheritance.  S7 also allows for integration with existing S3 and S4 systems, providing flexibility and a pathway for migrating existing code.
+
+---
+
+According to the provided documentation:
+
+*   **S7 version:** 0.2.0 (Published 2024-11-07)
+*   **R6 version:** 2.6.1 (Published 2025-02-15)
+```
+
+## Passing R Objects
+
+You can pass any R object to `chat()` as is:
+
+```{r}
+lm_obj <- lm(body_mass ~ species + sex, data = datasets::penguins)
+
+local_llama$chat(
+    "What can we deduct from this regression model?",
+    lm_obj
+)
+```
+
+```{verbatim}
+Here's what we can deduce from the provided regression model summary:
+
+1.  **Model Type:** The model is a linear regression (`lm` object).
+2.  **Predictors:** The model predicts `body_mass` based on `species` and `sex`.
+3.  **Coefficients:**
+    *   The intercept is 3372.4.
+    *   The coefficient for `species` is 26.9. This suggests that for each unit change in species (relative to the baseline species), body mass increases by 26.9 units, holding sex constant.
+    *   The coefficient for `species` is 1377.9. 
+    *   The coefficient for `sex` is 667.6. This suggests that males have, on average, a body mass 667.6 units higher than females, holding species constant.
+
+It's important to remember that these deductions are based solely on the provided output and do not include information about statistical significance (p-values), R-squared, or residual analysis, which would provide a more comprehensive understanding of the model's fit and reliability.
+```
+
+::: {.callout-note appearance="simple"}
+Any R object passed to `chat()` will be automatically converted to JSON (or text if JSON conversion fails), with some added information like the name of the object and its classes.
+:::
+
+## File References
+
+::: {.callout-warning appearance="simple"}
+Remote file references via `as_file_content()` are not supported with local servers. Use local file paths or URLs instead.
+:::
