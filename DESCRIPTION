@@ -17,7 +17,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-URL: https://ma-riviere.github.io/argent, https://github.com/ma-riviere/argent
+URL: https://ma-riviere.github.io/argent, https://github.com/ma-riviere/argent, https://ma-riviere.github.io/argent/
 Depends:
     R (>= 4.2.0)
 Imports:
