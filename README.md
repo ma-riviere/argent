@@ -113,7 +113,7 @@ gemini$chat(
     "Tell me more about its statistical modeling capabilities.",
     model = "gemini-2.5-flash"
 )
-#> [1] "R excels in statistical modeling, offering extensive capabilities for linear and nonlinear modeling, including generalized linear models (GLMs), mixed-effects models, and robust regression. It also supports classical statistical tests, time-series analysis, machine learning algorithms like classification and clustering, and survival analysis, making it a powerful tool for a diverse range of data analysis tasks."
+#> [1] "R offers extensive statistical modeling capabilities, encompassing a broad range of techniques from fundamental to advanced. Users can perform linear and generalized linear models, non-linear regression, mixed-effects models, time-series analysis (ARIMA, GARCH), survival analysis, and various multivariate statistical methods such as principal component analysis (PCA), factor analysis, and cluster analysis. Its rich ecosystem of packages further expands these capabilities, allowing for specialized modeling like Bayesian statistics, machine learning algorithms, and structural equation modeling."
 ```
 
 The chat history can be visualized by printing the provider object:
@@ -121,29 +121,29 @@ The chat history can be visualized by printing the provider object:
 ``` r
 print(gemini)
 #> 
-#> ── [ <Google> turns: 4 | Current context: 354 | Cumulated tokens: 604 ] ────────
+#> ── [ <Google> turns: 4 | Current context: 379 | Cumulated tokens: 636 ] ────────
 #> 
-#> ── user [159 / 250] ────────────────────────────────────────────────────────────
+#> ── user [159 / 257] ────────────────────────────────────────────────────────────
 #> 
 #> What is the R programming language? Answer in two sentences.
 #> 
 #> ── System ──
 #> 
 #> You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-14
-#> ── assistant [250 / 250] ───────────────────────────────────────────────────────
+#> ── assistant [257 / 257] ───────────────────────────────────────────────────────
 #> 
 #> R is a programming language and free software environment primarily used for statistical computing and graphics. It provides a wide variety of statistical (linear and nonlinear modeling, classical statistical tests, time-series analysis, classification, clustering, etc.) and graphical techniques, and is highly extensible.
 #> 
-#> ── user [224 / 604] ────────────────────────────────────────────────────────────
+#> ── user [224 / 636] ────────────────────────────────────────────────────────────
 #> 
 #> Tell me more about its statistical modeling capabilities.
 #> 
 #> ── System ──
 #> 
 #> You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-14
-#> ── assistant [354 / 604] ───────────────────────────────────────────────────────
+#> ── assistant [379 / 636] ───────────────────────────────────────────────────────
 #> 
-#> R excels in statistical modeling, offering extensive capabilities for linear and nonlinear modeling, including generalized linear models (GLMs), mixed-effects models, and robust regression. It also supports classical statistical tests, time-series analysis, machine learning algorithms like classification and clustering, and survival analysis, making it a powerful tool for a diverse range of data analysis tasks.
+#> R offers extensive statistical modeling capabilities, encompassing a broad range of techniques from fundamental to advanced. Users can perform linear and generalized linear models, non-linear regression, mixed-effects models, time-series analysis (ARIMA, GARCH), survival analysis, and various multivariate statistical methods such as principal component analysis (PCA), factor analysis, and cluster analysis. Its rich ecosystem of packages further expands these capabilities, allowing for specialized modeling like Bayesian statistics, machine learning algorithms, and structural equation modeling.
 ```
 
 > [!NOTE]
