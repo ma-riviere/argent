@@ -209,7 +209,8 @@ cat(anthropic$get_generated_code(langs = c("python"), as_chunks = TRUE))
 <summary>Generated Code</summary>
 ```
 
-```{python}
+```python
+
 import pandas as pd
 import os
 

@@ -170,7 +170,8 @@ cat(openai_responses$get_generated_code(langs = c("python"), as_chunks = TRUE))
 <details>
 <summary>Generated Code</summary>
 ```
-```{python}
+```python
+
 # Read the uploaded CSV, compute average body_mass grouped by species, sex, and year,
 # then save the result to a CSV file and display the first few rows.
 

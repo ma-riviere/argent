@@ -451,7 +451,8 @@ cat(google_gemini$get_generated_code(langs = c("python"), as_chunks = TRUE))
 <details>
 <summary>Generated Code</summary>
 ```
-```{python}
+```python
+
 import pandas as pd
 
 # Load the CSV file
@@ -464,7 +465,8 @@ print("\nDataFrame Info:")
 print(df.info())
 ```
 
-```{python}
+```python
+
 # Group by species, sex, and year and calculate the average body_mass_g
 summary_table = df.groupby(['species', 'sex', 'year'])['body_mass_g'].mean().reset_index()
 
