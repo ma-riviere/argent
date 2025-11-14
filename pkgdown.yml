@@ -1,0 +1,18 @@
+pandoc: 3.1.11
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  articles/anthropic: anthropic.html
+  articles/argent: argent.html
+  articles/google-gemini: google-gemini.html
+  articles/local-llm: local-llm.html
+  articles/openai-assistants: openai-assistants.html
+  articles/openai-completions: openai-completions.html
+  articles/openai-responses: openai-responses.html
+  articles/openrouter: openrouter.html
+  articles/other-providers: other-providers.html
+  articles/usecase-rag: usecase-rag.html
+last_built: 2025-11-14T22:25Z
+urls:
+  reference: https://ma-riviere.github.io/argent/reference
+  article: https://ma-riviere.github.io/argent/articles
