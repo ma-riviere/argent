@@ -7,7 +7,6 @@ execute:
 ---
 
 ```{r}
-#| eval: true
 #| echo: false
 #| output: false
 
@@ -42,8 +41,6 @@ file_search and code_interpreter.
 # Setup
 
 ```{r}
-#| eval: true
-
 openai_assistant <- OpenAI_Assistant$new(api_key = Sys.getenv("OPENAI_API_KEY"))
 ```
 
@@ -86,8 +83,6 @@ The Assistants API does not support GPT-5 models. Use GPT-4 or earlier.
 :::
 
 ```{r}
-#| eval: true
-
 openai_assistant$list_models() |>
     dplyr::filter(stringr::str_detect(id, "-4o-|-4.1-"))
 ```

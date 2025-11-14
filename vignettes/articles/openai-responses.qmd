@@ -7,7 +7,6 @@ execute:
 ---
 
 ```{r}
-#| eval: true
 #| echo: false
 #| output: false
 
@@ -21,16 +20,12 @@ This article covers using OpenAI's Responses API with `argent`. This is OpenAI's
 # Setup
 
 ```{r responses-init}
-#| eval: true
-
 openai_responses <- OpenAI_Responses$new(api_key = Sys.getenv("OPENAI_API_KEY"))
 ```
 
 **Available Models**
 
 ```{r}
-#| eval: true
-
 openai_responses$list_models() |>
     dplyr::filter(stringr::str_detect(id, "-5|5.1-"))
 ```

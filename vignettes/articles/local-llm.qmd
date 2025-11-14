@@ -7,7 +7,6 @@ execute:
 ---
 
 ```{r}
-#| eval: true
 #| echo: false
 #| output: false
 

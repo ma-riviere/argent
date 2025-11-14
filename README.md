@@ -101,7 +101,7 @@ gemini$chat(
     "What is the R programming language? Answer in two sentences.",
     model = "gemini-2.5-flash"
 )
-#> [1] "R is an open-source programming language and software environment primarily used for statistical computing and graphics. It provides a wide variety of statistical (linear and nonlinear modeling, classical statistical tests, time-series analysis, classification, clustering) and graphical techniques, and is highly extensible."
+#> [1] "R is a programming language and free software environment primarily used for statistical computing and graphics. It provides a wide variety of statistical (linear and nonlinear modeling, classical statistical tests, time-series analysis, classification, clustering, etc.) and graphical techniques, and is highly extensible."
 ```
 
 `argent` will maintain a conversation history in the provider object,
@@ -113,7 +113,7 @@ gemini$chat(
     "Tell me more about its statistical modeling capabilities.",
     model = "gemini-2.5-flash"
 )
-#> [1] "R excels in statistical modeling, offering extensive capabilities for both linear and nonlinear models, including generalized linear models (GLMs), mixed-effects models, and survival analysis. It supports a broad range of classical statistical tests like t-tests, ANOVA, and chi-squared tests, alongside advanced techniques such as time-series analysis (ARIMA, GARCH), classification (logistic regression, decision trees, support vector machines), and clustering (k-means, hierarchical clustering). Furthermore, R's vast ecosystem of packages significantly extends these capabilities, allowing users to implement cutting-edge methodologies for various statistical and machine learning tasks."
+#> [1] "R excels in statistical modeling, offering extensive capabilities for linear and nonlinear modeling, including generalized linear models (GLMs), mixed-effects models, and robust regression. It also supports classical statistical tests, time-series analysis, machine learning algorithms like classification and clustering, and survival analysis, making it a powerful tool for a diverse range of data analysis tasks."
 ```
 
 The chat history can be visualized by printing the provider object:
@@ -121,29 +121,29 @@ The chat history can be visualized by printing the provider object:
 ``` r
 print(gemini)
 #> 
-#> ── [ <Google> turns: 4 | Current context: 481 | Cumulated tokens: 721 ] ────────
+#> ── [ <Google> turns: 4 | Current context: 354 | Cumulated tokens: 604 ] ────────
 #> 
-#> ── user [159 / 240] ────────────────────────────────────────────────────────────
+#> ── user [159 / 250] ────────────────────────────────────────────────────────────
 #> 
 #> What is the R programming language? Answer in two sentences.
 #> 
 #> ── System ──
 #> 
 #> You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-14
-#> ── assistant [240 / 240] ───────────────────────────────────────────────────────
+#> ── assistant [250 / 250] ───────────────────────────────────────────────────────
 #> 
-#> R is an open-source programming language and software environment primarily used for statistical computing and graphics. It provides a wide variety of statistical (linear and nonlinear modeling, classical statistical tests, time-series analysis, classification, clustering) and graphical techniques, and is highly extensible.
+#> R is a programming language and free software environment primarily used for statistical computing and graphics. It provides a wide variety of statistical (linear and nonlinear modeling, classical statistical tests, time-series analysis, classification, clustering, etc.) and graphical techniques, and is highly extensible.
 #> 
-#> ── user [224 / 721] ────────────────────────────────────────────────────────────
+#> ── user [224 / 604] ────────────────────────────────────────────────────────────
 #> 
 #> Tell me more about its statistical modeling capabilities.
 #> 
 #> ── System ──
 #> 
 #> You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-14
-#> ── assistant [481 / 721] ───────────────────────────────────────────────────────
+#> ── assistant [354 / 604] ───────────────────────────────────────────────────────
 #> 
-#> R excels in statistical modeling, offering extensive capabilities for both linear and nonlinear models, including generalized linear models (GLMs), mixed-effects models, and survival analysis. It supports a broad range of classical statistical tests like t-tests, ANOVA, and chi-squared tests, alongside advanced techniques such as time-series analysis (ARIMA, GARCH), classification (logistic regression, decision trees, support vector machines), and clustering (k-means, hierarchical clustering). Furthermore, R's vast ecosystem of packages significantly extends these capabilities, allowing users to implement cutting-edge methodologies for various statistical and machine learning tasks.
+#> R excels in statistical modeling, offering extensive capabilities for linear and nonlinear modeling, including generalized linear models (GLMs), mixed-effects models, and robust regression. It also supports classical statistical tests, time-series analysis, machine learning algorithms like classification and clustering, and survival analysis, making it a powerful tool for a diverse range of data analysis tasks.
 ```
 
 > [!NOTE]

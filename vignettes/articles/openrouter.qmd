@@ -7,7 +7,6 @@ execute:
 ---
 
 ```{r}
-#| eval: true
 #| echo: false
 #| output: false
 
@@ -21,8 +20,6 @@ This article covers using the OpenRouter provider with argent. OpenRouter aggreg
 # Setup
 
 ```{r openrouter-init}
-#| eval: true
-
 openrouter <- OpenRouter$new(api_key = Sys.getenv("OPENROUTER_API_KEY"))
 ```
 
@@ -33,8 +30,6 @@ openrouter <- OpenRouter$new(api_key = Sys.getenv("OPENROUTER_API_KEY"))
 OpenRouter provides access to hundreds of models from various providers:
 
 ```{r}
-#| eval: true
-
 openrouter$list_models(supported_parameters = c("tools")) |>
     dplyr::filter(
         stringr::str_detect(name, "free") & context_length > 100000 & stringr::str_detect(input_modalities, "image")
