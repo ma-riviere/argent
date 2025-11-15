@@ -35,32 +35,60 @@ llm-docs: no
 development:
   mode: auto
 
+navbar:
+  structure:
+    left:  [intro, providers, advanced, reference]
+    right: [search, github, lightswitch]
+  components:
+    providers:
+      text: Providers
+      menu:
+      - text: Google Gemini
+        href: articles/google-gemini.html
+      - text: Anthropic
+        href: articles/anthropic.html
+      - text: OpenRouter
+        href: articles/openrouter.html
+      - text: Local LLM
+        href: articles/local-llm.html
+      - text: Other Providers
+        href: articles/other-providers.html
+      - text: -------
+      - text: OpenAI
+      - text: Responses API
+        href: articles/openai-responses.html
+      - text: Chat Completions API
+        href: articles/openai-completions.html
+      - text: Assistants API
+        href: articles/openai-assistants.html
+    advanced:
+      text: Advanced Use
+      menu:
+      - text: RAG Applications
+        href: articles/usecase-rag.html
+
 articles:
 - title: Provider Guides
   desc: Detailed guides for each LLM provider
-  navbar: ~
+  navbar:
   contents:
   - articles/google-gemini
   - articles/anthropic
   - articles/openrouter
   - articles/local-llm
+  - articles/other-providers
 
 - title: OpenAI APIs
   desc: Guides for different OpenAI API interfaces
-  navbar: ~
+  navbar: OpenAI
   contents:
   - articles/openai-responses
   - articles/openai-completions
   - articles/openai-assistants
 
-- title: Other Providers
-  desc: Using argent classes with compatible APIs
-  navbar: ~
-  contents: articles/other-providers
-
 - title: Advanced Use
   desc: Advanced features and techniques
-  navbar: ~
+  navbar: Advanced Use
   contents: articles/usecase-rag
 
 reference:

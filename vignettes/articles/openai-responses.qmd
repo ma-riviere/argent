@@ -6,13 +6,6 @@ execute:
   eval: false
 ---
 
-```{r}
-#| echo: false
-#| output: false
-
-devtools::load_all()
-```
-
 # Introduction
 
 This article covers using OpenAI's Responses API with `argent`. This is OpenAI's newest and most advanced API that combines the strengths of Chat Completions and Assistants APIs into a single streamlined interface for building agentic applications.

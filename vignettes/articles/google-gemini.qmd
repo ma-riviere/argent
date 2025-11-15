@@ -6,13 +6,6 @@ execute:
   eval: false
 ---
 
-```{r}
-#| echo: false
-#| output: false
-
-devtools::load_all()
-```
-
 # Introduction
 
 This article covers using the Google Gemini provider with argent. Google Gemini offers powerful multimodal capabilities, server-side tools, and extended thinking features.

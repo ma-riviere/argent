@@ -6,13 +6,6 @@ execute:
   eval: false
 ---
 
-```{r}
-#| echo: false
-#| output: false
-
-devtools::load_all()
-```
-
 # Getting Started
 
 Here is a quick example using the Google Gemini provider:

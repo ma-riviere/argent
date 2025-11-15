@@ -1,17 +1,10 @@
 ---
-title: "Using argent with Other Compatible APIs"
+title: "OpenAI or Anthropic compatible APIs"
 format: html
 execute:
   echo: true
   eval: false
 ---
-
-```{r}
-#| echo: false
-#| output: false
-
-devtools::load_all()
-```
 
 # Overview
 

@@ -6,13 +6,6 @@ execute:
   eval: false
 ---
 
-```{r}
-#| echo: false
-#| output: false
-
-devtools::load_all()
-```
-
 # Introduction
 
 This article covers using OpenAI's Chat Completions API with argent. This is the standard OpenAI API that supports tool calling, structured outputs, and reasoning with o1/GPT-5 models.

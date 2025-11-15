@@ -6,13 +6,6 @@ execute:
   eval: false
 ---
 
-```{r}
-#| echo: false
-#| output: false
-
-devtools::load_all()
-```
-
 # Introduction
 
 This article covers using the Anthropic (Claude) provider with `argent`. Anthropic offers powerful extended thinking capabilities, server-side tools, and prompt caching for cost optimization.

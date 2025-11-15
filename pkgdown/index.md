@@ -10,7 +10,7 @@
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Lifecycle:
-superseded](https://img.shields.io/badge/lifecycle-superseded-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#superseded)
+questioning](https://img.shields.io/badge/lifecycle-questioning-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#questioning)
 <!-- badges: end -->
 
 **argent** provides a unified R6-based interface for interacting with

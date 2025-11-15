@@ -6,13 +6,6 @@ execute:
   eval: false
 ---
 
-```{r}
-#| echo: false
-#| output: false
-
-devtools::load_all()
-```
-
 ::: {.callout-important appearance="simple"}
 
 ### Deprecation Warning

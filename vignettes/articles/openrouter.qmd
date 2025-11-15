@@ -6,13 +6,6 @@ execute:
   eval: false
 ---
 
-```{r}
-#| echo: false
-#| output: false
-
-devtools::load_all()
-```
-
 # Introduction
 
 This article covers using the OpenRouter provider with argent. OpenRouter aggregates multiple LLM providers, offering routing capabilities, fallback options, and access to a wide variety of models.

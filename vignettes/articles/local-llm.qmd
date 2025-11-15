@@ -6,15 +6,6 @@ execute:
   eval: false
 ---
 
-```{r}
-#| echo: false
-#| output: false
-
-devtools::load_all()
-
-options(argent.timeout = 120)
-```
-
 # Introduction
 
 This article covers using local LLM servers with argent. The `LocalLLM` provider works with any OpenAI-compatible local server, including llama.cpp, Ollama, vLLM, and others.
