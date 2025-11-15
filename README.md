@@ -101,7 +101,6 @@ gemini$chat(
     "What is the R programming language? Answer in two sentences.",
     model = "gemini-2.5-flash"
 )
-#> [1] "R is a programming language and free software environment primarily used for statistical computing and graphics. It provides a wide variety of statistical (linear and nonlinear modeling, classical statistical tests, time-series analysis, classification, clustering, etc.) and graphical techniques, and is highly extensible."
 ```
 
 `argent` will maintain a conversation history in the provider object,
@@ -113,37 +112,42 @@ gemini$chat(
     "Tell me more about its statistical modeling capabilities.",
     model = "gemini-2.5-flash"
 )
-#> [1] "R offers extensive statistical modeling capabilities, encompassing a broad range of techniques from fundamental to advanced. Users can perform linear and generalized linear models, non-linear regression, mixed-effects models, time-series analysis (ARIMA, GARCH), survival analysis, and various multivariate statistical methods such as principal component analysis (PCA), factor analysis, and cluster analysis. Its rich ecosystem of packages further expands these capabilities, allowing for specialized modeling like Bayesian statistics, machine learning algorithms, and structural equation modeling."
 ```
 
 The chat history can be visualized by printing the provider object:
 
 ``` r
 print(gemini)
-#> 
-#> ── [ <Google> turns: 4 | Current context: 379 | Cumulated tokens: 636 ] ────────
-#> 
-#> ── user [159 / 257] ────────────────────────────────────────────────────────────
-#> 
-#> What is the R programming language? Answer in two sentences.
-#> 
-#> ── System ──
-#> 
-#> You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-14
-#> ── assistant [257 / 257] ───────────────────────────────────────────────────────
-#> 
-#> R is a programming language and free software environment primarily used for statistical computing and graphics. It provides a wide variety of statistical (linear and nonlinear modeling, classical statistical tests, time-series analysis, classification, clustering, etc.) and graphical techniques, and is highly extensible.
-#> 
-#> ── user [224 / 636] ────────────────────────────────────────────────────────────
-#> 
-#> Tell me more about its statistical modeling capabilities.
-#> 
-#> ── System ──
-#> 
-#> You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-14
-#> ── assistant [379 / 636] ───────────────────────────────────────────────────────
-#> 
-#> R offers extensive statistical modeling capabilities, encompassing a broad range of techniques from fundamental to advanced. Users can perform linear and generalized linear models, non-linear regression, mixed-effects models, time-series analysis (ARIMA, GARCH), survival analysis, and various multivariate statistical methods such as principal component analysis (PCA), factor analysis, and cluster analysis. Its rich ecosystem of packages further expands these capabilities, allowing for specialized modeling like Bayesian statistics, machine learning algorithms, and structural equation modeling.
+```
+
+``` default
+── [ <Google> turns: 4 | Current context: 419 | Cumulated tokens: 676 ] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+── user [159 / 257] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+What is the R programming language? Answer in two sentences.
+
+── System ──
+
+You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-15
+
+── assistant [257 / 257] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+R is a programming language and free software environment primarily used for statistical computing and graphics. It provides a wide variety of statistical (linear and nonlinear modeling, classical statistical tests, time-series analysis, classification, clustering, etc.) and graphical techniques, and is highly extensible.
+
+
+── user [224 / 676] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+Tell me more about its statistical modeling capabilities.
+
+── System ──
+
+You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-15
+
+── assistant [419 / 676] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+R offers extensive statistical modeling capabilities, encompassing a broad range of techniques. It supports linear and generalized linear models (GLMs) for various response types, as well as nonlinear regression. Users can perform classical statistical tests like t-tests, ANOVA, and chi-squared tests. Furthermore, R is widely used for time-series analysis, including ARIMA models and state-space models, classification algorithms such as logistic regression, decision trees, and support vector machines, and clustering methods like k-means and hierarchical clustering. Its package ecosystem continuously expands these capabilities with cutting-edge statistical methodologies.
 ```
 
 > [!NOTE]
@@ -251,13 +255,49 @@ to show to tool definitions, calls, and results:
 
 ``` r
 print(gemini, show_tools = TRUE)
-#> ℹ No conversation history
+```
+
+``` default
+── [ <Google> turns: 4 | Current context: 480 | Cumulated tokens: 773 ] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+── user [216 / 293] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+The user's name is Marc. Give me the information about the user.
+
+── System ──
+
+You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-15
+
+── assistant [293 / 293] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+── Thinking ──
+
+**Accessing User Information: Marc**
+
+Okay, so I need to find some information about a user named Marc.  The `get_user_info` tool looks like the perfect candidate for this. It's designed specifically for retrieving user details, and the `user_name` parameter is exactly what I need.  It's straightforward; I can just call the tool with `user_name='Marc'` and expect a detailed response. Simple and efficient, just the way I like it.
+
+
+── tool [404 / 773] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+── assistant [480 / 773] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+── Thinking ──
+
+**Understanding Marc's Preferences**
+
+Okay, so the user wants to know about Marc. My first instinct, as always, is to leverage my tools. I employed the `get_user_info` function, specifically targeting 'Marc'. The response I received confirmed what I suspected: Marc's a fellow R enthusiast! Apparently, R is his favorite language. And beyond that, it looks like Shiny's the framework he gravitates towards. With this knowledge in hand, I can now craft a concise and informative response to the user's query, highlighting Marc's language and framework preferences, which are key elements to understand the landscape of skills.
+
+
+
+Marc's favorite programming language is R and his favorite framework is Shiny.
 ```
 
 ### Server-side Tools
 
 Providers like Google, Anthropic, and OpenAI have server-side tools.
-Those are tools you can call without having to them define yourself.
+Those are tools you can call without having to define them yourself.
+They will be run on the provider’s server.
 
 For example, Google Gemini has a server-side `google_search` which
 combines searching & fetching web pages:
@@ -345,7 +385,8 @@ The characters shown are:
 Finally, major providers support uploading files to their servers, and
 passing them as references to the model, to use them in the
 conversation, either on their own, or as part of a vector store / RAG
-system (see [RAG Applications](articles/usecase-rag.html)).
+system (see [server-side
+RAG](./articles/google-gemini.html#server-side-rag)).
 
 ``` r
 file_metadata <- gemini$upload_file("https://ma-riviere.com/res/cv.pdf")

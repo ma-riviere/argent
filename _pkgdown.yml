@@ -86,10 +86,7 @@ reference:
   desc: Define tools and schemas for structured outputs using annotations or direct
     specification
   contents:
-  - tool
-  - as_tool
-  - schema
-  - as_schema
+  - tool-definitions
 
 - title: Common Provider Methods
   desc: Core R6 methods available on all Provider instances

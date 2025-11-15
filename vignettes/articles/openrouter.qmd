@@ -1,5 +1,5 @@
 ---
-title: "OpenRouter Provider"
+title: "OpenRouter"
 format: html
 execute:
   echo: true
@@ -117,6 +117,8 @@ Alternatively, simply `print(openrouter)` to see the reasoning and answers' text
 
 # Server-side Tools
 
+Server-side tools are tools you can call without having to define them yourself. They will be run on the provider's server.
+
 OpenRouter only supports one server-side tool:
 
 - **web_search** - Web search capabilities
@@ -145,6 +147,7 @@ You can simply use `tools = list("web_search")`, which will set the engine to th
 # Multimodal Inputs
 
 OpenRouter supports sending:
+
 - Images (files or URLs) as base64
 - PDF files as base64, and URLs as-is (with configurable server-side parser engines: `as_pdf_content("pdf_url", .provider_options = list(pdf_parser = c("pdf-text", "mistral-ocr", "native"))))`)
 - Text/code files
@@ -164,9 +167,7 @@ bsg04_cast_image_path <- download_temp_file(bsg04_cast_image_url)
 
 **Sending a local image:**
 
-::: {.callout-note appearance="simple"}
-Since we're sending a path to a local image, it will automatically be converted to base64 before being sent.
-:::
+When providing a path to a local image, it will automatically be converted to base64 before being sent to the server.
 
 ```{r}
 openrouter$chat(
@@ -258,7 +259,9 @@ Or we could have implemented our own OCR solution, e.g. using a `local_llm` inst
 
 **Sending PDF URLs:**
 
-Let's send two PDF URLs and use the `as_text_content()` helper to have `pdftools::pdf_convert()` parse the PDFs and pass the text content to the model instead of passing base64 or letting the server do the parsing.
+For OpenRouter, by default, PDF URLs are sent as-is to the server.
+
+However, we can use the `as_text_content()` helper to have `pdftools::pdf_convert()` parse the PDFs and pass their text contents to the model instead.
 
 ```{r}
 r6_pdf_url <- "https://cran.r-project.org/web/packages/R6/R6.pdf"

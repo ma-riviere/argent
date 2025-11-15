@@ -1,5 +1,5 @@
 ---
-title: "Local LLM Provider"
+title: "Local LLMs"
 format: html
 execute:
   echo: true
@@ -146,7 +146,8 @@ Reasoning capabilities for local models are controlled at the **server level**, 
 
 # Multimodal Inputs
 
-What types of media you can send will depend on the model you are using. In general, you can send any type of text content (and files/objects automatically converted to text).
+What types of media you can send will depend on the model you are using. 
+At the minimum, you can send any type of text content (and files/objects automatically converted to text).
 
 Some models support vision, to which you can send images and possibly PDFs. Some models will need you to convert the PDF to an image first (which you can do by passing the PDF path to `as_image_content()`).
 
@@ -162,6 +163,8 @@ bsg04_cast_image_path <- download_temp_file(bsg04_cast_image_url)
 ```
 
 **Sending a local image:**
+
+When providing a path to a local image, it will automatically be converted to base64 before being sent to the server.
 
 ```{r}
 local_llama$chat(    

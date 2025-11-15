@@ -1,5 +1,5 @@
 ---
-title: "Google Gemini Provider"
+title: "Google (Gemini)"
 format: html
 execute:
   echo: true
@@ -101,6 +101,8 @@ Alternatively, simply `print(google_gemini)` to see the reasoning and answers' t
 
 # Server-side Tools
 
+Server-side tools are tools you can call without having to define them yourself. They will be run on the provider's server.
+
 Google Gemini supports five server-side tools that can be used alongside client-side tools:
 
 - **google_search** - Web search with grounding
@@ -166,7 +168,8 @@ This server-side tool is equivalent to our client-side `web_search` tool.
 
 ## Server-side: URL Context
 
-Automatically retrieves and processes content from URLs in your prompt. Supports text (HTML, JSON, XML), images (PNG, JPEG, WebP), and PDFs.
+This server tool lets the LLM fetch the contents of URLs given to it in the prompt. 
+It supports fetching text (HTML, JSON, XML), images (PNG, JPEG, WebP), and PDFs.
 
 ```{r}
 google_gemini$chat(
@@ -561,6 +564,7 @@ google_gemini$delete_file(penguins_file_metadata$name)
 ## Multimodal Inputs
 
 Google Gemini supports sending:
+
 - PDF (files or URLs) as text or base64
 - Images (files or URLs) as base64
 - Remote files (through `as_file_content()`)
@@ -580,6 +584,8 @@ bsg04_cast_image_path <- download_temp_file(bsg04_cast_image_url)
 ```
 
 **Sending a local image:**
+
+When providing a path to a local image, it will automatically be converted to base64 before being sent to the server.
 
 ```{r}
 google_gemini$chat(
@@ -652,7 +658,9 @@ Based on your resume, your favorite programming language appears to be **R**.
 
 **Sending PDF URLs:**
 
-Let's send two PDF URLs and use the `as_text_content()` helper to have `pdftools::pdf_convert()` parse the PDFs and pass the text content to the model (instead of passing base64).
+For Google, by default, PDF URLs are sent as base64 to the server.
+
+However, we can use the `as_text_content()` helper to have `pdftools::pdf_convert()` parse the PDFs and pass their text contents to the model instead.
 
 ```{r}
 r6_pdf_url <- "https://cran.r-project.org/web/packages/R6/R6.pdf"
@@ -739,7 +747,7 @@ You can use `$list_files()` to list all uploaded files and their metadata.
 :::
 
 
-# File Search & RAG
+# File Search & RAG {#server-side-rag}
 
 The file search tool enables Retrieval-Augmented Generation (RAG) by allowing the model to search through uploaded files. This is Google's managed solution for file search using vector embeddings.
 

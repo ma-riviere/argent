@@ -11,11 +11,15 @@
 #'
 #' For more information, see: https://platform.openai.com/docs/assistants/migration
 #'
+#' @section Useful links:
+#' - API reference: https://platform.openai.com/docs/api-reference/assistants
+#' - API docs: https://platform.openai.com/docs/assistants/deep-dive
+#'
 #' @field assistant List. Current assistant object
 #' @field thread List. Current thread object
 #' @field provider_name Character. Provider name (OpenAI Assistant)
 #' @field server_tools Character vector. Server-side tools to use for API requests
-#' 
+#'
 #' @section Server-side tools:
 #' - "file_search" for file search with vector stores
 #' - "code_interpreter" for Python code execution in sandboxed containers

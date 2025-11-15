@@ -1,5 +1,5 @@
 ---
-title: "Google Gemini Provider"
+title: "Getting Started with `argent`"
 format: html
 execute:
   echo: true
@@ -93,7 +93,8 @@ The model will use the tools provided (searching and fetching web pages) repeate
 
 ### Server-side Tools
 
-Providers like Google, Anthropic, and OpenAI have server-side tools. Those are tools you can call without having to define them yourself.
+Providers like Google, Anthropic, and OpenAI have server-side tools.
+Those are tools you can call without having to define them yourself. They will be run on the provider's server.
 
 For example, Google Gemini has a server-side `google_search` tool that will offer similar capabilities as our client-side `web_search` tool.
 

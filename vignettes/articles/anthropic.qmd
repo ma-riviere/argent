@@ -1,5 +1,5 @@
 ---
-title: "Anthropic Claude Provider"
+title: "Anthropic (Claude)"
 format: html
 execute:
   echo: true
@@ -100,13 +100,15 @@ Alternatively, simply `print(anthropic)` to see the reasoning and answers' text 
 
 # Server-side Tools
 
+Server-side tools are tools you can call without having to define them yourself. They will be run on the provider's server.
+
 Anthropic provides three server-side tools:
 
 - **web_search** - Web search with citations
 - **web_fetch** - Fetch and process URLs
 - **code_execution** - Execute commands, write and execute python code, analyze data, create visualizations and files
 
-## Web Search
+## Server-side: Web Search
 
 ```{r}
 anthropic$chat(
@@ -146,7 +148,9 @@ cat(anthropic$get_supplementary(format_to = "yaml"))
 ```
 
 
-## Web Fetch
+## Server-side: Web Fetch
+
+This server tool lets the LLM fetch the contents of URLs given to it in the prompt.
 
 ```{r}
 anthropic$chat(
@@ -165,7 +169,7 @@ cat(anthropic$get_supplementary(format_to = "yaml"))
 ```
 
 
-## Code Execution
+## Server-side: Code Execution
 
 Anthropic's code_execution tool provides a sandboxed environment for executing shell commands and file operations.
 
@@ -340,6 +344,7 @@ anthropic$delete_file(penguins_file$id)
 # Multimodal Inputs
 
 Anthropic Claude supports sending:
+
 - PDFs: URLs (as-is, base64, or text content), files (base64, or text content)
 - Images: URLs (as-is, or base64), files (base64)
 - Remote files (through `as_file_content()`)
@@ -360,9 +365,7 @@ bsg04_cast_image_path <- download_temp_file(bsg04_cast_image_url)
 
 **Sending a local image:**
 
-::: {.callout-note appearance="simple"}
-Since we're sending a path to a local image, it will automatically be converted to base64 before being sent.
-:::
+When providing a path to a local image, it will automatically be converted to base64 before being sent to the server.
 
 ```{r}
 anthropic$chat(
@@ -421,6 +424,8 @@ my_cv_pdf_path <- download_temp_file(my_cv_url)
 
 **Sending a local PDF:**
 
+When providing the prompt a path to a local PDF, it will automatically be converted to base64 before being sent to the server.
+
 ```{r}
 anthropic$chat(
     "What's my favorite programming language?",
@@ -437,7 +442,9 @@ Based on your resume, your favorite programming language is **R**.
 
 **Sending PDF URLs:**
 
-Let's send two PDF URLs and use the `as_text_content()` helper to have `pdftools::pdf_convert()` parse the PDFs and pass the text content to the model instead of sending the URLs as-is to the server.
+For Anthropic, by default, PDF URLs are sent as-is to the server.
+
+However, we can use the `as_text_content()` helper to have `pdftools::pdf_convert()` parse the PDFs and pass their text contents to the model instead.
 
 ```{r}
 r6_pdf_url <- "https://cran.r-project.org/web/packages/R6/R6.pdf"

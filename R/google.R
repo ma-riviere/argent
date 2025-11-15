@@ -3,8 +3,10 @@
 #' @description
 #' R6 class for interacting with Google's API. Provides methods for chat completions,
 #' model information retrieval, function calling capabilities, structured outputs, and context caching.
-#' API reference: https://ai.google.dev/api/generate-content
-#' API docs: https://ai.google.dev/gemini-api/docs/
+#' 
+#' @section Useful links:
+#' - API reference: https://ai.google.dev/api/generate-content
+#' - API docs: https://ai.google.dev/gemini-api/docs
 #'
 #' @field base_url Character. Base URL for API endpoint
 #' @field provider_name Character. Provider name (Google)

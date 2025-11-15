@@ -4,12 +4,16 @@
 #' R6 class for interacting with OpenRouter's API. Provides access to multiple LLM providers
 #' through a unified interface with support for chat completions, tool calling, and structured outputs.
 #'
+#' @section Useful links:
+#' - API reference: https://openrouter.ai/docs/api-reference/overview
+#' - API docs: https://openrouter.ai/docs/quickstart
+#'
 #' @field base_url Character. Base URL for API endpoint
 #' @field provider_name Character. Provider name (OpenRouter)
 #' @field allowed_providers Character vector. Allowed provider slugs (default: NULL)
 #' @field blocked_providers Character vector. Blocked provider slugs (default: NULL)
 #' @field server_tools Character vector. Server-side tools to use for API requests
-#' 
+#'
 #' @section Server-side tools:
 #' - "web_search" for web search grounding via OpenRouter's web plugin
 #' 

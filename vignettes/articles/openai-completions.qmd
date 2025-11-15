@@ -1,5 +1,5 @@
 ---
-title: "OpenAI Chat Completions API"
+title: "OpenAI - Chat Completions API"
 format: html
 execute:
   echo: true
@@ -86,6 +86,8 @@ The Chat Completions API does not support extracting reasoning content.
 :::
 
 # Server-side Tools
+
+Server-side tools are tools you can call without having to define them yourself. They will be run on the provider's server.
 
 OpenAI Chat Completions API only supports one server-side tool: **web_search**
 
@@ -201,6 +203,7 @@ For more flexible server-side tools, use the [Responses API](responses-api.html)
 # Multimodal Inputs
 
 OpenAI Responses API supports sending:
+
 - Images: URLs (as-is, or base64), files (base64)
 - PDFs: URLs and files (base64, or text content)
 - Remote files (through `as_file_content()`)
@@ -221,9 +224,7 @@ bsg04_cast_image_path <- download_temp_file(bsg04_cast_image_url)
 
 **Sending a local image:**
 
-::: {.callout-note appearance="simple"}
-Since we're sending a path to a local image, it will automatically be converted to base64 before being sent.
-:::
+When providing a path to a local image, it will automatically be converted to base64 before being sent to the server.
 
 ```{r}
 openai_chat$chat(
@@ -300,7 +301,9 @@ Based on the resume you provided (page 1), your favorite programming language ap
 
 **Sending PDF URLs:**
 
-Let's send two PDF URLs and use the `as_text_content()` helper to have `pdftools::pdf_convert()` parse the PDFs and pass the text content to the model instead of passing base64.
+For OpenAI Chat Completions, by default, PDF URLs are sent as base64 to the server.
+
+However, we can use the `as_text_content()` helper to have `pdftools::pdf_convert()` parse the PDFs and pass their text contents to the model instead.
 
 ```{r}
 r6_pdf_url <- "https://cran.r-project.org/web/packages/R6/R6.pdf"

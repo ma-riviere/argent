@@ -15,9 +15,13 @@
 #' This class inherits file management and vector store functionality from OpenAI,
 #' allowing files uploaded here to be used across different OpenAI APIs.
 #'
+#' @section Useful links:
+#' - API reference: https://platform.openai.com/docs/api-reference/responses/create
+#' - API docs: https://platform.openai.com/docs/quickstart
+#'
 #' @field provider_name Character. Provider name (OpenAI Responses)
 #' @field server_tools Character vector. Server-side tools to use for API requests
-#' 
+#'
 #' @section Server-side tools:
 #' - "web_search" for web search grounding via OpenAI's web plugin
 #' - "file_search" for file search with vector stores

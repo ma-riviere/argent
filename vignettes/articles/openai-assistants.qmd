@@ -1,5 +1,5 @@
 ---
-title: "OpenAI Assistants API (DEPRECATED)"
+title: "OpenAI - Assistants API"
 format: html
 execute:
   echo: true
@@ -192,6 +192,8 @@ When an assistant uses server-side tools (like `file_search` or `code_interprete
 
 # Server-side Tools
 
+Server-side tools are tools you can call without having to define them yourself. They will be run on the provider's server.
+
 OpenAI Assistants API supports two server-side tools:
 
 - **file_search** - Search through uploaded files using vector stores (i.e. server-side RAG)
@@ -301,6 +303,7 @@ openai_assistant$delete_assistant()
 # Multimodal Inputs
 
 OpenAI Assistants API supports sending:
+
 - Images: URLs (as-is, or base64), files (base64)
 - PDFs: URLs (as-is, base64, or text content), files (base64, or text content)
 - Remote files (through `as_file_content()`)
@@ -418,8 +421,9 @@ Your favorite programming language appears to be **R**, as indicated by your ext
 
 **Sending PDF URLs:**
 
-Let's send two PDF URLs and use the `as_text_content()` helper to have `pdftools::pdf_convert()` parse the PDFs
-and pass the text content to the model instead of passing base64.
+For OpenAI Assistants, by default, PDF URLs (or files) are uploaded to the server and the file_id is passed to the model.
+
+However, we can use the `as_text_content()` helper to have `pdftools::pdf_convert()` parse the PDFs and pass their text contents to the model instead.
 
 ```{r}
 r6_pdf_url <- "https://cran.r-project.org/web/packages/R6/R6.pdf"

@@ -4,11 +4,15 @@
 #' R6 class for interacting with Anthropic's API. Provides methods for chat completions
 #' with support for prompt caching, tool calling, and structured outputs.
 #'
+#' @section Useful links:
+#' - API reference: https://docs.claude.com/en/api/overview
+#' - API docs: https://docs.claude.com/en/docs/intro
+#'
 #' @field base_url Character. Base URL for API endpoint
 #' @field provider_name Character. Provider name (Anthropic)
 #' @field default_beta_features Character vector. Default beta features to use for API requests
 #' @field server_tools Character vector. Server-side tools to use for API requests
-#' 
+#'
 #' @section Server-side tools:
 #' - "code_execution" for bash commands and file operations (pricing: $0.05/session-hour, 5-min min)
 #' - "web_search" for web search capabilities. Can also be a list with `search_options`.

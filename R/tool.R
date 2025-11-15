@@ -1,8 +1,12 @@
-#' Convert Annotated Function to Tool Definition
+#' Tool Definitions
 #'
 #' @description
-#' Parses annotations from a function and converts it to a generic tool
-#' definition with an `args_schema` field. This standardized format can be
+#' Functions for defining tools using either annotations or direct specification.
+#'
+#' ## Annotation-based approach
+#'
+#' `as_tool()` parses annotations from a function and converts it to a generic
+#' tool definition with an `args_schema` field. This standardized format can be
 #' converted to provider-specific formats internally.
 #'
 #' Annotations use roxygen2-style `#'` comments inside the function body (not
@@ -12,6 +16,17 @@
 #' The package automatically enables source preservation when loaded. If you
 #' defined functions before loading the package, simply redefine them after
 #' loading argent.
+#'
+#' ## Direct specification approach
+#'
+#' `tool()` creates a tool definition by directly specifying parameters, as an
+#' alternative to using function annotations with `as_tool()`. This approach
+#' is useful for complex nested structures or when defining tools without
+#' corresponding R functions.
+#'
+#' Parameters are specified as named arguments. Each parameter value can be:
+#' - A string: `"type[*] [description]"` (e.g., `"string* The user's name"`)
+#' - A list: For nested objects with `type` field and nested properties
 #'
 #' @param fn A function with annotations in its body comments using `#'` prefix.
 #'   Supported tags:
@@ -25,6 +40,9 @@
 #'   default value in the function signature and no `*` suffix, it is
 #'   optional. If it has a `*` suffix, it overrides the default and becomes
 #'   required.
+#' @param name Character. The tool name
+#' @param description Character. What the tool does
+#' @param ... Named parameter specifications (for `tool()`). See Details.
 #'
 #' @return A list with:
 #'   - `name`: Function name (character)
@@ -32,10 +50,43 @@
 #'   - `args_schema`: JSON Schema object with `type`, `properties`, and
 #'     `required` fields
 #'
+#' @details
+#' ## Type Specifications (for `tool()`)
+#'
+#' **Primitive types:** `string`, `integer`, `number`, `boolean`, `date`,
+#' `date-time`
+#'
+#' **Arrays:** Use `[type]` syntax (e.g., `"[string]"`, `"[integer]"`)
+#'
+#' **Required marker:** Add `*` after type (e.g., `"string*"`)
+#'
+#' **Descriptions:** Add text after type (e.g., `"string* The user's name"`)
+#'
+#' **Nested objects:** Use list with `type = "object"` or `type = "object*"`:
+#' ```r
+#' address = list(
+#'   type = "object*",
+#'   description = "Mailing address",
+#'   street = "string* Street address",
+#'   city = "string* City name"
+#' )
+#' ```
+#'
+#' **Arrays of objects:** Use `type = "[object]"`:
+#' ```r
+#' users = list(
+#'   type = "[object]*",
+#'   description = "List of users",
+#'   name = "string*",
+#'   email = "string*"
+#' )
+#' ```
+#'
+#' @rdname tool-definitions
 #' @export
 #' @examples
 #' \dontrun{
-#' # Enable source preservation for interactive use
+#' # Annotation-based approach
 #' options(keep.source = TRUE)
 #'
 #' my_fn <- function(x, y = 3L) {
@@ -46,6 +97,28 @@
 #' }
 #'
 #' as_tool(my_fn)
+#'
+#' # Direct specification approach
+#' search_tool <- tool(
+#'   name = "search_db",
+#'   description = "Search the database",
+#'   query = "string* Search query",
+#'   limit = "integer Maximum results to return"
+#' )
+#'
+#' # Nested object
+#' create_user_tool <- tool(
+#'   name = "create_user",
+#'   description = "Create a new user",
+#'   name = "string* User's full name",
+#'   address = list(
+#'     type = "object*",
+#'     description = "User's mailing address",
+#'     street = "string* Street address",
+#'     city = "string* City name",
+#'     zip = "string Postal code"
+#'   )
+#' )
 #' }
 as_tool <- function(fn) {
     if (!is.function(fn)) {
@@ -135,34 +208,8 @@ as_tool <- function(fn) {
     )
 }
 
-#' Convert Annotated Function to Output Schema
-#'
-#' @description
-#' A semantic wrapper around [as_tool()] for defining output schemas. Accepts
-#' a function (typically empty/dummy) with plumber2-style annotations and
-#' returns a schema definition suitable for structured outputs.
-#'
-#' @param fn A function with plumber2-style annotations. See [as_tool()] for
-#'   annotation syntax.
-#'
-#' @return Same structure as [as_tool()]: a list with `name`, `description`,
-#'   and `args_schema` fields.
-#'
+#' @rdname tool-definitions
 #' @export
-#' @examples
-#' \dontrun{
-#' # Enable source preservation for interactive use
-#' options(keep.source = TRUE)
-#'
-#' response_spec <- function() {
-#'     #' @description User information response
-#'     #' @param name:string* User's full name
-#'     #' @param age:integer* User's age in years
-#'     #' @param tags:[string] Optional list of tags
-#' }
-#'
-#' as_schema(response_spec)
-#' }
 as_schema <- function(fn) {
     as_tool(fn)
 }
@@ -366,94 +413,8 @@ infer_required <- function(param_name, has_star, has_default) {
 
 # Direct specification functions ----------------------------------------------
 
-#' Define Tool with Direct Parameter Specification
-#'
-#' @description
-#' Create a tool definition by directly specifying parameters, as an alternative
-#' to using function annotations with [as_tool()]. This approach is useful for
-#' complex nested structures or when defining tools without corresponding R
-#' functions.
-#'
-#' Parameters are specified as named arguments. Each parameter value can be:
-#' - A string: `"type[*] [description]"` (e.g., `"string* The user's name"`)
-#' - A list: For nested objects with `type` field and nested properties
-#'
-#' @param name Character. The tool name
-#' @param description Character. What the tool does
-#' @param ... Named parameter specifications. See Details.
-#'
-#' @details
-#' ## Type Specifications
-#'
-#' **Primitive types:** `string`, `integer`, `number`, `boolean`, `date`,
-#' `date-time`
-#'
-#' **Arrays:** Use `[type]` syntax (e.g., `"[string]"`, `"[integer]"`)
-#'
-#' **Required marker:** Add `*` after type (e.g., `"string*"`)
-#'
-#' **Descriptions:** Add text after type (e.g., `"string* The user's name"`)
-#'
-#' **Nested objects:** Use list with `type = "object"` or `type = "object*"`:
-#' ```r
-#' address = list(
-#'   type = "object*",
-#'   description = "Mailing address",
-#'   street = "string* Street address",
-#'   city = "string* City name"
-#' )
-#' ```
-#'
-#' **Arrays of objects:** Use `type = "[object]"`:
-#' ```r
-#' users = list(
-#'   type = "[object]*",
-#'   description = "List of users",
-#'   name = "string*",
-#'   email = "string*"
-#' )
-#' ```
-#'
-#' @return A list with `name`, `description`, and `args_schema` fields,
-#'   compatible with provider `chat()` methods.
-#'
+#' @rdname tool-definitions
 #' @export
-#' @examples
-#' \dontrun{
-#' # Simple parameters
-#' search_tool <- tool(
-#'   name = "search_db",
-#'   description = "Search the database",
-#'   query = "string* Search query",
-#'   limit = "integer Maximum results to return"
-#' )
-#'
-#' # Nested object
-#' create_user_tool <- tool(
-#'   name = "create_user",
-#'   description = "Create a new user",
-#'   name = "string* User's full name",
-#'   address = list(
-#'     type = "object*",
-#'     description = "User's mailing address",
-#'     street = "string* Street address",
-#'     city = "string* City name",
-#'     zip = "string Postal code"
-#'   )
-#' )
-#'
-#' # Array of objects
-#' bulk_tool <- tool(
-#'   name = "bulk_create",
-#'   description = "Create multiple users",
-#'   users = list(
-#'     type = "[object]*",
-#'     description = "Users to create",
-#'     name = "string*",
-#'     email = "string*"
-#'   )
-#' )
-#' }
 tool <- function(name, description, ...) {
     if (!is.character(name) || length(name) != 1 || nchar(name) == 0) {
         cli::cli_abort("{.arg name} must be a non-empty string")
@@ -472,43 +433,8 @@ tool <- function(name, description, ...) {
     build_spec_from_params(name, description, params)
 }
 
-#' Define Schema with Direct Parameter Specification
-#'
-#' @description
-#' Create a schema definition by directly specifying parameters, as an
-#' alternative to using function annotations with [as_schema()]. Same syntax
-#' as [tool()] but semantically represents an output schema rather
-#' than a tool.
-#'
-#' @param name Character. The schema name
-#' @param description Character. What the schema represents
-#' @param ... Named parameter specifications. See [tool()] for syntax details.
-#'
-#' @return A list with `name`, `description`, and `args_schema` fields.
-#'
+#' @rdname tool-definitions
 #' @export
-#' @examples
-#' \dontrun{
-#' # Simple schema
-#' user_schema <- schema(
-#'   name = "user_response",
-#'   description = "User information",
-#'   name = "string* User's full name",
-#'   age = "integer* User's age"
-#' )
-#'
-#' # Nested schema
-#' detailed_schema <- schema(
-#'   name = "user_detailed",
-#'   description = "Detailed user information",
-#'   name = "string*",
-#'   address = list(
-#'     type = "object",
-#'     street = "string",
-#'     city = "string"
-#'   )
-#' )
-#' }
 schema <- function(name, description, ...) {
     tool(name, description, ...)
 }

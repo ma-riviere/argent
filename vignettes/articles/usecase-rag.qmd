@@ -1,5 +1,5 @@
 ---
-title: "Retrieval-Augmented Generation (RAG) with `argent` and `ragnar`"
+title: "Use-case: RAG with `argent` and `ragnar`"
 format: html
 execute:
   echo: true
