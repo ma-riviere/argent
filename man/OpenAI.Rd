@@ -142,7 +142,7 @@ results <- openai$delete_all_files()
 }
 \keyword{internal}
 \section{Super class}{
-\code{\link[argent:Provider]{argent::Provider}} -> \code{OpenAI}
+\code{argent::Provider} -> \code{OpenAI}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}

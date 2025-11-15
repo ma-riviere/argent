@@ -20,6 +20,14 @@ Key features:
 This class inherits file management and vector store functionality from OpenAI,
 allowing files uploaded here to be used across different OpenAI APIs.
 }
+\section{Useful links}{
+
+\itemize{
+\item API reference: https://platform.openai.com/docs/api-reference/responses/create
+\item API docs: https://platform.openai.com/docs/quickstart
+}
+}
+
 \section{Server-side tools}{
 
 \itemize{
@@ -157,7 +165,7 @@ path <- responses$download_container_file(
 }
 }
 \section{Super classes}{
-\code{\link[argent:Provider]{argent::Provider}} -> \code{\link[argent:OpenAI]{argent::OpenAI}} -> \code{OpenAI_Responses}
+\code{argent::Provider} -> \code{argent::OpenAI} -> \code{OpenAI_Responses}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}

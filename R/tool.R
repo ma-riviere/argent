@@ -47,8 +47,7 @@
 #' @return A list with:
 #'   - `name`: Function name (character)
 #'   - `description`: Function description (character)
-#'   - `args_schema`: JSON Schema object with `type`, `properties`, and
-#'     `required` fields
+#'   - `args_schema`: JSON Schema object with `type`, `properties`, and `required` fields
 #'
 #' @details
 #' ## Type Specifications (for `tool()`)
@@ -82,8 +81,7 @@
 #' )
 #' ```
 #'
-#' @rdname tool-definitions
-#' @export
+#' @name tool_definitions
 #' @examples
 #' \dontrun{
 #' # Annotation-based approach
@@ -120,6 +118,10 @@
 #'   )
 #' )
 #' }
+NULL
+
+#' @export
+#' @rdname tool_definitions
 as_tool <- function(fn) {
     if (!is.function(fn)) {
         cli::cli_abort("{.arg fn} must be a function")
@@ -208,7 +210,7 @@ as_tool <- function(fn) {
     )
 }
 
-#' @rdname tool-definitions
+#' @rdname tool_definitions
 #' @export
 as_schema <- function(fn) {
     as_tool(fn)
@@ -413,7 +415,7 @@ infer_required <- function(param_name, has_star, has_default) {
 
 # Direct specification functions ----------------------------------------------
 
-#' @rdname tool-definitions
+#' @rdname tool_definitions
 #' @export
 tool <- function(name, description, ...) {
     if (!is.character(name) || length(name) != 1 || nchar(name) == 0) {
@@ -433,7 +435,7 @@ tool <- function(name, description, ...) {
     build_spec_from_params(name, description, params)
 }
 
-#' @rdname tool-definitions
+#' @rdname tool_definitions
 #' @export
 schema <- function(name, description, ...) {
     tool(name, description, ...)

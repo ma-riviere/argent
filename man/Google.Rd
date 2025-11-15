@@ -6,9 +6,15 @@
 \description{
 R6 class for interacting with Google's API. Provides methods for chat completions,
 model information retrieval, function calling capabilities, structured outputs, and context caching.
-API reference: https://ai.google.dev/api/generate-content
-API docs: https://ai.google.dev/gemini-api/docs/
 }
+\section{Useful links}{
+
+\itemize{
+\item API reference: https://ai.google.dev/api/generate-content
+\item API docs: https://ai.google.dev/gemini-api/docs
+}
+}
+
 \section{Server-side tools}{
 
 \itemize{
@@ -57,7 +63,7 @@ cache_name <- google$create_cache(
 }
 }
 \section{Super class}{
-\code{\link[argent:Provider]{argent::Provider}} -> \code{Google}
+\code{argent::Provider} -> \code{Google}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}

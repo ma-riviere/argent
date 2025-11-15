@@ -11,6 +11,14 @@ tool calling, multimodal inputs, and structured outputs.
 This class inherits file management and vector store functionality from OpenAI,
 allowing files uploaded here to be used across different OpenAI APIs (Responses, Assistants).
 }
+\section{Useful links}{
+
+\itemize{
+\item API reference: https://platform.openai.com/docs/api-reference/chat
+\item API docs: https://platform.openai.com/docs/guides/completions/introduction
+}
+}
+
 \section{Server-side tools}{
 
 \itemize{
@@ -49,7 +57,7 @@ response <- openai$chat(
 }
 }
 \section{Super classes}{
-\code{\link[argent:Provider]{argent::Provider}} -> \code{\link[argent:OpenAI]{argent::OpenAI}} -> \code{OpenAI_Chat}
+\code{argent::Provider} -> \code{argent::OpenAI} -> \code{OpenAI_Chat}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}

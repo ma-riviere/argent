@@ -64,7 +64,7 @@ articles:
   contents: articles/usecase-rag
 
 reference:
-- title: Core Provider Classes
+- title: Provider Classes
   desc: R6 classes for different LLM providers
   contents:
   - starts_with("Google")
@@ -73,8 +73,8 @@ reference:
   - starts_with("OpenRouter")
   - starts_with("LocalLLM")
 
-- title: Multimodal Content Functions
-  desc: Functions for processing different types of inputs
+- title: Multimodal Content
+  desc: Helper functions for processing different types of inputs
   contents:
   - as_text_content
   - as_image_content
@@ -82,12 +82,10 @@ reference:
   - as_json_content
   - as_file_content
 
-- title: Tool & Schema Functions
-  desc: Define tools and schemas for structured outputs using annotations or direct
-    specification
+- title: Tool & Schema Definition
+  desc: Define tools and schemas for structured outputs using annotations or direct specification
   contents:
-  - tool-definitions
-
-- title: Common Provider Methods
-  desc: Core R6 methods available on all Provider instances
-  contents: Provider
+  - tool
+  - as_tool
+  - schema
+  - as_schema

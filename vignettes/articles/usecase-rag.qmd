@@ -15,7 +15,6 @@ For more details, see the [ragnar documentation](https://ragnar.tidyverse.org/).
 # Setup
 
 ```{r}
-library(argent)
 library(ragnar)
 library(cachem)
 library(stringr)

@@ -89,8 +89,17 @@ response <- llm$chat(prompt = "Hello!")
 }
 
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://ma-riviere.github.io/argent}
+  \item \url{https://github.com/ma-riviere/argent}
+  \item \url{https://ma-riviere.github.io/argent/}
+}
+
+}
 \author{
-\strong{Maintainer}: Marc Rivière \email{marc.aurele.riviere@gmail.com}
+\strong{Maintainer}: Marc-Aurèle Rivière \email{marc.aurele.riviere@gmail.com} (\href{https://orcid.org/0000-0002-5108-3382}{ORCID})
 
 }
 \keyword{internal}

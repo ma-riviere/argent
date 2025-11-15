@@ -7,6 +7,14 @@
 R6 class for interacting with Anthropic's API. Provides methods for chat completions
 with support for prompt caching, tool calling, and structured outputs.
 }
+\section{Useful links}{
+
+\itemize{
+\item API reference: https://docs.claude.com/en/api/overview
+\item API docs: https://docs.claude.com/en/docs/intro
+}
+}
+
 \section{Server-side tools}{
 
 \itemize{
@@ -68,7 +76,7 @@ raw_content <- anthropic$download_file(file_id = "file-abc123", dest_path = NULL
 }
 }
 \section{Super class}{
-\code{\link[argent:Provider]{argent::Provider}} -> \code{Anthropic}
+\code{argent::Provider} -> \code{Anthropic}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}

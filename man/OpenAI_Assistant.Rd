@@ -16,6 +16,14 @@ Users should migrate to the \href{responses-api.html}{Responses API} instead.
 For more information, see: https://platform.openai.com/docs/assistants/migration
 }
 
+\section{Useful links}{
+
+\itemize{
+\item API reference: https://platform.openai.com/docs/api-reference/assistants
+\item API docs: https://platform.openai.com/docs/assistants/deep-dive
+}
+}
+
 \section{Server-side tools}{
 
 \itemize{
@@ -115,7 +123,7 @@ assistant$load_assistant(id = "asst_...")
 }
 }
 \section{Super classes}{
-\code{\link[argent:Provider]{argent::Provider}} -> \code{\link[argent:OpenAI]{argent::OpenAI}} -> \code{OpenAIAssistant}
+\code{argent::Provider} -> \code{argent::OpenAI} -> \code{OpenAIAssistant}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}

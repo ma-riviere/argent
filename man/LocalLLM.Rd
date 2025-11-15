@@ -36,7 +36,7 @@ response <- llm$chat(
 }
 }
 \section{Super class}{
-\code{\link[argent:Provider]{argent::Provider}} -> \code{LocalLLM}
+\code{argent::Provider} -> \code{LocalLLM}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -58,6 +58,7 @@ response <- llm$chat(
 \item \href{#method-LocalLLM-get_model_name}{\code{LocalLLM$get_model_name()}}
 \item \href{#method-LocalLLM-list_models}{\code{LocalLLM$list_models()}}
 \item \href{#method-LocalLLM-chat}{\code{LocalLLM$chat()}}
+\item \href{#method-LocalLLM-embeddings}{\code{LocalLLM$embeddings()}}
 \item \href{#method-LocalLLM-clone}{\code{LocalLLM$clone()}}
 }
 }
@@ -250,6 +251,31 @@ include their names and structure in the context sent to the model.}
 }
 \subsection{Returns}{
 Character (or List if return_full_response = TRUE). Local LLM API's response object.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-LocalLLM-embeddings"></a>}}
+\if{latex}{\out{\hypertarget{method-LocalLLM-embeddings}{}}}
+\subsection{Method \code{embeddings()}}{
+Generate embeddings for text input
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{LocalLLM$embeddings(input, model = NULL, return_full_response = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{input}}{Character vector. Text(s) to embed}
+
+\item{\code{model}}{Character. Model to use (default: current model)}
+
+\item{\code{return_full_response}}{Logical. Return full API response (default: FALSE)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row
+per input text
 }
 }
 \if{html}{\out{<hr>}}

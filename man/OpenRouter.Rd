@@ -7,6 +7,14 @@
 R6 class for interacting with OpenRouter's API. Provides access to multiple LLM providers
 through a unified interface with support for chat completions, tool calling, and structured outputs.
 }
+\section{Useful links}{
+
+\itemize{
+\item API reference: https://openrouter.ai/docs/api-reference/overview
+\item API docs: https://openrouter.ai/docs/quickstart
+}
+}
+
 \section{Server-side tools}{
 
 \itemize{
@@ -53,7 +61,7 @@ response <- openrouter$chat(
 }
 }
 \section{Super class}{
-\code{\link[argent:Provider]{argent::Provider}} -> \code{OpenRouter}
+\code{argent::Provider} -> \code{OpenRouter}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
