@@ -21,15 +21,15 @@ managing assistants, threads, and runs with support for file search and function
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/google-gemini.html">Google Gemini Provider</a></li>
-    <li><a class="dropdown-item" href="../articles/anthropic.html">Anthropic Claude Provider</a></li>
-    <li><a class="dropdown-item" href="../articles/openrouter.html">OpenRouter Provider</a></li>
-    <li><a class="dropdown-item" href="../articles/local-llm.html">Local LLM Provider</a></li>
-    <li><a class="dropdown-item" href="../articles/openai-responses.html">OpenAI Responses API</a></li>
-    <li><a class="dropdown-item" href="../articles/openai-completions.html">OpenAI Chat Completions API</a></li>
-    <li><a class="dropdown-item" href="../articles/openai-assistants.html">OpenAI Assistants API (DEPRECATED)</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/google-gemini.html">Google (Gemini)</a></li>
+    <li><a class="dropdown-item" href="../articles/anthropic.html">Anthropic (Claude)</a></li>
+    <li><a class="dropdown-item" href="../articles/openrouter.html">OpenRouter</a></li>
+    <li><a class="dropdown-item" href="../articles/local-llm.html">Local LLMs</a></li>
+    <li><a class="dropdown-item" href="../articles/openai-responses.html">OpenAI - Responses API</a></li>
+    <li><a class="dropdown-item" href="../articles/openai-completions.html">OpenAI - Chat Completions API</a></li>
+    <li><a class="dropdown-item" href="../articles/openai-assistants.html">OpenAI - Assistants API</a></li>
     <li><a class="dropdown-item" href="../articles/other-providers.html">Using argent with Other Compatible APIs</a></li>
-    <li><a class="dropdown-item" href="../articles/usecase-rag.html">Retrieval-Augmented Generation (RAG) with `argent` and `ragnar`</a></li>
+    <li><a class="dropdown-item" href="../articles/usecase-rag.html">Use-case: RAG with `argent` and `ragnar`</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -61,6 +61,13 @@ managing assistants, threads, and runs with support for file search and function
 <p>Users should migrate to the <a href="responses-api.html">Responses API</a> instead.</p>
 <p>For more information, see: https://platform.openai.com/docs/assistants/migration</p>
     </div>
+    <div class="section level2">
+    <h2 id="useful-links">Useful links<a class="anchor" aria-label="anchor" href="#useful-links"></a></h2>
+
+
+<ul><li><p>API reference: https://platform.openai.com/docs/api-reference/assistants</p></li>
+<li><p>API docs: https://platform.openai.com/docs/assistants/deep-dive</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="server-side-tools">Server-side tools<a class="anchor" aria-label="anchor" href="#server-side-tools"></a></h2>
 
@@ -360,7 +367,7 @@ We recommend altering this or temperature but not both.</p></dd>
 <dd><p>List. Tool definitions (optional). Supports three formats:</p><ul><li><p>String form: "file_search", "code_interpreter"</p></li>
 <li><p>List form with resources: list(type = "file_search", store_ids = list("vs_123"))
 or list(type = "code_interpreter", file_ids = list("file-123"))</p></li>
-<li><p>Client-side functions: created with the <code>as_tool(fn)</code> or <code><a href="tool.html">tool()</a></code> helpers</p></li>
+<li><p>Client-side functions: created with the <code>as_tool(fn)</code> or <code><a href="tool_definitions.html">tool()</a></code> helpers</p></li>
 </ul></dd>
 
 

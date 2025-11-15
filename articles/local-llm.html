@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Local LLM Provider • argent</title>
+<title>Local LLMs • argent</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><script src="local-llm_files/libs/quarto-html/popper.min.js"></script><script src="local-llm_files/libs/quarto-html/tippy.umd.min.js"></script><link href="local-llm_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="local-llm_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Local LLM Provider">
+<!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Local LLMs">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:creator" content="@mariviere1">
 <meta name="twitter:site" content="@mariviere1">
@@ -39,15 +39,15 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/google-gemini.html">Google Gemini Provider</a></li>
-    <li><a class="dropdown-item" href="../articles/anthropic.html">Anthropic Claude Provider</a></li>
-    <li><a class="dropdown-item" href="../articles/openrouter.html">OpenRouter Provider</a></li>
-    <li><a class="dropdown-item" href="../articles/local-llm.html">Local LLM Provider</a></li>
-    <li><a class="dropdown-item" href="../articles/openai-responses.html">OpenAI Responses API</a></li>
-    <li><a class="dropdown-item" href="../articles/openai-completions.html">OpenAI Chat Completions API</a></li>
-    <li><a class="dropdown-item" href="../articles/openai-assistants.html">OpenAI Assistants API (DEPRECATED)</a></li>
+<li><a class="dropdown-item" href="../articles/google-gemini.html">Google (Gemini)</a></li>
+    <li><a class="dropdown-item" href="../articles/anthropic.html">Anthropic (Claude)</a></li>
+    <li><a class="dropdown-item" href="../articles/openrouter.html">OpenRouter</a></li>
+    <li><a class="dropdown-item" href="../articles/local-llm.html">Local LLMs</a></li>
+    <li><a class="dropdown-item" href="../articles/openai-responses.html">OpenAI - Responses API</a></li>
+    <li><a class="dropdown-item" href="../articles/openai-completions.html">OpenAI - Chat Completions API</a></li>
+    <li><a class="dropdown-item" href="../articles/openai-assistants.html">OpenAI - Assistants API</a></li>
     <li><a class="dropdown-item" href="../articles/other-providers.html">Using argent with Other Compatible APIs</a></li>
-    <li><a class="dropdown-item" href="../articles/usecase-rag.html">Retrieval-Augmented Generation (RAG) with `argent` and `ragnar`</a></li>
+    <li><a class="dropdown-item" href="../articles/usecase-rag.html">Use-case: RAG with `argent` and `ragnar`</a></li>
   </ul>
 </li>
       </ul>
@@ -65,7 +65,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Local LLM Provider</h1>
+      <h1>Local LLMs</h1>
 
 
 
@@ -222,10 +222,10 @@
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">cleaned_contents</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 </div>
-</details><p>Then, let’s define a JSON schema for the structured output using <code><a href="../reference/schema.html">schema()</a></code>:</p>
+</details><p>Then, let’s define a JSON schema for the structured output using <code><a href="../reference/tool_definitions.html">schema()</a></code>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">package_info_schema</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/schema.html">schema</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">package_info_schema</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tool_definitions.html">schema</a></span><span class="op">(</span></span>
 <span>    name <span class="op">=</span> <span class="st">"package_info"</span>,</span>
 <span>    description <span class="op">=</span> <span class="st">"Information about an R package release"</span>,</span>
 <span>    release_version <span class="op">=</span> <span class="st">"string* The release version of the package"</span>,</span>
@@ -236,7 +236,7 @@
 <div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">local_llama</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"When was the first release of the R 'ellmer' package on GitHub?"</span>,</span>
-<span>    tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="../reference/as_tool.html">as_tool</a></span><span class="op">(</span><span class="va">web_search</span><span class="op">)</span>, <span class="fu"><a href="../reference/as_tool.html">as_tool</a></span><span class="op">(</span><span class="va">web_fetch</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="../reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">web_search</span><span class="op">)</span>, <span class="fu"><a href="../reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">web_fetch</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    output_schema <span class="op">=</span> <span class="va">package_info_schema</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -290,7 +290,7 @@
 </div>
 </section><section class="section level2"><h2 id="multimodal-inputs">Multimodal Inputs<a class="anchor" aria-label="anchor" href="#multimodal-inputs"></a>
 </h2>
-<p>What types of media you can send will depend on the model you are using. In general, you can send any type of text content (and files/objects automatically converted to text).</p>
+<p>What types of media you can send will depend on the model you are using. At the minimum, you can send any type of text content (and files/objects automatically converted to text).</p>
 <p>Some models support vision, to which you can send images and possibly PDFs. Some models will need you to convert the PDF to an image first (which you can do by passing the PDF path to <code><a href="../reference/as_image_content.html">as_image_content()</a></code>).</p>
 <section class="level2"><h3 id="image-comprehension">Image Comprehension<a class="anchor" aria-label="anchor" href="#image-comprehension"></a>
 </h3>
@@ -301,6 +301,7 @@
 </details>
 </div>
 <p><strong>Sending a local image:</strong></p>
+<p>When providing a path to a local image, it will automatically be converted to base64 before being sent to the server.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">local_llama</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span>    </span>

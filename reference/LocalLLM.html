@@ -21,15 +21,15 @@ OpenAI-compatible APIs. Provides methods for chat completions with tool calling 
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/google-gemini.html">Google Gemini Provider</a></li>
-    <li><a class="dropdown-item" href="../articles/anthropic.html">Anthropic Claude Provider</a></li>
-    <li><a class="dropdown-item" href="../articles/openrouter.html">OpenRouter Provider</a></li>
-    <li><a class="dropdown-item" href="../articles/local-llm.html">Local LLM Provider</a></li>
-    <li><a class="dropdown-item" href="../articles/openai-responses.html">OpenAI Responses API</a></li>
-    <li><a class="dropdown-item" href="../articles/openai-completions.html">OpenAI Chat Completions API</a></li>
-    <li><a class="dropdown-item" href="../articles/openai-assistants.html">OpenAI Assistants API (DEPRECATED)</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/google-gemini.html">Google (Gemini)</a></li>
+    <li><a class="dropdown-item" href="../articles/anthropic.html">Anthropic (Claude)</a></li>
+    <li><a class="dropdown-item" href="../articles/openrouter.html">OpenRouter</a></li>
+    <li><a class="dropdown-item" href="../articles/local-llm.html">Local LLMs</a></li>
+    <li><a class="dropdown-item" href="../articles/openai-responses.html">OpenAI - Responses API</a></li>
+    <li><a class="dropdown-item" href="../articles/openai-completions.html">OpenAI - Chat Completions API</a></li>
+    <li><a class="dropdown-item" href="../articles/openai-assistants.html">OpenAI - Assistants API</a></li>
     <li><a class="dropdown-item" href="../articles/other-providers.html">Using argent with Other Compatible APIs</a></li>
-    <li><a class="dropdown-item" href="../articles/usecase-rag.html">Retrieval-Augmented Generation (RAG) with `argent` and `ragnar`</a></li>
+    <li><a class="dropdown-item" href="../articles/usecase-rag.html">Use-case: RAG with `argent` and `ragnar`</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -85,6 +85,7 @@ OpenAI-compatible APIs. Provides methods for chat completions with tool calling 
 <li><p><a href="#method-LocalLLM-get_model_name"><code>LocalLLM$get_model_name()</code></a></p></li>
 <li><p><a href="#method-LocalLLM-list_models"><code>LocalLLM$list_models()</code></a></p></li>
 <li><p><a href="#method-LocalLLM-chat"><code>LocalLLM$chat()</code></a></p></li>
+<li><p><a href="#method-LocalLLM-embeddings"><code>LocalLLM$embeddings()</code></a></p></li>
 <li><p><a href="#method-LocalLLM-clone"><code>LocalLLM$clone()</code></a></p></li>
 </ul></div><p><details><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="download_generated_files"><a href="Provider.html#method-download_generated_files"><code>argent::Provider$download_generated_files()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="dump_history"><a href="Provider.html#method-dump_history"><code>argent::Provider$dump_history()</code></a></span></li>
@@ -308,15 +309,44 @@ include their names and structure in the context sent to the model.</p></dd>
 <p>Character (or List if return_full_response = TRUE). Local LLM API's response object.</p>
 </div>
 
-</div><p></p><hr><a id="method-LocalLLM-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
-<p>The objects of this class are cloneable with this method.</p><div class="section">
+</div><p></p><hr><a id="method-LocalLLM-embeddings"></a><div class="section">
+<h3 id="method-embeddings-">Method <code>embeddings()</code><a class="anchor" aria-label="anchor" href="#method-embeddings-"></a></h3>
+<p>Generate embeddings for text input</p><div class="section">
 <h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">LocalLLM</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">LocalLLM</span><span class="op">$</span><span class="fu">embeddings</span><span class="op">(</span><span class="va">input</span>, model <span class="op">=</span> <span class="cn">NULL</span>, return_full_response <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>input</code></dt>
+<dd><p>Character vector. Text(s) to embed</p></dd>
+
+
+<dt><code>model</code></dt>
+<dd><p>Character. Model to use (default: current model)</p></dd>
+
+
+<dt><code>return_full_response</code></dt>
+<dd><p>Logical. Return full API response (default: FALSE)</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-4">Returns<a class="anchor" aria-label="anchor" href="#returns-4"></a></h4>
+<p>Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row
+per input text</p>
+</div>
+
+</div><p></p><hr><a id="method-LocalLLM-clone"></a><div class="section">
+<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+<p>The objects of this class are cloneable with this method.</p><div class="section">
+<h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">LocalLLM</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
