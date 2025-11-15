@@ -189,7 +189,7 @@ This server-side tool is equivalent to our client-side `web_fetch` tool.
 
 ## Server-side: File Search
 
-With Google Gemini, we can create a file search store and use the file_search tool to search through uploaded files, effectively turning it into a server-side RAG application. See the [File Search & RAG](#file-search-rag) section below for a complete example.
+With Google Gemini, we can create a file search store and use the file_search tool to search through uploaded files, effectively turning it into a server-side RAG application. See the [File Search & RAG](#server-side-rag) section below for a complete example.
 
 ## Server-side: Google Maps
 

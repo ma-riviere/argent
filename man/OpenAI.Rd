@@ -11,6 +11,27 @@ and OpenAI_Assistant to provide consistent interfaces across different OpenAI AP
 \examples{
 
 ## ------------------------------------------------
+## Method `OpenAI$embeddings`
+## ------------------------------------------------
+
+\dontrun{
+openai <- OpenAI_Chat$new()
+
+# Generate embeddings
+embeddings <- openai$embeddings(
+  input = c("Hello world", "How are you?"),
+  model = "text-embedding-3-small"
+)
+
+# With dimension reduction
+embeddings <- openai$embeddings(
+  input = "Sample text",
+  model = "text-embedding-3-large",
+  dimensions = 256
+)
+}
+
+## ------------------------------------------------
 ## Method `OpenAI$upload_file`
 ## ------------------------------------------------
 
@@ -160,6 +181,7 @@ results <- openai$delete_all_files()
 \item \href{#method-OpenAI-list_models}{\code{OpenAI$list_models()}}
 \item \href{#method-OpenAI-find_models}{\code{OpenAI$find_models()}}
 \item \href{#method-OpenAI-get_model_info}{\code{OpenAI$get_model_info()}}
+\item \href{#method-OpenAI-embeddings}{\code{OpenAI$embeddings()}}
 \item \href{#method-OpenAI-list_assistants}{\code{OpenAI$list_assistants()}}
 \item \href{#method-OpenAI-find_assistants}{\code{OpenAI$find_assistants()}}
 \item \href{#method-OpenAI-upload_file}{\code{OpenAI$upload_file()}}
@@ -302,6 +324,64 @@ Get information about a specific model
 \subsection{Returns}{
 A list containing information about the model.
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-OpenAI-embeddings"></a>}}
+\if{latex}{\out{\hypertarget{method-OpenAI-embeddings}{}}}
+\subsection{Method \code{embeddings()}}{
+Generate embeddings for text input
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{OpenAI$embeddings(
+  input,
+  model,
+  encoding_format = "float",
+  dimensions = NULL,
+  return_full_response = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{input}}{Character vector. Text(s) to embed}
+
+\item{\code{model}}{Character. Model to use (e.g., "text-embedding-3-small", "text-embedding-3-large")}
+
+\item{\code{encoding_format}}{Character. Format of embeddings: "float" or "base64" (default: "float")}
+
+\item{\code{dimensions}}{Integer. Number of dimensions for output (only for embedding-3 models)}
+
+\item{\code{return_full_response}}{Logical. Return full API response (default: FALSE)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row
+per input text
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+openai <- OpenAI_Chat$new()
+
+# Generate embeddings
+embeddings <- openai$embeddings(
+  input = c("Hello world", "How are you?"),
+  model = "text-embedding-3-small"
+)
+
+# With dimension reduction
+embeddings <- openai$embeddings(
+  input = "Sample text",
+  model = "text-embedding-3-large",
+  dimensions = 256
+)
+}
+}
+\if{html}{\out{</div>}}
+
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAI-list_assistants"></a>}}

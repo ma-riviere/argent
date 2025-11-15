@@ -315,6 +315,25 @@ Anthropic <- R6::R6Class( # nolint
             invisible(TRUE)
         },
 
+        # ------🔺 EMBEDDINGS --------------------------------------------------
+
+        #' @description
+        #' Generate embeddings for text input
+        #'
+        #' Note: Anthropic does not provide a native embeddings API. For embeddings, consider using:
+        #' - Voyage AI (recommended by Anthropic)
+        #' - OpenAI (text-embedding-3-small, text-embedding-3-large)
+        #' - Google (text-embedding-004)
+        #' - Other embedding providers available through OpenRouter
+        #'
+        #' @param ... Arguments (not used, included for method signature consistency)
+        #' @return This method always throws an error
+        embeddings = function(...) {
+            cli::cli_abort(
+                "[{self$provider_name}] Anthropic does not provide a native embeddings API."
+            )
+        },
+
         # ------🔺 RESPONSE HELPERS --------------------------------------------
 
         # ------🔺 CHAT --------------------------------------------------------

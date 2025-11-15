@@ -59,6 +59,34 @@ response <- openrouter$chat(
   tools = list(get_weather_tool)
 )
 }
+
+## ------------------------------------------------
+## Method `OpenRouter$embeddings`
+## ------------------------------------------------
+
+\dontrun{
+openrouter <- OpenRouter$new()
+
+# Generate embeddings
+embeddings <- openrouter$embeddings(
+  input = c("Hello world", "How are you?"),
+  model = "openai/text-embedding-3-small"
+)
+
+# With dimension reduction
+embeddings <- openrouter$embeddings(
+  input = "Sample text",
+  model = "openai/text-embedding-3-large",
+  dimensions = 256
+)
+
+# With provider routing
+embeddings <- openrouter$embeddings(
+  input = "Sample text",
+  model = "text-embedding-3-small",
+  provider = "openai"
+)
+}
 }
 \section{Super class}{
 \code{argent::Provider} -> \code{OpenRouter}
@@ -89,6 +117,7 @@ response <- openrouter$chat(
 \item \href{#method-OpenRouter-list_providers}{\code{OpenRouter$list_providers()}}
 \item \href{#method-OpenRouter-list_models}{\code{OpenRouter$list_models()}}
 \item \href{#method-OpenRouter-get_model_info}{\code{OpenRouter$get_model_info()}}
+\item \href{#method-OpenRouter-embeddings}{\code{OpenRouter$embeddings()}}
 \item \href{#method-OpenRouter-chat}{\code{OpenRouter$chat()}}
 \item \href{#method-OpenRouter-clone}{\code{OpenRouter$clone()}}
 }
@@ -272,6 +301,73 @@ Get information about a specific model
 \subsection{Returns}{
 List. Model information
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-OpenRouter-embeddings"></a>}}
+\if{latex}{\out{\hypertarget{method-OpenRouter-embeddings}{}}}
+\subsection{Method \code{embeddings()}}{
+Generate embeddings for text input
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{OpenRouter$embeddings(
+  input,
+  model,
+  encoding_format = "float",
+  dimensions = NULL,
+  provider = NULL,
+  return_full_response = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{input}}{Character vector. Text(s) to embed}
+
+\item{\code{model}}{Character. Model to use (e.g., "text-embedding-3-small", "text-embedding-3-large")}
+
+\item{\code{encoding_format}}{Character. Format of embeddings: "float" or "base64" (default: "float")}
+
+\item{\code{dimensions}}{Integer. Number of dimensions for output (only for embedding-3 models)}
+
+\item{\code{provider}}{Character. Specific provider to use (optional, enables provider routing)}
+
+\item{\code{return_full_response}}{Logical. Return full API response (default: FALSE)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row per input text
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+openrouter <- OpenRouter$new()
+
+# Generate embeddings
+embeddings <- openrouter$embeddings(
+  input = c("Hello world", "How are you?"),
+  model = "openai/text-embedding-3-small"
+)
+
+# With dimension reduction
+embeddings <- openrouter$embeddings(
+  input = "Sample text",
+  model = "openai/text-embedding-3-large",
+  dimensions = 256
+)
+
+# With provider routing
+embeddings <- openrouter$embeddings(
+  input = "Sample text",
+  model = "text-embedding-3-small",
+  provider = "openai"
+)
+}
+}
+\if{html}{\out{</div>}}
+
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenRouter-chat"></a>}}

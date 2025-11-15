@@ -213,6 +213,101 @@ OpenRouter <- R6::R6Class( # nolint
             return(as.list(model_info[1, ]))
         },
 
+        # ------🔺 EMBEDDINGS --------------------------------------------------
+
+        #' @description
+        #' Generate embeddings for text input
+        #' @param input Character vector. Text(s) to embed
+        #' @param model Character. Model to use (e.g., "text-embedding-3-small", "text-embedding-3-large")
+        #' @param encoding_format Character. Format of embeddings: "float" or "base64" (default: "float")
+        #' @param dimensions Integer. Number of dimensions for output (only for embedding-3 models)
+        #' @param provider Character. Specific provider to use (optional, enables provider routing)
+        #' @param return_full_response Logical. Return full API response (default: FALSE)
+        #' @return Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row per input text
+        #' @examples
+        #' \dontrun{
+        #' openrouter <- OpenRouter$new()
+        #'
+        #' # Generate embeddings
+        #' embeddings <- openrouter$embeddings(
+        #'   input = c("Hello world", "How are you?"),
+        #'   model = "openai/text-embedding-3-small"
+        #' )
+        #'
+        #' # With dimension reduction
+        #' embeddings <- openrouter$embeddings(
+        #'   input = "Sample text",
+        #'   model = "openai/text-embedding-3-large",
+        #'   dimensions = 256
+        #' )
+        #'
+        #' # With provider routing
+        #' embeddings <- openrouter$embeddings(
+        #'   input = "Sample text",
+        #'   model = "text-embedding-3-small",
+        #'   provider = "openai"
+        #' )
+        #' }
+        embeddings = function(
+            input,
+            model,
+            encoding_format = "float",
+            dimensions = NULL,
+            provider = NULL,
+            return_full_response = FALSE
+        ) {
+            # Validate input
+            if (!is.character(input) || length(input) == 0) {
+                cli::cli_abort("[{self$provider_name}] Input must be a non-empty character vector.")
+            }
+
+            # Validate model
+            if (is.null(model) || !nzchar(model)) {
+                cli::cli_abort("[{self$provider_name}] Model must be specified.")
+            }
+
+            # Build API request (OpenAI-compatible format)
+            query_data <- list3(
+                input = input,
+                model = model,
+                encoding_format = encoding_format,
+                dimensions = dimensions
+            )
+
+            # Add provider routing if specified
+            if (!is.null(provider)) {
+                query_data$provider <- list(order = list(provider))
+            } else if (!is.null(self$allowed_providers)) {
+                query_data$provider <- list(order = self$allowed_providers)
+            }
+
+            # Make API request
+            res <- private$request(paste0(self$base_url, "/v1/embeddings"), query_data)
+
+            # Handle API errors
+            if (purrr::is_empty(res$data)) {
+                cli::cli_abort("[{self$provider_name}] Error: API request failed or returned no data")
+            }
+
+            # Return full response if requested
+            if (isTRUE(return_full_response)) {
+                return(res)
+            }
+
+            # Extract embeddings and return as matrix (OpenAI-compatible format)
+            embeddings_list <- purrr::map(res$data, "embedding")
+
+            # Flatten to numeric vector, then reshape to matrix
+            embeddings_matrix <- matrix(
+                unlist(embeddings_list, use.names = FALSE),
+                nrow = length(embeddings_list),
+                ncol = length(embeddings_list[[1]]),
+                byrow = TRUE
+            )
+
+            return(embeddings_matrix)
+        },
+
         # ------🔺 RESPONSE HELPERS --------------------------------------------
 
         # ------🔺 CHAT --------------------------------------------------------

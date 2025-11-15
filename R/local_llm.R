@@ -360,8 +360,7 @@ LocalLLM <- R6::R6Class( # nolint
         #' @param input Character vector. Text(s) to embed
         #' @param model Character. Model to use (default: current model)
         #' @param return_full_response Logical. Return full API response (default: FALSE)
-        #' @return Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row
-        #'   per input text
+        #' @return Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row per input text
         embeddings = function(
             input,
             model = NULL,
@@ -392,7 +391,7 @@ LocalLLM <- R6::R6Class( # nolint
             res <- private$request(paste0(self$base_url, "/v1/embeddings"), query_data)
 
             # Handle API errors
-            if (is.null(res$data) || length(res$data) == 0) {
+            if (purrr::is_empty(res$data)) {
                 cli::cli_abort("[{self$provider_name}] Error: API request failed or returned no data")
             }
 

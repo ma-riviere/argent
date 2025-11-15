@@ -61,6 +61,34 @@ cache_name <- google$create_cache(
   ttl = "3600s"
 )
 }
+
+## ------------------------------------------------
+## Method `Google$embeddings`
+## ------------------------------------------------
+
+\dontrun{
+google <- Google$new()
+
+# Generate embeddings
+embeddings <- google$embeddings(
+  input = c("Hello world", "How are you?"),
+  model = "text-embedding-004"
+)
+
+# With task type for optimization
+embeddings <- google$embeddings(
+  input = "Sample query",
+  model = "text-embedding-004",
+  task_type = "RETRIEVAL_QUERY"
+)
+
+# With dimension reduction
+embeddings <- google$embeddings(
+  input = "Sample text",
+  model = "text-embedding-004",
+  output_dimensionality = 256
+)
+}
 }
 \section{Super class}{
 \code{argent::Provider} -> \code{Google}
@@ -82,6 +110,7 @@ cache_name <- google$create_cache(
 \item \href{#method-Google-new}{\code{Google$new()}}
 \item \href{#method-Google-list_models}{\code{Google$list_models()}}
 \item \href{#method-Google-get_model_info}{\code{Google$get_model_info()}}
+\item \href{#method-Google-embeddings}{\code{Google$embeddings()}}
 \item \href{#method-Google-upload_file}{\code{Google$upload_file()}}
 \item \href{#method-Google-get_file_metadata}{\code{Google$get_file_metadata()}}
 \item \href{#method-Google-list_files}{\code{Google$list_files()}}
@@ -189,6 +218,77 @@ Get information about a specific Google model
 \subsection{Returns}{
 List. Model information
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Google-embeddings"></a>}}
+\if{latex}{\out{\hypertarget{method-Google-embeddings}{}}}
+\subsection{Method \code{embeddings()}}{
+Generate embeddings for text input using Google's embedding models
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Google$embeddings(
+  input,
+  model,
+  task_type = NULL,
+  output_dimensionality = NULL,
+  return_full_response = FALSE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{input}}{Character vector. Text(s) to embed}
+
+\item{\code{model}}{Character. Model to use (e.g., "text-embedding-004", "text-embedding-preview-0815")}
+
+\item{\code{task_type}}{Character. Task type for optimization (optional). One of:
+\itemize{
+\item "RETRIEVAL_QUERY": For search queries
+\item "RETRIEVAL_DOCUMENT": For documents in search corpus
+\item "SEMANTIC_SIMILARITY": For similarity comparison
+\item "CLASSIFICATION": For text classification
+\item "CLUSTERING": For clustering tasks
+}}
+
+\item{\code{output_dimensionality}}{Integer. Number of dimensions for output (optional, 128-3072 for supported models)}
+
+\item{\code{return_full_response}}{Logical. Return full API response (default: FALSE)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row per input text
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+google <- Google$new()
+
+# Generate embeddings
+embeddings <- google$embeddings(
+  input = c("Hello world", "How are you?"),
+  model = "text-embedding-004"
+)
+
+# With task type for optimization
+embeddings <- google$embeddings(
+  input = "Sample query",
+  model = "text-embedding-004",
+  task_type = "RETRIEVAL_QUERY"
+)
+
+# With dimension reduction
+embeddings <- google$embeddings(
+  input = "Sample text",
+  model = "text-embedding-004",
+  output_dimensionality = 256
+)
+}
+}
+\if{html}{\out{</div>}}
+
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-upload_file"></a>}}

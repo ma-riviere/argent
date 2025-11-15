@@ -274,8 +274,7 @@ Generate embeddings for text input
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row
-per input text
+Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row per input text
 }
 }
 \if{html}{\out{<hr>}}

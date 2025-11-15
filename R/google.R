@@ -112,6 +112,115 @@ Google <- R6::R6Class( # nolint
             return(resp)
         },
 
+        # ------🔺 EMBEDDINGS --------------------------------------------------
+
+        #' @description
+        #' Generate embeddings for text input using Google's embedding models
+        #' @param input Character vector. Text(s) to embed
+        #' @param model Character. Model to use (e.g., "text-embedding-004", "text-embedding-preview-0815")
+        #' @param task_type Character. Task type for optimization (optional). One of:
+        #'   - "RETRIEVAL_QUERY": For search queries
+        #'   - "RETRIEVAL_DOCUMENT": For documents in search corpus
+        #'   - "SEMANTIC_SIMILARITY": For similarity comparison
+        #'   - "CLASSIFICATION": For text classification
+        #'   - "CLUSTERING": For clustering tasks
+        #' @param output_dimensionality Integer. Number of dimensions for output (optional, 128-3072 for supported models)
+        #' @param return_full_response Logical. Return full API response (default: FALSE)
+        #' @return Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row per input text
+        #' @examples
+        #' \dontrun{
+        #' google <- Google$new()
+        #'
+        #' # Generate embeddings
+        #' embeddings <- google$embeddings(
+        #'   input = c("Hello world", "How are you?"),
+        #'   model = "text-embedding-004"
+        #' )
+        #'
+        #' # With task type for optimization
+        #' embeddings <- google$embeddings(
+        #'   input = "Sample query",
+        #'   model = "text-embedding-004",
+        #'   task_type = "RETRIEVAL_QUERY"
+        #' )
+        #'
+        #' # With dimension reduction
+        #' embeddings <- google$embeddings(
+        #'   input = "Sample text",
+        #'   model = "text-embedding-004",
+        #'   output_dimensionality = 256
+        #' )
+        #' }
+        embeddings = function(
+            input,
+            model,
+            task_type = NULL,
+            output_dimensionality = NULL,
+            return_full_response = FALSE
+        ) {
+            # Validate input
+            if (!is.character(input) || length(input) == 0) {
+                cli::cli_abort("[{self$provider_name}] Input must be a non-empty character vector.")
+            }
+
+            # Validate model
+            if (is.null(model) || !nzchar(model)) {
+                cli::cli_abort("[{self$provider_name}] Model must be specified.")
+            }
+
+            # Validate task_type if provided
+            if (!is.null(task_type)) {
+                valid_task_types <- c(
+                    "RETRIEVAL_QUERY", "RETRIEVAL_DOCUMENT", "SEMANTIC_SIMILARITY",
+                    "CLASSIFICATION", "CLUSTERING"
+                )
+                if (!task_type %in% valid_task_types) {
+                    cli::cli_abort(
+                        "[{self$provider_name}] Invalid task_type. Must be one of: {paste(valid_task_types, collapse = ', ')}"
+                    )
+                }
+            }
+
+            # Build requests - Google expects one request per input text
+            embeddings_list <- list()
+
+            for (i in seq_along(input)) {
+                query_data <- list3(
+                    content = list(parts = list(list(text = input[i]))),
+                    task_type = task_type,
+                    output_dimensionality = output_dimensionality
+                )
+
+                # Make API request
+                endpoint <- paste0(self$base_url, "/v1beta/models/", model, ":embedContent")
+                res <- private$request(endpoint, query_data)
+
+                # Handle API errors
+                if (purrr::is_empty(purrr::pluck(res, "embedding", "values"))) {
+                    cli::cli_abort(
+                        "[{self$provider_name}] Error: API request failed or returned no embedding for input {i}"
+                    )
+                }
+
+                embeddings_list[[i]] <- purrr::pluck(res, "embedding", "values")
+            }
+
+            # Return full response if requested (return last response or list of all responses)
+            if (isTRUE(return_full_response)) {
+                return(res)
+            }
+
+            # Flatten to numeric vector, then reshape to matrix
+            embeddings_matrix <- matrix(
+                unlist(embeddings_list, use.names = FALSE),
+                nrow = length(embeddings_list),
+                ncol = length(embeddings_list[[1]]),
+                byrow = TRUE
+            )
+
+            return(embeddings_matrix)
+        },
+
         # ------🔺 FILES -------------------------------------------------------
 
         #' @description

@@ -20,21 +20,21 @@ outputs.
 
 > **Important**
 >
-> In most cases, you’d be better off using
+> Why **questioning** ? In most cases, you’d be better off using
 > [ellmer](https://github.com/tidyverse/ellmer).
 >
-> I started working on this back in 2023 when none of the existing
+> I started working on this back in 2023 when none of the existing LLM
 > packages supported tool calling or structured outputs, but I never
-> took the time to put everything into a proper package.
+> took the time to put everything into a proper package until now.
 >
-> However, now there are several packages available, including
+> However, there are now several similar packages, including
 > [ellmer](https://github.com/tidyverse/ellmer) by the Tidyverse team,
 > which I recommend using instead.
 >
 > I’m putting `argent` out there in case it supports some edge cases
 > that other packages don’t, and because I didn’t want to let all that
-> work go to waste. I will be migrating my projects to `ellmer`, and I
-> am not sure I’ll maintain `argent` in the long run.
+> work go to waste. I will be progressively migrating my projects to
+> `ellmer`, and I am not sure how long I’ll maintain `argent`.
 
 ## In a Nutshell
 

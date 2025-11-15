@@ -102,6 +102,7 @@ raw_content <- anthropic$download_file(file_id = "file-abc123", dest_path = NULL
 \item \href{#method-Anthropic-download_file}{\code{Anthropic$download_file()}}
 \item \href{#method-Anthropic-list_files}{\code{Anthropic$list_files()}}
 \item \href{#method-Anthropic-delete_file}{\code{Anthropic$delete_file()}}
+\item \href{#method-Anthropic-embeddings}{\code{Anthropic$embeddings()}}
 \item \href{#method-Anthropic-chat}{\code{Anthropic$chat()}}
 \item \href{#method-Anthropic-clone}{\code{Anthropic$clone()}}
 }
@@ -336,6 +337,34 @@ Delete an uploaded file
 }
 \subsection{Returns}{
 Logical. TRUE if successful, FALSE otherwise
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Anthropic-embeddings"></a>}}
+\if{latex}{\out{\hypertarget{method-Anthropic-embeddings}{}}}
+\subsection{Method \code{embeddings()}}{
+Generate embeddings for text input
+
+Note: Anthropic does not provide a native embeddings API. For embeddings, consider using:
+\itemize{
+\item Voyage AI (recommended by Anthropic)
+\item OpenAI (text-embedding-3-small, text-embedding-3-large)
+\item Google (text-embedding-004)
+\item Other embedding providers available through OpenRouter
+}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Anthropic$embeddings(...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Arguments (not used, included for method signature consistency)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+This method always throws an error
 }
 }
 \if{html}{\out{<hr>}}

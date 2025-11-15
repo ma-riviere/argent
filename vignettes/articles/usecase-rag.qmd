@@ -27,6 +27,25 @@ library(purrr)
 
 First, create a knowledge store from your documentation. We'll use the Quarto documentation as an example, to stay similar to the ragnar documentation.
 
+### Collecting Documents
+
+Here, let's collect (part of) the Quarto documentation from the Quarto website.
+
+```{r}
+quarto_docs_url_filter <- function(urls) {
+    cleaned_urls <- str_subset(urls, "https://quarto.org/docs/") |> 
+        str_subset(regex("\\.html$", ignore_case = FALSE))
+
+    return(cleaned_urls)
+}
+
+paths <- ragnar::ragnar_find_links(
+    "https://quarto.org/", 
+    depth = 1, 
+    url_filter = quarto_docs_url_filter
+)
+```
+
 ### Create Store with Embeddings
 
 ```{r}
@@ -54,24 +73,11 @@ store <- ragnar::ragnar_store_create(
 )
 ```
 
+::: {.callout-note appearance="simple"}
+Google, OpenAI (all 3 classes), OpenRouter, and local LLM all support embeddings.
 :::
 
-### Collecting Documents
-
-```{r}
-quarto_docs_url_filter <- function(urls) {
-    cleaned_urls <- str_subset(urls, "https://quarto.org/docs/") |> 
-        str_subset(regex("\\.html$", ignore_case = FALSE))
-
-    return(cleaned_urls)
-}
-
-paths <- ragnar::ragnar_find_links(
-    "https://quarto.org/", 
-    depth = 1, 
-    url_filter = quarto_docs_url_filter
-)
-```
+:::
 
 ### Process and Index Documents
 
@@ -83,9 +89,7 @@ insert_chunk_into_store <- function(path) {
 }
 
 walk(paths, insert_chunk_into_store, .progress = TRUE)
-```
 
-```{r}
 ragnar::ragnar_store_build_index(store)
 ```
 
