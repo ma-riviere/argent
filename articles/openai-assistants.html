@@ -312,8 +312,7 @@
 <p>Create an assistant with client-side tools:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">openai_assistant</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/OpenAI_Assistant.html">OpenAI_Assistant</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">openai_assistant</span><span class="op">$</span><span class="fu">create_assistant</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">openai_assistant</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/OpenAI_Assistant.html">OpenAI_Assistant</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">create_assistant</span><span class="op">(</span></span>
 <span>    name <span class="op">=</span> <span class="st">"My Assistant"</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gpt-4.1"</span>,</span>
 <span>    tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="../reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">web_search</span><span class="op">)</span>, <span class="fu"><a href="../reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">web_fetch</span><span class="op">)</span><span class="op">)</span></span>
@@ -326,13 +325,14 @@
 <span>    <span class="st">"When was the first release of the R 'ellmer' package on GitHub?"</span>,</span>
 <span>    output_schema <span class="op">=</span> <span class="va">package_info_schema</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; ✔ [OpenAI Assistant] Thread created: thread_leVxekjFQnO8vUES62HBJuLc</span></span></code></pre></div>
+<span><span class="fl">6</span><span class="co">#&gt; ✔ [OpenAI Assistant] Thread created: thread_leVxekjFQnO8vUES62HBJuLc</span></span></code></pre></div>
 </div>
 <div class="sourceCode" id="cb16"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>$release_version</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>[1] "0.1.0"</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>$release_date</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>[1] "2025-01-09"</span></code></pre></div>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>[1] "2024-03-20"</span></code></pre></div>
+<p><em>Hum. Not quite right …</em></p>
 <div>
 <blockquote>
 <p><strong>Warning</strong></p>
