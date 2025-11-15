@@ -887,19 +887,21 @@ as_schema_openai <- function(output_schema) {
         return(output_schema)
     }
 
-    schema_to_use <- if (!is.null(output_schema$args_schema)) {
-        output_schema$args_schema
+    if (!is.null(output_schema$args_schema)) {
+        schema_to_use <- output_schema$args_schema
     } else if (!is.null(output_schema$schema)) {
-        output_schema$schema
+        schema_to_use <- output_schema$schema
     } else {
-        cli::cli_abort("Output schema must have either {.field args_schema} or {.field schema}")
+        cli::cli_abort(
+            "[{self$provider_name}] output_schema needs one of {.field {c('args_schema', 'schema')}}"
+        )
     }
-    schema_to_use$additionalProperties <- FALSE
 
-    list(
+    list3(
         # type = "json_schema", # Only for responses API
         name = output_schema$name,
         description = output_schema$description,
+        strict = output_schema$strict %||% TRUE,
         schema = schema_to_use
     )
 }

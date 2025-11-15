@@ -153,8 +153,7 @@ package_info_schema <- schema(
 Create an assistant with client-side tools:
 
 ```{r}
-openai_assistant <- OpenAI_Assistant$new()
-openai_assistant$create_assistant(
+openai_assistant <- OpenAI_Assistant$new()$create_assistant(
     name = "My Assistant",
     model = "gpt-4.1",
     tools = list(as_tool(web_search), as_tool(web_fetch))
@@ -168,7 +167,7 @@ openai_assistant$chat(
     "When was the first release of the R 'ellmer' package on GitHub?",
     output_schema = package_info_schema
 )
-#> ✔ [OpenAI Assistant] Thread created: thread_leVxekjFQnO8vUES62HBJuLc
+6#> ✔ [OpenAI Assistant] Thread created: thread_leVxekjFQnO8vUES62HBJuLc
 ```
 
 ```{verbatim}
@@ -176,8 +175,10 @@ $release_version
 [1] "0.1.0"
 
 $release_date
-[1] "2025-01-09"
+[1] "2024-03-20"
 ```
+
+*Hum. Not quite right ...*
 
 ::: {.callout-warning appearance="simple"}
 When an assistant uses server-side tools (like `file_search` or `code_interpreter`) and you provide an `output_schema`, the API forces a second call with the schema (and no tools) once the assistant is done using its tools, to bypass the fact that you can't use server-side tools with structured outputs. This happens automatically.

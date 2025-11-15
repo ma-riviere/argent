@@ -63,7 +63,8 @@ Anthropic <- R6::R6Class( # nolint
             "token-efficient-tools-2025-02-19",
             "files-api-2025-04-14",
             "code-execution-2025-08-25",
-            "web-fetch-2025-09-10"
+            "web-fetch-2025-09-10",
+            "structured-outputs-2025-11-13"
             # "context-management-2025-06-27" # Not implemented yet (see https://docs.anthropic.com/en/docs/build-with-anthropic/context-editing)
             # "context-1m-2025-08-07" # Tier 4 and up, extra costs above 200k tokens
         ),
@@ -344,7 +345,7 @@ Anthropic <- R6::R6Class( # nolint
         #'   or content wrapped with `as_*_content()` functions. R objects (but not plain strings) will
         #'   include their names and structure in the context sent to the model.
         #' @param cache_prompt Logical. Cache the prompt for reuse (default: FALSE)
-        #' @param model Character. Model to use (default: "claude-sonnet-4-5-20250929")
+        #' @param model Character. Model to use (default: "claude-haiku-4-5-20251001")
         #' @param system Character. System instructions (optional)
         #' @param cache_system Logical. Cache system instructions (default: FALSE)
         #' @param max_tokens Integer. Maximum tokens to generate (default: 4096)
@@ -371,7 +372,7 @@ Anthropic <- R6::R6Class( # nolint
         chat = function(
             ...,
             cache_prompt = FALSE,
-            model = "claude-sonnet-4-5-20250929",
+            model = "claude-haiku-4-5-20251001",
             system = .default_system_prompt,
             cache_system = FALSE,
             max_tokens = 4096,
@@ -585,6 +586,10 @@ Anthropic <- R6::R6Class( # nolint
                 private$append_to_chat_history(new_message)
             }
 
+            # Check if code_execution server tool is present (incompatible with native structured output)
+            code_execution_present <- !is.null(tool_list) && 
+                purrr::some(tool_list, is_server_tool, names = "code_execution")
+
             # ---- Build API request ----
 
             # Build system message if provided
@@ -595,6 +600,11 @@ Anthropic <- R6::R6Class( # nolint
                     system_content[[1]]$cache_control <- list(type = "ephemeral")
                     n_cache_breakpoints <- n_cache_breakpoints + 1
                 }
+            }
+
+            query_output_format <- NULL
+            if (is.list(output_schema) && private$supports_native_structured_output(model) && !code_execution_present) {
+                query_output_format <- list(type = "json_schema", schema = as_schema_anthropic(output_schema))
             }
 
             query_data <- list3(
@@ -608,6 +618,7 @@ Anthropic <- R6::R6Class( # nolint
                 tools = tool_list,
                 tool_choice = tool_choice,
                 container = if (!is.null(tools) && !is.null(container_id)) container_id else NULL,
+                output_format = query_output_format,
                 messages = self$chat_history
             )
 
@@ -669,9 +680,19 @@ Anthropic <- R6::R6Class( # nolint
 
             # ---- Final response ----
 
-            # Handle structured output using the tool call trick
+            # Handle structured output
             if (is.list(output_schema)) {
 
+                # Use native structured output if model supports it and code_execution is not present
+                if (private$supports_native_structured_output(model) && !code_execution_present) {
+                    if (!isTRUE(return_full_response)) {
+                        text_output <- self$get_content_text(res)
+                        return(jsonlite::fromJSON(text_output, simplifyDataFrame = FALSE))
+                    }
+                    return(res)
+                }
+
+                # Fall back to tool call trick for haiku, unknown models, or when code_execution is present
                 format_tool <- response_schema_to_tool_anthropic(output_schema)
                 format_prompt <- make_format_prompt(format_tool$name)
 
@@ -715,7 +736,16 @@ Anthropic <- R6::R6Class( # nolint
     private = list(
         api_key = NULL,
 
-        # ------🔺 EXTRACTION --------------------------------------------------        
+        # ------🔺 MODEL SUPPORT -----------------------------------------------
+
+        supports_native_structured_output = function(model) {
+            model_lower <- tolower(model)
+            if (grepl("haiku", model_lower)) return(FALSE)
+            if (grepl("sonnet", model_lower) || grepl("opus", model_lower)) return(TRUE)
+            return(FALSE)
+        },
+
+        # ------🔺 EXTRACTION --------------------------------------------------
 
         is_root = function(input) {
             is.list(input) && !is.null(input$role) && !is.null(input$content)
@@ -1275,27 +1305,24 @@ as_tool_anthropic <- function(tool_schema) {
     )
 }
 
-#' Convert schema to structured output format for Anthropic (internal)
-#' @param output_schema List. Schema definition with name, description, and args_schema/input_schema
-#' @return List. Structured output format for Anthropic
+#' Convert schema to native output_format parameter for Anthropic (internal)
+#' @param output_schema List. Schema definition with input_schema/args_schema/schema field
+#' @return List. JSON Schema object for Anthropic's output_format parameter
 #' @keywords internal
 #' @noRd
 as_schema_anthropic <- function(output_schema) {
+    # Extract the actual JSON Schema from the wrapper
     if (!is.null(output_schema$input_schema)) {
-        return(output_schema)
-    }
-
-    if (is.null(output_schema$args_schema)) {
+        return(output_schema$input_schema)
+    } else if (!is.null(output_schema$args_schema)) {
+        return(output_schema$args_schema)
+    } else if (!is.null(output_schema$schema)) {
+        return(output_schema$schema)
+    } else {
         cli::cli_abort(
-            "[{self$provider_name}] Output schema must have either {.field input_schema} or {.field args_schema}"
+            "[{self$provider_name}] output_schema needs one of {.field {c('input_schema', 'args_schema', 'schema')}}"
         )
     }
-
-    list(
-        name = output_schema$name,
-        description = output_schema$description,
-        input_schema = output_schema$args_schema
-    )
 }
 
 #' Convert response schema to tool format (internal)

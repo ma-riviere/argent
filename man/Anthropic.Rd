@@ -376,7 +376,7 @@ Send a chat completion request to Anthropic
 \if{html}{\out{<div class="r">}}\preformatted{Anthropic$chat(
   ...,
   cache_prompt = FALSE,
-  model = "claude-sonnet-4-5-20250929",
+  model = "claude-haiku-4-5-20251001",
   system = .default_system_prompt,
   cache_system = FALSE,
   max_tokens = 4096,
@@ -401,7 +401,7 @@ include their names and structure in the context sent to the model.}
 
 \item{\code{cache_prompt}}{Logical. Cache the prompt for reuse (default: FALSE)}
 
-\item{\code{model}}{Character. Model to use (default: "claude-sonnet-4-5-20250929")}
+\item{\code{model}}{Character. Model to use (default: "claude-haiku-4-5-20251001")}
 
 \item{\code{system}}{Character. System instructions (optional)}
 

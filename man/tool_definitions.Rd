@@ -3,18 +3,15 @@
 \name{tool_definitions}
 \alias{tool_definitions}
 \alias{as_tool}
-\alias{as_schema}
 \alias{tool}
 \alias{schema}
 \title{Tool Definitions}
 \usage{
 as_tool(fn)
 
-as_schema(fn)
-
 tool(name, description, ...)
 
-schema(name, description, ...)
+schema(name, description, ..., strict = TRUE, additional_properties = FALSE)
 }
 \arguments{
 \item{fn}{A function with annotations in its body comments using \verb{#'} prefix.
@@ -32,22 +29,34 @@ default value in the function signature and no \code{*} suffix, it is
 optional. If it has a \code{*} suffix, it overrides the default and becomes
 required.}
 
-\item{name}{Character. The tool name}
+\item{name}{Character. The tool or schema name}
 
-\item{description}{Character. What the tool does}
+\item{description}{Character. What the tool does or what the schema represents}
 
-\item{...}{Named parameter specifications (for \code{tool()}). See Details.}
+\item{...}{Named parameter specifications. See Details.}
+
+\item{strict}{Logical. For \code{schema()} only. Whether to use strict mode (defaults to TRUE).
+Added at root level of the schema definition.}
+
+\item{additional_properties}{Logical. For \code{schema()} only. Whether to allow additional
+properties in the schema (defaults to FALSE). Added to \code{args_schema}.}
 }
 \value{
-A list with:
+For \code{tool()}: A list with:
 \itemize{
-\item \code{name}: Function name (character)
-\item \code{description}: Function description (character)
+\item \code{name}: Tool name (character)
+\item \code{description}: Tool description (character)
 \item \code{args_schema}: JSON Schema object with \code{type}, \code{properties}, and \code{required} fields
+}
+
+For \code{schema()}: Same as \code{tool()} but with additional fields:
+\itemize{
+\item \code{strict}: Logical (at root level)
+\item \code{args_schema$additionalProperties}: Logical (inside args_schema)
 }
 }
 \description{
-Functions for defining tools using either annotations or direct specification.
+Functions for defining tools and schemas using either annotations or direct specification.
 \subsection{Annotation-based approach}{
 
 \code{as_tool()} parses annotations from a function and converts it to a generic
@@ -69,6 +78,10 @@ loading argent.
 alternative to using function annotations with \code{as_tool()}. This approach
 is useful for complex nested structures or when defining tools without
 corresponding R functions.
+
+\code{schema()} is similar to \code{tool()} but designed for structured output schemas.
+It includes additional fields (\code{strict} and \code{additionalProperties}) required
+by some LLM providers for structured outputs.
 
 Parameters are specified as named arguments. Each parameter value can be:
 \itemize{
@@ -124,12 +137,23 @@ my_fn <- function(x, y = 3L) {
 
 as_tool(my_fn)
 
-# Direct specification approach
+# Direct specification - tool()
 search_tool <- tool(
   name = "search_db",
   description = "Search the database",
   query = "string* Search query",
   limit = "integer Maximum results to return"
+)
+
+# Direct specification - schema()
+output_schema <- schema(
+  name = "flight_search",
+  description = "Flight search results",
+  destination = "string* Destination city",
+  departure_date = "string* Departure date",
+  passengers = "integer* Number of passengers",
+  strict = TRUE,
+  additional_properties = FALSE
 )
 
 # Nested object

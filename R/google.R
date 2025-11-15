@@ -1717,16 +1717,17 @@ as_tool_google <- function(tool_schema) {
 #' @noRd
 as_schema_google <- function(output_schema) {
     # Extract the actual JSON Schema from the wrapper
-    schema_to_use <- if (!is.null(output_schema$args_schema)) {
-        output_schema$args_schema
+    if (!is.null(output_schema$args_schema)) {
+        google_schema <- output_schema$args_schema
     } else if (!is.null(output_schema$parameters)) {
-        output_schema$parameters
+        google_schema <- output_schema$parameters
     } else if (!is.null(output_schema$schema)) {
-        output_schema$schema
+        google_schema <- output_schema$schema
     } else {
-        cli::cli_abort("Output schema must have either {.field args_schema}, {.field parameters}, or {.field schema}")
+        cli::cli_abort(
+            "[{self$provider_name}] output_schema needs one of {.field {c('args_schema', 'parameters', 'schema')}}"
+        )
     }
-
-    # Google's responseSchema expects just the JSON Schema object, not wrapped
-    return(schema_to_use)
+    google_schema$additionalProperties <- NULL # Google doesn't support this
+    return(google_schema)
 }

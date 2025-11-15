@@ -1,7 +1,7 @@
 #' Tool Definitions
 #'
 #' @description
-#' Functions for defining tools using either annotations or direct specification.
+#' Functions for defining tools and schemas using either annotations or direct specification.
 #'
 #' ## Annotation-based approach
 #'
@@ -24,6 +24,10 @@
 #' is useful for complex nested structures or when defining tools without
 #' corresponding R functions.
 #'
+#' `schema()` is similar to `tool()` but designed for structured output schemas.
+#' It includes additional fields (`strict` and `additionalProperties`) required
+#' by some LLM providers for structured outputs.
+#'
 #' Parameters are specified as named arguments. Each parameter value can be:
 #' - A string: `"type[*] [description]"` (e.g., `"string* The user's name"`)
 #' - A list: For nested objects with `type` field and nested properties
@@ -40,14 +44,22 @@
 #'   default value in the function signature and no `*` suffix, it is
 #'   optional. If it has a `*` suffix, it overrides the default and becomes
 #'   required.
-#' @param name Character. The tool name
-#' @param description Character. What the tool does
-#' @param ... Named parameter specifications (for `tool()`). See Details.
+#' @param name Character. The tool or schema name
+#' @param description Character. What the tool does or what the schema represents
+#' @param ... Named parameter specifications. See Details.
+#' @param strict Logical. For `schema()` only. Whether to use strict mode (defaults to TRUE).
+#'   Added at root level of the schema definition.
+#' @param additional_properties Logical. For `schema()` only. Whether to allow additional
+#'   properties in the schema (defaults to FALSE). Added to `args_schema`.
 #'
-#' @return A list with:
-#'   - `name`: Function name (character)
-#'   - `description`: Function description (character)
+#' @return For `tool()`: A list with:
+#'   - `name`: Tool name (character)
+#'   - `description`: Tool description (character)
 #'   - `args_schema`: JSON Schema object with `type`, `properties`, and `required` fields
+#'
+#'   For `schema()`: Same as `tool()` but with additional fields:
+#'   - `strict`: Logical (at root level)
+#'   - `args_schema$additionalProperties`: Logical (inside args_schema)
 #'
 #' @details
 #' ## Type Specifications (for `tool()`)
@@ -96,12 +108,23 @@
 #'
 #' as_tool(my_fn)
 #'
-#' # Direct specification approach
+#' # Direct specification - tool()
 #' search_tool <- tool(
 #'   name = "search_db",
 #'   description = "Search the database",
 #'   query = "string* Search query",
 #'   limit = "integer Maximum results to return"
+#' )
+#'
+#' # Direct specification - schema()
+#' output_schema <- schema(
+#'   name = "flight_search",
+#'   description = "Flight search results",
+#'   destination = "string* Destination city",
+#'   departure_date = "string* Departure date",
+#'   passengers = "integer* Number of passengers",
+#'   strict = TRUE,
+#'   additional_properties = FALSE
 #' )
 #'
 #' # Nested object
@@ -210,11 +233,6 @@ as_tool <- function(fn) {
     )
 }
 
-#' @rdname tool_definitions
-#' @export
-as_schema <- function(fn) {
-    as_tool(fn)
-}
 
 # Internal helper functions ---------------------------------------------------
 
@@ -437,8 +455,22 @@ tool <- function(name, description, ...) {
 
 #' @rdname tool_definitions
 #' @export
-schema <- function(name, description, ...) {
-    tool(name, description, ...)
+schema <- function(name, description, ..., strict = TRUE, additional_properties = FALSE) {
+    if (!is.character(name) || length(name) != 1 || nchar(name) == 0) {
+        cli::cli_abort("{.arg name} must be a non-empty string")
+    }
+
+    if (!is.character(description) || length(description) != 1 || nchar(description) == 0) {
+        cli::cli_abort("{.arg description} must be a non-empty string")
+    }
+
+    params <- list(...)
+
+    if (length(params) == 0) {
+        cli::cli_warn("No parameters specified for schema {.val {name}}")
+    }
+
+    build_spec_from_params(name, description, params, strict = strict, additional_properties = additional_properties)
 }
 
 # -----🔺 INTERNAL -------------------------------------------------------------
@@ -446,7 +478,7 @@ schema <- function(name, description, ...) {
 #' Build specification from parameter list
 #' @keywords internal
 #' @noRd
-build_spec_from_params <- function(name, description, params) {
+build_spec_from_params <- function(name, description, params, strict = NULL, additional_properties = NULL) {
     properties <- list()
     required <- character(0)
 
@@ -461,19 +493,22 @@ build_spec_from_params <- function(name, description, params) {
     }
 
     # If no parameters, don't include args_schema
-    args_schema <- if (length(params) > 0) {
-        list(
+    args_schema <- NULL
+    if (length(params) > 0) {
+        args_schema <- list(
             type = "object",
             properties = properties,
             required = if (length(required) > 0) as.list(required) else list()
         )
-    } else {
-        NULL
+        if (!is.null(additional_properties)) {
+            args_schema$additionalProperties <- additional_properties
+        }
     }
 
     list3(
         name = name,
         description = description,
+        strict = strict,
         args_schema = args_schema
     )
 }
