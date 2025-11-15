@@ -104,39 +104,11 @@
 <section class="level2"><h3 id="building-a-knowledge-store">Building a Knowledge Store<a class="anchor" aria-label="anchor" href="#building-a-knowledge-store"></a>
 </h3>
 <p>First, create a knowledge store from your documentation. We’ll use the Quarto documentation as an example, to stay similar to the ragnar documentation.</p>
-<section class="level3"><h4 id="create-store-with-embeddings">Create Store with Embeddings<a class="anchor" aria-label="anchor" href="#create-store-with-embeddings"></a>
+<section class="level3"><h4 id="collecting-documents">Collecting Documents<a class="anchor" aria-label="anchor" href="#collecting-documents"></a>
 </h4>
+<p>Here, let’s collect (part of) the Quarto documentation from the Quarto website.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">store</span> <span class="op">&lt;-</span> <span class="fu">ragnar</span><span class="fu">::</span><span class="fu">ragnar_store_create</span><span class="op">(</span></span>
-<span>    <span class="st">"data/quarto-docs.duckdb"</span>,</span>
-<span>    embed <span class="op">=</span> \<span class="op">(</span><span class="va">text</span><span class="op">)</span> <span class="fu">ragnar</span><span class="fu">::</span><span class="fu">embed_google_gemini</span><span class="op">(</span><span class="va">text</span>, model <span class="op">=</span> <span class="st">"text-embedding-004"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-</div>
-<div>
-<blockquote>
-<p><strong>Note</strong></p>
-<p>We could have made our own embedding function with our <code>LocalLLM</code> class and a local embedding model:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">local_embedding_fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">text</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="fu">argent</span><span class="fu">::</span><span class="va"><a href="../reference/LocalLLM.html">LocalLLM</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
-<span>        base_url <span class="op">=</span> <span class="st">"http://127.0.0.1:5000"</span>,</span>
-<span>        model <span class="op">=</span> <span class="st">"Qwen3-Embedding-8B-Q8_0.gguf"</span></span>
-<span>    <span class="op">)</span><span class="op">$</span><span class="fu">embeddings</span><span class="op">(</span><span class="va">text</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="va">store</span> <span class="op">&lt;-</span> <span class="fu">ragnar</span><span class="fu">::</span><span class="fu">ragnar_store_create</span><span class="op">(</span></span>
-<span>    <span class="st">"data/quarto-docs.duckdb"</span>,</span>
-<span>    embed <span class="op">=</span> <span class="va">local_embedding_fn</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-</div>
-</blockquote>
-</div>
-</section><section class="level3"><h4 id="collecting-documents">Collecting Documents<a class="anchor" aria-label="anchor" href="#collecting-documents"></a>
-</h4>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">quarto_docs_url_filter</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">urls</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">cleaned_urls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_subset.html" class="external-link">str_subset</a></span><span class="op">(</span><span class="va">urls</span>, <span class="st">"https://quarto.org/docs/"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>        <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_subset.html" class="external-link">str_subset</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/modifiers.html" class="external-link">regex</a></span><span class="op">(</span><span class="st">"\\.html$"</span>, ignore_case <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
@@ -150,6 +122,41 @@
 <span>    url_filter <span class="op">=</span> <span class="va">quarto_docs_url_filter</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
+</section><section class="level3"><h4 id="create-store-with-embeddings">Create Store with Embeddings<a class="anchor" aria-label="anchor" href="#create-store-with-embeddings"></a>
+</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">store</span> <span class="op">&lt;-</span> <span class="fu">ragnar</span><span class="fu">::</span><span class="fu">ragnar_store_create</span><span class="op">(</span></span>
+<span>    <span class="st">"data/quarto-docs.duckdb"</span>,</span>
+<span>    embed <span class="op">=</span> \<span class="op">(</span><span class="va">text</span><span class="op">)</span> <span class="fu">ragnar</span><span class="fu">::</span><span class="fu">embed_google_gemini</span><span class="op">(</span><span class="va">text</span>, model <span class="op">=</span> <span class="st">"text-embedding-004"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div>
+<blockquote>
+<p><strong>Note</strong></p>
+<p>We could have made our own embedding function with our <code>LocalLLM</code> class and a local embedding model:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">local_embedding_fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">text</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu">argent</span><span class="fu">::</span><span class="va"><a href="../reference/LocalLLM.html">LocalLLM</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
+<span>        base_url <span class="op">=</span> <span class="st">"http://127.0.0.1:5000"</span>,</span>
+<span>        model <span class="op">=</span> <span class="st">"Qwen3-Embedding-8B-Q8_0.gguf"</span></span>
+<span>    <span class="op">)</span><span class="op">$</span><span class="fu">embeddings</span><span class="op">(</span><span class="va">text</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">store</span> <span class="op">&lt;-</span> <span class="fu">ragnar</span><span class="fu">::</span><span class="fu">ragnar_store_create</span><span class="op">(</span></span>
+<span>    <span class="st">"data/quarto-docs.duckdb"</span>,</span>
+<span>    embed <span class="op">=</span> <span class="va">local_embedding_fn</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div>
+<blockquote>
+<p><strong>Note</strong></p>
+<p>Google, OpenAI (all 3 classes), OpenRouter, and local LLM all support embeddings.</p>
+</blockquote>
+</div>
+</blockquote>
+</div>
 </section><section class="level3"><h4 id="process-and-index-documents">Process and Index Documents<a class="anchor" aria-label="anchor" href="#process-and-index-documents"></a>
 </h4>
 <div class="cell">
@@ -160,17 +167,15 @@
 <span>        <span class="fu">ragnar</span><span class="fu">::</span><span class="fu">ragnar_store_insert</span><span class="op">(</span><span class="va">store</span>, chunks <span class="op">=</span> <span class="va">_</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">walk</a></span><span class="op">(</span><span class="va">paths</span>, <span class="va">insert_chunk_into_store</span>, .progress <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">ragnar</span><span class="fu">::</span><span class="fu">ragnar_store_build_index</span><span class="op">(</span><span class="va">store</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">walk</a></span><span class="op">(</span><span class="va">paths</span>, <span class="va">insert_chunk_into_store</span>, .progress <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ragnar</span><span class="fu">::</span><span class="fu">ragnar_store_build_index</span><span class="op">(</span><span class="va">store</span><span class="op">)</span></span></code></pre></div>
 </div>
 </section></section><section class="level2"><h3 id="creating-a-stateful-retrieval-tool">Creating a Stateful Retrieval Tool<a class="anchor" aria-label="anchor" href="#creating-a-stateful-retrieval-tool"></a>
 </h3>
 <p>To enable progressive exploration of the knowledge base (avoiding duplicate chunks across multiple queries), we need to track which chunks have already been retrieved. Since argent’s tools are stateless, we use <code><a href="https://cachem.r-lib.org/reference/cache_mem.html" class="external-link">cachem::cache_mem()</a></code> to maintain state across tool calls.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">retrieve_state</span> <span class="op">&lt;-</span> <span class="fu">cachem</span><span class="fu">::</span><span class="fu"><a href="https://cachem.r-lib.org/reference/cache_mem.html" class="external-link">cache_mem</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">retrieve_docs</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">query</span><span class="op">)</span> <span class="op">{</span></span>
@@ -201,7 +206,7 @@
 </h3>
 <p>Now you can use the retrieval tool in conversations. The LLM will automatically retrieve relevant documentation when needed.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gemini</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Google.html">Google</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
@@ -210,13 +215,13 @@
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <details><summary>Answer</summary><p>You can create tables in Quarto using Markdown pipe tables. Here’s an example:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> fruit  <span class="pp">|</span> price  <span class="pp">|</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|--------|</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> apple  <span class="pp">|</span> 2.05   <span class="pp">|</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> pear   <span class="pp">|</span> 1.37   <span class="pp">|</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> orange <span class="pp">|</span> 3.09   <span class="pp">|</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>: Fruit prices {.striped .hover}</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> fruit  <span class="pp">|</span> price  <span class="pp">|</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|--------|</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> apple  <span class="pp">|</span> 2.05   <span class="pp">|</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> pear   <span class="pp">|</span> 1.37   <span class="pp">|</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> orange <span class="pp">|</span> 3.09   <span class="pp">|</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>: Fruit prices {.striped .hover}</span></code></pre></div>
 <p>This will render a table with three columns: “fruit” and “price”, with row stripes and highlighting on hover due to the <code>{.striped .hover}</code> attribute after the caption.</p>
 <p>You can also control the relative column widths using dashes in the line separating the header from the body. For example, <code>---|-</code> would make the first column 3/4 and the second column 1/4 of the full text width.</p>
 <p>Keep in mind that pipe table cells cannot contain block elements like paragraphs and lists, and cannot span multiple lines</p>

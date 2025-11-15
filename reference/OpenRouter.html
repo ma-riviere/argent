@@ -113,6 +113,7 @@ through a unified interface with support for chat completions, tool calling, and
 <li><p><a href="#method-OpenRouter-list_providers"><code>OpenRouter$list_providers()</code></a></p></li>
 <li><p><a href="#method-OpenRouter-list_models"><code>OpenRouter$list_models()</code></a></p></li>
 <li><p><a href="#method-OpenRouter-get_model_info"><code>OpenRouter$get_model_info()</code></a></p></li>
+<li><p><a href="#method-OpenRouter-embeddings"><code>OpenRouter$embeddings()</code></a></p></li>
 <li><p><a href="#method-OpenRouter-chat"><code>OpenRouter$chat()</code></a></p></li>
 <li><p><a href="#method-OpenRouter-clone"><code>OpenRouter$clone()</code></a></p></li>
 </ul></div><p><details><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="download_generated_files"><a href="Provider.html#method-download_generated_files"><code>argent::Provider$download_generated_files()</code></a></span></li>
@@ -293,10 +294,85 @@ Example: c("tools", "response_format")</p></dd>
 <p>List. Model information</p>
 </div>
 
+</div><p></p><hr><a id="method-OpenRouter-embeddings"></a><div class="section">
+<h3 id="method-embeddings-">Method <code>embeddings()</code><a class="anchor" aria-label="anchor" href="#method-embeddings-"></a></h3>
+<p>Generate embeddings for text input</p><div class="section">
+<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenRouter</span><span class="op">$</span><span class="fu">embeddings</span><span class="op">(</span></span>
+<span>  <span class="va">input</span>,</span>
+<span>  <span class="va">model</span>,</span>
+<span>  encoding_format <span class="op">=</span> <span class="st">"float"</span>,</span>
+<span>  dimensions <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  provider <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  return_full_response <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>input</code></dt>
+<dd><p>Character vector. Text(s) to embed</p></dd>
+
+
+<dt><code>model</code></dt>
+<dd><p>Character. Model to use (e.g., "text-embedding-3-small", "text-embedding-3-large")</p></dd>
+
+
+<dt><code>encoding_format</code></dt>
+<dd><p>Character. Format of embeddings: "float" or "base64" (default: "float")</p></dd>
+
+
+<dt><code>dimensions</code></dt>
+<dd><p>Integer. Number of dimensions for output (only for embedding-3 models)</p></dd>
+
+
+<dt><code>provider</code></dt>
+<dd><p>Character. Specific provider to use (optional, enables provider routing)</p></dd>
+
+
+<dt><code>return_full_response</code></dt>
+<dd><p>Logical. Return full API response (default: FALSE)</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
+<p>Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row per input text</p>
+</div>
+<div class="section">
+<h4 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a></h4>
+<p></p><div class="r example copy"><div class="sourceCode"><pre><code>\dontrun{
+openrouter &lt;- OpenRouter$new()
+
+# Generate embeddings
+embeddings &lt;- openrouter$embeddings(
+  input = c("Hello world", "How are you?"),
+  model = "openai/text-embedding-3-small"
+)
+
+# With dimension reduction
+embeddings &lt;- openrouter$embeddings(
+  input = "Sample text",
+  model = "openai/text-embedding-3-large",
+  dimensions = 256
+)
+
+# With provider routing
+embeddings &lt;- openrouter$embeddings(
+  input = "Sample text",
+  model = "text-embedding-3-small",
+  provider = "openai"
+)
+}
+</code></pre></div><p></p></div>
+</div>
+
+
 </div><p></p><hr><a id="method-OpenRouter-chat"></a><div class="section">
 <h3 id="method-chat-">Method <code>chat()</code><a class="anchor" aria-label="anchor" href="#method-chat-"></a></h3>
 <p>Send a chat completion request to OpenRouter</p><div class="section">
-<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenRouter</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>  <span class="va">...</span>,</span>
 <span>  system <span class="op">=</span> <span class="va">.default_system_prompt</span>,</span>
@@ -329,7 +405,7 @@ Example: c("tools", "response_format")</p></dd>
 </div>
 
 <div class="section">
-<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
+<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>One or more inputs for the prompt. Can be text strings, file paths, URLs, R objects,
 or content wrapped with <code>as_*_content()</code> functions. R objects (but not plain strings) will
@@ -483,19 +559,19 @@ https://openrouter.ai/docs/features/provider-routing for details. Possible eleme
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
+<h4 id="returns-6">Returns<a class="anchor" aria-label="anchor" href="#returns-6"></a></h4>
 <p>Character (or List if return_full_response = TRUE). OpenRouter API's response object.</p>
 </div>
 
 </div><p></p><hr><a id="method-OpenRouter-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
+<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenRouter</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
+<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
@@ -543,6 +619,34 @@ https://openrouter.ai/docs/features/provider-routing for details. Possible eleme
 <span class="r-in"><span>  prompt <span class="op">=</span> <span class="st">"What's the weather in Paris?"</span>,</span></span>
 <span class="r-in"><span>  model <span class="op">=</span> <span class="st">"anthropic/claude-3.5-sonnet"</span>,</span></span>
 <span class="r-in"><span>  tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">get_weather_tool</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## ------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co">## Method `OpenRouter$embeddings`</span></span></span>
+<span class="r-in"><span><span class="co">## ------------------------------------------------</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="va">openrouter</span> <span class="op">&lt;-</span> <span class="va">OpenRouter</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Generate embeddings</span></span></span>
+<span class="r-in"><span><span class="va">embeddings</span> <span class="op">&lt;-</span> <span class="va">openrouter</span><span class="op">$</span><span class="fu">embeddings</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  input <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Hello world"</span>, <span class="st">"How are you?"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  model <span class="op">=</span> <span class="st">"openai/text-embedding-3-small"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># With dimension reduction</span></span></span>
+<span class="r-in"><span><span class="va">embeddings</span> <span class="op">&lt;-</span> <span class="va">openrouter</span><span class="op">$</span><span class="fu">embeddings</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  input <span class="op">=</span> <span class="st">"Sample text"</span>,</span></span>
+<span class="r-in"><span>  model <span class="op">=</span> <span class="st">"openai/text-embedding-3-large"</span>,</span></span>
+<span class="r-in"><span>  dimensions <span class="op">=</span> <span class="fl">256</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># With provider routing</span></span></span>
+<span class="r-in"><span><span class="va">embeddings</span> <span class="op">&lt;-</span> <span class="va">openrouter</span><span class="op">$</span><span class="fu">embeddings</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  input <span class="op">=</span> <span class="st">"Sample text"</span>,</span></span>
+<span class="r-in"><span>  model <span class="op">=</span> <span class="st">"text-embedding-3-small"</span>,</span></span>
+<span class="r-in"><span>  provider <span class="op">=</span> <span class="st">"openai"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>

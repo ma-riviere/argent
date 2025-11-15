@@ -87,6 +87,7 @@ and OpenAI_Assistant to provide consistent interfaces across different OpenAI AP
 <li><p><a href="#method-OpenAI-list_models"><code>OpenAI$list_models()</code></a></p></li>
 <li><p><a href="#method-OpenAI-find_models"><code>OpenAI$find_models()</code></a></p></li>
 <li><p><a href="#method-OpenAI-get_model_info"><code>OpenAI$get_model_info()</code></a></p></li>
+<li><p><a href="#method-OpenAI-embeddings"><code>OpenAI$embeddings()</code></a></p></li>
 <li><p><a href="#method-OpenAI-list_assistants"><code>OpenAI$list_assistants()</code></a></p></li>
 <li><p><a href="#method-OpenAI-find_assistants"><code>OpenAI$find_assistants()</code></a></p></li>
 <li><p><a href="#method-OpenAI-upload_file"><code>OpenAI$upload_file()</code></a></p></li>
@@ -228,27 +229,91 @@ and OpenAI_Assistant to provide consistent interfaces across different OpenAI AP
 <p>A list containing information about the model.</p>
 </div>
 
+</div><p></p><hr><a id="method-OpenAI-embeddings"></a><div class="section">
+<h3 id="method-embeddings-">Method <code>embeddings()</code><a class="anchor" aria-label="anchor" href="#method-embeddings-"></a></h3>
+<p>Generate embeddings for text input</p><div class="section">
+<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">embeddings</span><span class="op">(</span></span>
+<span>  <span class="va">input</span>,</span>
+<span>  <span class="va">model</span>,</span>
+<span>  encoding_format <span class="op">=</span> <span class="st">"float"</span>,</span>
+<span>  dimensions <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  return_full_response <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>input</code></dt>
+<dd><p>Character vector. Text(s) to embed</p></dd>
+
+
+<dt><code>model</code></dt>
+<dd><p>Character. Model to use (e.g., "text-embedding-3-small", "text-embedding-3-large")</p></dd>
+
+
+<dt><code>encoding_format</code></dt>
+<dd><p>Character. Format of embeddings: "float" or "base64" (default: "float")</p></dd>
+
+
+<dt><code>dimensions</code></dt>
+<dd><p>Integer. Number of dimensions for output (only for embedding-3 models)</p></dd>
+
+
+<dt><code>return_full_response</code></dt>
+<dd><p>Logical. Return full API response (default: FALSE)</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-3">Returns<a class="anchor" aria-label="anchor" href="#returns-3"></a></h4>
+<p>Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row
+per input text</p>
+</div>
+<div class="section">
+<h4 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a></h4>
+<p></p><div class="r example copy"><div class="sourceCode"><pre><code>\dontrun{
+openai &lt;- OpenAI_Chat$new()
+
+# Generate embeddings
+embeddings &lt;- openai$embeddings(
+  input = c("Hello world", "How are you?"),
+  model = "text-embedding-3-small"
+)
+
+# With dimension reduction
+embeddings &lt;- openai$embeddings(
+  input = "Sample text",
+  model = "text-embedding-3-large",
+  dimensions = 256
+)
+}
+</code></pre></div><p></p></div>
+</div>
+
+
 </div><p></p><hr><a id="method-OpenAI-list_assistants"></a><div class="section">
 <h3 id="method-list-assistants-">Method <code>list_assistants()</code><a class="anchor" aria-label="anchor" href="#method-list-assistants-"></a></h3>
 <p>List all assistants.</p><div class="section">
-<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
+<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">list_assistants</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="returns-3">Returns<a class="anchor" aria-label="anchor" href="#returns-3"></a></h4>
+<h4 id="returns-4">Returns<a class="anchor" aria-label="anchor" href="#returns-4"></a></h4>
 <p>A data frame of assistants.</p>
 </div>
 
 </div><p></p><hr><a id="method-OpenAI-find_assistants"></a><div class="section">
 <h3 id="method-find-assistants-">Method <code>find_assistants()</code><a class="anchor" aria-label="anchor" href="#method-find-assistants-"></a></h3>
 <p>Find assistants matching criteria.</p><div class="section">
-<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
+<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">find_assistants</span><span class="op">(</span><span class="va">...</span>, as_df <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
+<h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>Named arguments for filtering.</p></dd>
 
@@ -260,7 +325,7 @@ and OpenAI_Assistant to provide consistent interfaces across different OpenAI AP
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-4">Returns<a class="anchor" aria-label="anchor" href="#returns-4"></a></h4>
+<h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
 <p>A data frame of matching assistants.</p>
 </div>
 
@@ -270,12 +335,12 @@ and OpenAI_Assistant to provide consistent interfaces across different OpenAI AP
 <p>Files are uploaded to OpenAI and can be used with features like Assistants, fine-tuning,
 Batch API, and more. Maximum file size is 512 MB per file. Organizations have a 100 GB
 total storage limit across all files.</p><div class="section">
-<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
+<h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">upload_file</span><span class="op">(</span><span class="va">file_path</span>, file_name <span class="op">=</span> <span class="cn">NULL</span>, purpose <span class="op">=</span> <span class="st">"user_data"</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
+<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>file_path</code></dt>
 <dd><p>Character. Path to the file to upload, or URL to a remote file.</p></dd>
 
@@ -297,7 +362,7 @@ uses the basename of file_path.</p></dd>
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
+<h4 id="returns-6">Returns<a class="anchor" aria-label="anchor" href="#returns-6"></a></h4>
 <p>List. File object containing:</p><ul><li><p><code>id</code>: Unique file identifier</p></li>
 <li><p><code>object</code>: Object type (always "file")</p></li>
 <li><p><code>bytes</code>: File size in bytes</p></li>
@@ -308,7 +373,7 @@ uses the basename of file_path.</p></dd>
 <li><p><code>status_details</code>: Additional details if status is "error" (optional)</p></li>
 </ul></div>
 <div class="section">
-<h4 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a></h4>
+<h4 id="examples-1">Examples<a class="anchor" aria-label="anchor" href="#examples-1"></a></h4>
 <p></p><div class="r example copy"><div class="sourceCode"><pre><code>\dontrun{
 openai &lt;- OpenAI_Chat$new()
 
@@ -331,12 +396,12 @@ file &lt;- openai$upload_file("training_data.jsonl", purpose = "fine-tune")
 <p>Upload a file from a data frame.</p>
 <p>Convenience method to upload a data frame as a tab-separated text file to OpenAI.
 Creates a temporary file, uploads it, then cleans up.</p><div class="section">
-<h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
+<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">upload_file_from_df</span><span class="op">(</span><span class="va">df</span>, file_name <span class="op">=</span> <span class="st">"data.txt"</span>, purpose <span class="op">=</span> <span class="st">"user_data"</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
+<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>df</code></dt>
 <dd><p>Data frame. The data to upload.</p></dd>
 
@@ -353,11 +418,11 @@ See <code>upload_file()</code> for valid purposes.</p></dd>
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-6">Returns<a class="anchor" aria-label="anchor" href="#returns-6"></a></h4>
+<h4 id="returns-7">Returns<a class="anchor" aria-label="anchor" href="#returns-7"></a></h4>
 <p>List. File object (see <code>upload_file()</code> for structure).</p>
 </div>
 <div class="section">
-<h4 id="examples-1">Examples<a class="anchor" aria-label="anchor" href="#examples-1"></a></h4>
+<h4 id="examples-2">Examples<a class="anchor" aria-label="anchor" href="#examples-2"></a></h4>
 <p></p><div class="r example copy"><div class="sourceCode"><pre><code>\dontrun{
 openai &lt;- OpenAI_Chat$new()
 
@@ -374,12 +439,12 @@ file &lt;- openai$upload_file_from_df(df, file_name = "my_data.txt")
 <p>List all files belonging to the organization.</p>
 <p>Returns a list of all files that have been uploaded to OpenAI, ordered by creation date
 (most recent first).</p><div class="section">
-<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">list_files</span><span class="op">(</span>purpose <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
+<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>purpose</code></dt>
 <dd><p>Character. Optional filter by purpose. If provided, only returns files
 with the specified purpose. Valid values: "assistants", "user_data", "fine-tune",
@@ -389,7 +454,7 @@ with the specified purpose. Valid values: "assistants", "user_data", "fine-tune"
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-7">Returns<a class="anchor" aria-label="anchor" href="#returns-7"></a></h4>
+<h4 id="returns-8">Returns<a class="anchor" aria-label="anchor" href="#returns-8"></a></h4>
 <p>Data frame with columns:</p><ul><li><p><code>id</code>: File identifier</p></li>
 <li><p><code>object</code>: Object type ("file")</p></li>
 <li><p><code>bytes</code>: File size</p></li>
@@ -400,7 +465,7 @@ with the specified purpose. Valid values: "assistants", "user_data", "fine-tune"
 <li><p><code>status_details</code>: Error details if applicable</p></li>
 </ul></div>
 <div class="section">
-<h4 id="examples-2">Examples<a class="anchor" aria-label="anchor" href="#examples-2"></a></h4>
+<h4 id="examples-3">Examples<a class="anchor" aria-label="anchor" href="#examples-3"></a></h4>
 <p></p><div class="r example copy"><div class="sourceCode"><pre><code>\dontrun{
 openai &lt;- OpenAI_Chat$new()
 
@@ -418,12 +483,12 @@ assistant_files &lt;- openai$list_files(purpose = "assistants")
 <h3 id="method-find-file-">Method <code>find_file()</code><a class="anchor" aria-label="anchor" href="#method-find-file-"></a></h3>
 <p>Find files matching specific criteria.</p>
 <p>Filters the list of files based on provided criteria (e.g., filename, purpose, status).</p><div class="section">
-<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
+<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">find_file</span><span class="op">(</span><span class="va">...</span>, as_df <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
+<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>Named arguments for filtering (e.g., <code>filename = "data.csv"</code>,
 <code>purpose = "assistants"</code>).</p></dd>
@@ -437,11 +502,11 @@ If FALSE, returns a list.</p></dd>
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-8">Returns<a class="anchor" aria-label="anchor" href="#returns-8"></a></h4>
+<h4 id="returns-9">Returns<a class="anchor" aria-label="anchor" href="#returns-9"></a></h4>
 <p>Data frame (or list) of matching files.</p>
 </div>
 <div class="section">
-<h4 id="examples-3">Examples<a class="anchor" aria-label="anchor" href="#examples-3"></a></h4>
+<h4 id="examples-4">Examples<a class="anchor" aria-label="anchor" href="#examples-4"></a></h4>
 <p></p><div class="r example copy"><div class="sourceCode"><pre><code>\dontrun{
 openai &lt;- OpenAI_Chat$new()
 
@@ -460,12 +525,12 @@ files &lt;- openai$find_file(purpose = "assistants")
 <p>Retrieve information about a specific file.</p>
 <p>Returns metadata about a file, including its status, size, and purpose. Does not return
 the file contents (use <code>download_file()</code> or <code>get_file_content()</code> for that).</p><div class="section">
-<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
+<h4 id="usage-11">Usage<a class="anchor" aria-label="anchor" href="#usage-11"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">get_file</span><span class="op">(</span><span class="va">file_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
+<h4 id="arguments-9">Arguments<a class="anchor" aria-label="anchor" href="#arguments-9"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>file_id</code></dt>
 <dd><p>Character. The ID of the file to retrieve.</p></dd>
 
@@ -473,7 +538,7 @@ the file contents (use <code>download_file()</code> or <code>get_file_content()<
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-9">Returns<a class="anchor" aria-label="anchor" href="#returns-9"></a></h4>
+<h4 id="returns-10">Returns<a class="anchor" aria-label="anchor" href="#returns-10"></a></h4>
 <p>List. File object containing:</p><ul><li><p><code>id</code>: File identifier</p></li>
 <li><p><code>object</code>: Object type ("file")</p></li>
 <li><p><code>bytes</code>: File size in bytes</p></li>
@@ -484,7 +549,7 @@ the file contents (use <code>download_file()</code> or <code>get_file_content()<
 <li><p><code>status_details</code>: Error details if status is "error"</p></li>
 </ul></div>
 <div class="section">
-<h4 id="examples-4">Examples<a class="anchor" aria-label="anchor" href="#examples-4"></a></h4>
+<h4 id="examples-5">Examples<a class="anchor" aria-label="anchor" href="#examples-5"></a></h4>
 <p></p><div class="r example copy"><div class="sourceCode"><pre><code>\dontrun{
 openai &lt;- OpenAI_Chat$new()
 
@@ -501,12 +566,12 @@ cat("File:", file_info$filename, "Status:", file_info$status, "\n")
 <p>Retrieve the contents of a file.</p>
 <p>Returns the raw content of the specified file as a character string. Note that files
 with purpose "assistants" cannot be retrieved.</p><div class="section">
-<h4 id="usage-11">Usage<a class="anchor" aria-label="anchor" href="#usage-11"></a></h4>
+<h4 id="usage-12">Usage<a class="anchor" aria-label="anchor" href="#usage-12"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">get_file_content</span><span class="op">(</span><span class="va">file_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-9">Arguments<a class="anchor" aria-label="anchor" href="#arguments-9"></a></h4>
+<h4 id="arguments-10">Arguments<a class="anchor" aria-label="anchor" href="#arguments-10"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>file_id</code></dt>
 <dd><p>Character. The ID of the file to retrieve.</p></dd>
 
@@ -514,11 +579,11 @@ with purpose "assistants" cannot be retrieved.</p><div class="section">
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-10">Returns<a class="anchor" aria-label="anchor" href="#returns-10"></a></h4>
+<h4 id="returns-11">Returns<a class="anchor" aria-label="anchor" href="#returns-11"></a></h4>
 <p>Character. The file contents as a string.</p>
 </div>
 <div class="section">
-<h4 id="examples-5">Examples<a class="anchor" aria-label="anchor" href="#examples-5"></a></h4>
+<h4 id="examples-6">Examples<a class="anchor" aria-label="anchor" href="#examples-6"></a></h4>
 <p></p><div class="r example copy"><div class="sourceCode"><pre><code>\dontrun{
 openai &lt;- OpenAI_Chat$new()
 
@@ -537,12 +602,12 @@ cat(content)
 "assistants" cannot be downloaded. If dest_path is a directory, the file is saved with
 its original filename. If dest_path is a file path, it is used as the complete
 destination path.</p><div class="section">
-<h4 id="usage-12">Usage<a class="anchor" aria-label="anchor" href="#usage-12"></a></h4>
+<h4 id="usage-13">Usage<a class="anchor" aria-label="anchor" href="#usage-13"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">download_file</span><span class="op">(</span><span class="va">file_id</span>, dest_path <span class="op">=</span> <span class="st">"data"</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-10">Arguments<a class="anchor" aria-label="anchor" href="#arguments-10"></a></h4>
+<h4 id="arguments-11">Arguments<a class="anchor" aria-label="anchor" href="#arguments-11"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>file_id</code></dt>
 <dd><p>Character. The ID of the file to download.</p></dd>
 
@@ -559,11 +624,11 @@ path or a complete file path. Created if it doesn't exist.</p></dd>
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-11">Returns<a class="anchor" aria-label="anchor" href="#returns-11"></a></h4>
+<h4 id="returns-12">Returns<a class="anchor" aria-label="anchor" href="#returns-12"></a></h4>
 <p>Character. Path to the downloaded file (invisibly).</p>
 </div>
 <div class="section">
-<h4 id="examples-6">Examples<a class="anchor" aria-label="anchor" href="#examples-6"></a></h4>
+<h4 id="examples-7">Examples<a class="anchor" aria-label="anchor" href="#examples-7"></a></h4>
 <p></p><div class="r example copy"><div class="sourceCode"><pre><code>\dontrun{
 openai &lt;- OpenAI_Chat$new()
 
@@ -581,12 +646,12 @@ path &lt;- openai$download_file(file_id = "file-abc123", dest_path = "downloads/
 <h3 id="method-delete-file-">Method <code>delete_file()</code><a class="anchor" aria-label="anchor" href="#method-delete-file-"></a></h3>
 <p>Delete a file from OpenAI.</p>
 <p>Permanently deletes the specified file. This action cannot be undone.</p><div class="section">
-<h4 id="usage-13">Usage<a class="anchor" aria-label="anchor" href="#usage-13"></a></h4>
+<h4 id="usage-14">Usage<a class="anchor" aria-label="anchor" href="#usage-14"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">delete_file</span><span class="op">(</span><span class="va">file_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-11">Arguments<a class="anchor" aria-label="anchor" href="#arguments-11"></a></h4>
+<h4 id="arguments-12">Arguments<a class="anchor" aria-label="anchor" href="#arguments-12"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>file_id</code></dt>
 <dd><p>Character. The ID of the file to delete.</p></dd>
 
@@ -594,13 +659,13 @@ path &lt;- openai$download_file(file_id = "file-abc123", dest_path = "downloads/
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-12">Returns<a class="anchor" aria-label="anchor" href="#returns-12"></a></h4>
+<h4 id="returns-13">Returns<a class="anchor" aria-label="anchor" href="#returns-13"></a></h4>
 <p>List. Deletion confirmation containing:</p><ul><li><p><code>id</code>: The deleted file ID</p></li>
 <li><p><code>object</code>: Object type ("file")</p></li>
 <li><p><code>deleted</code>: Boolean indicating successful deletion</p></li>
 </ul></div>
 <div class="section">
-<h4 id="examples-7">Examples<a class="anchor" aria-label="anchor" href="#examples-7"></a></h4>
+<h4 id="examples-8">Examples<a class="anchor" aria-label="anchor" href="#examples-8"></a></h4>
 <p></p><div class="r example copy"><div class="sourceCode"><pre><code>\dontrun{
 openai &lt;- OpenAI_Chat$new()
 
@@ -617,12 +682,12 @@ if (result$deleted) cat("File deleted successfully\n")
 <p>Delete multiple files from OpenAI.</p>
 <p>Convenience method to delete multiple files at once. Each deletion is performed
 sequentially.</p><div class="section">
-<h4 id="usage-14">Usage<a class="anchor" aria-label="anchor" href="#usage-14"></a></h4>
+<h4 id="usage-15">Usage<a class="anchor" aria-label="anchor" href="#usage-15"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">delete_files</span><span class="op">(</span><span class="va">file_ids</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-12">Arguments<a class="anchor" aria-label="anchor" href="#arguments-12"></a></h4>
+<h4 id="arguments-13">Arguments<a class="anchor" aria-label="anchor" href="#arguments-13"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>file_ids</code></dt>
 <dd><p>Character vector. File IDs to delete.</p></dd>
 
@@ -630,11 +695,11 @@ sequentially.</p><div class="section">
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-13">Returns<a class="anchor" aria-label="anchor" href="#returns-13"></a></h4>
+<h4 id="returns-14">Returns<a class="anchor" aria-label="anchor" href="#returns-14"></a></h4>
 <p>Data frame. Deletion results for each file.</p>
 </div>
 <div class="section">
-<h4 id="examples-8">Examples<a class="anchor" aria-label="anchor" href="#examples-8"></a></h4>
+<h4 id="examples-9">Examples<a class="anchor" aria-label="anchor" href="#examples-9"></a></h4>
 <p></p><div class="r example copy"><div class="sourceCode"><pre><code>\dontrun{
 openai &lt;- OpenAI_Chat$new()
 
@@ -649,16 +714,16 @@ results &lt;- openai$delete_files(c("file-abc123", "file-def456"))
 <h3 id="method-delete-all-files-">Method <code>delete_all_files()</code><a class="anchor" aria-label="anchor" href="#method-delete-all-files-"></a></h3>
 <p>Delete all files from OpenAI.</p>
 <p>WARNING: This permanently deletes ALL files in your organization. Use with extreme caution.</p><div class="section">
-<h4 id="usage-15">Usage<a class="anchor" aria-label="anchor" href="#usage-15"></a></h4>
+<h4 id="usage-16">Usage<a class="anchor" aria-label="anchor" href="#usage-16"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">delete_all_files</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="returns-14">Returns<a class="anchor" aria-label="anchor" href="#returns-14"></a></h4>
+<h4 id="returns-15">Returns<a class="anchor" aria-label="anchor" href="#returns-15"></a></h4>
 <p>Data frame. Deletion results for all files.</p>
 </div>
 <div class="section">
-<h4 id="examples-9">Examples<a class="anchor" aria-label="anchor" href="#examples-9"></a></h4>
+<h4 id="examples-10">Examples<a class="anchor" aria-label="anchor" href="#examples-10"></a></h4>
 <p></p><div class="r example copy"><div class="sourceCode"><pre><code>\dontrun{
 openai &lt;- OpenAI_Chat$new()
 
@@ -672,12 +737,12 @@ results &lt;- openai$delete_all_files()
 </div><p></p><hr><a id="method-OpenAI-create_store"></a><div class="section">
 <h3 id="method-create-store-">Method <code>create_store()</code><a class="anchor" aria-label="anchor" href="#method-create-store-"></a></h3>
 <p>Create a vector store.</p><div class="section">
-<h4 id="usage-16">Usage<a class="anchor" aria-label="anchor" href="#usage-16"></a></h4>
+<h4 id="usage-17">Usage<a class="anchor" aria-label="anchor" href="#usage-17"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">create_store</span><span class="op">(</span><span class="va">name</span>, file_ids <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-13">Arguments<a class="anchor" aria-label="anchor" href="#arguments-13"></a></h4>
+<h4 id="arguments-14">Arguments<a class="anchor" aria-label="anchor" href="#arguments-14"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>name</code></dt>
 <dd><p>Character. The name of the vector store.</p></dd>
 
@@ -689,19 +754,19 @@ results &lt;- openai$delete_all_files()
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-15">Returns<a class="anchor" aria-label="anchor" href="#returns-15"></a></h4>
+<h4 id="returns-16">Returns<a class="anchor" aria-label="anchor" href="#returns-16"></a></h4>
 <p>A list containing information about the vector store.</p>
 </div>
 
 </div><p></p><hr><a id="method-OpenAI-read_store"></a><div class="section">
 <h3 id="method-read-store-">Method <code>read_store()</code><a class="anchor" aria-label="anchor" href="#method-read-store-"></a></h3>
 <p>Read a vector store.</p><div class="section">
-<h4 id="usage-17">Usage<a class="anchor" aria-label="anchor" href="#usage-17"></a></h4>
+<h4 id="usage-18">Usage<a class="anchor" aria-label="anchor" href="#usage-18"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">read_store</span><span class="op">(</span><span class="va">store_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-14">Arguments<a class="anchor" aria-label="anchor" href="#arguments-14"></a></h4>
+<h4 id="arguments-15">Arguments<a class="anchor" aria-label="anchor" href="#arguments-15"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>store_id</code></dt>
 <dd><p>Character. The ID of the vector store to read.</p></dd>
 
@@ -709,31 +774,31 @@ results &lt;- openai$delete_all_files()
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-16">Returns<a class="anchor" aria-label="anchor" href="#returns-16"></a></h4>
+<h4 id="returns-17">Returns<a class="anchor" aria-label="anchor" href="#returns-17"></a></h4>
 <p>A list containing information about the vector store.</p>
 </div>
 
 </div><p></p><hr><a id="method-OpenAI-list_stores"></a><div class="section">
 <h3 id="method-list-stores-">Method <code>list_stores()</code><a class="anchor" aria-label="anchor" href="#method-list-stores-"></a></h3>
 <p>List all vector stores.</p><div class="section">
-<h4 id="usage-18">Usage<a class="anchor" aria-label="anchor" href="#usage-18"></a></h4>
+<h4 id="usage-19">Usage<a class="anchor" aria-label="anchor" href="#usage-19"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">list_stores</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="returns-17">Returns<a class="anchor" aria-label="anchor" href="#returns-17"></a></h4>
+<h4 id="returns-18">Returns<a class="anchor" aria-label="anchor" href="#returns-18"></a></h4>
 <p>A data frame of vector stores.</p>
 </div>
 
 </div><p></p><hr><a id="method-OpenAI-find_store"></a><div class="section">
 <h3 id="method-find-store-">Method <code>find_store()</code><a class="anchor" aria-label="anchor" href="#method-find-store-"></a></h3>
 <p>Find a vector store matching criteria.</p><div class="section">
-<h4 id="usage-19">Usage<a class="anchor" aria-label="anchor" href="#usage-19"></a></h4>
+<h4 id="usage-20">Usage<a class="anchor" aria-label="anchor" href="#usage-20"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">find_store</span><span class="op">(</span><span class="va">...</span>, as_df <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-15">Arguments<a class="anchor" aria-label="anchor" href="#arguments-15"></a></h4>
+<h4 id="arguments-16">Arguments<a class="anchor" aria-label="anchor" href="#arguments-16"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>Named arguments for filtering.</p></dd>
 
@@ -745,19 +810,19 @@ results &lt;- openai$delete_all_files()
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-18">Returns<a class="anchor" aria-label="anchor" href="#returns-18"></a></h4>
+<h4 id="returns-19">Returns<a class="anchor" aria-label="anchor" href="#returns-19"></a></h4>
 <p>A data frame of matching vector stores.</p>
 </div>
 
 </div><p></p><hr><a id="method-OpenAI-update_store"></a><div class="section">
 <h3 id="method-update-store-">Method <code>update_store()</code><a class="anchor" aria-label="anchor" href="#method-update-store-"></a></h3>
 <p>Update a vector store.</p><div class="section">
-<h4 id="usage-20">Usage<a class="anchor" aria-label="anchor" href="#usage-20"></a></h4>
+<h4 id="usage-21">Usage<a class="anchor" aria-label="anchor" href="#usage-21"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">update_store</span><span class="op">(</span><span class="va">store_id</span>, <span class="va">new_name</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-16">Arguments<a class="anchor" aria-label="anchor" href="#arguments-16"></a></h4>
+<h4 id="arguments-17">Arguments<a class="anchor" aria-label="anchor" href="#arguments-17"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>store_id</code></dt>
 <dd><p>Character. The ID of the vector store to update.</p></dd>
 
@@ -769,19 +834,19 @@ results &lt;- openai$delete_all_files()
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-19">Returns<a class="anchor" aria-label="anchor" href="#returns-19"></a></h4>
+<h4 id="returns-20">Returns<a class="anchor" aria-label="anchor" href="#returns-20"></a></h4>
 <p>A list containing information about the updated vector store.</p>
 </div>
 
 </div><p></p><hr><a id="method-OpenAI-delete_store"></a><div class="section">
 <h3 id="method-delete-store-">Method <code>delete_store()</code><a class="anchor" aria-label="anchor" href="#method-delete-store-"></a></h3>
 <p>Delete a vector store.</p><div class="section">
-<h4 id="usage-21">Usage<a class="anchor" aria-label="anchor" href="#usage-21"></a></h4>
+<h4 id="usage-22">Usage<a class="anchor" aria-label="anchor" href="#usage-22"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">delete_store</span><span class="op">(</span><span class="va">store_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-17">Arguments<a class="anchor" aria-label="anchor" href="#arguments-17"></a></h4>
+<h4 id="arguments-18">Arguments<a class="anchor" aria-label="anchor" href="#arguments-18"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>store_id</code></dt>
 <dd><p>Character. The ID of the vector store to delete.</p></dd>
 
@@ -789,19 +854,19 @@ results &lt;- openai$delete_all_files()
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-20">Returns<a class="anchor" aria-label="anchor" href="#returns-20"></a></h4>
+<h4 id="returns-21">Returns<a class="anchor" aria-label="anchor" href="#returns-21"></a></h4>
 <p>A list containing information about the deleted vector store.</p>
 </div>
 
 </div><p></p><hr><a id="method-OpenAI-delete_stores"></a><div class="section">
 <h3 id="method-delete-stores-">Method <code>delete_stores()</code><a class="anchor" aria-label="anchor" href="#method-delete-stores-"></a></h3>
 <p>Delete multiple vector stores.</p><div class="section">
-<h4 id="usage-22">Usage<a class="anchor" aria-label="anchor" href="#usage-22"></a></h4>
+<h4 id="usage-23">Usage<a class="anchor" aria-label="anchor" href="#usage-23"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">delete_stores</span><span class="op">(</span><span class="va">store_ids</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-18">Arguments<a class="anchor" aria-label="anchor" href="#arguments-18"></a></h4>
+<h4 id="arguments-19">Arguments<a class="anchor" aria-label="anchor" href="#arguments-19"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>store_ids</code></dt>
 <dd><p>A character vector of vector store IDs.</p></dd>
 
@@ -809,31 +874,31 @@ results &lt;- openai$delete_all_files()
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-21">Returns<a class="anchor" aria-label="anchor" href="#returns-21"></a></h4>
+<h4 id="returns-22">Returns<a class="anchor" aria-label="anchor" href="#returns-22"></a></h4>
 <p>A data frame of deleted vector stores.</p>
 </div>
 
 </div><p></p><hr><a id="method-OpenAI-delete_all_stores"></a><div class="section">
 <h3 id="method-delete-all-stores-">Method <code>delete_all_stores()</code><a class="anchor" aria-label="anchor" href="#method-delete-all-stores-"></a></h3>
 <p>Delete all vector stores.</p><div class="section">
-<h4 id="usage-23">Usage<a class="anchor" aria-label="anchor" href="#usage-23"></a></h4>
+<h4 id="usage-24">Usage<a class="anchor" aria-label="anchor" href="#usage-24"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">delete_all_stores</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="returns-22">Returns<a class="anchor" aria-label="anchor" href="#returns-22"></a></h4>
+<h4 id="returns-23">Returns<a class="anchor" aria-label="anchor" href="#returns-23"></a></h4>
 <p>A data frame of deleted vector stores.</p>
 </div>
 
 </div><p></p><hr><a id="method-OpenAI-delete_store_and_files"></a><div class="section">
 <h3 id="method-delete-store-and-files-">Method <code>delete_store_and_files()</code><a class="anchor" aria-label="anchor" href="#method-delete-store-and-files-"></a></h3>
 <p>Delete a vector store and its files.</p><div class="section">
-<h4 id="usage-24">Usage<a class="anchor" aria-label="anchor" href="#usage-24"></a></h4>
+<h4 id="usage-25">Usage<a class="anchor" aria-label="anchor" href="#usage-25"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">delete_store_and_files</span><span class="op">(</span><span class="va">store_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-19">Arguments<a class="anchor" aria-label="anchor" href="#arguments-19"></a></h4>
+<h4 id="arguments-20">Arguments<a class="anchor" aria-label="anchor" href="#arguments-20"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>store_id</code></dt>
 <dd><p>Character. The ID of the vector store to delete.</p></dd>
 
@@ -841,39 +906,15 @@ results &lt;- openai$delete_all_files()
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-23">Returns<a class="anchor" aria-label="anchor" href="#returns-23"></a></h4>
+<h4 id="returns-24">Returns<a class="anchor" aria-label="anchor" href="#returns-24"></a></h4>
 <p>A list containing information about the deleted vector store and files.</p>
 </div>
 
 </div><p></p><hr><a id="method-OpenAI-add_file_to_store"></a><div class="section">
 <h3 id="method-add-file-to-store-">Method <code>add_file_to_store()</code><a class="anchor" aria-label="anchor" href="#method-add-file-to-store-"></a></h3>
 <p>Add a file to a vector store.</p><div class="section">
-<h4 id="usage-25">Usage<a class="anchor" aria-label="anchor" href="#usage-25"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">add_file_to_store</span><span class="op">(</span><span class="va">store_id</span>, <span class="va">file_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
-<h4 id="arguments-20">Arguments<a class="anchor" aria-label="anchor" href="#arguments-20"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>store_id</code></dt>
-<dd><p>Character. The ID of the vector store.</p></dd>
-
-
-<dt><code>file_id</code></dt>
-<dd><p>Character. The ID of the file.</p></dd>
-
-
-</dl><p></p></div>
-</div>
-<div class="section">
-<h4 id="returns-24">Returns<a class="anchor" aria-label="anchor" href="#returns-24"></a></h4>
-<p>A list containing information about the file in the vector store.</p>
-</div>
-
-</div><p></p><hr><a id="method-OpenAI-read_file_from_store"></a><div class="section">
-<h3 id="method-read-file-from-store-">Method <code>read_file_from_store()</code><a class="anchor" aria-label="anchor" href="#method-read-file-from-store-"></a></h3>
-<p>Read a file from a vector store.</p><div class="section">
 <h4 id="usage-26">Usage<a class="anchor" aria-label="anchor" href="#usage-26"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">read_file_from_store</span><span class="op">(</span><span class="va">store_id</span>, <span class="va">file_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">add_file_to_store</span><span class="op">(</span><span class="va">store_id</span>, <span class="va">file_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -893,11 +934,11 @@ results &lt;- openai$delete_all_files()
 <p>A list containing information about the file in the vector store.</p>
 </div>
 
-</div><p></p><hr><a id="method-OpenAI-list_files_in_store"></a><div class="section">
-<h3 id="method-list-files-in-store-">Method <code>list_files_in_store()</code><a class="anchor" aria-label="anchor" href="#method-list-files-in-store-"></a></h3>
-<p>List all files in a vector store.</p><div class="section">
+</div><p></p><hr><a id="method-OpenAI-read_file_from_store"></a><div class="section">
+<h3 id="method-read-file-from-store-">Method <code>read_file_from_store()</code><a class="anchor" aria-label="anchor" href="#method-read-file-from-store-"></a></h3>
+<p>Read a file from a vector store.</p><div class="section">
 <h4 id="usage-27">Usage<a class="anchor" aria-label="anchor" href="#usage-27"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">list_files_in_store</span><span class="op">(</span><span class="va">store_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">read_file_from_store</span><span class="op">(</span><span class="va">store_id</span>, <span class="va">file_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -906,22 +947,46 @@ results &lt;- openai$delete_all_files()
 <dd><p>Character. The ID of the vector store.</p></dd>
 
 
+<dt><code>file_id</code></dt>
+<dd><p>Character. The ID of the file.</p></dd>
+
+
 </dl><p></p></div>
 </div>
 <div class="section">
 <h4 id="returns-26">Returns<a class="anchor" aria-label="anchor" href="#returns-26"></a></h4>
+<p>A list containing information about the file in the vector store.</p>
+</div>
+
+</div><p></p><hr><a id="method-OpenAI-list_files_in_store"></a><div class="section">
+<h3 id="method-list-files-in-store-">Method <code>list_files_in_store()</code><a class="anchor" aria-label="anchor" href="#method-list-files-in-store-"></a></h3>
+<p>List all files in a vector store.</p><div class="section">
+<h4 id="usage-28">Usage<a class="anchor" aria-label="anchor" href="#usage-28"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">list_files_in_store</span><span class="op">(</span><span class="va">store_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-23">Arguments<a class="anchor" aria-label="anchor" href="#arguments-23"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>store_id</code></dt>
+<dd><p>Character. The ID of the vector store.</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-27">Returns<a class="anchor" aria-label="anchor" href="#returns-27"></a></h4>
 <p>A data frame of files in the vector store.</p>
 </div>
 
 </div><p></p><hr><a id="method-OpenAI-find_file_in_store"></a><div class="section">
 <h3 id="method-find-file-in-store-">Method <code>find_file_in_store()</code><a class="anchor" aria-label="anchor" href="#method-find-file-in-store-"></a></h3>
 <p>Find a file in a vector store matching criteria.</p><div class="section">
-<h4 id="usage-28">Usage<a class="anchor" aria-label="anchor" href="#usage-28"></a></h4>
+<h4 id="usage-29">Usage<a class="anchor" aria-label="anchor" href="#usage-29"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">find_file_in_store</span><span class="op">(</span><span class="va">store_id</span>, <span class="va">...</span>, as_df <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-23">Arguments<a class="anchor" aria-label="anchor" href="#arguments-23"></a></h4>
+<h4 id="arguments-24">Arguments<a class="anchor" aria-label="anchor" href="#arguments-24"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>store_id</code></dt>
 <dd><p>Character. The ID of the vector store.</p></dd>
 
@@ -937,19 +1002,19 @@ results &lt;- openai$delete_all_files()
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-27">Returns<a class="anchor" aria-label="anchor" href="#returns-27"></a></h4>
+<h4 id="returns-28">Returns<a class="anchor" aria-label="anchor" href="#returns-28"></a></h4>
 <p>A data frame of matching files.</p>
 </div>
 
 </div><p></p><hr><a id="method-OpenAI-delete_file_from_store"></a><div class="section">
 <h3 id="method-delete-file-from-store-">Method <code>delete_file_from_store()</code><a class="anchor" aria-label="anchor" href="#method-delete-file-from-store-"></a></h3>
 <p>Delete a file from a vector store.</p><div class="section">
-<h4 id="usage-29">Usage<a class="anchor" aria-label="anchor" href="#usage-29"></a></h4>
+<h4 id="usage-30">Usage<a class="anchor" aria-label="anchor" href="#usage-30"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">delete_file_from_store</span><span class="op">(</span><span class="va">store_id</span>, <span class="va">file_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-24">Arguments<a class="anchor" aria-label="anchor" href="#arguments-24"></a></h4>
+<h4 id="arguments-25">Arguments<a class="anchor" aria-label="anchor" href="#arguments-25"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>store_id</code></dt>
 <dd><p>Character. The ID of the vector store.</p></dd>
 
@@ -961,19 +1026,19 @@ results &lt;- openai$delete_all_files()
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-28">Returns<a class="anchor" aria-label="anchor" href="#returns-28"></a></h4>
+<h4 id="returns-29">Returns<a class="anchor" aria-label="anchor" href="#returns-29"></a></h4>
 <p>A list containing information about the deleted file.</p>
 </div>
 
 </div><p></p><hr><a id="method-OpenAI-delete_files_from_store"></a><div class="section">
 <h3 id="method-delete-files-from-store-">Method <code>delete_files_from_store()</code><a class="anchor" aria-label="anchor" href="#method-delete-files-from-store-"></a></h3>
 <p>Delete multiple files from a vector store.</p><div class="section">
-<h4 id="usage-30">Usage<a class="anchor" aria-label="anchor" href="#usage-30"></a></h4>
+<h4 id="usage-31">Usage<a class="anchor" aria-label="anchor" href="#usage-31"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">delete_files_from_store</span><span class="op">(</span><span class="va">store_id</span>, <span class="va">file_ids</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-25">Arguments<a class="anchor" aria-label="anchor" href="#arguments-25"></a></h4>
+<h4 id="arguments-26">Arguments<a class="anchor" aria-label="anchor" href="#arguments-26"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>store_id</code></dt>
 <dd><p>Character. The ID of the vector store.</p></dd>
 
@@ -985,19 +1050,19 @@ results &lt;- openai$delete_all_files()
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-29">Returns<a class="anchor" aria-label="anchor" href="#returns-29"></a></h4>
+<h4 id="returns-30">Returns<a class="anchor" aria-label="anchor" href="#returns-30"></a></h4>
 <p>A data frame of deleted files.</p>
 </div>
 
 </div><p></p><hr><a id="method-OpenAI-delete_all_files_from_store"></a><div class="section">
 <h3 id="method-delete-all-files-from-store-">Method <code>delete_all_files_from_store()</code><a class="anchor" aria-label="anchor" href="#method-delete-all-files-from-store-"></a></h3>
 <p>Delete all files from a vector store.</p><div class="section">
-<h4 id="usage-31">Usage<a class="anchor" aria-label="anchor" href="#usage-31"></a></h4>
+<h4 id="usage-32">Usage<a class="anchor" aria-label="anchor" href="#usage-32"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">delete_all_files_from_store</span><span class="op">(</span><span class="va">store_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-26">Arguments<a class="anchor" aria-label="anchor" href="#arguments-26"></a></h4>
+<h4 id="arguments-27">Arguments<a class="anchor" aria-label="anchor" href="#arguments-27"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>store_id</code></dt>
 <dd><p>Character. The ID of the vector store.</p></dd>
 
@@ -1005,19 +1070,19 @@ results &lt;- openai$delete_all_files()
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-30">Returns<a class="anchor" aria-label="anchor" href="#returns-30"></a></h4>
+<h4 id="returns-31">Returns<a class="anchor" aria-label="anchor" href="#returns-31"></a></h4>
 <p>A data frame of deleted files.</p>
 </div>
 
 </div><p></p><hr><a id="method-OpenAI-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-32">Usage<a class="anchor" aria-label="anchor" href="#usage-32"></a></h4>
+<h4 id="usage-33">Usage<a class="anchor" aria-label="anchor" href="#usage-33"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-27">Arguments<a class="anchor" aria-label="anchor" href="#arguments-27"></a></h4>
+<h4 id="arguments-28">Arguments<a class="anchor" aria-label="anchor" href="#arguments-28"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
@@ -1032,6 +1097,27 @@ results &lt;- openai$delete_all_files()
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## ------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co">## Method `OpenAI$embeddings`</span></span></span>
+<span class="r-in"><span><span class="co">## ------------------------------------------------</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="va">openai</span> <span class="op">&lt;-</span> <span class="va"><a href="OpenAI_Chat.html">OpenAI_Chat</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Generate embeddings</span></span></span>
+<span class="r-in"><span><span class="va">embeddings</span> <span class="op">&lt;-</span> <span class="va">openai</span><span class="op">$</span><span class="fu">embeddings</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  input <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Hello world"</span>, <span class="st">"How are you?"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  model <span class="op">=</span> <span class="st">"text-embedding-3-small"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># With dimension reduction</span></span></span>
+<span class="r-in"><span><span class="va">embeddings</span> <span class="op">&lt;-</span> <span class="va">openai</span><span class="op">$</span><span class="fu">embeddings</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  input <span class="op">=</span> <span class="st">"Sample text"</span>,</span></span>
+<span class="r-in"><span>  model <span class="op">=</span> <span class="st">"text-embedding-3-large"</span>,</span></span>
+<span class="r-in"><span>  dimensions <span class="op">=</span> <span class="fl">256</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## ------------------------------------------------</span></span></span>
 <span class="r-in"><span><span class="co">## Method `OpenAI$upload_file`</span></span></span>
 <span class="r-in"><span><span class="co">## ------------------------------------------------</span></span></span>

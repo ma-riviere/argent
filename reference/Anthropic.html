@@ -111,6 +111,7 @@ with support for prompt caching, tool calling, and structured outputs.</p>
 <li><p><a href="#method-Anthropic-download_file"><code>Anthropic$download_file()</code></a></p></li>
 <li><p><a href="#method-Anthropic-list_files"><code>Anthropic$list_files()</code></a></p></li>
 <li><p><a href="#method-Anthropic-delete_file"><code>Anthropic$delete_file()</code></a></p></li>
+<li><p><a href="#method-Anthropic-embeddings"><code>Anthropic$embeddings()</code></a></p></li>
 <li><p><a href="#method-Anthropic-chat"><code>Anthropic$chat()</code></a></p></li>
 <li><p><a href="#method-Anthropic-clone"><code>Anthropic$clone()</code></a></p></li>
 </ul></div><p><details><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="download_generated_files"><a href="Provider.html#method-download_generated_files"><code>argent::Provider$download_generated_files()</code></a></span></li>
@@ -352,10 +353,35 @@ raw_content &lt;- anthropic$download_file(file_id = "file-abc123", dest_path = N
 <p>Logical. TRUE if successful, FALSE otherwise</p>
 </div>
 
+</div><p></p><hr><a id="method-Anthropic-embeddings"></a><div class="section">
+<h3 id="method-embeddings-">Method <code>embeddings()</code><a class="anchor" aria-label="anchor" href="#method-embeddings-"></a></h3>
+<p>Generate embeddings for text input</p>
+<p>Note: Anthropic does not provide a native embeddings API. For embeddings, consider using:</p><ul><li><p>Voyage AI (recommended by Anthropic)</p></li>
+<li><p>OpenAI (text-embedding-3-small, text-embedding-3-large)</p></li>
+<li><p>Google (text-embedding-004)</p></li>
+<li><p>Other embedding providers available through OpenRouter</p></li>
+</ul><div class="section">
+<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Anthropic</span><span class="op">$</span><span class="fu">embeddings</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>...</code></dt>
+<dd><p>Arguments (not used, included for method signature consistency)</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-7">Returns<a class="anchor" aria-label="anchor" href="#returns-7"></a></h4>
+<p>This method always throws an error</p>
+</div>
+
 </div><p></p><hr><a id="method-Anthropic-chat"></a><div class="section">
 <h3 id="method-chat-">Method <code>chat()</code><a class="anchor" aria-label="anchor" href="#method-chat-"></a></h3>
 <p>Send a chat completion request to Anthropic</p><div class="section">
-<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Anthropic</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>  <span class="va">...</span>,</span>
 <span>  cache_prompt <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -376,7 +402,7 @@ raw_content &lt;- anthropic$download_file(file_id = "file-abc123", dest_path = N
 </div>
 
 <div class="section">
-<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
+<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>One or more inputs for the prompt. Can be text strings, file paths, URLs, R objects,
 or content wrapped with <code>as_*_content()</code> functions. R objects (but not plain strings) will
@@ -452,19 +478,19 @@ list(type = "tool", name = "tool_name"), or NULL for none (default: list(type = 
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-7">Returns<a class="anchor" aria-label="anchor" href="#returns-7"></a></h4>
+<h4 id="returns-8">Returns<a class="anchor" aria-label="anchor" href="#returns-8"></a></h4>
 <p>Character (or List if return_full_response = TRUE). Anthropic API's response object.</p>
 </div>
 
 </div><p></p><hr><a id="method-Anthropic-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
+<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Anthropic</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
+<h4 id="arguments-9">Arguments<a class="anchor" aria-label="anchor" href="#arguments-9"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
