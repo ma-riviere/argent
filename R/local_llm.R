@@ -2,7 +2,25 @@
 #'
 #' @description
 #' R6 class for interacting with local LLM servers (e.g., llama.cpp, Ollama) that implement
-#' OpenAI-compatible APIs. Provides methods for chat completions, embeddings, and tool calling capabilities.
+#' OpenAI-compatible APIs.
+#'
+#' @section Features:
+#' - Client-side conversation state management
+#' - Client-side tools
+#' - Multimodal inputs (images, PDFs)
+#' - Extended thinking support (server-configured)
+#' - Structured outputs
+#'
+#' @section Useful links:
+#' - llama-server (llama.cpp) reference: https://github.com/ggml-org/llama.cpp/tree/master/tools/server
+#'
+#' @section Main entrypoints:
+#' - `chat()`: Multi-turn multimodal conversations with tool use and structured outputs.
+#' - `embeddings()`: Vector embeddings for text inputs.
+#'
+#' @section Structured Outputs:
+#' Function-call trick for all models: uses tool calling to simulate structured outputs, always requiring
+#' an additional API query with full chat history (incurs extra cost).
 #'
 #' @export
 #' @examples

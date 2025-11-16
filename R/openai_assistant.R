@@ -1,41 +1,42 @@
 #' Client for OpenAI's Assistants API
 #'
 #' @description
-#' R6 class for interacting with OpenAI's Assistants API. Provides methods for creating and
-#' managing assistants and threads.
+#' R6 class for interacting with OpenAI's Assistants API.
+#' Inherits file management and vector store methods from OpenAI_Base.
 #'
-#' @section Deprecation Notice:
+#' @section Features:
+#' - Server-side conversation state management via threads
+#' - Client-side tools
+#' - Server-side tools
+#' - Multimodal inputs (files, images, PDFs, R objects)
+#' - File uploads and management
+#' - Server-side RAG with stores & `file_search` server tool
+#' - Structured outputs
+#'
+#' @section Useful links:
+#' - API reference: https://platform.openai.com/docs/api-reference/assistants
+#' - API docs: https://platform.openai.com/docs/assistants/deep-dive
+#'
+#' @section Deprecation notice:
 #' **DEPRECATED:** OpenAI has deprecated the Assistants API in favor of the Responses API. It will shut down on August 26, 2026.
 #'
 #' Users should migrate to the [Responses API](responses-api.html) instead.
 #'
 #' For more information, see: https://platform.openai.com/docs/assistants/migration
 #'
-#' @section History Management:
-#' The Assistants API uses server-side thread state for conversation history. However,
-#' this class maintains client-side `session_history` for tracking conversations with token counts.
-#' - `chat_history` methods are overridden and not applicable (server-side threads)
-#' - `session_history` is maintained for use with `print()` and token tracking
-#' - Use `get_thread_msgs()` to retrieve server-side conversation history
-#' - Use `get_history()` or `get_session_history()` for client-side tracking 
+#' @section History management:
+#' The Assistants API has no client-side history management.
+#' It uses server-side thread state for conversation history. However,it also maintains
+#' a client-side `session_history` for tracking conversations with token counts (unreliable).
 #'
-#' @section Features:
-#' - Server-side state management with threads
-#' - File search with vector stores
-#' - Code execution in sandboxed containers
-#'
-#' @section Useful links:
-#' - API reference: https://platform.openai.com/docs/api-reference/assistants
-#' - API docs: https://platform.openai.com/docs/assistants/deep-dive
+#' @section Main entrypoints:
+#' - `chat()`: Multi-turn multimodal conversations with tool use and structured outputs.
+#' - `embeddings()`: Vector embeddings for text inputs.
 #'
 #' @field assistant List. Current assistant object
 #' @field thread List. Current thread object
 #' @field provider_name Character. Provider name (OpenAI Assistant)
 #' @field server_tools Character vector. Server-side tools to use for API requests
-#'
-#' @section Server-side tools:
-#' - "file_search" for file search with vector stores
-#' - "code_interpreter" for Python code execution in sandboxed containers
 #'
 #' @export
 #' @examples

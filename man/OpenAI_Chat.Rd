@@ -5,18 +5,17 @@
 \title{Client for OpenAI's Chat Completions API}
 \description{
 R6 class for interacting with OpenAI's Chat Completions API (v1/chat/completions).
-Provides methods for chat completions.
-
-This class inherits file management and vector store functionalities from
-its parent class OpenAI.
+Inherits file management and vector store methods from OpenAI_Base.
 }
 \section{Features}{
 
 \itemize{
-\item Client-side chat history management
-\item Tool calling
-\item Multimodal inputs
-\item Uploaded file inputs
+\item Client-side conversation state management
+\item Client-side tools
+\item Server-side tools
+\item Multimodal inputs (files, images, PDFs, R objects)
+\item File uploads and management
+\item Reasoning
 \item Structured outputs
 }
 }
@@ -29,11 +28,24 @@ its parent class OpenAI.
 }
 }
 
+\section{Main entrypoints}{
+
+\itemize{
+\item \code{chat()}: Multi-turn multimodal conversations with tool use and structured outputs.
+\item \code{embeddings()}: Vector embeddings for text inputs.
+}
+}
+
 \section{Server-side tools}{
 
 \itemize{
 \item "web_search" for web search grounding via OpenAI's web plugin
 }
+}
+
+\section{Structured outputs}{
+
+Fully native structured outputs via JSON schema. No additional API calls required.
 }
 
 \examples{

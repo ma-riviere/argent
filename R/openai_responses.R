@@ -2,29 +2,38 @@
 #'
 #' @description
 #' R6 class for interacting with OpenAI's Responses API (v1/responses).
-#' Provides methods for chat completions and container management.
-#' 
-#' This class inherits file management and vector store functionalities from 
-#' its parent class OpenAI.
+#' Inherits file management and vector store methods from OpenAI_Base.
 #' 
 #' @section Features:
-#' - Server-side conversation state management via previous_response_id
-#' - Server-side tools: web_search, file_search, code_interpreter
-#' - Reasoning budget support for extended thinking
-#' - Response forking: continue from any point in conversation history
+#' - Client-side conversation state management
+#' - Server-side conversation state management via previous_response_id & response forking
+#' - Client-side tools
+#' - Server-side tools
+#' - Multimodal inputs (files, images, PDFs, R objects)
+#' - File uploads and management
+#' - Server-side RAG with stores & `file_search` server tool
+#' - Reasoning
+#' - Structured outputs
 #'
 #' @section Useful links:
 #' - API reference: https://platform.openai.com/docs/api-reference/responses/create
 #' - API docs: https://platform.openai.com/docs/quickstart
 #'
-#' @field provider_name Character. Provider name (OpenAI Responses)
-#' @field server_tools Character vector. Server-side tools to use for API requests
+#' @section Main entrypoints:
+#' - `chat()`: Multi-turn multimodal conversations with tool use and structured outputs.
+#' - `embeddings()`: Vector embeddings for text inputs.
 #'
 #' @section Server-side tools:
 #' - "web_search" for web search grounding via OpenAI's web plugin
 #' - "file_search" for file search with vector stores
 #' - "code_interpreter" for Python code execution in sandboxed containers
-#' 
+#'
+#' @section Structured outputs:
+#' Fully native structured outputs via JSON schema. No additional API calls required.
+#'
+#' @field provider_name Character. Provider name (OpenAI Responses)
+#' @field server_tools Character vector. Server-side tools to use for API requests
+#'
 #' @export
 #' @examples
 #' \dontrun{

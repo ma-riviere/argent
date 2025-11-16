@@ -2,28 +2,34 @@
 #'
 #' @description
 #' R6 class for interacting with OpenAI's Chat Completions API (v1/chat/completions).
-#' Provides methods for chat completions.
-#' 
-#' This class inherits file management and vector store functionalities from 
-#' its parent class OpenAI.
+#' Inherits file management and vector store methods from OpenAI_Base.
 #'
 #' @section Features:
-#' - Client-side chat history management
-#' - Tool calling
-#' - Multimodal inputs
-#' - Uploaded file inputs
+#' - Client-side conversation state management
+#' - Client-side tools
+#' - Server-side tools
+#' - Multimodal inputs (files, images, PDFs, R objects)
+#' - File uploads and management
+#' - Reasoning
 #' - Structured outputs
 #'
 #' @section Useful links:
 #' - API reference: https://platform.openai.com/docs/api-reference/chat
 #' - API docs: https://platform.openai.com/docs/guides/completions/introduction
 #'
-#' @field provider_name Character. Provider name (OpenAI Chat)
-#' @field server_tools Character vector. Server-side tools to use for API requests
+#' @section Main entrypoints:
+#' - `chat()`: Multi-turn multimodal conversations with tool use and structured outputs.
+#' - `embeddings()`: Vector embeddings for text inputs.
 #'
 #' @section Server-side tools:
 #' - "web_search" for web search grounding via OpenAI's web plugin
-#' 
+#'
+#' @section Structured outputs:
+#' Fully native structured outputs via JSON schema. No additional API calls required.
+#'
+#' @field provider_name Character. Provider name (OpenAI Chat)
+#' @field server_tools Character vector. Server-side tools to use for API requests
+#'
 #' @export
 #' @examples
 #' \dontrun{

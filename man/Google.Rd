@@ -4,14 +4,35 @@
 \alias{Google}
 \title{Client for Google's Gemini API}
 \description{
-R6 class for interacting with Google's Gemini API. Provides methods for chat completions,
-model information retrieval, embeddings, files management, and function calling capabilities.
+R6 class for interacting with Google's Gemini API.
 }
+\section{Features}{
+
+\itemize{
+\item Client-side conversation state management
+\item Client-side tools
+\item Server-side tools
+\item Multimodal inputs (files, images, PDFs, R objects)
+\item File uploads and management
+\item Server-side RAG with stores & \code{file_search} server tool
+\item Reasoning
+\item Structured outputs
+}
+}
+
 \section{Useful links}{
 
 \itemize{
 \item API reference: https://ai.google.dev/api/generate-content
 \item API docs: https://ai.google.dev/gemini-api/docs
+}
+}
+
+\section{Main entrypoints}{
+
+\itemize{
+\item \code{chat()}: Multi-turn multimodal conversations with tool use and structured outputs.
+\item \code{embeddings()}: Vector embeddings for text inputs.
 }
 }
 
@@ -23,6 +44,16 @@ model information retrieval, embeddings, files management, and function calling 
 \item \code{url_context}: Fetch and process URLs
 \item \code{google_maps}: Location-aware data
 \item \code{file_search}: Search through uploaded files
+}
+}
+
+\section{Structured outputs}{
+
+Hybrid approach for structured outputs:
+\itemize{
+\item Native support for Sonnet and Pro models via JSON schema.
+\item Function-call trick for other models: uses tool calling to simulate structured outputs, requiring an
+additional API query with full chat history (incurs extra cost).
 }
 }
 

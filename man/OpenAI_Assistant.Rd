@@ -4,36 +4,19 @@
 \alias{OpenAI_Assistant}
 \title{Client for OpenAI's Assistants API}
 \description{
-R6 class for interacting with OpenAI's Assistants API. Provides methods for creating and
-managing assistants and threads.
+R6 class for interacting with OpenAI's Assistants API.
+Inherits file management and vector store methods from OpenAI_Base.
 }
-\section{Deprecation Notice}{
-
-\strong{DEPRECATED:} OpenAI has deprecated the Assistants API in favor of the Responses API. It will shut down on August 26, 2026.
-
-Users should migrate to the \href{responses-api.html}{Responses API} instead.
-
-For more information, see: https://platform.openai.com/docs/assistants/migration
-}
-
-\section{History Management}{
-
-The Assistants API uses server-side thread state for conversation history. However,
-this class maintains client-side \code{session_history} for tracking conversations with token counts.
-\itemize{
-\item \code{chat_history} methods are overridden and not applicable (server-side threads)
-\item \code{session_history} is maintained for use with \code{print()} and token tracking
-\item Use \code{get_thread_msgs()} to retrieve server-side conversation history
-\item Use \code{get_history()} or \code{get_session_history()} for client-side tracking
-}
-}
-
 \section{Features}{
 
 \itemize{
-\item Server-side state management with threads
-\item File search with vector stores
-\item Code execution in sandboxed containers
+\item Server-side conversation state management via threads
+\item Client-side tools
+\item Server-side tools
+\item Multimodal inputs (files, images, PDFs, R objects)
+\item File uploads and management
+\item Server-side RAG with stores & \code{file_search} server tool
+\item Structured outputs
 }
 }
 
@@ -45,11 +28,27 @@ this class maintains client-side \code{session_history} for tracking conversatio
 }
 }
 
-\section{Server-side tools}{
+\section{Deprecation notice}{
+
+\strong{DEPRECATED:} OpenAI has deprecated the Assistants API in favor of the Responses API. It will shut down on August 26, 2026.
+
+Users should migrate to the \href{responses-api.html}{Responses API} instead.
+
+For more information, see: https://platform.openai.com/docs/assistants/migration
+}
+
+\section{History management}{
+
+The Assistants API has no client-side history management.
+It uses server-side thread state for conversation history. However,it also maintains
+a client-side \code{session_history} for tracking conversations with token counts (unreliable).
+}
+
+\section{Main entrypoints}{
 
 \itemize{
-\item "file_search" for file search with vector stores
-\item "code_interpreter" for Python code execution in sandboxed containers
+\item \code{chat()}: Multi-turn multimodal conversations with tool use and structured outputs.
+\item \code{embeddings()}: Vector embeddings for text inputs.
 }
 }
 

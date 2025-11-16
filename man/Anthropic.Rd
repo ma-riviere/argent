@@ -4,14 +4,34 @@
 \alias{Anthropic}
 \title{Client for Anthropic's Claude API}
 \description{
-R6 class for interacting with Anthropic's API. Provides methods for chat completions,
-model information retrieval, files management, and tool calling capabilities.
+R6 class for interacting with Anthropic's Claude API.
 }
+\section{Features}{
+
+\itemize{
+\item Client-side conversation state management
+\item Client-side tools
+\item Server-side tools
+\item Multimodal inputs (files, images, PDFs, R objects)
+\item File uploads and management
+\item Prompt caching
+\item Extended thinking support
+\item Structured outputs
+}
+}
+
 \section{Useful links}{
 
 \itemize{
 \item API reference: https://docs.claude.com/en/api/overview
 \item API docs: https://docs.claude.com/en/docs/intro
+}
+}
+
+\section{Main entrypoints}{
+
+\itemize{
+\item \code{chat()}: Multi-turn multimodal conversations with tool use and structured outputs.
 }
 }
 
@@ -21,6 +41,16 @@ model information retrieval, files management, and tool calling capabilities.
 \item "code_execution" for bash commands and file operations (pricing: $0.05/session-hour, 5-min min)
 \item "web_search" for web search capabilities. Can also be a list with \code{search_options}.
 \item "web_fetch" to fetch content from a URL provided in the prompt.
+}
+}
+
+\section{Structured outputs}{
+
+Hybrid approach for structured outputs:
+\itemize{
+\item Native support for Sonnet and Opus models via JSON schema.
+\item Function-call trick for Haiku models or when code_execution is enabled: uses tool calling to simulate
+structured outputs, requiring an additional API query with full chat history (incurs extra cost).
 }
 }
 

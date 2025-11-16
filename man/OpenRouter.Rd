@@ -4,9 +4,21 @@
 \alias{OpenRouter}
 \title{Client for the OpenRouter API}
 \description{
-R6 class for interacting with OpenRouter's API. Provides methods for chat completions,
-model information retrieval, embeddings, and function calling capabilities.
+R6 class for interacting with OpenRouter's API.
 }
+\section{Features}{
+
+\itemize{
+\item Client-side conversation state management
+\item Client-side tools
+\item Server-side tools
+\item Multimodal inputs (files, images, PDFs, R objects)
+\item Provider routing and preferences
+\item Reasoning
+\item Structured outputs
+}
+}
+
 \section{Useful links}{
 
 \itemize{
@@ -15,11 +27,25 @@ model information retrieval, embeddings, and function calling capabilities.
 }
 }
 
+\section{Main entrypoints}{
+
+\itemize{
+\item \code{chat()}: Multi-turn multimodal conversations with tool use and structured outputs.
+\item \code{embeddings()}: Vector embeddings for text inputs.
+}
+}
+
 \section{Server-side tools}{
 
 \itemize{
 \item "web_search" for web search grounding via OpenRouter's web plugin
 }
+}
+
+\section{Structured outputs}{
+
+Function-call trick for all models: uses tool calling to simulate structured outputs, always requiring
+an additional API query with full chat history (incurs extra cost).
 }
 
 \examples{

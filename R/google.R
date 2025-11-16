@@ -1,20 +1,39 @@
 #' Client for Google's Gemini API
 #'
 #' @description
-#' R6 class for interacting with Google's Gemini API. Provides methods for chat completions,
-#' model information retrieval, embeddings, files management, and function calling capabilities.
-#' 
+#' R6 class for interacting with Google's Gemini API.
+#'
+#' @section Features:
+#' - Client-side conversation state management
+#' - Client-side tools
+#' - Server-side tools
+#' - Multimodal inputs (files, images, PDFs, R objects)
+#' - File uploads and management
+#' - Server-side RAG with stores & `file_search` server tool
+#' - Reasoning
+#' - Structured outputs
+#'
 #' @section Useful links:
 #' - API reference: https://ai.google.dev/api/generate-content
 #' - API docs: https://ai.google.dev/gemini-api/docs
 #' 
+#' @section Main entrypoints:
+#' - `chat()`: Multi-turn multimodal conversations with tool use and structured outputs.
+#' - `embeddings()`: Vector embeddings for text inputs.
+#'
 #' @section Server-side tools:
 #' - `code_execution`: Execute Python code
 #' - `google_search`: Web search with grounding
 #' - `url_context`: Fetch and process URLs
 #' - `google_maps`: Location-aware data
 #' - `file_search`: Search through uploaded files
-#' 
+#'
+#' @section Structured outputs:
+#' Hybrid approach for structured outputs:
+#' - Native support for Sonnet and Pro models via JSON schema.
+#' - Function-call trick for other models: uses tool calling to simulate structured outputs, requiring an
+#'   additional API query with full chat history (incurs extra cost).
+#'
 #' @export
 #' @examples
 #' \dontrun{

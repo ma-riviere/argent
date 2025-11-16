@@ -1,19 +1,37 @@
 #' Client for Anthropic's Claude API
 #'
 #' @description
-#' R6 class for interacting with Anthropic's API. Provides methods for chat completions,
-#' model information retrieval, files management, and tool calling capabilities.
+#' R6 class for interacting with Anthropic's Claude API.
+#'
+#' @section Features:
+#' - Client-side conversation state management
+#' - Client-side tools
+#' - Server-side tools
+#' - Multimodal inputs (files, images, PDFs, R objects)
+#' - File uploads and management
+#' - Prompt caching
+#' - Extended thinking support
+#' - Structured outputs
 #'
 #' @section Useful links:
 #' - API reference: https://docs.claude.com/en/api/overview
 #' - API docs: https://docs.claude.com/en/docs/intro
 #'
-#' @field default_beta_features Character vector. Default beta features to use for API requests
+#' @section Main entrypoints:
+#' - `chat()`: Multi-turn multimodal conversations with tool use and structured outputs.
 #'
 #' @section Server-side tools:
 #' - "code_execution" for bash commands and file operations (pricing: $0.05/session-hour, 5-min min)
 #' - "web_search" for web search capabilities. Can also be a list with `search_options`.
 #' - "web_fetch" to fetch content from a URL provided in the prompt.
+#'
+#' @section Structured outputs:
+#' Hybrid approach for structured outputs:
+#' - Native support for Sonnet and Opus models via JSON schema.
+#' - Function-call trick for Haiku models or when code_execution is enabled: uses tool calling to simulate
+#'   structured outputs, requiring an additional API query with full chat history (incurs extra cost).
+#'
+#' @field default_beta_features Character vector. Default beta features to use for API requests
 #' 
 #' @export
 #' @examples

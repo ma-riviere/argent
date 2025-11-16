@@ -5,8 +5,40 @@
 \title{Client for local LLM servers (e.g., llama.cpp, Ollama)}
 \description{
 R6 class for interacting with local LLM servers (e.g., llama.cpp, Ollama) that implement
-OpenAI-compatible APIs. Provides methods for chat completions, embeddings, and tool calling capabilities.
+OpenAI-compatible APIs.
 }
+\section{Features}{
+
+\itemize{
+\item Client-side conversation state management
+\item Client-side tools
+\item Multimodal inputs (images, PDFs)
+\item Extended thinking support (server-configured)
+\item Structured outputs
+}
+}
+
+\section{Useful links}{
+
+\itemize{
+\item llama-server (llama.cpp) reference: https://github.com/ggml-org/llama.cpp/tree/master/tools/server
+}
+}
+
+\section{Main entrypoints}{
+
+\itemize{
+\item \code{chat()}: Multi-turn multimodal conversations with tool use and structured outputs.
+\item \code{embeddings()}: Vector embeddings for text inputs.
+}
+}
+
+\section{Structured Outputs}{
+
+Function-call trick for all models: uses tool calling to simulate structured outputs, always requiring
+an additional API query with full chat history (incurs extra cost).
+}
+
 \examples{
 \dontrun{
 # Connect to local llama.cpp server

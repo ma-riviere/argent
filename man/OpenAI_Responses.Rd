@@ -5,18 +5,20 @@
 \title{Client for OpenAI's Responses API}
 \description{
 R6 class for interacting with OpenAI's Responses API (v1/responses).
-Provides methods for chat completions and container management.
-
-This class inherits file management and vector store functionalities from
-its parent class OpenAI.
+Inherits file management and vector store methods from OpenAI_Base.
 }
 \section{Features}{
 
 \itemize{
-\item Server-side conversation state management via previous_response_id
-\item Server-side tools: web_search, file_search, code_interpreter
-\item Reasoning budget support for extended thinking
-\item Response forking: continue from any point in conversation history
+\item Client-side conversation state management
+\item Server-side conversation state management via previous_response_id & response forking
+\item Client-side tools
+\item Server-side tools
+\item Multimodal inputs (files, images, PDFs, R objects)
+\item File uploads and management
+\item Server-side RAG with stores & \code{file_search} server tool
+\item Reasoning
+\item Structured outputs
 }
 }
 
@@ -28,6 +30,14 @@ its parent class OpenAI.
 }
 }
 
+\section{Main entrypoints}{
+
+\itemize{
+\item \code{chat()}: Multi-turn multimodal conversations with tool use and structured outputs.
+\item \code{embeddings()}: Vector embeddings for text inputs.
+}
+}
+
 \section{Server-side tools}{
 
 \itemize{
@@ -35,6 +45,11 @@ its parent class OpenAI.
 \item "file_search" for file search with vector stores
 \item "code_interpreter" for Python code execution in sandboxed containers
 }
+}
+
+\section{Structured outputs}{
+
+Fully native structured outputs via JSON schema. No additional API calls required.
 }
 
 \examples{
