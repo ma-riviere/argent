@@ -22,7 +22,7 @@ Common patterns:
 
 ## Examples
 
-### Minimax-M2 API (Anthropic-compatible)
+### Minimax API (Anthropic-compatible)
 
 Minimax provides an Anthropic-compatible API. You can use argent’s
 `Anthropic` class by simply changing the base URL:
@@ -30,13 +30,13 @@ Minimax provides an Anthropic-compatible API. You can use argent’s
 ``` r
 minimax <- Anthropic$new(
     base_url = "https://api.minimax.io/anthropic",
-    api_key = Sys.getenv("MINIMAX_API_KEY")
+    api_key = Sys.getenv("MINIMAX_API_KEY"),
+    provider_name = "Minimax",
+    default_model = "MiniMax-M2"
 )
 
-minimax$chat(
-    "What is the R programming language? Answer in two sentences.",
-    model = "MiniMax-M2"
-)
+minimax$chat("What is the R programming language? Answer in two sentences.")
 ```
 
-All features of the `Anthropic` class work with Minimax.
+All features of the `Anthropic` class will work with Minimax, except
+server-side tools.

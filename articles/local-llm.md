@@ -39,8 +39,10 @@ llama.cpp/build/bin/llama-server \
 ### Connecting to the Server
 
 ``` r
-local_llama <- LocalLLM$new(base_url = "http://localhost:5000")
-#> ✔ [LocalLLM] Auto-detected model: gemma-3-27b-it-IQ4_XS.gguf
+local_llama <- LocalLLM$new(
+    base_url = "http://localhost:5000",
+    default_model = "gemma-3-27b-it-IQ4_XS.gguf"
+)
 ```
 
 On initialization, `argent` will automatically detect the available

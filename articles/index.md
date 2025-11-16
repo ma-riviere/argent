@@ -30,4 +30,4 @@ Guides for different OpenAI API interfaces
 Advanced features and techniques
 
 - [Use-case: RAG with \`argent\` and
-  \`ragnar\`](https://ma-riviere.github.io/argent/articles/usecase-rag.md):
+  \`ragnar\`](https://ma-riviere.github.io/argent/articles/advanced-rag.md):

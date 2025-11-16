@@ -100,22 +100,21 @@
 <strong>OpenAI-compatible APIs</strong>: Use <code>OpenAI_Chat</code> or <code>OpenAI_Responses</code> with a different base_url</li>
 </ul></section><section class="section level2"><h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h2>
-<section class="level2"><h3 id="minimax-m2-api-anthropic-compatible">Minimax-M2 API (Anthropic-compatible)<a class="anchor" aria-label="anchor" href="#minimax-m2-api-anthropic-compatible"></a>
+<section class="level2"><h3 id="minimax-api-anthropic-compatible">Minimax API (Anthropic-compatible)<a class="anchor" aria-label="anchor" href="#minimax-api-anthropic-compatible"></a>
 </h3>
 <p>Minimax provides an Anthropic-compatible API. You can use argent’s <code>Anthropic</code> class by simply changing the base URL:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">minimax</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Anthropic.html">Anthropic</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
 <span>    base_url <span class="op">=</span> <span class="st">"https://api.minimax.io/anthropic"</span>,</span>
-<span>    api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"MINIMAX_API_KEY"</span><span class="op">)</span></span>
+<span>    api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"MINIMAX_API_KEY"</span><span class="op">)</span>,</span>
+<span>    provider_name <span class="op">=</span> <span class="st">"Minimax"</span>,</span>
+<span>    default_model <span class="op">=</span> <span class="st">"MiniMax-M2"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">minimax</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
-<span>    <span class="st">"What is the R programming language? Answer in two sentences."</span>,</span>
-<span>    model <span class="op">=</span> <span class="st">"MiniMax-M2"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">minimax</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="st">"What is the R programming language? Answer in two sentences."</span><span class="op">)</span></span></code></pre></div>
 </div>
-<p>All features of the <code>Anthropic</code> class work with Minimax.</p>
+<p>All features of the <code>Anthropic</code> class will work with Minimax, except server-side tools.</p>
 </section></section><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
