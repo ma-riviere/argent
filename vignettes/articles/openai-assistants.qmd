@@ -691,7 +691,7 @@ p$age()          # get new age
 View citations and supplementary information:
 
 ```{r}
-cat(rag_assistant$get_supplementary(format_to = "yaml"), "\n")
+cat(yaml::as.yaml(rag_assistant$get_supplementary()), "\n")
 ```
 
 ```{yaml}	

@@ -120,39 +120,7 @@ google_gemini$chat(
 **Extract grounding metadata** (citations and sources):
 
 ```{r}
-cat(google_gemini$get_supplementary(format_to = "yaml")) # Defaults to the last response
-```
-
-```{json}
-#| code-fold: true
-#| code-summary: "Grounding metadata"
-
-{
-  "groundingChunks": [
-    {
-      "web": {
-        "uri": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGosazEUGyHJprNFMCOiOXltmNUdin3Db8znul6Z3nj2WCyh_HtzLIOYrHm7p22vlrzF-OkTrFLM0nPqAAM4SpRueJHx34Lqnn69HYrpWmMMvvlQNGXq_kiAhxsO9IU0HjRvsCy",
-        "title": "r-project.org"
-      }
-    }
-  ],
-  "groundingSupports": [
-    {
-      "segment": {
-        "startIndex": 52,
-        "endIndex": 96,
-        "text": "2, which was published on September 3, 2025."
-      },
-      "groundingChunkIndices": [
-        0
-      ]
-    }
-  ],
-  "webSearchQueries": [
-    "R ellmer package latest version",
-    "ellmer package CRAN"
-  ]
-} 
+google_gemini$get_supplementary() # Defaults to the last response
 ```
 
 ::: {.callout-note appearance="simple"}
@@ -236,139 +204,7 @@ Here are 5 good coffee shops with outdoor seating near you:
 **Extract grounding metadata** (citations and sources):
 
 ```{r}
-cat(google_gemini$get_supplementary(format_to = "yaml"))
-```
-
-```{json}
-#| code-fold: true
-#| code-summary: "Grounding metadata"
-
-{
-  "groundingChunks": [
-    {
-      "maps": {
-        "uri": "https://maps.google.com/?cid=3245168162210890933",
-        "title": "Espresso House",
-        "placeId": "places/ChIJffMg26MxbUYRtcT8-D8nCS0"
-      }
-    },
-    {
-      "maps": {
-        "uri": "https://maps.google.com/?cid=16759249395376552021",
-        "title": "Tantes Hage",
-        "placeId": "places/ChIJv_D0CSQxbUYRVXiZ4YfQlOg"
-      }
-    },
-    {
-      "maps": {
-        "uri": "https://maps.google.com/?cid=15986994636847136576",
-        "title": "Awake",
-        "placeId": "places/ChIJt48wUgAxbUYRQD9ZY-s23d0"
-      }
-    },
-    {
-      "maps": {
-        "uri": "https://maps.google.com/?cid=5498302272122706174",
-        "title": "Dromedar Kaffebar, Nordre",
-        "placeId": "places/ChIJu4I8x5kxbUYR_tiYBcnkTUw"
-      }
-    },
-    {
-      "maps": {
-        "uri": "https://maps.google.com/?cid=11104887590088168370",
-        "title": "Café Løkka",
-        "placeId": "places/ChIJs-DHJJ8xbUYRslPZTW18HJo"
-      }
-    },
-    {
-      "maps": {
-        "uri": "https://maps.google.com/?cid=6827123593483013344",
-        "title": "Espresso House",
-        "placeId": "places/ChIJCbmu26ExbUYR4Ew-k7zQvl4"
-      }
-    },
-    {
-      "maps": {
-        "uri": "https://maps.google.com/?cid=1749102876415147595",
-        "title": "Creature Comforts Cafe",
-        "placeId": "places/ChIJiTgxMG7ta4cRS75WiMwPRhg"
-      }
-    },
-    {
-      "maps": {
-        "uri": "https://maps.google.com/?cid=6801006062827479437",
-        "title": "Estenstadhytta",
-        "placeId": "places/ChIJfWaWsmIxbUYRjSEcGvsGYl4"
-      }
-    },
-    {
-      "maps": {
-        "uri": "https://maps.google.com/?cid=2982629209513831130",
-        "title": "Terrible Love",
-        "placeId": "places/ChIJP8p2kJC1RIYR2qrGoXZtZCk"
-      }
-    },
-    {
-      "maps": {
-        "uri": "https://maps.google.com/?cid=17370108676956306718",
-        "title": "Jacobsen & Svart Coffee Roasters",
-        "placeId": "places/ChIJWat1aMYxbUYRHj3pl88FD_E"
-      }
-    },
-    {
-      "maps": {
-        "uri": "https://maps.google.com/?cid=12065341795685703138",
-        "title": "Café le Frère",
-        "placeId": "places/ChIJ7X0oFJwxbUYR4h2FMXC0cKc"
-      }
-    }
-  ],
-  "groundingSupports": [
-    {
-      "segment": {
-        "startIndex": 65,
-        "endIndex": 189,
-        "text": "**Jacobsen & Svart Coffee Roasters** - This coffee shop has a rating of 4.7 stars and is currently open until 5:00 PM today."
-      },
-      "groundingChunkIndices": [
-        0
-      ]
-    },
-    {
-      "segment": {
-        "startIndex": 370,
-        "endIndex": 458,
-        "text": "**Café Løkka** - This cafe has a 4.3-star rating and is currently open until 12:00 AM."
-      },
-      "groundingChunkIndices": [
-        1
-      ]
-    },
-    {
-      "segment": {
-        "startIndex": 463,
-        "endIndex": 557,
-        "text": "**Dromedar Kaffebar, Nordre** - Rated 4.3 stars, this coffee shop is open until 7:00 PM today."
-      },
-      "groundingChunkIndices": [
-        2
-      ]
-    },
-    {
-      "segment": {
-        "startIndex": 562,
-        "endIndex": 673,
-        "text": "**Espresso House** (Nordre gate 1-3) - This cafe has a rating of 4.2 stars and is currently open until 8:00 PM."
-      },
-      "groundingChunkIndices": [
-        3
-      ]
-    }
-  ],
-  "webSearchQueries": [
-    "coffee shops with outdoor seating near me within 1km"
-  ]
-} 
+google_gemini$get_supplementary()
 ```
 
 **Enabling the Maps Widget**
@@ -802,7 +638,7 @@ google_gemini$chat(
 **Extract grounding metadata with citations:**
 
 ```{r}
-cat(google_gemini$get_supplementary(format_to = "yaml"))
+cat(yaml::as.yaml(google_gemini$get_supplementary()))
 ```
 
 ```{yaml}

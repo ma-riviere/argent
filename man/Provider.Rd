@@ -137,18 +137,11 @@ Set the rate limit
 \subsection{Method \code{get_history()}}{
 Get both chat and session history
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Provider$get_history(format_to = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Provider$get_history()}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{format_to}}{Character. Output format: "json", "yaml", or NULL for list (default: NULL)}
-}
-\if{html}{\out{</div>}}
-}
 \subsection{Returns}{
-List, JSON string, or YAML string. History in requested format
+List. History containing both chat_history and session_history
 }
 }
 \if{html}{\out{<hr>}}
@@ -177,18 +170,11 @@ Self (invisibly) for method chaining
 \subsection{Method \code{get_chat_history()}}{
 Get the chat history. The chat history is the history of messages exchanged between the user and the model.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Provider$get_chat_history(format_to = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Provider$get_chat_history()}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{format_to}}{Character. Output format: "json", "yaml", or NULL for list (default: NULL)}
-}
-\if{html}{\out{</div>}}
-}
 \subsection{Returns}{
-List, JSON string, or YAML string. Chat history in requested format
+List. Chat history
 }
 }
 \if{html}{\out{<hr>}}
@@ -197,18 +183,11 @@ List, JSON string, or YAML string. Chat history in requested format
 \subsection{Method \code{get_session_history()}}{
 Get the session history
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Provider$get_session_history(format_to = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Provider$get_session_history()}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{format_to}}{Character. Output format: "json", "yaml", or NULL for list (default: NULL)}
-}
-\if{html}{\out{</div>}}
-}
 \subsection{Returns}{
-List, JSON string, or YAML string. Session history (alternating query_data and responses) in requested format
+List. Session history (alternating query_data and responses)
 }
 }
 \if{html}{\out{<hr>}}
@@ -347,18 +326,11 @@ Integer. Cumulative tokens used computed from session_history, up to the specifi
 \subsection{Method \code{get_last_response()}}{
 Get the last API response
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Provider$get_last_response(format_to = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Provider$get_last_response()}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{format_to}}{Character. Output format: "json", "yaml", or NULL for list (default: NULL)}
-}
-\if{html}{\out{</div>}}
-}
 \subsection{Returns}{
-List, JSON string, or YAML string. Last API response object in requested format, or NULL if no response has been stored
+List. Last API response object, or NULL if no response has been stored
 }
 }
 \if{html}{\out{<hr>}}
@@ -483,23 +455,18 @@ Character vector. Paths to saved files (invisibly)
 \subsection{Method \code{get_supplementary()}}{
 Get supplementary data from an API response (annotations, citations, grounding metadata, etc.)
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Provider$get_supplementary(
-  api_res = self$get_last_response(),
-  format_to = NULL
-)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Provider$get_supplementary(api_res = self$get_last_response())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{api_res}}{List. API response object (defaults to last response)}
-
-\item{\code{format_to}}{Character. Output format: "json", "yaml", or NULL for list (default: NULL)}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-List, JSON string, or YAML string. Supplementary data from response (provider-specific structure)
+List. Supplementary data from response (provider-specific structure)
 }
 }
 \if{html}{\out{<hr>}}

@@ -87,11 +87,10 @@ Provider <- R6::R6Class( # nolint
 
         #' @description
         #' Get both chat and session history
-        #' @param format_to Character. Output format: "json", "yaml", or NULL for list (default: NULL)
-        #' @return List, JSON string, or YAML string. History in requested format
-        get_history = function(format_to = NULL) {
+        #' @return List. History containing both chat_history and session_history
+        get_history = function() {
             history <- list(chat_history = self$chat_history, session_history = self$session_history)
-            return(format_output(history, format_to))
+            return(history)
         },
 
         #' @description
@@ -115,18 +114,16 @@ Provider <- R6::R6Class( # nolint
 
         #' @description
         #' Get the chat history. The chat history is the history of messages exchanged between the user and the model.
-        #' @param format_to Character. Output format: "json", "yaml", or NULL for list (default: NULL)
-        #' @return List, JSON string, or YAML string. Chat history in requested format
-        get_chat_history = function(format_to = NULL) {
-            return(format_output(self$chat_history, format_to))
+        #' @return List. Chat history
+        get_chat_history = function() {
+            return(self$chat_history)
         },
 
         #' @description
         #' Get the session history
-        #' @param format_to Character. Output format: "json", "yaml", or NULL for list (default: NULL)
-        #' @return List, JSON string, or YAML string. Session history (alternating query_data and responses) in requested format
-        get_session_history = function(format_to = NULL) {
-            return(format_output(self$session_history, format_to))
+        #' @return List. Session history (alternating query_data and responses)
+        get_session_history = function() {
+            return(self$session_history)
         },
 
         #' @description
@@ -255,18 +252,17 @@ Provider <- R6::R6Class( # nolint
 
         #' @description
         #' Get the last API response
-        #' @param format_to Character. Output format: "json", "yaml", or NULL for list (default: NULL)
-        #' @return List, JSON string, or YAML string. Last API response object in requested format, or NULL if no response has been stored
-        get_last_response = function(format_to = NULL) {
+        #' @return List. Last API response object, or NULL if no response has been stored
+        get_last_response = function() {
             if (purrr::is_empty(self$session_history)) {
                 cli::cli_alert_info("No session history found")
                 return(NULL)
             }
-            last_response <- purrr::keep(self$session_history, \(x) x$type == "response") |> 
-                last() |> 
+            last_response <- purrr::keep(self$session_history, \(x) x$type == "response") |>
+                last() |>
                 purrr::pluck("data")
-            
-            return(format_output(last_response, format_to))
+
+            return(last_response)
         },
 
         #' @description
@@ -343,11 +339,10 @@ Provider <- R6::R6Class( # nolint
         #' @description
         #' Get supplementary data from an API response (annotations, citations, grounding metadata, etc.)
         #' @param api_res List. API response object (defaults to last response)
-        #' @param format_to Character. Output format: "json", "yaml", or NULL for list (default: NULL)
-        #' @return List, JSON string, or YAML string. Supplementary data from response (provider-specific structure)
-        get_supplementary = function(api_res = self$get_last_response(), format_to = NULL) {
+        #' @return List. Supplementary data from response (provider-specific structure)
+        get_supplementary = function(api_res = self$get_last_response()) {
             supplementary_data <- private$extract_supplementary(api_res)
-            return(format_output(supplementary_data, format_to))
+            return(supplementary_data)
         },
 
         # ------🔺 PRINT -------------------------------------------------------

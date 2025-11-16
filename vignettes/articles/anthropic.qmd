@@ -134,11 +134,7 @@ anthropic$chat(
 
 :::
 
-We can call `anthropic$get_supplementary()` to get the citations:
-
-```{r}
-cat(anthropic$get_supplementary(format_to = "yaml"))
-```
+We can call `anthropic$get_supplementary()` to get the citations.
 
 
 ## Server-side: Web Fetch
@@ -155,11 +151,7 @@ anthropic$chat(
 
 The `web_fetch` tool also supports parameters like `allowed_domains`, `exclude_domains`, and `max_uses`. See [Anthropic's documentation](https://docs.claude.com/en/docs/agents-and-tools/tool-use/web-fetch-tool#tool-definition) for details.
 
-We can call `anthropic$get_supplementary()` to get the details of the searches the server made:
-
-```{r}
-cat(anthropic$get_supplementary(format_to = "yaml"))
-```
+We can call `anthropic$get_supplementary()` to get the details of the searches the server made.
 
 
 ## Server-side: Code Execution

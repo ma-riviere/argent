@@ -30,8 +30,6 @@ template:
 
 destination: docs
 
-llm-docs: no
-
 development:
   mode: auto
 

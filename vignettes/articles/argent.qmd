@@ -8,7 +8,11 @@ execute:
 
 # Getting Started
 
-Here is a quick example using the Google Gemini provider:
+Here is a quick showcase of the various features of `argent` using the Google (Gemini) provider. 
+
+::: {.callout-note appearance="simple"}
+The examples shown would be mostly identical with any other provider.
+:::
 
 ```{r}
 gemini <- Google$new(api_key = Sys.getenv("GEMINI_API_KEY"))
@@ -67,8 +71,6 @@ Run the agent:
 gemini$chat(
     "When was the first release of the R 'ellmer' package on GitHub?",
     model = "gemini-2.5-flash",
-    thinking_budget = 512,
-    include_thoughts = TRUE,
     tools = list(as_tool(web_search), as_tool(web_fetch)),
     output_schema = package_info_schema
 )
@@ -273,7 +275,7 @@ Check the chat history:
 ```{r}
 #| eval: false
 
-cat(google_gemini$get_chat_history(format_to = "yaml"))
+cat(yaml::as.yaml(google_gemini$get_chat_history()))
 ```
 
 ```json

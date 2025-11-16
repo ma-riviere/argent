@@ -132,7 +132,7 @@ Search models do not support standard sampling parameters (temperature, top_p, f
 **Extracting the annotations:** we can extract the annotations with `openai_chat$get_supplementary()` or `print(openai_chat, show_supplementary = TRUE)`.
 
 ```{r}
-cat(openai_chat$get_supplementary(format_to = "yaml"))
+cat(yaml::as.yaml(openai_chat$get_supplementary()))
 ```
 
 ```{yaml}
