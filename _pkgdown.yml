@@ -87,7 +87,8 @@ articles:
 - title: Advanced Use
   desc: Advanced features and techniques
   navbar: Advanced Use
-  contents: articles/usecase-rag
+  contents:
+    - articles/advanced-rag
 
 reference:
 - title: Provider Classes

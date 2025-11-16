@@ -26,14 +26,12 @@ outputs.
 > I started working on this back in 2023 when none of the existing LLM
 > packages supported tool calling or structured outputs, but I never
 > took the time to put everything into a proper package until now.
->
 > However, there are now several similar packages, including
-> [ellmer](https://github.com/tidyverse/ellmer) by the Tidyverse team,
-> which I recommend using instead.
+> [ellmer](https://github.com/tidyverse/ellmer) by the Tidyverse team.
 >
 > I’m putting `argent` out there in case it supports some edge cases
 > that other packages don’t, and because I didn’t want to let all that
-> work go to waste. I will be progressively migrating my projects to
+> work go to waste. But I will be progressively migrating my projects to
 > `ellmer`, and I am not sure how long I’ll maintain `argent`.
 
 ## In a Nutshell
