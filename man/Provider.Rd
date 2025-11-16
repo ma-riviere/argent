@@ -2,7 +2,7 @@
 % Please edit documentation in R/provider.R
 \name{Provider}
 \alias{Provider}
-\title{Provider Base Class}
+\title{Provider Base Class: shared interface & common functionalities for all LLM providers}
 \description{
 Base R6 class for all LLM provider clients. Provides shared infrastructure for:
 \itemize{
@@ -30,15 +30,17 @@ Manual save/load available via \code{dump_history()} and \code{load_history()}.
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{chat_history}}{List. Conversation history (provider-specific format)}
+\item{\code{base_url}}{Character. Base URL for API endpoint}
 
-\item{\code{session_history}}{List. Ground truth: alternating query_data and API responses}
+\item{\code{provider_name}}{Character. Provider name}
 
 \item{\code{rate_limit}}{Numeric. Rate limit in requests per second}
 
 \item{\code{history_file_path}}{Character. Full file path for persistent history storage}
 
-\item{\code{provider_name}}{Character. Provider name (Provider)}
+\item{\code{chat_history}}{List. Conversation history (provider-specific format)}
+
+\item{\code{session_history}}{List. Ground truth: alternating query_data and API responses}
 
 \item{\code{server_tools}}{Character vector. Server-side tools to use for API requests}
 

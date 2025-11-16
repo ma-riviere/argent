@@ -96,14 +96,15 @@ reference:
   contents:
   - Google
   - Anthropic
-  - starts_with("OpenAI")
+  - starts_with("OpenAI_")
   - OpenRouter
   - LocalLLM
 
-- subtitle: Parent Provider Class
-  desc: Parent class for all LLM providers (internal use only)
+- subtitle: Internal Classes
+  desc: Parent (internal) classes
   contents:
   - Provider
+  - OpenAI
 
 - title: Utilities
 - subtitle: Multimodal Inputs

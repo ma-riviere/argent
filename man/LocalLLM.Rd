@@ -2,10 +2,10 @@
 % Please edit documentation in R/local_llm.R
 \name{LocalLLM}
 \alias{LocalLLM}
-\title{Local LLM API Client}
+\title{Client for local LLM servers (e.g., llama.cpp, Ollama)}
 \description{
 R6 class for interacting with local LLM servers (e.g., llama.cpp, Ollama) that implement
-OpenAI-compatible APIs. Provides methods for chat completions with tool calling support.
+OpenAI-compatible APIs. Provides methods for chat completions, embeddings, and tool calling capabilities.
 }
 \examples{
 \dontrun{

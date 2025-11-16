@@ -2,10 +2,10 @@
 % Please edit documentation in R/openrouter.R
 \name{OpenRouter}
 \alias{OpenRouter}
-\title{OpenRouter API Client}
+\title{Client for the OpenRouter API}
 \description{
-R6 class for interacting with OpenRouter's API. Provides access to multiple LLM providers
-through a unified interface with support for chat completions, tool calling, and structured outputs.
+R6 class for interacting with OpenRouter's API. Provides methods for chat completions,
+model information retrieval, embeddings, and function calling capabilities.
 }
 \section{Useful links}{
 

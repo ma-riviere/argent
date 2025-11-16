@@ -1,8 +1,8 @@
-#' Anthropic API Client
+#' Client for Anthropic's Claude API
 #'
 #' @description
-#' R6 class for interacting with Anthropic's API. Provides methods for chat completions
-#' with support for prompt caching, tool calling, and structured outputs.
+#' R6 class for interacting with Anthropic's API. Provides methods for chat completions,
+#' model information retrieval, files management, and tool calling capabilities.
 #'
 #' @section Useful links:
 #' - API reference: https://docs.claude.com/en/api/overview

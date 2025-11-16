@@ -2,10 +2,10 @@
 % Please edit documentation in R/google.R
 \name{Google}
 \alias{Google}
-\title{Google API Client}
+\title{Client for Google's Gemini API}
 \description{
-R6 class for interacting with Google's API. Provides methods for chat completions,
-model information retrieval, function calling capabilities, structured outputs, and context caching.
+R6 class for interacting with Google's Gemini API. Provides methods for chat completions,
+model information retrieval, embeddings, files management, and function calling capabilities.
 }
 \section{Useful links}{
 

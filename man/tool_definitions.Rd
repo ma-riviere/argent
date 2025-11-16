@@ -5,7 +5,7 @@
 \alias{as_tool}
 \alias{tool}
 \alias{schema}
-\title{Tool Definitions}
+\title{Generate tools and schemas definitions from functions annotations, or direct specification}
 \usage{
 as_tool(fn)
 
@@ -56,7 +56,6 @@ For \code{schema()}: Same as \code{tool()} but with additional fields:
 }
 }
 \description{
-Functions for defining tools and schemas using either annotations or direct specification.
 \subsection{Annotation-based approach}{
 
 \code{as_tool()} parses annotations from a function and converts it to a generic

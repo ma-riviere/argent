@@ -1,4 +1,4 @@
-#' Provider Base Class
+#' Provider Base Class: shared interface & common functionalities for all LLM providers
 #'
 #' @description
 #' Base R6 class for all LLM provider clients. Provides shared infrastructure for:
@@ -10,11 +10,12 @@
 #' This class is inherited by all provider classes (Google, Anthropic, OpenAI_Base)
 #' to ensure consistent interfaces and eliminate code duplication.
 #'
-#' @field chat_history List. Conversation history (provider-specific format)
-#' @field session_history List. Ground truth: alternating query_data and API responses
+#' @field base_url Character. Base URL for API endpoint
+#' @field provider_name Character. Provider name
 #' @field rate_limit Numeric. Rate limit in requests per second
 #' @field history_file_path Character. Full file path for persistent history storage
-#' @field provider_name Character. Provider name (Provider)
+#' @field chat_history List. Conversation history (provider-specific format)
+#' @field session_history List. Ground truth: alternating query_data and API responses
 #' @field server_tools Character vector. Server-side tools to use for API requests
 #' @field default_model Character. Default model to use for chat requests
 #'

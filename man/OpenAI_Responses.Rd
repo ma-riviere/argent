@@ -2,24 +2,24 @@
 % Please edit documentation in R/openai_responses.R
 \name{OpenAI_Responses}
 \alias{OpenAI_Responses}
-\title{OpenAI Responses API Client}
+\title{Client for OpenAI's Responses API}
 \description{
 R6 class for interacting with OpenAI's Responses API (v1/responses).
-This is OpenAI's newest and most advanced API that combines the strengths of Chat Completions
-and Assistants APIs into a single streamlined interface for building agentic applications.
+Provides methods for chat completions and container management.
 
-Key features:
+This class inherits file management and vector store functionalities from
+its parent class OpenAI.
+}
+\section{Features}{
+
 \itemize{
 \item Server-side conversation state management via previous_response_id
 \item Server-side tools: web_search, file_search, code_interpreter
 \item Reasoning budget support for extended thinking
-\item Background mode for long-running tasks
 \item Response forking: continue from any point in conversation history
 }
-
-This class inherits file management and vector store functionality from OpenAI,
-allowing files uploaded here to be used across different OpenAI APIs.
 }
+
 \section{Useful links}{
 
 \itemize{

@@ -7,7 +7,7 @@
 \alias{as_file_content}
 \alias{as_pdf_content}
 \alias{as_json_content}
-\title{Convert inputs to content for multimodal API requests}
+\title{Convert file paths, URLs or R objects to the specified content format before passing it to the LLM API}
 \usage{
 as_text_content(
   ...,

@@ -2,11 +2,12 @@
 % Please edit documentation in R/openai_base.R
 \name{OpenAI}
 \alias{OpenAI}
-\title{OpenAI Base API Client}
+\title{Parent class for OpenAI API clients (Responses, Chat Completions, Assistants)}
 \description{
-Base R6 class for OpenAI API interactions. Provides shared infrastructure for file management,
-vector stores, and HTTP request handling. This class is inherited by OpenAI_Chat, OpenAI_Responses,
-and OpenAI_Assistant to provide consistent interfaces across different OpenAI APIs.
+Parent class for OpenAI API clients (Responses, Chat Completions, Assistants).
+Provides shared infrastructure for file management, vector stores, and API requests.
+This class is inherited by OpenAI_Chat, OpenAI_Responses, and OpenAI_Assistant
+to provide consistent interfaces across different OpenAI API clients.
 }
 \examples{
 

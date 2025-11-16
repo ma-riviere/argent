@@ -2,18 +2,39 @@
 % Please edit documentation in R/openai_assistant.R
 \name{OpenAI_Assistant}
 \alias{OpenAI_Assistant}
-\title{OpenAI Assistant API Client}
+\title{Client for OpenAI's Assistants API}
 \description{
 R6 class for interacting with OpenAI's Assistants API. Provides methods for creating and
-managing assistants, threads, and runs with support for file search and function calling.
+managing assistants and threads.
 }
 \section{Deprecation Notice}{
 
-\strong{DEPRECATED:} OpenAI has deprecated the Assistants API in favor of the new Responses API. It will shut down on August 26, 2026.
+\strong{DEPRECATED:} OpenAI has deprecated the Assistants API in favor of the Responses API. It will shut down on August 26, 2026.
 
 Users should migrate to the \href{responses-api.html}{Responses API} instead.
 
 For more information, see: https://platform.openai.com/docs/assistants/migration
+}
+
+\section{History Management}{
+
+The Assistants API uses server-side thread state for conversation history. However,
+this class maintains client-side \code{session_history} for tracking conversations with token counts.
+\itemize{
+\item \code{chat_history} methods are overridden and not applicable (server-side threads)
+\item \code{session_history} is maintained for use with \code{print()} and token tracking
+\item Use \code{get_thread_msgs()} to retrieve server-side conversation history
+\item Use \code{get_history()} or \code{get_session_history()} for client-side tracking
+}
+}
+
+\section{Features}{
+
+\itemize{
+\item Server-side state management with threads
+\item File search with vector stores
+\item Code execution in sandboxed containers
+}
 }
 
 \section{Useful links}{
@@ -29,18 +50,6 @@ For more information, see: https://platform.openai.com/docs/assistants/migration
 \itemize{
 \item "file_search" for file search with vector stores
 \item "code_interpreter" for Python code execution in sandboxed containers
-}
-}
-
-\section{History Management}{
-
-The Assistants API uses server-side thread state for conversation history. However,
-this class maintains client-side \code{session_history} for tracking conversations with token counts.
-\itemize{
-\item \code{chat_history} methods are overridden and not applicable (server-side threads)
-\item \code{session_history} is maintained for use with \code{print()} and token tracking
-\item Use \code{get_thread_msgs()} to retrieve server-side conversation history
-\item Use \code{get_history()} or \code{get_session_history()} for client-side tracking
 }
 }
 

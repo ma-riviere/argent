@@ -1,12 +1,18 @@
-#' OpenAI Chat Completions API Client
+#' Client for OpenAI's Chat Completions API
 #'
 #' @description
 #' R6 class for interacting with OpenAI's Chat Completions API (v1/chat/completions).
-#' Provides methods for stateless or stateful chat interactions with conversation history,
-#' tool calling, multimodal inputs, and structured outputs.
+#' Provides methods for chat completions.
+#' 
+#' This class inherits file management and vector store functionalities from 
+#' its parent class OpenAI.
 #'
-#' This class inherits file management and vector store functionality from OpenAI,
-#' allowing files uploaded here to be used across different OpenAI APIs (Responses, Assistants).
+#' @section Features:
+#' - Client-side chat history management
+#' - Tool calling
+#' - Multimodal inputs
+#' - Uploaded file inputs
+#' - Structured outputs
 #'
 #' @section Useful links:
 #' - API reference: https://platform.openai.com/docs/api-reference/chat
