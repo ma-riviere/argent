@@ -1,9 +1,32 @@
 # Client for OpenAI's Assistants API
 
-R6 class for interacting with OpenAI's Assistants API. Provides methods
-for creating and managing assistants and threads.
+R6 class for interacting with OpenAI's Assistants API. Inherits file
+management and vector store methods from OpenAI_Base.
 
-## Deprecation Notice
+## Features
+
+- Server-side conversation state management via threads
+
+- Client-side tools
+
+- Server-side tools
+
+- Multimodal inputs (files, images, PDFs, R objects)
+
+- File uploads and management
+
+- Server-side RAG with stores & `file_search` server tool
+
+- Structured outputs
+
+## Useful links
+
+- API reference:
+  https://platform.openai.com/docs/api-reference/assistants
+
+- API docs: https://platform.openai.com/docs/assistants/deep-dive
+
+## Deprecation notice
 
 **DEPRECATED:** OpenAI has deprecated the Assistants API in favor of the
 Responses API. It will shut down on August 26, 2026.
@@ -15,43 +38,19 @@ instead.
 For more information, see:
 https://platform.openai.com/docs/assistants/migration
 
-## History Management
+## History management
 
-The Assistants API uses server-side thread state for conversation
-history. However, this class maintains client-side `session_history` for
-tracking conversations with token counts.
+The Assistants API has no client-side history management. It uses
+server-side thread state for conversation history. However,it also
+maintains a client-side `session_history` for tracking conversations
+with token counts (unreliable).
 
-- `chat_history` methods are overridden and not applicable (server-side
-  threads)
+## Main entrypoints
 
-- `session_history` is maintained for use with
-  [`print()`](https://rdrr.io/r/base/print.html) and token tracking
+- `chat()`: Multi-turn multimodal conversations with tool use and
+  structured outputs.
 
-- Use `get_thread_msgs()` to retrieve server-side conversation history
-
-- Use `get_history()` or `get_session_history()` for client-side
-  tracking
-
-## Features
-
-- Server-side state management with threads
-
-- File search with vector stores
-
-- Code execution in sandboxed containers
-
-## Useful links
-
-- API reference:
-  https://platform.openai.com/docs/api-reference/assistants
-
-- API docs: https://platform.openai.com/docs/assistants/deep-dive
-
-## Server-side tools
-
-- "file_search" for file search with vector stores
-
-- "code_interpreter" for Python code execution in sandboxed containers
+- `embeddings()`: Vector embeddings for text inputs.
 
 ## Super classes
 

@@ -1,8 +1,22 @@
 # Client for the OpenRouter API
 
-R6 class for interacting with OpenRouter's API. Provides methods for
-chat completions, model information retrieval, embeddings, and function
-calling capabilities.
+R6 class for interacting with OpenRouter's API.
+
+## Features
+
+- Client-side conversation state management
+
+- Client-side tools
+
+- Server-side tools
+
+- Multimodal inputs (files, images, PDFs, R objects)
+
+- Provider routing and preferences
+
+- Reasoning
+
+- Structured outputs
 
 ## Useful links
 
@@ -10,9 +24,22 @@ calling capabilities.
 
 - API docs: https://openrouter.ai/docs/quickstart
 
+## Main entrypoints
+
+- `chat()`: Multi-turn multimodal conversations with tool use and
+  structured outputs.
+
+- `embeddings()`: Vector embeddings for text inputs.
+
 ## Server-side tools
 
 - "web_search" for web search grounding via OpenRouter's web plugin
+
+## Structured outputs
+
+Function-call trick for all models: uses tool calling to simulate
+structured outputs, always requiring an additional API query with full
+chat history (incurs extra cost).
 
 ## Super class
 

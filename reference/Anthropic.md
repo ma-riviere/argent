@@ -1,14 +1,35 @@
 # Client for Anthropic's Claude API
 
-R6 class for interacting with Anthropic's API. Provides methods for chat
-completions, model information retrieval, files management, and tool
-calling capabilities.
+R6 class for interacting with Anthropic's Claude API.
+
+## Features
+
+- Client-side conversation state management
+
+- Client-side tools
+
+- Server-side tools
+
+- Multimodal inputs (files, images, PDFs, R objects)
+
+- File uploads and management
+
+- Prompt caching
+
+- Extended thinking support
+
+- Structured outputs
 
 ## Useful links
 
 - API reference: https://docs.claude.com/en/api/overview
 
 - API docs: https://docs.claude.com/en/docs/intro
+
+## Main entrypoints
+
+- `chat()`: Multi-turn multimodal conversations with tool use and
+  structured outputs.
 
 ## Server-side tools
 
@@ -19,6 +40,16 @@ calling capabilities.
   `search_options`.
 
 - "web_fetch" to fetch content from a URL provided in the prompt.
+
+## Structured outputs
+
+Hybrid approach for structured outputs:
+
+- Native support for Sonnet and Opus models via JSON schema.
+
+- Function-call trick for Haiku models or when code_execution is
+  enabled: uses tool calling to simulate structured outputs, requiring
+  an additional API query with full chat history (incurs extra cost).
 
 ## Super class
 
