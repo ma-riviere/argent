@@ -1,0 +1,625 @@
+# Anthropic (Claude)
+
+## Introduction
+
+This article covers using the Anthropic (Claude) provider with `argent`.
+Anthropic offers powerful extended thinking capabilities, server-side
+tools, and prompt caching for cost optimization.
+
+## Setup
+
+``` r
+anthropic <- Anthropic$new(api_key = Sys.getenv("ANTHROPIC_API_KEY"))
+```
+
+**Available Models**
+
+``` r
+anthropic$list_models()
+```
+
+## Basic Completion
+
+``` r
+anthropic$chat(
+    "What's the R programming language? Answer in three sentences.",
+    model = "claude-haiku-4-5-20251001"
+)
+```
+
+## Tool Calling + Structured Output + Thinking
+
+Anthropic supports extended thinking via the `thinking_budget`
+parameter, which allows models to reason through problems before
+responding.
+
+First, define some web-related tools (search, crawl, fetch, and a
+general-use tool) bundled in a `web_tools` list:
+
+Web Tools Implementation
+
+**Search:**
+
+``` r
+web_search <- function(query) {
+    #' @description Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or any data not in your training data.
+    #' @param query:string* The search query string. Be specific and use keywords that will yield the most relevant results.
+    
+    return(web_search_tavily(query))
+}
+
+web_search_tavily <- function(query) {
+    res <- httr2::request("https://api.tavily.com/search") |> 
+        httr2::req_body_json(list(
+            query = query,
+            search_depth = "basic",
+            include_answer = FALSE,
+            max_results = 10,
+            api_key = Sys.getenv("TAVILY_API_KEY")
+        )) |> 
+        httr2::req_error(is_error = \(resp) FALSE) |> 
+        httr2::req_throttle(rate = 20/60, realm = "tavily") |> 
+        httr2::req_perform() |> 
+        httr2::resp_body_json() |> 
+        purrr::discard_at(c("response_time", "follow_up_questions", "images"))
+
+    results <- purrr::map(res$results, \(x) purrr::discard_at(x, "raw_content"))
+
+    return(jsonlite::toJSON(results, pretty = FALSE, auto_unbox = TRUE))
+}
+```
+
+**Fetch:**
+
+``` r
+web_fetch <- function(url) {
+    #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content. Automatically falls back to alternative methods if the primary fetch fails.
+    #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
+    
+    res <- web_fetch_trafilatura(url)
+
+    could_not_fetch <- c(
+        "Impossible to fetch the contents of this web page",
+        "Please reload this page",
+        "There was an error while loading",
+        "404"
+    )
+    if (is.null(res) || is.na(res) || nchar(res) == 0 ||
+        any(stringr::str_detect(res, stringr::fixed(could_not_fetch, ignore_case = TRUE)))) {
+        res <- web_fetch_rvest(url)
+    }
+    return(res)
+}
+
+web_fetch_trafilatura <- function(url) {
+    # pip install trafilatura
+    tryCatch({
+        res <- paste0("trafilatura -u ", url, " --markdown --no-comments --links ") |> 
+            system(intern = TRUE) |> 
+            purrr::keep(nzchar) |>
+            paste0(collapse = "\n")
+        
+        return(res)
+    },
+    error = function(e) {
+        return("Impossible to fetch the contents of this web page. It might not allow scraping")
+    })
+}
+
+web_fetch_rvest <- function(url) {
+    tags_to_ignore <- c(
+        "a", "script", "code", "img", "svg", "footer", "g", "path", "polygon", "label", "button", "form", "input", "select", 
+        "style", "link", "meta", "noscript", "iframe", "embed", "object", "param", "video", "audio", "track", "source", 
+        "canvas", "map", "area", "math", "col", "colgroup", "dl", "dt", "dd", "hr", "pre", "address", "figure", "figcaption",
+        "dfn", "em", "kbd", "samp", "var", "del", "ins", "mark", "circle"
+    )
+
+    remove_tags <- function(xml, tags) {
+        purrr::walk(tags, \(tag) purrr::walk(xml2::xml_find_all(xml, paste0(".//", tag)), \(node) xml2::xml_remove(node)))
+        return(xml)
+    }
+
+    cleaned_contents <- tryCatch(
+        rvest::read_html(url)
+        |> rvest::html_element("body")
+        |> remove_tags(tags_to_ignore)
+        |> rvest::html_children()
+        |> rvest::html_text2()
+        |> purrr::discard(\(x) x == "")
+        |> paste0(collapse = "\n\n"),
+        error = \(e) return("")
+    )
+    return(cleaned_contents)
+}
+```
+
+Then, let’s define a JSON schema for the structured output using
+[`schema()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md):
+
+``` r
+package_info_schema <- schema(
+    name = "package_info",
+    description = "Information about an R package release",
+    release_version = "string* The release version of the package",
+    release_date = "string* The release date of the `release_version`"
+)
+```
+
+Then, run the agent:
+
+``` r
+anthropic$chat(
+    "When was the first release of the R 'ellmer' package on GitHub?",
+    model = "claude-haiku-4-5-20251001",
+    thinking_budget = 1024,
+    tools = list(as_tool(web_search), as_tool(web_fetch)),
+    output_schema = package_info_schema
+)
+```
+
+``` default
+$release_version
+[1] "0.1.0"
+
+$release_date
+[1] "2025-01-09"
+```
+
+The model will keep calling tools until it has enough information to
+answer the question.
+
+### Extracting Reasoning
+
+``` r
+cat(anthropic$get_reasoning_text())
+```
+
+Alternatively, simply `print(anthropic)` to see the reasoning and
+answers’ text in the console, turn by turn.
+
+> **Note**
+>
+> `get_reasoning_text()` and `get_content_text()` use the last API
+> response (`anthropic$get_last_response()`) by default.
+
+## Server-side Tools
+
+Server-side tools are tools you can call without having to define them
+yourself. They will be run on the provider’s server.
+
+Anthropic provides three server-side tools:
+
+- **web_search** - Web search with citations
+- **web_fetch** - Fetch and process URLs
+- **code_execution** - Execute commands, write and execute python code,
+  analyze data, create visualizations and files
+
+### Server-side: Web Search
+
+``` r
+anthropic$chat(
+    "What's the latest version of the R 'ellmer' package?",
+    model = "claude-haiku-4-5-20251001",
+    tools = list("web_search"),
+    output_schema = package_info_schema
+)
+```
+
+> **Tip**
+>
+> The `web_search` tool supports additional parameters like
+> `allowed_domains`, `exclude_domains`, `max_uses`, and `user_location`.
+> See [Anthropic’s
+> documentation](https://docs.claude.com/en/docs/agents-and-tools/tool-use/web-search-tool#tool-definition)
+> for details.
+>
+> ``` r
+> anthropic$chat(
+>     "What's the latest version of the R 'ellmer' package?",
+>     model = "claude-haiku-4-5-20251001",
+>     tools = list(
+>         list(
+>             type = "web_search_20250305",
+>             name = "web_search",
+>             blocked_domains = list("rdrr.io"),
+>             max_uses = 2
+>         )
+>     ),
+>     output_schema = package_info_schema
+> )
+> ```
+
+We can call `anthropic$get_supplementary()` to get the citations.
+
+### Server-side: Web Fetch
+
+This server tool lets the LLM fetch the contents of URLs given to it in
+the prompt.
+
+``` r
+anthropic$chat(
+    "Summarize the main changes in the current development version of the R 'ellmer' package from: https://raw.githubusercontent.com/tidyverse/ellmer/main/NEWS.md",
+    model = "claude-haiku-4-5-20251001",
+    tools = list("web_fetch")
+)
+```
+
+The `web_fetch` tool also supports parameters like `allowed_domains`,
+`exclude_domains`, and `max_uses`. See [Anthropic’s
+documentation](https://docs.claude.com/en/docs/agents-and-tools/tool-use/web-fetch-tool#tool-definition)
+for details.
+
+We can call `anthropic$get_supplementary()` to get the details of the
+searches the server made.
+
+### Server-side: Code Execution
+
+Anthropic’s code_execution tool provides a sandboxed environment for
+executing shell commands and file operations.
+
+> **Note**
+>
+> - **Pricing**: \$0.05/session-hour with 5-minute minimum
+> - **Resources**: 5GB RAM/disk, 1 CPU, no internet access
+> - **Workspace**: Linked to the API key (files can be downloaded)
+> - **Sub-tools**:
+>   - `bash_code_execution` - Execute bash commands
+>   - `text_editor_code_execution` - Edit files
+> - **Expiration**: 30 days after creation
+>
+> Claude automatically determines which sub-tool to use.
+
+**Example: Analyzing the Penguins Dataset**
+
+``` r
+penguins_url <- "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/refs/heads/main/inst/extdata/penguins.csv"
+penguins_file <- anthropic$upload_file(penguins_url)
+
+code_exec_tool <- list(type = "code_execution", file_ids = list(penguins_file$id))
+
+anthropic$chat(
+    "Create a summary table showing average body_mass grouped by species, sex, and year. Save as CSV.",
+    model = "claude-sonnet-4-5-20250929",
+    tools = list(code_exec_tool)
+)
+```
+
+Inspect the generated code:
+
+``` r
+cat(anthropic$get_generated_code(langs = c("python"), as_chunks = TRUE))
+```
+
+Generated Code
+
+``` python
+import pandas as pd
+import os
+
+# Read the CSV file
+input_file = os.path.join(os.environ['INPUT_DIR'], 'fileaa34f5b158276.csv')
+df = pd.read_csv(input_file)
+
+# Display basic info about the data
+print("Original data shape:", df.shape)
+print("\nColumn names:", df.columns.tolist())
+print("\nFirst few rows:")
+print(df.head())
+
+# Check for missing values in key columns
+print("\nMissing values in key columns:")
+print(f"species: {df['species'].isna().sum()}")
+print(f"sex: {df['sex'].isna().sum()}")
+print(f"year: {df['year'].isna().sum()}")
+print(f"body_mass: {df['body_mass'].isna().sum()}")
+
+# Remove rows where body_mass is NA (can't calculate average for missing values)
+# Also remove rows where sex is NA if you want clean grouping
+df_clean = df.dropna(subset=['body_mass', 'sex', 'species', 'year'])
+
+print(f"\nData shape after removing rows with missing values: {df_clean.shape}")
+
+# Group by species, sex, and year, and calculate average body_mass
+summary = df_clean.groupby(['species', 'sex', 'year'])['body_mass'].mean().reset_index()
+summary.columns = ['species', 'sex', 'year', 'average_body_mass']
+
+# Round to 2 decimal places for readability
+summary['average_body_mass'] = summary['average_body_mass'].round(2)
+
+# Sort by species, year, and sex for better readability
+summary = summary.sort_values(['species', 'year', 'sex']).reset_index(drop=True)
+
+print("\nSummary table:")
+print(summary)
+
+# Save to CSV
+output_file = '/tmp/body_mass_summary.csv'
+summary.to_csv(output_file, index=False)
+print(f"\nSummary saved to {output_file}")
+
+# Copy to OUTPUT_DIR for export
+output_export = os.path.join(os.environ['OUTPUT_DIR'], 'body_mass_summary.csv')
+summary.to_csv(output_export, index=False)
+print(f"Summary exported to {output_export}")
+```
+
+Download the generated output file to `/data`:
+
+``` r
+downloaded_path <- anthropic$download_generated_files(dest_path = "data")
+#> ✔ [Anthropic] File downloaded to: data/body_mass_summary.csv
+```
+
+``` r
+read.csv(downloaded_path)
+```
+
+``` default
+     species    sex year average_body_mass
+1     Adelie female 2007           3389.77
+2     Adelie   male 2007           4038.64
+3     Adelie female 2008           3386.00
+4     Adelie   male 2008           4098.00
+5     Adelie female 2009           3334.62
+6     Adelie   male 2009           3995.19
+7  Chinstrap female 2007           3569.23
+8  Chinstrap   male 2007           3819.23
+9  Chinstrap female 2008           3472.22
+10 Chinstrap   male 2008           4127.78
+11 Chinstrap female 2009           3522.92
+12 Chinstrap   male 2009           3927.08
+13    Gentoo female 2007           4618.75
+14    Gentoo   male 2007           5552.94
+15    Gentoo female 2008           4627.27
+16    Gentoo   male 2008           5410.87
+17    Gentoo female 2009           4786.25
+18    Gentoo   male 2009           5510.71
+```
+
+Continue asking questions in the same context:
+
+``` r
+penguin_output_schema <- schema(
+    name = "penguin_output",
+    description = "Schema for the penguin output",
+    average_body_mass = "number* The average body_mass",
+    species = "string* The species",
+    sex = "string* The sex",
+    year = "integer* The year"
+)
+
+anthropic$chat(
+    "What's the average body_mass for the Adelie females in 2009?",
+    tools = list("code_execution"),
+    output_schema = penguin_output_schema
+)
+```
+
+``` default
+$species
+[1] "Adelie"
+
+$sex
+[1] "female"
+
+$year
+[1] 2009
+
+$average_body_mass
+[1] 3334.62
+```
+
+Cleanup:
+
+``` r
+anthropic$delete_file(penguins_file$id)
+```
+
+## Multimodal Inputs
+
+Anthropic Claude supports sending:
+
+- PDFs: URLs (as-is, base64, or text content), files (base64, or text
+  content)
+- Images: URLs (as-is, or base64), files (base64)
+- Remote files (through
+  [`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md))
+- Plain text & code files
+- Text-based data files (csv, tsv, json, ..)
+- R objects
+
+### Image Comprehension
+
+Downloading an example image
+
+``` r
+bsg04_cast_image_url <- "https://upload.wikimedia.org/wikipedia/en/1/1a/Battlestar_Galactica_%282004%29_cast.jpg"
+bsg04_cast_image_path <- download_temp_file(bsg04_cast_image_url)
+```
+
+**Sending a local image:**
+
+When providing a path to a local image, it will automatically be
+converted to base64 before being sent to the server.
+
+``` r
+anthropic$chat(
+    "Who are the characters in this image, and what show is it from?",
+    bsg04_cast_image_path,
+    model = "claude-haiku-4-5-20251001"
+)
+```
+
+**Sending an image URL:**
+
+> **Note**
+>
+> Image URLs are sent as-is to Anthropic.
+>
+> We could have used the `as_image_content(bsg04_cast_image_url)` helper
+> to make sure the path/url is converted to base64, and, optionally, to
+> resize the image before sending it.
+
+``` r
+anthropic$chat(
+    "Who are the characters in this image, and what show is it from?",
+    bsg04_cast_image_url,
+    model = "claude-haiku-4-5-20251001"
+)
+```
+
+``` default
+This is the cast from **Battlestar Galactica** (2004-2009), the science fiction series that rebooted the original 1978 show.
+
+The main characters visible in this promotional image include:
+
+- **Edward James Olmos** as Admiral William Adama
+- **Mary McDonnell** as President Laura Roslin
+- **Katee Sackhoff** as Kara "Starbuck" Thrace
+- **Jamie Bamber** as Lee "Apollo" Adama
+- **Tricia Helfer** as Number Six
+- **James Callis** as Gaius Baltar
+- **Grace Park** as Sharon "Athena" Agathon
+
+The show follows the last surviving battleship and its fleet of civilian ships as they search for the mythical planet Earth while being hunted by robotic Cylons. It became known for its complex characters, political intrigue, and exploration of themes like identity, religion, and survival.
+```
+
+*So say we all!*
+
+### PDF Comprehension
+
+Downloading an example PDF (my CV)
+
+``` r
+my_cv_url <- "https://ma-riviere.com/res/cv.pdf"
+my_cv_pdf_path <- download_temp_file(my_cv_url)
+```
+
+**Sending a local PDF:**
+
+When providing the prompt a path to a local PDF, it will automatically
+be converted to base64 before being sent to the server.
+
+``` r
+anthropic$chat(
+    "What's my favorite programming language?",
+    my_cv_pdf_path,
+    model = "claude-haiku-4-5-20251001"
+)
+```
+
+``` default
+Based on your resume, your favorite programming language is **R**.
+```
+
+*Damn right!*
+
+**Sending PDF URLs:**
+
+For Anthropic, by default, PDF URLs are sent as-is to the server.
+
+However, we can use the
+[`as_text_content()`](https://ma-riviere.github.io/argent/reference/as_text_content.md)
+helper to have
+[`pdftools::pdf_convert()`](https://docs.ropensci.org/pdftools//reference/pdf_render_page.html)
+parse the PDFs and pass their text contents to the model instead.
+
+``` r
+r6_pdf_url <- "https://cran.r-project.org/web/packages/R6/R6.pdf"
+s7_pdf_url <- "https://cran.r-project.org/web/packages/S7/S7.pdf"
+
+multimodal_prompt <- list(
+    "Give a short summary of the pros and cons of the two class systems in the following PDFs:",
+    as_text_content(r6_pdf_url),
+    as_text_content(s7_pdf_url)
+)
+
+anthropic$chat(!!!multimodal_prompt, model = "claude-sonnet-4-5-20250929")
+```
+
+### Sending files
+
+We can also send files directly to the model.
+
+Thanks to the
+[`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md)
+helper, we can pass further options to the provider:
+
+``` r
+cv_metadata <- anthropic$upload_file(my_cv_url)
+
+cv_file_ref <- as_file_content(
+    cv_metadata$id,
+    .provider_options = list(
+        title = "Some stuff I've done", 
+        context = "The `argent` R package is not yet mentionned on it but will soon be.", 
+        citations = TRUE
+    )
+)
+
+anthropic$chat(
+    "What R packages or tools are mentionned in my 'some stuff I've done' document?",
+    cv_file_ref,
+    model = "claude-haiku-4-5-20251001"
+)
+
+anthropic$delete_file(cv_metadata$id)
+```
+
+## Prompt Caching
+
+Anthropic supports prompt caching to reduce costs and latency for
+repeated context.
+
+Enable caching with the `cache_prompt`, `cache_system`, and
+`cache_tools` parameters:
+
+``` r
+multimodal_prompt <- list(
+    "Give a 3 sentences summary of the advantages of S7 over R6",
+    as_text_content(r6_pdf_url),
+    as_text_content(s7_pdf_url)
+)
+
+anthropic$chat(!!!multimodal_prompt, model = "claude-haiku-4-5-20251001", cache_prompt = TRUE)
+```
+
+We can check that the content was indeed cached:
+
+``` r
+purrr::pluck(anthropic$get_last_response(), "usage")
+```
+
+``` default
+$input_tokens
+[1] 2
+
+$cache_creation_input_tokens
+[1] 19770
+
+$cache_read_input_tokens
+[1] 0
+
+$cache_creation
+$cache_creation$ephemeral_5m_input_tokens
+[1] 19770
+
+$cache_creation$ephemeral_1h_input_tokens
+[1] 0
+
+
+$output_tokens
+[1] 140
+
+$service_tier
+[1] "standard"
+```
+
+> **Note**
+>
+> Cached content is stored for 5 minutes and reused across requests,
+> significantly reducing token costs for repeated context.
+>
+> See [Anthropic’s prompt caching
+> documentation](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching)
+> for more details.

@@ -1,0 +1,380 @@
+# Local LLMs
+
+## Introduction
+
+This article covers using local LLM servers with argent. The `LocalLLM`
+provider works with any OpenAI-compatible local server, including
+llama.cpp, Ollama, vLLM, and others.
+
+## Supported Servers
+
+- **llama.cpp** (llama-server)
+- **Ollama**
+- **vLLM**
+- **LM Studio**
+- **text-generation-webui**
+- Any other OpenAI-compatible server
+
+## Setup
+
+### Starting a Local Server
+
+``` bash
+llama.cpp/build/bin/llama-server \
+  --host 127.0.0.1 \
+  --port 5000 \
+  --flash-attn 1 \
+  --n-gpu-layers 999 --n-gpu-layers-draft 999 \
+  --model gemma-3-27b-it-IQ4_XS.gguf \
+  --model-draft gemma-3-4b-it-IQ4_XS.gguf \
+  --cache-type-k q8_0 --cache-type-v q8_0 \
+  --ctx-size 64000 --ctx-size-draft 64000 \
+  --draft-max 8 --draft-min 4 \
+  --jinja \
+  --reasoning-format deepseek \
+  --reasoning-budget -1 \
+  --mmproj mmproj-BF16.gguf
+```
+
+### Connecting to the Server
+
+``` r
+local_llama <- LocalLLM$new(base_url = "http://localhost:5000")
+#> ✔ [LocalLLM] Auto-detected model: gemma-3-27b-it-IQ4_XS.gguf
+```
+
+On initialization, `argent` will automatically detect the available
+model from the server and set it as the default model for all future
+`chat()` calls. You can check the current default model with
+`get_default_model_id()`:
+
+## Basic Completion
+
+``` r
+local_llama$chat("What's the R programming language? Answer in three sentences.")
+```
+
+## Tool Calling + Structured Output
+
+First, define some web-related tools (search, crawl, fetch, and a
+general-use tool) bundled in a `web_tools` list:
+
+Web Tools Implementation
+
+**Search:**
+
+``` r
+web_search <- function(query) {
+    #' @description Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or any data not in your training data.
+    #' @param query:string* The search query string. Be specific and use keywords that will yield the most relevant results.
+    
+    return(web_search_tavily(query))
+}
+
+web_search_tavily <- function(query) {
+    res <- httr2::request("https://api.tavily.com/search") |> 
+        httr2::req_body_json(list(
+            query = query,
+            search_depth = "basic",
+            include_answer = FALSE,
+            max_results = 10,
+            api_key = Sys.getenv("TAVILY_API_KEY")
+        )) |> 
+        httr2::req_error(is_error = \(resp) FALSE) |> 
+        httr2::req_throttle(rate = 20/60, realm = "tavily") |> 
+        httr2::req_perform() |> 
+        httr2::resp_body_json() |> 
+        purrr::discard_at(c("response_time", "follow_up_questions", "images"))
+
+    results <- purrr::map(res$results, \(x) purrr::discard_at(x, "raw_content"))
+
+    return(jsonlite::toJSON(results, pretty = FALSE, auto_unbox = TRUE))
+}
+```
+
+**Fetch:**
+
+``` r
+web_fetch <- function(url) {
+    #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content. Automatically falls back to alternative methods if the primary fetch fails.
+    #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
+    
+    res <- web_fetch_trafilatura(url)
+
+    could_not_fetch <- c(
+        "Impossible to fetch the contents of this web page",
+        "Please reload this page",
+        "There was an error while loading",
+        "404"
+    )
+    if (is.null(res) || is.na(res) || nchar(res) == 0 ||
+        any(stringr::str_detect(res, stringr::fixed(could_not_fetch, ignore_case = TRUE)))) {
+        res <- web_fetch_rvest(url)
+    }
+    return(res)
+}
+
+web_fetch_trafilatura <- function(url) {
+    # pip install trafilatura
+    tryCatch({
+        res <- paste0("trafilatura -u ", url, " --markdown --no-comments --links ") |> 
+            system(intern = TRUE) |> 
+            purrr::keep(nzchar) |>
+            paste0(collapse = "\n")
+        
+        return(res)
+    },
+    error = function(e) {
+        return("Impossible to fetch the contents of this web page. It might not allow scraping")
+    })
+}
+
+web_fetch_rvest <- function(url) {
+    tags_to_ignore <- c(
+        "a", "script", "code", "img", "svg", "footer", "g", "path", "polygon", "label", "button", "form", "input", "select", 
+        "style", "link", "meta", "noscript", "iframe", "embed", "object", "param", "video", "audio", "track", "source", 
+        "canvas", "map", "area", "math", "col", "colgroup", "dl", "dt", "dd", "hr", "pre", "address", "figure", "figcaption",
+        "dfn", "em", "kbd", "samp", "var", "del", "ins", "mark", "circle"
+    )
+
+    remove_tags <- function(xml, tags) {
+        purrr::walk(tags, \(tag) purrr::walk(xml2::xml_find_all(xml, paste0(".//", tag)), \(node) xml2::xml_remove(node)))
+        return(xml)
+    }
+
+    cleaned_contents <- tryCatch(
+        rvest::read_html(url)
+        |> rvest::html_element("body")
+        |> remove_tags(tags_to_ignore)
+        |> rvest::html_children()
+        |> rvest::html_text2()
+        |> purrr::discard(\(x) x == "")
+        |> paste0(collapse = "\n\n"),
+        error = \(e) return("")
+    )
+    return(cleaned_contents)
+}
+```
+
+Then, let’s define a JSON schema for the structured output using
+[`schema()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md):
+
+``` r
+package_info_schema <- schema(
+    name = "package_info",
+    description = "Information about an R package release",
+    release_version = "string* The release version of the package",
+    release_date = "string* The release date of the `release_version`"
+)
+```
+
+``` r
+local_llama$chat(
+    "When was the first release of the R 'ellmer' package on GitHub?",
+    tools = list(as_tool(web_search), as_tool(web_fetch)),
+    output_schema = package_info_schema
+)
+```
+
+``` default
+$release_version
+[1] "0.2.0"
+
+$release_date
+[1] "2025-05-01"
+```
+
+*Wrong answer, but it used the tools and returned a structured output.
+Not too bad for a small local model.*
+
+> **Note**
+>
+> Structured output works on ANY model that supports tool calling, even
+> if they don’t support structured outputs or response formats natively.
+> `argent` handles this through a “forced tool call” mechanism.
+
+> **Note**
+>
+> Depending on your local machine’s speed, you may need to increase the
+> request timeout to let the server complete the task. You can do this
+> by setting the `argent.timeout` option:
+>
+> ``` r
+> options(argent.timeout = 120)
+> ```
+
+## Reasoning/Thinking
+
+If available, you can extract reasoning from the response using
+`get_reasoning_text()`:
+
+``` r
+cat(local_llama$get_reasoning_text())
+```
+
+Alternatively, simply `print(local_llama)` to see the reasoning and
+answers’ text in the console, turn by turn.
+
+> **Note**
+>
+> `get_reasoning_text()` and `get_content_text()` use the last API
+> response (`local_llama$get_last_response()`) by default.
+
+> **Tip**
+>
+> Reasoning capabilities for local models are controlled at the **server
+> level**, not through API parameters. For llama.cpp, use these flags
+> when starting the server:
+>
+> - `--reasoning-format`: Specify the reasoning format (e.g.,
+>   `deepseek`)
+> - `--reasoning-budget`: `-1` for unlimited budget, `0` for no budget
+
+## Multimodal Inputs
+
+What types of media you can send will depend on the model you are using.
+At the minimum, you can send any type of text content (and files/objects
+automatically converted to text).
+
+Some models support vision, to which you can send images and possibly
+PDFs. Some models will need you to convert the PDF to an image first
+(which you can do by passing the PDF path to
+[`as_image_content()`](https://ma-riviere.github.io/argent/reference/as_image_content.md)).
+
+### Image Comprehension
+
+Downloading an example image
+
+``` r
+bsg04_cast_image_url <- "https://upload.wikimedia.org/wikipedia/en/1/1a/Battlestar_Galactica_%282004%29_cast.jpg"
+bsg04_cast_image_path <- download_temp_file(bsg04_cast_image_url)
+```
+
+**Sending a local image:**
+
+When providing a path to a local image, it will automatically be
+converted to base64 before being sent to the server.
+
+``` r
+local_llama$chat(    
+    "Who are the characters in this image, and what show is it from?",
+    bsg04_cast_image_path
+)
+```
+
+``` default
+Based on the image, the characters are from the science fiction television series *Battlestar Galactica*. 
+
+From left to right, the characters appear to be:
+
+*   **William Adama** (Edward James Olmos)
+*   **Laura Roslin** (Mary McDonnell)
+*   **Lee Adama** (Jamie Bamber)
+*   **Kara "Starbuck" Thrace** (Katee Sackhoff)
+*   **Number Six** (Tricia Helfer)
+*   **Daniel "Crashdown" Tyrol** (Aaron D'Alessandro)
+*   **Sharon "Boomer" Valerii/Sharon "Athena" Agathon** (Grace Park)
+
+I am confident in this identification, as the image is a promotional photo associated with the show and its primary cast.
+```
+
+*So say we all!*
+
+**Sending an image URL:**
+
+``` r
+local_llama$chat(
+    "Who are the characters in this image, and what show is it from?",
+    bsg04_cast_image_url
+)
+```
+
+### PDF Comprehension
+
+> **Note**
+>
+> Some models don’t support PDF processing natively. You can either
+> convert the PDF to text using
+> [`as_text_content()`](https://ma-riviere.github.io/argent/reference/as_text_content.md)
+> (which will use
+> [`pdftools::pdf_convert()`](https://docs.ropensci.org/pdftools//reference/pdf_render_page.html)),
+> or convert the PDF to an image using
+> [`as_image_content()`](https://ma-riviere.github.io/argent/reference/as_image_content.md)
+> and hope the model has better image comprehension capabilities than
+> the tool you used to convert the PDF to text.
+
+Let’s send two PDF URLs and use the
+[`as_text_content()`](https://ma-riviere.github.io/argent/reference/as_text_content.md)
+helper to have
+[`pdftools::pdf_convert()`](https://docs.ropensci.org/pdftools//reference/pdf_render_page.html)
+parse the PDFs and pass the text content to the model instead of passing
+base64.
+
+``` r
+r6_pdf_url <- "https://cran.r-project.org/web/packages/R6/R6.pdf"
+s7_pdf_url <- "https://cran.r-project.org/web/packages/S7/S7.pdf"
+
+multimodal_prompt <- list(
+    "Give a 3 sentences summary of the advantages of S7 over R6",
+    as_text_content(r6_pdf_url),
+    as_text_content(s7_pdf_url),
+    "And give me the current versions of both packages" # To make sure you actually read the PDFs
+)
+
+local_llama$chat(!!!multimodal_prompt)
+```
+
+``` default
+Here's a 3-sentence summary of the advantages of S7 over R6, based on the provided documentation:
+
+S7 offers a more formal and robust object-oriented programming system compared to R6, designed as a successor to both S3 and S4, and incorporates formal class and method specification with a limited form of multiple dispatch. Unlike R6's reliance on environments, S7 aims to provide a more structured approach with explicit class definitions and inheritance.  S7 also allows for integration with existing S3 and S4 systems, providing flexibility and a pathway for migrating existing code.
+
+---
+
+According to the provided documentation:
+
+*   **S7 version:** 0.2.0 (Published 2024-11-07)
+*   **R6 version:** 2.6.1 (Published 2025-02-15)
+```
+
+### Passing R Objects
+
+You can pass any R object to `chat()` as is:
+
+``` r
+lm_obj <- lm(body_mass ~ species + sex, data = datasets::penguins)
+
+local_llama$chat(
+    "What can we deduct from this regression model?",
+    lm_obj
+)
+```
+
+``` default
+Here's what we can deduce from the provided regression model summary:
+
+1.  **Model Type:** The model is a linear regression (`lm` object).
+2.  **Predictors:** The model predicts `body_mass` based on `species` and `sex`.
+3.  **Coefficients:**
+    *   The intercept is 3372.4.
+    *   The coefficient for `species` is 26.9. This suggests that for each unit change in species (relative to the baseline species), body mass increases by 26.9 units, holding sex constant.
+    *   The coefficient for `species` is 1377.9. 
+    *   The coefficient for `sex` is 667.6. This suggests that males have, on average, a body mass 667.6 units higher than females, holding species constant.
+
+It's important to remember that these deductions are based solely on the provided output and do not include information about statistical significance (p-values), R-squared, or residual analysis, which would provide a more comprehensive understanding of the model's fit and reliability.
+```
+
+> **Note**
+>
+> Any R object passed to `chat()` will be automatically converted to
+> JSON (or text if JSON conversion fails), with some added information
+> like the name of the object and its classes.
+
+### File References
+
+> **Warning**
+>
+> Remote file references via
+> [`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md)
+> are not supported with local servers. Use local file paths or URLs
+> instead.

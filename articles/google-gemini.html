@@ -279,36 +279,7 @@
 <p><strong>Extract grounding metadata</strong> (citations and sources):</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">get_supplementary</span><span class="op">(</span>format_to <span class="op">=</span> <span class="st">"yaml"</span><span class="op">)</span><span class="op">)</span> <span class="co"># Defaults to the last response</span></span></code></pre></div>
-</div>
-<div class="cell">
-<details class="code-fold"><summary>Grounding metadata</summary><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"groundingChunks"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"web"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"uri"</span><span class="fu">:</span> <span class="st">"https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGosazEUGyHJprNFMCOiOXltmNUdin3Db8znul6Z3nj2WCyh_HtzLIOYrHm7p22vlrzF-OkTrFLM0nPqAAM4SpRueJHx34Lqnn69HYrpWmMMvvlQNGXq_kiAhxsO9IU0HjRvsCy"</span><span class="fu">,</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"title"</span><span class="fu">:</span> <span class="st">"r-project.org"</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"groundingSupports"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"segment"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"startIndex"</span><span class="fu">:</span> <span class="dv">52</span><span class="fu">,</span></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"endIndex"</span><span class="fu">:</span> <span class="dv">96</span><span class="fu">,</span></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"text"</span><span class="fu">:</span> <span class="st">"2, which was published on September 3, 2025."</span></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"groundingChunkIndices"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>        <span class="dv">0</span></span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"webSearchQueries"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"R ellmer package latest version"</span><span class="ot">,</span></span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ellmer package CRAN"</span></span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span> </span></code></pre></div>
-</details>
+<code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">get_supplementary</span><span class="op">(</span><span class="op">)</span> <span class="co"># Defaults to the last response</span></span></code></pre></div>
 </div>
 <div>
 <blockquote>
@@ -320,7 +291,7 @@
 </h3>
 <p>This server tool lets the LLM fetch the contents of URLs given to it in the prompt. It supports fetching text (HTML, JSON, XML), images (PNG, JPEG, WebP), and PDFs.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"Summarize the main changes in the current development version of the R 'ellmer' package in 2 sentences: \ </span></span>
 <span><span class="st">    https://raw.githubusercontent.com/tidyverse/ellmer/main/NEWS.md"</span>,</span>
@@ -328,7 +299,7 @@
 <span>    tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"url_context"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb14"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>The current development version of the R 'ellmer' package introduces several significant changes, including enhanced control over model reasoning effort with new `reasoning_effort` and `reasoning_tokens` parameters for various chat functions. Additionally, it refines API key handling by using a `credentials` function to retrieve keys on demand, preventing their storage in chat objects, and supports image generation through `chat_google_gemini()` and `chat_openai_responses()`.</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>The current development version of the R 'ellmer' package introduces several significant changes, including enhanced control over model reasoning effort with new `reasoning_effort` and `reasoning_tokens` parameters for various chat functions. Additionally, it refines API key handling by using a `credentials` function to retrieve keys on demand, preventing their storage in chat objects, and supports image generation through `chat_google_gemini()` and `chat_openai_responses()`.</span></code></pre></div>
 <p><strong>Limitations:</strong></p>
 <ul>
 <li>Maximum 20 URLs per request</li>
@@ -350,7 +321,7 @@
 <section class="level3"><h4 id="basic-usage">Basic Usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
 </h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"What are the 5 best Italian restaurants within a 15-minute walk from Times Square?"</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
@@ -359,7 +330,7 @@
 </div>
 <p>We can also provide a specific location for more relevant results:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"Give me 5 good coffee shops with outdoor seating in a 1km radius from here."</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
@@ -374,151 +345,22 @@
 <span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb17"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>Here are 5 good coffee shops with outdoor seating near you:</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>1.  **Jacobsen &amp; Svart Coffee Roasters** - This coffee shop has a rating of 4.7 stars and is currently open until 5:00 PM today.</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>2.  **Tantes Hage** - With a rating of 4.8 stars, this cafe offers outdoor seating. Please note that Tantes Hage is closed today, but open on Sundays from 10:00 AM to 6:00 PM.</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>3.  **Café Løkka** - This cafe has a 4.3-star rating and is currently open until 12:00 AM.</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>4.  **Dromedar Kaffebar, Nordre** - Rated 4.3 stars, this coffee shop is open until 7:00 PM today.</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>5.  **Espresso House** (Nordre gate 1-3) - This cafe has a rating of 4.2 stars and is currently open until 8:00 PM.</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>Here are 5 good coffee shops with outdoor seating near you:</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>1.  **Jacobsen &amp; Svart Coffee Roasters** - This coffee shop has a rating of 4.7 stars and is currently open until 5:00 PM today.</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>2.  **Tantes Hage** - With a rating of 4.8 stars, this cafe offers outdoor seating. Please note that Tantes Hage is closed today, but open on Sundays from 10:00 AM to 6:00 PM.</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>3.  **Café Løkka** - This cafe has a 4.3-star rating and is currently open until 12:00 AM.</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>4.  **Dromedar Kaffebar, Nordre** - Rated 4.3 stars, this coffee shop is open until 7:00 PM today.</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>5.  **Espresso House** (Nordre gate 1-3) - This cafe has a rating of 4.2 stars and is currently open until 8:00 PM.</span></code></pre></div>
 <p><strong>Extract grounding metadata</strong> (citations and sources):</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">get_supplementary</span><span class="op">(</span>format_to <span class="op">=</span> <span class="st">"yaml"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="cell">
-<details class="code-fold"><summary>Grounding metadata</summary><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"groundingChunks"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"maps"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"uri"</span><span class="fu">:</span> <span class="st">"https://maps.google.com/?cid=3245168162210890933"</span><span class="fu">,</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"title"</span><span class="fu">:</span> <span class="st">"Espresso House"</span><span class="fu">,</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"placeId"</span><span class="fu">:</span> <span class="st">"places/ChIJffMg26MxbUYRtcT8-D8nCS0"</span></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"maps"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"uri"</span><span class="fu">:</span> <span class="st">"https://maps.google.com/?cid=16759249395376552021"</span><span class="fu">,</span></span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"title"</span><span class="fu">:</span> <span class="st">"Tantes Hage"</span><span class="fu">,</span></span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"placeId"</span><span class="fu">:</span> <span class="st">"places/ChIJv_D0CSQxbUYRVXiZ4YfQlOg"</span></span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"maps"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"uri"</span><span class="fu">:</span> <span class="st">"https://maps.google.com/?cid=15986994636847136576"</span><span class="fu">,</span></span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"title"</span><span class="fu">:</span> <span class="st">"Awake"</span><span class="fu">,</span></span>
-<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"placeId"</span><span class="fu">:</span> <span class="st">"places/ChIJt48wUgAxbUYRQD9ZY-s23d0"</span></span>
-<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"maps"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"uri"</span><span class="fu">:</span> <span class="st">"https://maps.google.com/?cid=5498302272122706174"</span><span class="fu">,</span></span>
-<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"title"</span><span class="fu">:</span> <span class="st">"Dromedar Kaffebar, Nordre"</span><span class="fu">,</span></span>
-<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"placeId"</span><span class="fu">:</span> <span class="st">"places/ChIJu4I8x5kxbUYR_tiYBcnkTUw"</span></span>
-<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"maps"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"uri"</span><span class="fu">:</span> <span class="st">"https://maps.google.com/?cid=11104887590088168370"</span><span class="fu">,</span></span>
-<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"title"</span><span class="fu">:</span> <span class="st">"Café Løkka"</span><span class="fu">,</span></span>
-<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"placeId"</span><span class="fu">:</span> <span class="st">"places/ChIJs-DHJJ8xbUYRslPZTW18HJo"</span></span>
-<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"maps"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"uri"</span><span class="fu">:</span> <span class="st">"https://maps.google.com/?cid=6827123593483013344"</span><span class="fu">,</span></span>
-<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"title"</span><span class="fu">:</span> <span class="st">"Espresso House"</span><span class="fu">,</span></span>
-<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"placeId"</span><span class="fu">:</span> <span class="st">"places/ChIJCbmu26ExbUYR4Ew-k7zQvl4"</span></span>
-<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"maps"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"uri"</span><span class="fu">:</span> <span class="st">"https://maps.google.com/?cid=1749102876415147595"</span><span class="fu">,</span></span>
-<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"title"</span><span class="fu">:</span> <span class="st">"Creature Comforts Cafe"</span><span class="fu">,</span></span>
-<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"placeId"</span><span class="fu">:</span> <span class="st">"places/ChIJiTgxMG7ta4cRS75WiMwPRhg"</span></span>
-<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"maps"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"uri"</span><span class="fu">:</span> <span class="st">"https://maps.google.com/?cid=6801006062827479437"</span><span class="fu">,</span></span>
-<span id="cb19-55"><a href="#cb19-55" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"title"</span><span class="fu">:</span> <span class="st">"Estenstadhytta"</span><span class="fu">,</span></span>
-<span id="cb19-56"><a href="#cb19-56" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"placeId"</span><span class="fu">:</span> <span class="st">"places/ChIJfWaWsmIxbUYRjSEcGvsGYl4"</span></span>
-<span id="cb19-57"><a href="#cb19-57" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb19-58"><a href="#cb19-58" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb19-59"><a href="#cb19-59" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb19-60"><a href="#cb19-60" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"maps"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb19-61"><a href="#cb19-61" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"uri"</span><span class="fu">:</span> <span class="st">"https://maps.google.com/?cid=2982629209513831130"</span><span class="fu">,</span></span>
-<span id="cb19-62"><a href="#cb19-62" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"title"</span><span class="fu">:</span> <span class="st">"Terrible Love"</span><span class="fu">,</span></span>
-<span id="cb19-63"><a href="#cb19-63" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"placeId"</span><span class="fu">:</span> <span class="st">"places/ChIJP8p2kJC1RIYR2qrGoXZtZCk"</span></span>
-<span id="cb19-64"><a href="#cb19-64" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb19-65"><a href="#cb19-65" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb19-66"><a href="#cb19-66" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb19-67"><a href="#cb19-67" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"maps"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb19-68"><a href="#cb19-68" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"uri"</span><span class="fu">:</span> <span class="st">"https://maps.google.com/?cid=17370108676956306718"</span><span class="fu">,</span></span>
-<span id="cb19-69"><a href="#cb19-69" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"title"</span><span class="fu">:</span> <span class="st">"Jacobsen &amp; Svart Coffee Roasters"</span><span class="fu">,</span></span>
-<span id="cb19-70"><a href="#cb19-70" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"placeId"</span><span class="fu">:</span> <span class="st">"places/ChIJWat1aMYxbUYRHj3pl88FD_E"</span></span>
-<span id="cb19-71"><a href="#cb19-71" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb19-72"><a href="#cb19-72" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb19-73"><a href="#cb19-73" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb19-74"><a href="#cb19-74" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"maps"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb19-75"><a href="#cb19-75" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"uri"</span><span class="fu">:</span> <span class="st">"https://maps.google.com/?cid=12065341795685703138"</span><span class="fu">,</span></span>
-<span id="cb19-76"><a href="#cb19-76" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"title"</span><span class="fu">:</span> <span class="st">"Café le Frère"</span><span class="fu">,</span></span>
-<span id="cb19-77"><a href="#cb19-77" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"placeId"</span><span class="fu">:</span> <span class="st">"places/ChIJ7X0oFJwxbUYR4h2FMXC0cKc"</span></span>
-<span id="cb19-78"><a href="#cb19-78" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb19-79"><a href="#cb19-79" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb19-80"><a href="#cb19-80" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb19-81"><a href="#cb19-81" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"groundingSupports"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb19-82"><a href="#cb19-82" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb19-83"><a href="#cb19-83" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"segment"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb19-84"><a href="#cb19-84" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"startIndex"</span><span class="fu">:</span> <span class="dv">65</span><span class="fu">,</span></span>
-<span id="cb19-85"><a href="#cb19-85" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"endIndex"</span><span class="fu">:</span> <span class="dv">189</span><span class="fu">,</span></span>
-<span id="cb19-86"><a href="#cb19-86" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"text"</span><span class="fu">:</span> <span class="st">"**Jacobsen &amp; Svart Coffee Roasters** - This coffee shop has a rating of 4.7 stars and is currently open until 5:00 PM today."</span></span>
-<span id="cb19-87"><a href="#cb19-87" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
-<span id="cb19-88"><a href="#cb19-88" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"groundingChunkIndices"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb19-89"><a href="#cb19-89" aria-hidden="true" tabindex="-1"></a>        <span class="dv">0</span></span>
-<span id="cb19-90"><a href="#cb19-90" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
-<span id="cb19-91"><a href="#cb19-91" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb19-92"><a href="#cb19-92" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb19-93"><a href="#cb19-93" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"segment"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb19-94"><a href="#cb19-94" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"startIndex"</span><span class="fu">:</span> <span class="dv">370</span><span class="fu">,</span></span>
-<span id="cb19-95"><a href="#cb19-95" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"endIndex"</span><span class="fu">:</span> <span class="dv">458</span><span class="fu">,</span></span>
-<span id="cb19-96"><a href="#cb19-96" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"text"</span><span class="fu">:</span> <span class="st">"**Café Løkka** - This cafe has a 4.3-star rating and is currently open until 12:00 AM."</span></span>
-<span id="cb19-97"><a href="#cb19-97" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
-<span id="cb19-98"><a href="#cb19-98" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"groundingChunkIndices"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb19-99"><a href="#cb19-99" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span></span>
-<span id="cb19-100"><a href="#cb19-100" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
-<span id="cb19-101"><a href="#cb19-101" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb19-102"><a href="#cb19-102" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb19-103"><a href="#cb19-103" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"segment"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb19-104"><a href="#cb19-104" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"startIndex"</span><span class="fu">:</span> <span class="dv">463</span><span class="fu">,</span></span>
-<span id="cb19-105"><a href="#cb19-105" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"endIndex"</span><span class="fu">:</span> <span class="dv">557</span><span class="fu">,</span></span>
-<span id="cb19-106"><a href="#cb19-106" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"text"</span><span class="fu">:</span> <span class="st">"**Dromedar Kaffebar, Nordre** - Rated 4.3 stars, this coffee shop is open until 7:00 PM today."</span></span>
-<span id="cb19-107"><a href="#cb19-107" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
-<span id="cb19-108"><a href="#cb19-108" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"groundingChunkIndices"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb19-109"><a href="#cb19-109" aria-hidden="true" tabindex="-1"></a>        <span class="dv">2</span></span>
-<span id="cb19-110"><a href="#cb19-110" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
-<span id="cb19-111"><a href="#cb19-111" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb19-112"><a href="#cb19-112" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb19-113"><a href="#cb19-113" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"segment"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb19-114"><a href="#cb19-114" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"startIndex"</span><span class="fu">:</span> <span class="dv">562</span><span class="fu">,</span></span>
-<span id="cb19-115"><a href="#cb19-115" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"endIndex"</span><span class="fu">:</span> <span class="dv">673</span><span class="fu">,</span></span>
-<span id="cb19-116"><a href="#cb19-116" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"text"</span><span class="fu">:</span> <span class="st">"**Espresso House** (Nordre gate 1-3) - This cafe has a rating of 4.2 stars and is currently open until 8:00 PM."</span></span>
-<span id="cb19-117"><a href="#cb19-117" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
-<span id="cb19-118"><a href="#cb19-118" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"groundingChunkIndices"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb19-119"><a href="#cb19-119" aria-hidden="true" tabindex="-1"></a>        <span class="dv">3</span></span>
-<span id="cb19-120"><a href="#cb19-120" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
-<span id="cb19-121"><a href="#cb19-121" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb19-122"><a href="#cb19-122" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb19-123"><a href="#cb19-123" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"webSearchQueries"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb19-124"><a href="#cb19-124" aria-hidden="true" tabindex="-1"></a>    <span class="st">"coffee shops with outdoor seating near me within 1km"</span></span>
-<span id="cb19-125"><a href="#cb19-125" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
-<span id="cb19-126"><a href="#cb19-126" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span> </span></code></pre></div>
-</details>
+<div class="sourceCode cell-code" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">get_supplementary</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p><strong>Enabling the Maps Widget</strong></p>
 <p>Enable the widget context token to render interactive Google Maps widgets using the Maps API:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"Plan a day in Trondheim. I want to see the Nidaros, swim in a lake, and have a beer by the river."</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
@@ -534,16 +376,16 @@
 <span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb21"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>Here's a possible plan for your day in Trondheim:</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>Start your day by visiting the magnificent Nidaros Cathedral, a Gothic cathedral dating from the 13th century located at Kongsgårdsgata 2. The cathedral typically opens at 9:00 AM on weekdays.</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>After exploring the cathedral, head to Theisendammen badeplass for a refreshing swim in a lake. This park is open 24 hours, highly-rated, and is a good option for swimming.</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>In the evening, enjoy a beer by the Nidelva river at Den Gode Nabo AS. This highly-rated bar, located at Øvre Bakklandet 66, offers outdoor seating, perfect for enjoying the riverside atmosphere.</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>Here's a possible plan for your day in Trondheim:</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>Start your day by visiting the magnificent Nidaros Cathedral, a Gothic cathedral dating from the 13th century located at Kongsgårdsgata 2. The cathedral typically opens at 9:00 AM on weekdays.</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>After exploring the cathedral, head to Theisendammen badeplass for a refreshing swim in a lake. This park is open 24 hours, highly-rated, and is a good option for swimming.</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>In the evening, enjoy a beer by the Nidelva river at Den Gode Nabo AS. This highly-rated bar, located at Øvre Bakklandet 66, offers outdoor seating, perfect for enjoying the riverside atmosphere.</span></code></pre></div>
 <p>Extract the widget context token:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">get_supplementary</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>    <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/pluck.html" class="external-link">pluck</a></span><span class="op">(</span><span class="st">"grounding_metadata"</span>, <span class="st">"googleMapsWidgetContextToken"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -564,7 +406,7 @@
 <p><strong>Example: Analyzing the Penguins Dataset</strong></p>
 <p>Let’s upload the penguins dataset as a remote file and use the code execution tool:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">penguins_url</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/allisonhorst/palmerpenguins/refs/heads/main/inst/extdata/penguins.csv"</span></span>
 <span><span class="va">penguins_file_metadata</span> <span class="op">&lt;-</span> <span class="va">google_gemini</span><span class="op">$</span><span class="fu">upload_file</span><span class="op">(</span><span class="va">penguins_url</span><span class="op">)</span></span>
 <span></span>
@@ -576,66 +418,66 @@
 </div>
 <p>Inspect the generated code:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">get_generated_code</span><span class="op">(</span>langs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"python"</span><span class="op">)</span>, as_chunks <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
-<details><summary>Generated Code</summary><div class="sourceCode" id="cb25"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the CSV file</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"input_file_0.csv"</span>)</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the first few rows and information about the DataFrame</span></span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DataFrame Head:"</span>)</span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.head())</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">DataFrame Info:"</span>)</span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.info())</span></code></pre></div>
-<div class="sourceCode" id="cb26"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Group by species, sex, and year and calculate the average body_mass_g</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>summary_table <span class="op">=</span> df.groupby([<span class="st">'species'</span>, <span class="st">'sex'</span>, <span class="st">'year'</span>])[<span class="st">'body_mass_g'</span>].mean().reset_index()</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename the 'body_mass_g' column to 'average_body_mass_g' for clarity</span></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>summary_table <span class="op">=</span> summary_table.rename(columns<span class="op">=</span>{<span class="st">'body_mass_g'</span>: <span class="st">'average_body_mass_g'</span>})</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the summary table to a CSV file</span></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>output_filename <span class="op">=</span> <span class="st">"average_body_mass_summary.csv"</span></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>summary_table.to_csv(output_filename, index<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Summary table saved to </span><span class="sc">{</span>output_filename<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Summary Table Head:"</span>)</span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(summary_table.head())</span></code></pre></div>
+<details><summary>Generated Code</summary><div class="sourceCode" id="cb23"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the CSV file</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"input_file_0.csv"</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the first few rows and information about the DataFrame</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DataFrame Head:"</span>)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.head())</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">DataFrame Info:"</span>)</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.info())</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Group by species, sex, and year and calculate the average body_mass_g</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>summary_table <span class="op">=</span> df.groupby([<span class="st">'species'</span>, <span class="st">'sex'</span>, <span class="st">'year'</span>])[<span class="st">'body_mass_g'</span>].mean().reset_index()</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename the 'body_mass_g' column to 'average_body_mass_g' for clarity</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>summary_table <span class="op">=</span> summary_table.rename(columns<span class="op">=</span>{<span class="st">'body_mass_g'</span>: <span class="st">'average_body_mass_g'</span>})</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the summary table to a CSV file</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>output_filename <span class="op">=</span> <span class="st">"average_body_mass_summary.csv"</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>summary_table.to_csv(output_filename, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Summary table saved to </span><span class="sc">{</span>output_filename<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Summary Table Head:"</span>)</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(summary_table.head())</span></code></pre></div>
 </details><p>Download the generated files:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">downloaded_path</span> <span class="op">&lt;-</span> <span class="va">google_gemini</span><span class="op">$</span><span class="fu">download_generated_files</span><span class="op">(</span>dest_path <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ✔ File saved: data/generated_file_9604db3d-57fc-4aab-bd60-bf4c194ab6e5.csv</span></span></code></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">downloaded_path</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb29"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>     species    sex year average_body_mass_g</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>1     Adelie female 2007            3389.773</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>2     Adelie female 2008            3386.000</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>3     Adelie female 2009            3334.615</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>4     Adelie   male 2007            4038.636</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>5     Adelie   male 2008            4098.000</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>6     Adelie   male 2009            3995.192</span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>7  Chinstrap female 2007            3569.231</span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>8  Chinstrap female 2008            3472.222</span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>9  Chinstrap female 2009            3522.917</span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>10 Chinstrap   male 2007            3819.231</span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>11 Chinstrap   male 2008            4127.778</span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>12 Chinstrap   male 2009            3927.083</span>
-<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>13    Gentoo female 2007            4618.750</span>
-<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>14    Gentoo female 2008            4627.273</span>
-<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>15    Gentoo female 2009            4786.250</span>
-<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>16    Gentoo   male 2007            5552.941</span>
-<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>17    Gentoo   male 2008            5410.870</span>
-<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>18    Gentoo   male 2009            5510.714</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>     species    sex year average_body_mass_g</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>1     Adelie female 2007            3389.773</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>2     Adelie female 2008            3386.000</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>3     Adelie female 2009            3334.615</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>4     Adelie   male 2007            4038.636</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>5     Adelie   male 2008            4098.000</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>6     Adelie   male 2009            3995.192</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>7  Chinstrap female 2007            3569.231</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>8  Chinstrap female 2008            3472.222</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>9  Chinstrap female 2009            3522.917</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>10 Chinstrap   male 2007            3819.231</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>11 Chinstrap   male 2008            4127.778</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>12 Chinstrap   male 2009            3927.083</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>13    Gentoo female 2007            4618.750</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>14    Gentoo female 2008            4627.273</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>15    Gentoo female 2009            4786.250</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>16    Gentoo   male 2007            5552.941</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>17    Gentoo   male 2008            5410.870</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>18    Gentoo   male 2009            5510.714</span></code></pre></div>
 <p>Continue asking questions in the same context:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">penguin_output_schema</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tool_definitions.html">schema</a></span><span class="op">(</span></span>
 <span>    name <span class="op">=</span> <span class="st">"penguin_output"</span>,</span>
 <span>    description <span class="op">=</span> <span class="st">"Schema for the penguin output"</span>,</span>
@@ -651,17 +493,17 @@
 <span>    output_schema <span class="op">=</span> <span class="va">penguin_output_schema</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb31"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>$species</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>[1] "Adelie"</span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>$sex</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>[1] "females"</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>$year</span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>[1] 2009</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>$average_body_mass</span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>[1] 3334.62</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>$species</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>[1] "Adelie"</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>$sex</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>[1] "females"</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>$year</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>[1] 2009</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>$average_body_mass</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>[1] 3334.62</span></code></pre></div>
 </section><section class="level2"><h3 id="multimodal-inputs">Multimodal Inputs<a class="anchor" aria-label="anchor" href="#multimodal-inputs"></a>
 </h3>
 <p>Google Gemini supports sending:</p>
@@ -676,7 +518,7 @@
 <section class="level3"><h4 id="image-comprehension">Image Comprehension<a class="anchor" aria-label="anchor" href="#image-comprehension"></a>
 </h4>
 <div class="cell">
-<details class="code-fold"><summary>Downloading an example image</summary><div class="sourceCode cell-code" id="cb32"><pre class="downlit sourceCode r">
+<details class="code-fold"><summary>Downloading an example image</summary><div class="sourceCode cell-code" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bsg04_cast_image_url</span> <span class="op">&lt;-</span> <span class="st">"https://upload.wikimedia.org/wikipedia/en/1/1a/Battlestar_Galactica_%282004%29_cast.jpg"</span></span>
 <span><span class="va">bsg04_cast_image_path</span> <span class="op">&lt;-</span> <span class="fu">download_temp_file</span><span class="op">(</span><span class="va">bsg04_cast_image_url</span><span class="op">)</span></span></code></pre></div>
 </details>
@@ -684,26 +526,26 @@
 <p><strong>Sending a local image:</strong></p>
 <p>When providing a path to a local image, it will automatically be converted to base64 before being sent to the server.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"Who are the characters in this image, and what show is it from?"</span>,</span>
 <span>    <span class="va">bsg04_cast_image_path</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb34"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>The characters in the image are from the show **Battlestar Galactica**.</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>From left to right, the characters are:</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>*   **Admiral William Adama** (played by Edward James Olmos)</span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>*   **President Laura Roslin** (played by Mary McDonnell)</span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>*   **Captain Lee "Apollo" Adama** (played by Jamie Bamber)</span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>*   **Lieutenant Kara "Starbuck" Thrace** (played by Katee Sackhoff)</span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>*   **Number Six** (played by Tricia Helfer)</span>
-<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>*   **Gaius Baltar** (played by James Callis)</span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>*   **Sharon "Boomer" Valerii / Sharon "Athena" Agathon** (played by Grace Park)</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>The characters in the image are from the show **Battlestar Galactica**.</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>From left to right, the characters are:</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>*   **Admiral William Adama** (played by Edward James Olmos)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>*   **President Laura Roslin** (played by Mary McDonnell)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>*   **Captain Lee "Apollo" Adama** (played by Jamie Bamber)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>*   **Lieutenant Kara "Starbuck" Thrace** (played by Katee Sackhoff)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>*   **Number Six** (played by Tricia Helfer)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>*   **Gaius Baltar** (played by James Callis)</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>*   **Sharon "Boomer" Valerii / Sharon "Athena" Agathon** (played by Grace Park)</span></code></pre></div>
 <p><em>So say we all!</em></p>
 <p><strong>Sending an image URL:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">reset_history</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
@@ -727,26 +569,26 @@
 </section><section class="level3"><h4 id="pdf-comprehension">PDF Comprehension<a class="anchor" aria-label="anchor" href="#pdf-comprehension"></a>
 </h4>
 <div class="cell">
-<details class="code-fold"><summary>Downloading an example PDF (my CV)</summary><div class="sourceCode cell-code" id="cb36"><pre class="downlit sourceCode r">
+<details class="code-fold"><summary>Downloading an example PDF (my CV)</summary><div class="sourceCode cell-code" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">my_cv_url</span> <span class="op">&lt;-</span> <span class="st">"https://ma-riviere.com/res/cv.pdf"</span></span>
 <span><span class="va">my_cv_pdf_path</span> <span class="op">&lt;-</span> <span class="fu">download_temp_file</span><span class="op">(</span><span class="va">my_cv_url</span><span class="op">)</span></span></code></pre></div>
 </details>
 </div>
 <p><strong>Sending a local PDF:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"What's my favorite programming language ?"</span>,</span>
 <span>    <span class="va">my_cv_pdf_path</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb38"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>Based on your resume, your favorite programming language appears to be **R**.</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>Based on your resume, your favorite programming language appears to be **R**.</span></code></pre></div>
 <p><em>Damn right!</em></p>
 <p><strong>Sending PDF URLs:</strong></p>
 <p>For Google, by default, PDF URLs are sent as base64 to the server.</p>
 <p>However, we can use the <code><a href="../reference/as_text_content.html">as_text_content()</a></code> helper to have <code><a href="https://docs.ropensci.org/pdftools//reference/pdf_render_page.html" class="external-link">pdftools::pdf_convert()</a></code> parse the PDFs and pass their text contents to the model instead.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r6_pdf_url</span> <span class="op">&lt;-</span> <span class="st">"https://cran.r-project.org/web/packages/R6/R6.pdf"</span></span>
 <span><span class="va">s7_pdf_url</span> <span class="op">&lt;-</span> <span class="st">"https://cran.r-project.org/web/packages/S7/S7.pdf"</span></span>
 <span></span>
@@ -759,16 +601,16 @@
 <span></span>
 <span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="op">!</span><span class="op">!</span><span class="op">!</span><span class="va">multimodal_prompt</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb40"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>S7 offers a more formal and comprehensive object-oriented system for R, explicitly designed as a successor to both S3 and S4, featuring formal class, generic, and method specifications. It supports limited multiple dispatch, allowing method selection based on the types of multiple arguments, a capability not natively offered by R6. Furthermore, S7 is the result of a collaborative effort by the R Consortium Object-Oriented Programming Working Group, suggesting a broader community consensus and potential for standardization in R's future.</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>The current versions of the packages are:</span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>*   **R6:** 2.6.1 (published 2025-02-15)</span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>*   **S7:** 0.2.0 (published 2024-11-07)</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>S7 offers a more formal and comprehensive object-oriented system for R, explicitly designed as a successor to both S3 and S4, featuring formal class, generic, and method specifications. It supports limited multiple dispatch, allowing method selection based on the types of multiple arguments, a capability not natively offered by R6. Furthermore, S7 is the result of a collaborative effort by the R Consortium Object-Oriented Programming Working Group, suggesting a broader community consensus and potential for standardization in R's future.</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>The current versions of the packages are:</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>*   **R6:** 2.6.1 (published 2025-02-15)</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>*   **S7:** 0.2.0 (published 2024-11-07)</span></code></pre></div>
 </section><section class="level3"><h4 id="passing-r-objects">Passing R Objects<a class="anchor" aria-label="anchor" href="#passing-r-objects"></a>
 </h4>
 <p>You can pass any R object to <code>chat()</code> as is:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lm_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">body_mass</span> <span class="op">~</span> <span class="va">species</span> <span class="op">+</span> <span class="va">sex</span>, data <span class="op">=</span> <span class="fu">datasets</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/datasets/penguins.html" class="external-link">penguins</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
@@ -777,13 +619,13 @@
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb42"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>From the provided regression model output, we can deduce the following three points:</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>1.  **Model Type and Purpose**: This is a linear regression model (`lm_obj`) attempting to explain or predict `body_mass` based on two categorical predictor variables: `species` and `sex`. The model was fitted using the `datasets::penguins` dataset.</span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>2.  **Intercept and Reference Group Body Mass**: The estimated intercept is 3372.4. Given that `contr.treatment` was used for both categorical variables, this intercept represents the estimated average `body_mass` (likely in grams) for the baseline group: an **Adelie female penguin**.</span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>3.  **Estimated Effects of Predictors**:</span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>    *   **Species Effect**: Compared to Adelie penguins (the reference species), Chinstrap penguins are estimated to have an average `body_mass` that is 26.9 units higher, and Gentoo penguins are estimated to have an average `body_mass` that is 1377.9 units higher, assuming sex is held constant.</span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>    *   **Sex Effect**: Compared to female penguins (the reference sex), male penguins are estimated to have an average `body_mass` that is 667.6 units higher, assuming species is held constant.</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>From the provided regression model output, we can deduce the following three points:</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>1.  **Model Type and Purpose**: This is a linear regression model (`lm_obj`) attempting to explain or predict `body_mass` based on two categorical predictor variables: `species` and `sex`. The model was fitted using the `datasets::penguins` dataset.</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>2.  **Intercept and Reference Group Body Mass**: The estimated intercept is 3372.4. Given that `contr.treatment` was used for both categorical variables, this intercept represents the estimated average `body_mass` (likely in grams) for the baseline group: an **Adelie female penguin**.</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>3.  **Estimated Effects of Predictors**:</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    *   **Species Effect**: Compared to Adelie penguins (the reference species), Chinstrap penguins are estimated to have an average `body_mass` that is 26.9 units higher, and Gentoo penguins are estimated to have an average `body_mass` that is 1377.9 units higher, assuming sex is held constant.</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    *   **Sex Effect**: Compared to female penguins (the reference sex), male penguins are estimated to have an average `body_mass` that is 667.6 units higher, assuming species is held constant.</span></code></pre></div>
 <div>
 <blockquote>
 <p><strong>Note</strong></p>
@@ -794,7 +636,7 @@
 </h4>
 <p>Upload a file and reference it with <code><a href="../reference/as_file_content.html">as_file_content()</a></code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">file_metadata</span> <span class="op">&lt;-</span> <span class="va">google_gemini</span><span class="op">$</span><span class="fu">upload_file</span><span class="op">(</span><span class="va">my_cv_url</span><span class="op">)</span> <span class="co"># Pass an URL or a local file path</span></span>
 <span></span>
 <span><span class="va">multipart_prompt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -806,12 +648,12 @@
 <span></span>
 <span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">delete_file</span><span class="op">(</span><span class="va">file_metadata</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb44"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>Based on your resume, your two favorite frameworks/tools appear to be **Shiny** and **Quarto/R Markdown**.</span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>Here's why:</span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>*   Your most recent role is "R/Shiny Developer," highlighting Shiny as a primary tool.</span>
-<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>*   Shiny is listed first and prominently in your "Frameworks &amp; Tools" section.</span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>*   "Quarto, R Markdown" is also listed prominently and is explicitly mentioned in your "Consulting" section, and is a natural pairing with R and Shiny for scientific publishing and interactive content.</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>Based on your resume, your two favorite frameworks/tools appear to be **Shiny** and **Quarto/R Markdown**.</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>Here's why:</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>*   Your most recent role is "R/Shiny Developer," highlighting Shiny as a primary tool.</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>*   Shiny is listed first and prominently in your "Frameworks &amp; Tools" section.</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>*   "Quarto, R Markdown" is also listed prominently and is explicitly mentioned in your "Consulting" section, and is a natural pairing with R and Shiny for scientific publishing and interactive content.</span></code></pre></div>
 <div>
 <blockquote>
 <p><strong>Note</strong></p>
@@ -831,7 +673,7 @@
 </h3>
 <p>First, create a file search store to hold your files:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">store</span> <span class="op">&lt;-</span> <span class="va">google_gemini</span><span class="op">$</span><span class="fu">create_store</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"R OOP Store"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ✔ [Google] File search store created: fileSearchStores/r-oop-store-bkd207kkacou</span></span></code></pre></div>
 </div>
@@ -840,7 +682,7 @@
 <p>You can either upload files directly or import existing File API files:</p>
 <p><strong>Direct upload:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r6_pdf_url</span> <span class="op">&lt;-</span> <span class="st">"https://cran.r-project.org/web/packages/R6/R6.pdf"</span></span>
 <span></span>
 <span><span class="va">doc</span> <span class="op">&lt;-</span> <span class="va">google_gemini</span><span class="op">$</span><span class="fu">add_file_to_store</span><span class="op">(</span></span>
@@ -853,7 +695,7 @@
 <p><strong>Import from File API:</strong></p>
 <p>Another way to upload files is to use the <code>upload_file()</code>, and then import the uploaded file into the store. The result will be the same.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">file_metadata</span> <span class="op">&lt;-</span> <span class="va">google_gemini</span><span class="op">$</span><span class="fu">upload_file</span><span class="op">(</span><span class="va">r6_pdf_url</span>, name <span class="op">=</span> <span class="st">"R6 Package Documentation 2"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ✔ [Google] File uploaded: files/ie6e5jfpuwpf</span></span>
 <span></span>
@@ -867,7 +709,7 @@
 </h3>
 <p>Once files are uploaded, use the file_search tool in your chat requests:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"What are the key features of R6 classes compared to reference classes? In three sentences."</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
@@ -878,54 +720,54 @@
 </div>
 <p><strong>Extract grounding metadata with citations:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">get_supplementary</span><span class="op">(</span>format_to <span class="op">=</span> <span class="st">"yaml"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu">yaml</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/yaml/man/as.yaml.html" class="external-link">as.yaml</a></span><span class="op">(</span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">get_supplementary</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="cell">
-<details class="code-fold"><summary>Grounding metadata with file citations</summary><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grounding_metadata</span><span class="kw">:</span></span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">groundingChunks</span><span class="kw">:</span></span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">retrievedContext</span><span class="kw">:</span></span>
-<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">title</span><span class="kw">:</span><span class="at"> je792h7nxtr4</span></span>
-<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="fu">      text</span><span class="kw">: </span><span class="ch">|-</span></span>
-<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>        above) of the object.</span>
-<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>        The default print method of R6 objects can be redefined, by supplying a public print method.</span>
-<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>         (print members that are not functions are ignored.) This method is automatically called when-</span>
-<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>         ever the object is printed, e.g. when the object's name is typed at the command prompt, or when</span>
-<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>         print(obj) is called. It can also be called directly via obj\$print(). All extra arguments from a</span>
-<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>         print(obj,...) call are passed on to the obj\$print(...) method.</span>
-<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a>        Portable and non-portable classes</span>
-<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a>        When R6 classes are portable (the default), they can be inherited across packages without compli-</span>
-<span id="cb50-17"><a href="#cb50-17" aria-hidden="true" tabindex="-1"></a>         cation. However, when in portable mode, members must be accessed with self and private, as in</span>
-<span id="cb50-18"><a href="#cb50-18" aria-hidden="true" tabindex="-1"></a>         self\$x and private\$y.</span>
-<span id="cb50-19"><a href="#cb50-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-20"><a href="#cb50-20" aria-hidden="true" tabindex="-1"></a>        --- PAGE 5 ---</span>
-<span id="cb50-21"><a href="#cb50-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-22"><a href="#cb50-22" aria-hidden="true" tabindex="-1"></a>        R6Class</span>
-<span id="cb50-23"><a href="#cb50-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-24"><a href="#cb50-24" aria-hidden="true" tabindex="-1"></a>        5</span>
-<span id="cb50-25"><a href="#cb50-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-26"><a href="#cb50-26" aria-hidden="true" tabindex="-1"></a>        When used in non-portable mode, R6 classes behave more like reference classes: inheritance across</span>
-<span id="cb50-27"><a href="#cb50-27" aria-hidden="true" tabindex="-1"></a>         packages will not work well, and self and private are not necessary for accessing fields.</span>
-<span id="cb50-28"><a href="#cb50-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-29"><a href="#cb50-29" aria-hidden="true" tabindex="-1"></a>        Cloning objects</span>
-<span id="cb50-30"><a href="#cb50-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-31"><a href="#cb50-31" aria-hidden="true" tabindex="-1"></a>        R6 objects have a method named clone by default. To disable this, use cloneable=FALSE. Having</span>
-<span id="cb50-32"><a href="#cb50-32" aria-hidden="true" tabindex="-1"></a>         the clone method present will slightly increase the memory footprint of R6 objects, but since the</span>
-<span id="cb50-33"><a href="#cb50-33" aria-hidden="true" tabindex="-1"></a>         method will be shared across all R6 objects, the memory use will be negligible.</span>
-<span id="cb50-34"><a href="#cb50-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-35"><a href="#cb50-35" aria-hidden="true" tabindex="-1"></a>        By default, calling x\$clone() on an R6 object will result in a shallow</span>
-<span id="cb50-36"><a href="#cb50-36" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">fileSearchStore</span><span class="kw">:</span><span class="at"> fileSearchStores/r-oop-store-bkd207kkacou</span></span>
-<span id="cb50-37"><a href="#cb50-37" aria-hidden="true" tabindex="-1"></a><span class="co">...</span></span></code></pre></div>
+<details class="code-fold"><summary>Grounding metadata with file citations</summary><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grounding_metadata</span><span class="kw">:</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">groundingChunks</span><span class="kw">:</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">retrievedContext</span><span class="kw">:</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">title</span><span class="kw">:</span><span class="at"> je792h7nxtr4</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="fu">      text</span><span class="kw">: </span><span class="ch">|-</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>        above) of the object.</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>        The default print method of R6 objects can be redefined, by supplying a public print method.</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>         (print members that are not functions are ignored.) This method is automatically called when-</span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>         ever the object is printed, e.g. when the object's name is typed at the command prompt, or when</span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>         print(obj) is called. It can also be called directly via obj\$print(). All extra arguments from a</span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>         print(obj,...) call are passed on to the obj\$print(...) method.</span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>        Portable and non-portable classes</span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a>        When R6 classes are portable (the default), they can be inherited across packages without compli-</span>
+<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a>         cation. However, when in portable mode, members must be accessed with self and private, as in</span>
+<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a>         self\$x and private\$y.</span>
+<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-20"><a href="#cb48-20" aria-hidden="true" tabindex="-1"></a>        --- PAGE 5 ---</span>
+<span id="cb48-21"><a href="#cb48-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-22"><a href="#cb48-22" aria-hidden="true" tabindex="-1"></a>        R6Class</span>
+<span id="cb48-23"><a href="#cb48-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-24"><a href="#cb48-24" aria-hidden="true" tabindex="-1"></a>        5</span>
+<span id="cb48-25"><a href="#cb48-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-26"><a href="#cb48-26" aria-hidden="true" tabindex="-1"></a>        When used in non-portable mode, R6 classes behave more like reference classes: inheritance across</span>
+<span id="cb48-27"><a href="#cb48-27" aria-hidden="true" tabindex="-1"></a>         packages will not work well, and self and private are not necessary for accessing fields.</span>
+<span id="cb48-28"><a href="#cb48-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-29"><a href="#cb48-29" aria-hidden="true" tabindex="-1"></a>        Cloning objects</span>
+<span id="cb48-30"><a href="#cb48-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-31"><a href="#cb48-31" aria-hidden="true" tabindex="-1"></a>        R6 objects have a method named clone by default. To disable this, use cloneable=FALSE. Having</span>
+<span id="cb48-32"><a href="#cb48-32" aria-hidden="true" tabindex="-1"></a>         the clone method present will slightly increase the memory footprint of R6 objects, but since the</span>
+<span id="cb48-33"><a href="#cb48-33" aria-hidden="true" tabindex="-1"></a>         method will be shared across all R6 objects, the memory use will be negligible.</span>
+<span id="cb48-34"><a href="#cb48-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-35"><a href="#cb48-35" aria-hidden="true" tabindex="-1"></a>        By default, calling x\$clone() on an R6 object will result in a shallow</span>
+<span id="cb48-36"><a href="#cb48-36" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">fileSearchStore</span><span class="kw">:</span><span class="at"> fileSearchStores/r-oop-store-bkd207kkacou</span></span>
+<span id="cb48-37"><a href="#cb48-37" aria-hidden="true" tabindex="-1"></a><span class="co">...</span></span></code></pre></div>
 </details>
 </div>
 </section><section class="level2"><h3 id="using-metadata-filtering">Using Metadata Filtering<a class="anchor" aria-label="anchor" href="#using-metadata-filtering"></a>
 </h3>
 <p>Add custom metadata to files for filtering:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">s7_pdf_url</span> <span class="op">&lt;-</span> <span class="st">"https://cran.r-project.org/web/packages/S7/S7.pdf"</span></span>
 <span></span>
 <span><span class="va">doc2</span> <span class="op">&lt;-</span> <span class="va">google_gemini</span><span class="op">$</span><span class="fu">add_file_to_store</span><span class="op">(</span></span>
@@ -956,7 +798,7 @@
 </h3>
 <p>Control how files are chunked for better retrieval.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">doc3</span> <span class="op">&lt;-</span> <span class="va">google_gemini</span><span class="op">$</span><span class="fu">add_file_to_store</span><span class="op">(</span></span>
 <span>    file_path <span class="op">=</span> <span class="va">s7_pdf_url</span>,</span>
 <span>    store_name <span class="op">=</span> <span class="va">store</span><span class="op">$</span><span class="va">name</span>,</span>
@@ -972,7 +814,7 @@
 </h3>
 <p>You can also query specific files without using the chat interface:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">query_file</span><span class="op">(</span></span>
 <span>    file_name <span class="op">=</span> <span class="va">doc</span><span class="op">$</span><span class="va">name</span>,</span>
 <span>    query <span class="op">=</span> <span class="st">"What are active bindings?"</span>,</span>
@@ -983,27 +825,27 @@
 </h3>
 <p><strong>List all stores:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">list_stores</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p><strong>List files in a store:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">list_files_in_store</span><span class="op">(</span><span class="va">store</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p><strong>Get file details:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">read_file_from_store</span><span class="op">(</span><span class="va">doc</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p><strong>Delete a file:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">delete_file_from_store</span><span class="op">(</span><span class="va">doc</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p><strong>Delete a store:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">delete_store</span><span class="op">(</span><span class="va">store</span><span class="op">$</span><span class="va">name</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div>

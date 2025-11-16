@@ -1,0 +1,889 @@
+# Google (Gemini)
+
+## Introduction
+
+This article covers using the Google Gemini provider with argent. Google
+Gemini offers powerful multimodal capabilities, server-side tools, and
+extended thinking features.
+
+## Setup
+
+``` r
+google_gemini <- Google$new(api_key = Sys.getenv("GEMINI_API_KEY"))
+```
+
+**Available Models**
+
+``` r
+google_gemini$list_models() |>
+    dplyr::filter(stringr::str_detect(name, "2.5-flash|2.5-pro|3-pro")) |>
+    dplyr::select(-description)
+```
+
+## Basic Completion
+
+``` r
+google_gemini$chat(
+    "What's the R programming language? Answer in three sentences.",
+    model = "gemini-2.5-flash"
+)
+```
+
+## Tool Calling + Structured Output + Thinking
+
+First, define some web-related tools (search, crawl, fetch, and a
+general-use tool) bundled in a `web_tools` list:
+
+Web Tools Implementation
+
+**Search:**
+
+``` r
+web_search <- function(query) {
+    #' @description Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or any data not in your training data.
+    #' @param query:string* The search query string. Be specific and use keywords that will yield the most relevant results.
+    
+    return(web_search_tavily(query))
+}
+
+web_search_tavily <- function(query) {
+    res <- httr2::request("https://api.tavily.com/search") |> 
+        httr2::req_body_json(list(
+            query = query,
+            search_depth = "basic",
+            include_answer = FALSE,
+            max_results = 10,
+            api_key = Sys.getenv("TAVILY_API_KEY")
+        )) |> 
+        httr2::req_error(is_error = \(resp) FALSE) |> 
+        httr2::req_throttle(rate = 20/60, realm = "tavily") |> 
+        httr2::req_perform() |> 
+        httr2::resp_body_json() |> 
+        purrr::discard_at(c("response_time", "follow_up_questions", "images"))
+
+    results <- purrr::map(res$results, \(x) purrr::discard_at(x, "raw_content"))
+
+    return(jsonlite::toJSON(results, pretty = FALSE, auto_unbox = TRUE))
+}
+```
+
+**Fetch:**
+
+``` r
+web_fetch <- function(url) {
+    #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content. Automatically falls back to alternative methods if the primary fetch fails.
+    #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
+    
+    res <- web_fetch_trafilatura(url)
+
+    could_not_fetch <- c(
+        "Impossible to fetch the contents of this web page",
+        "Please reload this page",
+        "There was an error while loading",
+        "404"
+    )
+    if (is.null(res) || is.na(res) || nchar(res) == 0 ||
+        any(stringr::str_detect(res, stringr::fixed(could_not_fetch, ignore_case = TRUE)))) {
+        res <- web_fetch_rvest(url)
+    }
+    return(res)
+}
+
+web_fetch_trafilatura <- function(url) {
+    # pip install trafilatura
+    tryCatch({
+        res <- paste0("trafilatura -u ", url, " --markdown --no-comments --links ") |> 
+            system(intern = TRUE) |> 
+            purrr::keep(nzchar) |>
+            paste0(collapse = "\n")
+        
+        return(res)
+    },
+    error = function(e) {
+        return("Impossible to fetch the contents of this web page. It might not allow scraping")
+    })
+}
+
+web_fetch_rvest <- function(url) {
+    tags_to_ignore <- c(
+        "a", "script", "code", "img", "svg", "footer", "g", "path", "polygon", "label", "button", "form", "input", "select", 
+        "style", "link", "meta", "noscript", "iframe", "embed", "object", "param", "video", "audio", "track", "source", 
+        "canvas", "map", "area", "math", "col", "colgroup", "dl", "dt", "dd", "hr", "pre", "address", "figure", "figcaption",
+        "dfn", "em", "kbd", "samp", "var", "del", "ins", "mark", "circle"
+    )
+
+    remove_tags <- function(xml, tags) {
+        purrr::walk(tags, \(tag) purrr::walk(xml2::xml_find_all(xml, paste0(".//", tag)), \(node) xml2::xml_remove(node)))
+        return(xml)
+    }
+
+    cleaned_contents <- tryCatch(
+        rvest::read_html(url)
+        |> rvest::html_element("body")
+        |> remove_tags(tags_to_ignore)
+        |> rvest::html_children()
+        |> rvest::html_text2()
+        |> purrr::discard(\(x) x == "")
+        |> paste0(collapse = "\n\n"),
+        error = \(e) return("")
+    )
+    return(cleaned_contents)
+}
+```
+
+Then, let’s define a JSON schema for the structured output using
+[`schema()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md):
+
+``` r
+package_info_schema <- schema(
+    name = "package_info",
+    description = "Information about an R package release",
+    release_version = "string* The release version of the package",
+    release_date = "string* The release date of the `release_version`"
+)
+```
+
+Then, run the agent:
+
+``` r
+google_gemini$chat(
+    "When was the first release of the R 'ellmer' package on GitHub?",
+    model = "gemini-2.5-flash",
+    thinking_budget = 512,
+    include_thoughts = TRUE,
+    tools = list(as_tool(web_search), as_tool(web_fetch)),
+    output_schema = package_info_schema
+)
+```
+
+``` default
+$release_version
+[1] "0.1.0"
+
+$release_date
+[1] "2025-01-09"
+```
+
+The model will keep calling tools until it has enough information to
+answer the question.
+
+### Extracting Reasoning
+
+``` r
+cat(google_gemini$get_reasoning_text())
+```
+
+Alternatively, simply `print(google_gemini)` to see the reasoning and
+answers’ text in the console, turn by turn.
+
+> **Note**
+>
+> `get_reasoning_text()` and `get_content_text()` use the last API
+> response (`google_gemini$get_last_response()`) by default.
+
+## Server-side Tools
+
+Server-side tools are tools you can call without having to define them
+yourself. They will be run on the provider’s server.
+
+Google Gemini supports five server-side tools that can be used alongside
+client-side tools:
+
+- **google_search** - Web search with grounding
+- **google_maps** - Location-aware information with Google Maps data
+- **url_context** - Fetch and process URLs
+- **code_execution** - Execute Python code
+- **file_search** - Search through uploaded files using vector stores
+  (i.e. server-side RAG)
+
+### Server-side: Google Search
+
+The server-side web search tool provides search results with citations:
+
+``` r
+google_gemini$chat(
+    "What's the latest version of the R 'ellmer' package?",
+    model = "gemini-2.5-flash",
+    tools = list("google_search"),
+    output_schema = package_info_schema
+)
+```
+
+**Extract grounding metadata** (citations and sources):
+
+``` r
+google_gemini$get_supplementary() # Defaults to the last response
+```
+
+> **Note**
+>
+> This server-side tool is equivalent to our client-side `web_search`
+> tool.
+
+### Server-side: URL Context
+
+This server tool lets the LLM fetch the contents of URLs given to it in
+the prompt. It supports fetching text (HTML, JSON, XML), images (PNG,
+JPEG, WebP), and PDFs.
+
+``` r
+google_gemini$chat(
+    "Summarize the main changes in the current development version of the R 'ellmer' package in 2 sentences: \ 
+    https://raw.githubusercontent.com/tidyverse/ellmer/main/NEWS.md",
+    model = "gemini-2.5-flash",
+    tools = list("url_context")
+)
+```
+
+``` default
+The current development version of the R 'ellmer' package introduces several significant changes, including enhanced control over model reasoning effort with new `reasoning_effort` and `reasoning_tokens` parameters for various chat functions. Additionally, it refines API key handling by using a `credentials` function to retrieve keys on demand, preventing their storage in chat objects, and supports image generation through `chat_google_gemini()` and `chat_openai_responses()`.
+```
+
+**Limitations:**
+
+- Maximum 20 URLs per request
+- 34MB limit per URL
+- Retrieved content counts toward input token usage
+
+> **Note**
+>
+> This server-side tool is equivalent to our client-side `web_fetch`
+> tool.
+
+### Server-side: File Search
+
+With Google Gemini, we can create a file search store and use the
+file_search tool to search through uploaded files, effectively turning
+it into a server-side RAG application. See the [File Search &
+RAG](#server-side-rag) section below for a complete example.
+
+### Server-side: Google Maps
+
+The Google Maps grounding tool connects Gemini with Google Maps’ rich,
+factual, and up-to-date location data. This enables accurate,
+location-aware responses for geographical queries.
+
+#### Basic Usage
+
+``` r
+google_gemini$chat(
+    "What are the 5 best Italian restaurants within a 15-minute walk from Times Square?",
+    model = "gemini-2.5-flash",
+    tools = list("google_maps")
+)
+```
+
+We can also provide a specific location for more relevant results:
+
+``` r
+google_gemini$chat(
+    "Give me 5 good coffee shops with outdoor seating in a 1km radius from here.",
+    model = "gemini-2.5-flash",
+    tools = list(
+        list(
+            type = "google_maps",
+            location = list(
+                latitude = 63.43047233964285,
+                longitude = -10.394945036790627
+            )
+        )
+    )
+)
+```
+
+``` default
+Here are 5 good coffee shops with outdoor seating near you:
+
+1.  **Jacobsen & Svart Coffee Roasters** - This coffee shop has a rating of 4.7 stars and is currently open until 5:00 PM today.
+2.  **Tantes Hage** - With a rating of 4.8 stars, this cafe offers outdoor seating. Please note that Tantes Hage is closed today, but open on Sundays from 10:00 AM to 6:00 PM.
+3.  **Café Løkka** - This cafe has a 4.3-star rating and is currently open until 12:00 AM.
+4.  **Dromedar Kaffebar, Nordre** - Rated 4.3 stars, this coffee shop is open until 7:00 PM today.
+5.  **Espresso House** (Nordre gate 1-3) - This cafe has a rating of 4.2 stars and is currently open until 8:00 PM.
+```
+
+**Extract grounding metadata** (citations and sources):
+
+``` r
+google_gemini$get_supplementary()
+```
+
+**Enabling the Maps Widget**
+
+Enable the widget context token to render interactive Google Maps
+widgets using the Maps API:
+
+``` r
+google_gemini$chat(
+    "Plan a day in Trondheim. I want to see the Nidaros, swim in a lake, and have a beer by the river.",
+    model = "gemini-2.5-flash",
+    tools = list(
+        list(
+            type = "google_maps",
+            enable_widget = TRUE,
+            location = list(
+                latitude = 63.43047233964285,
+                longitude = -10.394945036790627
+            )
+        )
+    )
+)
+```
+
+``` default
+Here's a possible plan for your day in Trondheim:
+
+Start your day by visiting the magnificent Nidaros Cathedral, a Gothic cathedral dating from the 13th century located at Kongsgårdsgata 2. The cathedral typically opens at 9:00 AM on weekdays.
+
+After exploring the cathedral, head to Theisendammen badeplass for a refreshing swim in a lake. This park is open 24 hours, highly-rated, and is a good option for swimming.
+
+In the evening, enjoy a beer by the Nidelva river at Den Gode Nabo AS. This highly-rated bar, located at Øvre Bakklandet 66, offers outdoor seating, perfect for enjoying the riverside atmosphere.
+```
+
+Extract the widget context token:
+
+``` r
+google_gemini$get_supplementary() |> 
+    purrr::pluck("grounding_metadata", "googleMapsWidgetContextToken")
+```
+
+The widget token can be passed to the Google Maps API to display
+interactive maps with markers in your frontend.
+
+> **Note**
+>
+> - Only works with specific Gemini models (2.5 Pro, 2.5 Flash, 2.5
+>   Flash-Lite, 2.0 Flash)
+> - Free tier: 500 successful requests per day
+> - 25\$ per 1,000 grounded prompts
+
+### Server-side: Code Execution
+
+The code execution tool allows the model to write and execute Python
+code in a server-side sandboxed environment for data analysis,
+calculations, and visualizations.
+
+**Example: Analyzing the Penguins Dataset**
+
+Let’s upload the penguins dataset as a remote file and use the code
+execution tool:
+
+``` r
+penguins_url <- "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/refs/heads/main/inst/extdata/penguins.csv"
+penguins_file_metadata <- google_gemini$upload_file(penguins_url)
+
+google_gemini$chat(
+    "Create a summary table showing average body_mass grouped by species, sex, and year. Save as CSV.",
+    model = "gemini-2.5-flash",
+    tools = list(list(type = "code_execution", file_ids = list(penguins_file_metadata$name)))
+)
+```
+
+Inspect the generated code:
+
+``` r
+cat(google_gemini$get_generated_code(langs = c("python"), as_chunks = TRUE))
+```
+
+Generated Code
+
+``` python
+import pandas as pd
+
+# Load the CSV file
+df = pd.read_csv("input_file_0.csv")
+
+# Display the first few rows and information about the DataFrame
+print("DataFrame Head:")
+print(df.head())
+print("\nDataFrame Info:")
+print(df.info())
+```
+
+``` python
+# Group by species, sex, and year and calculate the average body_mass_g
+summary_table = df.groupby(['species', 'sex', 'year'])['body_mass_g'].mean().reset_index()
+
+# Rename the 'body_mass_g' column to 'average_body_mass_g' for clarity
+summary_table = summary_table.rename(columns={'body_mass_g': 'average_body_mass_g'})
+
+# Save the summary table to a CSV file
+output_filename = "average_body_mass_summary.csv"
+summary_table.to_csv(output_filename, index=False)
+
+print(f"Summary table saved to {output_filename}")
+print("\nSummary Table Head:")
+print(summary_table.head())
+```
+
+Download the generated files:
+
+``` r
+downloaded_path <- google_gemini$download_generated_files(dest_path = "data")
+#> ✔ File saved: data/generated_file_9604db3d-57fc-4aab-bd60-bf4c194ab6e5.csv
+```
+
+``` r
+read.csv(downloaded_path)
+```
+
+``` default
+     species    sex year average_body_mass_g
+1     Adelie female 2007            3389.773
+2     Adelie female 2008            3386.000
+3     Adelie female 2009            3334.615
+4     Adelie   male 2007            4038.636
+5     Adelie   male 2008            4098.000
+6     Adelie   male 2009            3995.192
+7  Chinstrap female 2007            3569.231
+8  Chinstrap female 2008            3472.222
+9  Chinstrap female 2009            3522.917
+10 Chinstrap   male 2007            3819.231
+11 Chinstrap   male 2008            4127.778
+12 Chinstrap   male 2009            3927.083
+13    Gentoo female 2007            4618.750
+14    Gentoo female 2008            4627.273
+15    Gentoo female 2009            4786.250
+16    Gentoo   male 2007            5552.941
+17    Gentoo   male 2008            5410.870
+18    Gentoo   male 2009            5510.714
+```
+
+Continue asking questions in the same context:
+
+``` r
+penguin_output_schema <- schema(
+    name = "penguin_output",
+    description = "Schema for the penguin output",
+    average_body_mass = "number* The average body_mass",
+    species = "string* The species",
+    sex = "string* The sex",
+    year = "integer* The year"
+)
+
+google_gemini$chat(
+    "What's the average body_mass for the Adelie females in 2009?",
+    tools = list("code_execution"),
+    output_schema = penguin_output_schema
+)
+```
+
+``` default
+$species
+[1] "Adelie"
+
+$sex
+[1] "females"
+
+$year
+[1] 2009
+
+$average_body_mass
+[1] 3334.62
+```
+
+### Multimodal Inputs
+
+Google Gemini supports sending:
+
+- PDF (files or URLs) as text or base64
+- Images (files or URLs) as base64
+- Remote files (through
+  [`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md))
+- Plain text & code files
+- Text-based data files (csv, tsv, json, ..)
+- R objects
+
+#### Image Comprehension
+
+Downloading an example image
+
+``` r
+bsg04_cast_image_url <- "https://upload.wikimedia.org/wikipedia/en/1/1a/Battlestar_Galactica_%282004%29_cast.jpg"
+bsg04_cast_image_path <- download_temp_file(bsg04_cast_image_url)
+```
+
+**Sending a local image:**
+
+When providing a path to a local image, it will automatically be
+converted to base64 before being sent to the server.
+
+``` r
+google_gemini$chat(
+    "Who are the characters in this image, and what show is it from?",
+    bsg04_cast_image_path
+)
+```
+
+``` default
+The characters in the image are from the show **Battlestar Galactica**.
+
+From left to right, the characters are:
+*   **Admiral William Adama** (played by Edward James Olmos)
+*   **President Laura Roslin** (played by Mary McDonnell)
+*   **Captain Lee "Apollo" Adama** (played by Jamie Bamber)
+*   **Lieutenant Kara "Starbuck" Thrace** (played by Katee Sackhoff)
+*   **Number Six** (played by Tricia Helfer)
+*   **Gaius Baltar** (played by James Callis)
+*   **Sharon "Boomer" Valerii / Sharon "Athena" Agathon** (played by Grace Park)
+```
+
+*So say we all!*
+
+**Sending an image URL:**
+
+``` r
+google_gemini$reset_history()
+
+google_gemini$chat(
+    "Who are the characters in this image, and what show is it from?",
+    bsg04_cast_image_url
+)
+```
+
+> **Note**
+>
+> Here, the URL was automatically detected, downloaded in a temporary
+> file, and converted to base64, before being passed to the model.
+>
+> Other providers may have different behavior. For example, Anthropic
+> supports passing image files URLs directly.
+
+> **Tip**
+>
+> We could have used the `as_image_content(bsg04_cast_image_url)` helper
+> to make sure the path/url is treated as an image, and, optionally, to
+> resize the image before sending it.
+
+#### PDF Comprehension
+
+Downloading an example PDF (my CV)
+
+``` r
+my_cv_url <- "https://ma-riviere.com/res/cv.pdf"
+my_cv_pdf_path <- download_temp_file(my_cv_url)
+```
+
+**Sending a local PDF:**
+
+``` r
+google_gemini$chat(
+    "What's my favorite programming language ?",
+    my_cv_pdf_path
+)
+```
+
+``` default
+Based on your resume, your favorite programming language appears to be **R**.
+```
+
+*Damn right!*
+
+**Sending PDF URLs:**
+
+For Google, by default, PDF URLs are sent as base64 to the server.
+
+However, we can use the
+[`as_text_content()`](https://ma-riviere.github.io/argent/reference/as_text_content.md)
+helper to have
+[`pdftools::pdf_convert()`](https://docs.ropensci.org/pdftools//reference/pdf_render_page.html)
+parse the PDFs and pass their text contents to the model instead.
+
+``` r
+r6_pdf_url <- "https://cran.r-project.org/web/packages/R6/R6.pdf"
+s7_pdf_url <- "https://cran.r-project.org/web/packages/S7/S7.pdf"
+
+multimodal_prompt <- list(
+    "Give a 3 sentences summary of the advantages of S7 over R6",
+    as_text_content(r6_pdf_url),
+    as_text_content(s7_pdf_url),
+    "And give me the current versions of both packages" # To make sure you actually read the PDFs
+)
+
+google_gemini$chat(!!!multimodal_prompt)
+```
+
+``` default
+S7 offers a more formal and comprehensive object-oriented system for R, explicitly designed as a successor to both S3 and S4, featuring formal class, generic, and method specifications. It supports limited multiple dispatch, allowing method selection based on the types of multiple arguments, a capability not natively offered by R6. Furthermore, S7 is the result of a collaborative effort by the R Consortium Object-Oriented Programming Working Group, suggesting a broader community consensus and potential for standardization in R's future.
+
+The current versions of the packages are:
+*   **R6:** 2.6.1 (published 2025-02-15)
+*   **S7:** 0.2.0 (published 2024-11-07)
+```
+
+#### Passing R Objects
+
+You can pass any R object to `chat()` as is:
+
+``` r
+lm_obj <- lm(body_mass ~ species + sex, data = datasets::penguins)
+
+google_gemini$chat(
+    "What can we deduct from this regression model ?",
+    lm_obj,
+    model = "gemini-2.5-flash"
+)
+```
+
+``` default
+From the provided regression model output, we can deduce the following three points:
+
+1.  **Model Type and Purpose**: This is a linear regression model (`lm_obj`) attempting to explain or predict `body_mass` based on two categorical predictor variables: `species` and `sex`. The model was fitted using the `datasets::penguins` dataset.
+2.  **Intercept and Reference Group Body Mass**: The estimated intercept is 3372.4. Given that `contr.treatment` was used for both categorical variables, this intercept represents the estimated average `body_mass` (likely in grams) for the baseline group: an **Adelie female penguin**.
+3.  **Estimated Effects of Predictors**:
+    *   **Species Effect**: Compared to Adelie penguins (the reference species), Chinstrap penguins are estimated to have an average `body_mass` that is 26.9 units higher, and Gentoo penguins are estimated to have an average `body_mass` that is 1377.9 units higher, assuming sex is held constant.
+    *   **Sex Effect**: Compared to female penguins (the reference sex), male penguins are estimated to have an average `body_mass` that is 667.6 units higher, assuming species is held constant.
+```
+
+> **Note**
+>
+> Any R object passed to `chat()` will be automatically converted to
+> JSON (or text if JSON conversion fails), with some added information
+> like the name of the object and its classes.
+
+#### Passing Uploaded Files
+
+Upload a file and reference it with
+[`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md):
+
+``` r
+file_metadata <- google_gemini$upload_file(my_cv_url) # Pass an URL or a local file path
+
+multipart_prompt <- list(
+    "What are my two favorite frameworks/tools ?",
+    as_file_content(file_metadata$name)
+)
+
+google_gemini$chat(!!!multipart_prompt, model = "gemini-2.5-flash")
+
+google_gemini$delete_file(file_metadata$name)
+```
+
+``` default
+Based on your resume, your two favorite frameworks/tools appear to be **Shiny** and **Quarto/R Markdown**.
+
+Here's why:
+*   Your most recent role is "R/Shiny Developer," highlighting Shiny as a primary tool.
+*   Shiny is listed first and prominently in your "Frameworks & Tools" section.
+*   "Quarto, R Markdown" is also listed prominently and is explicitly mentioned in your "Consulting" section, and is a natural pairing with R and Shiny for scientific publishing and interactive content.
+```
+
+> **Note**
+>
+> Here, using
+> [`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md)
+> is necessary to signal to the model to use this as a remote file
+> reference, rather than just some text content.
+
+> **Tip**
+>
+> You can use `$list_files()` to list all uploaded files and their
+> metadata.
+
+## File Search & RAG
+
+The file search tool enables Retrieval-Augmented Generation (RAG) by
+allowing the model to search through uploaded files. This is Google’s
+managed solution for file search using vector embeddings.
+
+### Creating a File Search Store
+
+First, create a file search store to hold your files:
+
+``` r
+store <- google_gemini$create_store(name = "R OOP Store")
+#> ✔ [Google] File search store created: fileSearchStores/r-oop-store-bkd207kkacou
+```
+
+### Uploading Files to Store
+
+You can either upload files directly or import existing File API files:
+
+**Direct upload:**
+
+``` r
+r6_pdf_url <- "https://cran.r-project.org/web/packages/R6/R6.pdf"
+
+doc <- google_gemini$add_file_to_store(
+    file_path = r6_pdf_url,
+    store_name = store$name,
+    file_name = "R6 Package Documentation"
+)
+#> ✔ [Google] File uploaded to store: fileSearchStores/r-oop-store-bkd207kkacou/documents/r6-package-documentation-9uwwjohjvjj1
+```
+
+**Import from File API:**
+
+Another way to upload files is to use the `upload_file()`, and then
+import the uploaded file into the store. The result will be the same.
+
+``` r
+file_metadata <- google_gemini$upload_file(r6_pdf_url, name = "R6 Package Documentation 2")
+#> ✔ [Google] File uploaded: files/ie6e5jfpuwpf
+
+doc <- google_gemini$import_file_to_store(
+    file_name = file_metadata$name,
+    store_name = store$name
+)
+#> ✔ [Google] File imported: fileSearchStores/r-oop-store-bkd207kkacou/documents/ie6e5jfpuwpf-3z73sypazx1o
+```
+
+### Using File Search in Chat
+
+Once files are uploaded, use the file_search tool in your chat requests:
+
+``` r
+google_gemini$chat(
+    "What are the key features of R6 classes compared to reference classes? In three sentences.",
+    model = "gemini-2.5-flash",
+    tools = list(
+        list(type = "file_search", store_names = list(store$name))
+    )
+)
+```
+
+**Extract grounding metadata with citations:**
+
+``` r
+cat(yaml::as.yaml(google_gemini$get_supplementary()))
+```
+
+Grounding metadata with file citations
+
+``` yaml
+grounding_metadata:
+  groundingChunks:
+  - retrievedContext:
+      title: je792h7nxtr4
+      text: |-
+        above) of the object.
+
+        The default print method of R6 objects can be redefined, by supplying a public print method.
+         (print members that are not functions are ignored.) This method is automatically called when-
+         ever the object is printed, e.g. when the object's name is typed at the command prompt, or when
+         print(obj) is called. It can also be called directly via obj\$print(). All extra arguments from a
+         print(obj,...) call are passed on to the obj\$print(...) method.
+
+        Portable and non-portable classes
+
+        When R6 classes are portable (the default), they can be inherited across packages without compli-
+         cation. However, when in portable mode, members must be accessed with self and private, as in
+         self\$x and private\$y.
+
+        --- PAGE 5 ---
+
+        R6Class
+
+        5
+
+        When used in non-portable mode, R6 classes behave more like reference classes: inheritance across
+         packages will not work well, and self and private are not necessary for accessing fields.
+
+        Cloning objects
+
+        R6 objects have a method named clone by default. To disable this, use cloneable=FALSE. Having
+         the clone method present will slightly increase the memory footprint of R6 objects, but since the
+         method will be shared across all R6 objects, the memory use will be negligible.
+
+        By default, calling x\$clone() on an R6 object will result in a shallow
+      fileSearchStore: fileSearchStores/r-oop-store-bkd207kkacou
+...
+```
+
+### Using Metadata Filtering
+
+Add custom metadata to files for filtering:
+
+``` r
+s7_pdf_url <- "https://cran.r-project.org/web/packages/S7/S7.pdf"
+
+doc2 <- google_gemini$add_file_to_store(
+    file_path = s7_pdf_url,
+    store_name = store$name,
+    file_name = "S7 Package Documentation",
+    custom_metadata = list(
+        package = "S7",
+        version = "0.2.0",
+        year = 2024
+    )
+)
+#> ✔ [Google] File uploaded to store: fileSearchStores/r-oop-store-bkd207kkacou/documents/fileSearchStores/r-oop-store-bkd207kkacou/documents/s7-package-documentation-x7o9goo6eufz
+
+google_gemini$chat(
+    "What are the main features of S7?",
+    model = "gemini-2.5-flash",
+    tools = list(
+        list(
+            type = "file_search",
+            store_names = list(store$name),
+            metadata_filter = "package=S7"
+        )
+    )
+)
+```
+
+### Chunking Configuration
+
+Control how files are chunked for better retrieval.
+
+``` r
+doc3 <- google_gemini$add_file_to_store(
+    file_path = s7_pdf_url,
+    store_name = store$name,
+    file_name = "S7 Package Documentation 2",
+    chunking_config = list(
+        max_tokens_per_chunk = 400,
+        max_overlap_tokens = 50
+    )
+)
+#> ✔ [Google] File uploaded to store: fileSearchStores/r-oop-store-bkd207kkacou/documents/s7-package-documentation-2-sgob116kg3ts
+```
+
+### Querying Files Directly
+
+You can also query specific files without using the chat interface:
+
+``` r
+google_gemini$query_file(
+    file_name = doc$name,
+    query = "What are active bindings?",
+    results_count = 5
+)
+```
+
+### Managing Stores and Files
+
+**List all stores:**
+
+``` r
+google_gemini$list_stores()
+```
+
+**List files in a store:**
+
+``` r
+google_gemini$list_files_in_store(store$name)
+```
+
+**Get file details:**
+
+``` r
+google_gemini$read_file_from_store(doc$name)
+```
+
+**Delete a file:**
+
+``` r
+google_gemini$delete_file_from_store(doc$name)
+```
+
+**Delete a store:**
+
+``` r
+google_gemini$delete_store(store$name, force = TRUE)
+```
+
+> **Note**
+>
+> **Pricing & Limits:** - File search is currently in preview and
+> pricing may change - Maximum file size: 2GB - Supported formats: PDF,
+> TXT, HTML, DOCX, and more

@@ -207,20 +207,12 @@ to ensure consistent interfaces and eliminate code duplication.</p>
 <h3 id="method-get-history-">Method <code>get_history()</code><a class="anchor" aria-label="anchor" href="#method-get-history-"></a></h3>
 <p>Get both chat and session history</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Provider</span><span class="op">$</span><span class="fu">get_history</span><span class="op">(</span>format_to <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Provider</span><span class="op">$</span><span class="fu">get_history</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
-<div class="section">
-<h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>format_to</code></dt>
-<dd><p>Character. Output format: "json", "yaml", or NULL for list (default: NULL)</p></dd>
-
-
-</dl><p></p></div>
-</div>
 <div class="section">
 <h4 id="returns-1">Returns<a class="anchor" aria-label="anchor" href="#returns-1"></a></h4>
-<p>List, JSON string, or YAML string. History in requested format</p>
+<p>List. History containing both chat_history and session_history</p>
 </div>
 
 </div><p></p><hr><a id="method-Provider-set_history"></a><div class="section">
@@ -231,7 +223,7 @@ to ensure consistent interfaces and eliminate code duplication.</p>
 </div>
 
 <div class="section">
-<h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
+<h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>history</code></dt>
 <dd><p>List. Chat and session history to set (list(chat_history = ..., session_history = ...))</p></dd>
 
@@ -247,40 +239,24 @@ to ensure consistent interfaces and eliminate code duplication.</p>
 <h3 id="method-get-chat-history-">Method <code>get_chat_history()</code><a class="anchor" aria-label="anchor" href="#method-get-chat-history-"></a></h3>
 <p>Get the chat history. The chat history is the history of messages exchanged between the user and the model.</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Provider</span><span class="op">$</span><span class="fu">get_chat_history</span><span class="op">(</span>format_to <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Provider</span><span class="op">$</span><span class="fu">get_chat_history</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
-<div class="section">
-<h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>format_to</code></dt>
-<dd><p>Character. Output format: "json", "yaml", or NULL for list (default: NULL)</p></dd>
-
-
-</dl><p></p></div>
-</div>
 <div class="section">
 <h4 id="returns-3">Returns<a class="anchor" aria-label="anchor" href="#returns-3"></a></h4>
-<p>List, JSON string, or YAML string. Chat history in requested format</p>
+<p>List. Chat history</p>
 </div>
 
 </div><p></p><hr><a id="method-Provider-get_session_history"></a><div class="section">
 <h3 id="method-get-session-history-">Method <code>get_session_history()</code><a class="anchor" aria-label="anchor" href="#method-get-session-history-"></a></h3>
 <p>Get the session history</p><div class="section">
 <h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Provider</span><span class="op">$</span><span class="fu">get_session_history</span><span class="op">(</span>format_to <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Provider</span><span class="op">$</span><span class="fu">get_session_history</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
-<div class="section">
-<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>format_to</code></dt>
-<dd><p>Character. Output format: "json", "yaml", or NULL for list (default: NULL)</p></dd>
-
-
-</dl><p></p></div>
-</div>
 <div class="section">
 <h4 id="returns-4">Returns<a class="anchor" aria-label="anchor" href="#returns-4"></a></h4>
-<p>List, JSON string, or YAML string. Session history (alternating query_data and responses) in requested format</p>
+<p>List. Session history (alternating query_data and responses)</p>
 </div>
 
 </div><p></p><hr><a id="method-Provider-dump_history"></a><div class="section">
@@ -291,7 +267,7 @@ to ensure consistent interfaces and eliminate code duplication.</p>
 </div>
 
 <div class="section">
-<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
+<h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>dest_path</code></dt>
 <dd><p>Character. Optional custom file path. If NULL, uses history_file_path.</p></dd>
 
@@ -336,7 +312,7 @@ to ensure consistent interfaces and eliminate code duplication.</p>
 </div>
 
 <div class="section">
-<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
+<h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>file_path</code></dt>
 <dd><p>Character. Path to history file (absolute or relative to project root) or just filename</p></dd>
 
@@ -368,7 +344,7 @@ to ensure consistent interfaces and eliminate code duplication.</p>
 </div>
 
 <div class="section">
-<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
+<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>enabled</code></dt>
 <dd><p>Logical. Enable/disable automatic history sync</p></dd>
 
@@ -396,7 +372,7 @@ to ensure consistent interfaces and eliminate code duplication.</p>
 </div>
 
 <div class="section">
-<h4 id="arguments-9">Arguments<a class="anchor" aria-label="anchor" href="#arguments-9"></a></h4>
+<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>up_to_index</code></dt>
 <dd><p>Integer. Index up to which to calculate the cumulative tokens (default: NULL)</p></dd>
 
@@ -412,20 +388,12 @@ to ensure consistent interfaces and eliminate code duplication.</p>
 <h3 id="method-get-last-response-">Method <code>get_last_response()</code><a class="anchor" aria-label="anchor" href="#method-get-last-response-"></a></h3>
 <p>Get the last API response</p><div class="section">
 <h4 id="usage-15">Usage<a class="anchor" aria-label="anchor" href="#usage-15"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Provider</span><span class="op">$</span><span class="fu">get_last_response</span><span class="op">(</span>format_to <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Provider</span><span class="op">$</span><span class="fu">get_last_response</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
-<div class="section">
-<h4 id="arguments-10">Arguments<a class="anchor" aria-label="anchor" href="#arguments-10"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>format_to</code></dt>
-<dd><p>Character. Output format: "json", "yaml", or NULL for list (default: NULL)</p></dd>
-
-
-</dl><p></p></div>
-</div>
 <div class="section">
 <h4 id="returns-11">Returns<a class="anchor" aria-label="anchor" href="#returns-11"></a></h4>
-<p>List, JSON string, or YAML string. Last API response object in requested format, or NULL if no response has been stored</p>
+<p>List. Last API response object, or NULL if no response has been stored</p>
 </div>
 
 </div><p></p><hr><a id="method-Provider-get_content_text"></a><div class="section">
@@ -436,7 +404,7 @@ to ensure consistent interfaces and eliminate code duplication.</p>
 </div>
 
 <div class="section">
-<h4 id="arguments-11">Arguments<a class="anchor" aria-label="anchor" href="#arguments-11"></a></h4>
+<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>api_res</code></dt>
 <dd><p>List. API response object (defaults to last response)</p></dd>
 
@@ -456,7 +424,7 @@ to ensure consistent interfaces and eliminate code duplication.</p>
 </div>
 
 <div class="section">
-<h4 id="arguments-12">Arguments<a class="anchor" aria-label="anchor" href="#arguments-12"></a></h4>
+<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>api_res</code></dt>
 <dd><p>List. API response object (defaults to last response)</p></dd>
 
@@ -480,7 +448,7 @@ to ensure consistent interfaces and eliminate code duplication.</p>
 </div>
 
 <div class="section">
-<h4 id="arguments-13">Arguments<a class="anchor" aria-label="anchor" href="#arguments-13"></a></h4>
+<h4 id="arguments-9">Arguments<a class="anchor" aria-label="anchor" href="#arguments-9"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>api_res</code></dt>
 <dd><p>List. API response object (defaults to last response)</p></dd>
 
@@ -508,7 +476,7 @@ to ensure consistent interfaces and eliminate code duplication.</p>
 </div>
 
 <div class="section">
-<h4 id="arguments-14">Arguments<a class="anchor" aria-label="anchor" href="#arguments-14"></a></h4>
+<h4 id="arguments-10">Arguments<a class="anchor" aria-label="anchor" href="#arguments-10"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>api_res</code></dt>
 <dd><p>List. API response object (defaults to last response)</p></dd>
 
@@ -532,7 +500,7 @@ to ensure consistent interfaces and eliminate code duplication.</p>
 </div>
 
 <div class="section">
-<h4 id="arguments-15">Arguments<a class="anchor" aria-label="anchor" href="#arguments-15"></a></h4>
+<h4 id="arguments-11">Arguments<a class="anchor" aria-label="anchor" href="#arguments-11"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>api_res</code></dt>
 <dd><p>List. API response object (defaults to last response)</p></dd>
 
@@ -556,27 +524,20 @@ to ensure consistent interfaces and eliminate code duplication.</p>
 <h3 id="method-get-supplementary-">Method <code>get_supplementary()</code><a class="anchor" aria-label="anchor" href="#method-get-supplementary-"></a></h3>
 <p>Get supplementary data from an API response (annotations, citations, grounding metadata, etc.)</p><div class="section">
 <h4 id="usage-21">Usage<a class="anchor" aria-label="anchor" href="#usage-21"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Provider</span><span class="op">$</span><span class="fu">get_supplementary</span><span class="op">(</span></span>
-<span>  api_res <span class="op">=</span> <span class="va">self</span><span class="op">$</span><span class="fu">get_last_response</span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  format_to <span class="op">=</span> <span class="cn">NULL</span></span>
-<span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Provider</span><span class="op">$</span><span class="fu">get_supplementary</span><span class="op">(</span>api_res <span class="op">=</span> <span class="va">self</span><span class="op">$</span><span class="fu">get_last_response</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-16">Arguments<a class="anchor" aria-label="anchor" href="#arguments-16"></a></h4>
+<h4 id="arguments-12">Arguments<a class="anchor" aria-label="anchor" href="#arguments-12"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>api_res</code></dt>
 <dd><p>List. API response object (defaults to last response)</p></dd>
-
-
-<dt><code>format_to</code></dt>
-<dd><p>Character. Output format: "json", "yaml", or NULL for list (default: NULL)</p></dd>
 
 
 </dl><p></p></div>
 </div>
 <div class="section">
 <h4 id="returns-17">Returns<a class="anchor" aria-label="anchor" href="#returns-17"></a></h4>
-<p>List, JSON string, or YAML string. Supplementary data from response (provider-specific structure)</p>
+<p>List. Supplementary data from response (provider-specific structure)</p>
 </div>
 
 </div><p></p><hr><a id="method-Provider-print"></a><div class="section">
@@ -594,7 +555,7 @@ to ensure consistent interfaces and eliminate code duplication.</p>
 </div>
 
 <div class="section">
-<h4 id="arguments-17">Arguments<a class="anchor" aria-label="anchor" href="#arguments-17"></a></h4>
+<h4 id="arguments-13">Arguments<a class="anchor" aria-label="anchor" href="#arguments-13"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>show_system</code></dt>
 <dd><p>Logical. Include system messages (default: TRUE)</p></dd>
 
@@ -634,7 +595,7 @@ to ensure consistent interfaces and eliminate code duplication.</p>
 </div>
 
 <div class="section">
-<h4 id="arguments-18">Arguments<a class="anchor" aria-label="anchor" href="#arguments-18"></a></h4>
+<h4 id="arguments-14">Arguments<a class="anchor" aria-label="anchor" href="#arguments-14"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
