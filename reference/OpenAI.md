@@ -1,10 +1,10 @@
-# OpenAI Base API Client
+# Parent class for OpenAI API clients (Responses, Chat Completions, Assistants)
 
-Base R6 class for OpenAI API interactions. Provides shared
-infrastructure for file management, vector stores, and HTTP request
-handling. This class is inherited by OpenAI_Chat, OpenAI_Responses, and
-OpenAI_Assistant to provide consistent interfaces across different
-OpenAI APIs.
+Parent class for OpenAI API clients (Responses, Chat Completions,
+Assistants). Provides shared infrastructure for file management, vector
+stores, and API requests. This class is inherited by OpenAI_Chat,
+OpenAI_Responses, and OpenAI_Assistant to provide consistent interfaces
+across different OpenAI API clients.
 
 ## Super class
 

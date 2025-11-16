@@ -1,13 +1,12 @@
-# OpenAI Assistant API Client
+# Client for OpenAI's Assistants API
 
 R6 class for interacting with OpenAI's Assistants API. Provides methods
-for creating and managing assistants, threads, and runs with support for
-file search and function calling.
+for creating and managing assistants and threads.
 
 ## Deprecation Notice
 
 **DEPRECATED:** OpenAI has deprecated the Assistants API in favor of the
-new Responses API. It will shut down on August 26, 2026.
+Responses API. It will shut down on August 26, 2026.
 
 Users should migrate to the [Responses
 API](https://ma-riviere.github.io/argent/reference/responses-api.md)
@@ -15,19 +14,6 @@ instead.
 
 For more information, see:
 https://platform.openai.com/docs/assistants/migration
-
-## Useful links
-
-- API reference:
-  https://platform.openai.com/docs/api-reference/assistants
-
-- API docs: https://platform.openai.com/docs/assistants/deep-dive
-
-## Server-side tools
-
-- "file_search" for file search with vector stores
-
-- "code_interpreter" for Python code execution in sandboxed containers
 
 ## History Management
 
@@ -45,6 +31,27 @@ tracking conversations with token counts.
 
 - Use `get_history()` or `get_session_history()` for client-side
   tracking
+
+## Features
+
+- Server-side state management with threads
+
+- File search with vector stores
+
+- Code execution in sandboxed containers
+
+## Useful links
+
+- API reference:
+  https://platform.openai.com/docs/api-reference/assistants
+
+- API docs: https://platform.openai.com/docs/assistants/deep-dive
+
+## Server-side tools
+
+- "file_search" for file search with vector stores
+
+- "code_interpreter" for Python code execution in sandboxed containers
 
 ## Super classes
 

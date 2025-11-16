@@ -1,8 +1,8 @@
-# Local LLM API Client
+# Client for local LLM servers (e.g., llama.cpp, Ollama)
 
 R6 class for interacting with local LLM servers (e.g., llama.cpp,
 Ollama) that implement OpenAI-compatible APIs. Provides methods for chat
-completions with tool calling support.
+completions, embeddings, and tool calling capabilities.
 
 ## Super class
 

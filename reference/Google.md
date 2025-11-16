@@ -1,8 +1,8 @@
-# Google API Client
+# Client for Google's Gemini API
 
-R6 class for interacting with Google's API. Provides methods for chat
-completions, model information retrieval, function calling capabilities,
-structured outputs, and context caching.
+R6 class for interacting with Google's Gemini API. Provides methods for
+chat completions, model information retrieval, embeddings, files
+management, and function calling capabilities.
 
 ## Useful links
 

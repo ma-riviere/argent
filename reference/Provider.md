@@ -1,4 +1,4 @@
-# Provider Base Class
+# Provider Base Class: shared interface & common functionalities for all LLM providers
 
 Base R6 class for all LLM provider clients. Provides shared
 infrastructure for:
@@ -31,13 +31,13 @@ Manual save/load available via `dump_history()` and `load_history()`.
 
 ## Public fields
 
-- `chat_history`:
+- `base_url`:
 
-  List. Conversation history (provider-specific format)
+  Character. Base URL for API endpoint
 
-- `session_history`:
+- `provider_name`:
 
-  List. Ground truth: alternating query_data and API responses
+  Character. Provider name
 
 - `rate_limit`:
 
@@ -47,9 +47,13 @@ Manual save/load available via `dump_history()` and `load_history()`.
 
   Character. Full file path for persistent history storage
 
-- `provider_name`:
+- `chat_history`:
 
-  Character. Provider name (Provider)
+  List. Conversation history (provider-specific format)
+
+- `session_history`:
+
+  List. Ground truth: alternating query_data and API responses
 
 - `server_tools`:
 

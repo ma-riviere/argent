@@ -1,11 +1,12 @@
-# OpenAI Responses API Client
+# Client for OpenAI's Responses API
 
 R6 class for interacting with OpenAI's Responses API (v1/responses).
-This is OpenAI's newest and most advanced API that combines the
-strengths of Chat Completions and Assistants APIs into a single
-streamlined interface for building agentic applications.
+Provides methods for chat completions and container management.
 
-Key features:
+This class inherits file management and vector store functionalities
+from its parent class OpenAI.
+
+## Features
 
 - Server-side conversation state management via previous_response_id
 
@@ -13,13 +14,7 @@ Key features:
 
 - Reasoning budget support for extended thinking
 
-- Background mode for long-running tasks
-
 - Response forking: continue from any point in conversation history
-
-This class inherits file management and vector store functionality from
-OpenAI, allowing files uploaded here to be used across different OpenAI
-APIs.
 
 ## Useful links
 

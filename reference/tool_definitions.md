@@ -1,7 +1,4 @@
-# Tool Definitions
-
-Functions for defining tools and schemas using either annotations or
-direct specification.
+# Generate tools and schemas definitions from functions annotations, or direct specification
 
 ### Annotation-based approach
 

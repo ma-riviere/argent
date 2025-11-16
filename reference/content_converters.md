@@ -1,4 +1,4 @@
-# Convert inputs to content for multimodal API requests
+# Convert file paths, URLs or R objects to the specified content format before passing it to the LLM API
 
 These functions convert various input types into formats suitable for
 LLM API requests. Each function handles specific content types with

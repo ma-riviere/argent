@@ -516,26 +516,30 @@ MIT License
 Main classes for the supported LLM providers
 
 - [`Google`](https://ma-riviere.github.io/argent/reference/Google.md) :
-  Google API Client
+  Client for Google's Gemini API
 - [`Anthropic`](https://ma-riviere.github.io/argent/reference/Anthropic.md)
-  : Anthropic API Client
+  : Client for Anthropic's Claude API
 - [`OpenAI_Assistant`](https://ma-riviere.github.io/argent/reference/OpenAI_Assistant.md)
-  : OpenAI Assistant API Client
+  : Client for OpenAI's Assistants API
 - [`OpenAI_Chat`](https://ma-riviere.github.io/argent/reference/OpenAI_Chat.md)
-  : OpenAI Chat Completions API Client
+  : Client for OpenAI's Chat Completions API
 - [`OpenAI_Responses`](https://ma-riviere.github.io/argent/reference/OpenAI_Responses.md)
-  : OpenAI Responses API Client
+  : Client for OpenAI's Responses API
 - [`OpenRouter`](https://ma-riviere.github.io/argent/reference/OpenRouter.md)
-  : OpenRouter API Client
+  : Client for the OpenRouter API
 - [`LocalLLM`](https://ma-riviere.github.io/argent/reference/LocalLLM.md)
-  : Local LLM API Client
+  : Client for local LLM servers (e.g., llama.cpp, Ollama)
 
-### Parent Provider Class
+### Internal Classes
 
-Parent class for all LLM providers (internal use only)
+Parent (internal) classes
 
 - [`Provider`](https://ma-riviere.github.io/argent/reference/Provider.md)
-  : Provider Base Class
+  : Provider Base Class: shared interface & common functionalities for
+  all LLM providers
+- [`OpenAI`](https://ma-riviere.github.io/argent/reference/OpenAI.md) :
+  Parent class for OpenAI API clients (Responses, Chat Completions,
+  Assistants)
 
 ## Utilities
 
@@ -548,7 +552,8 @@ Helper functions for processing different types of inputs
   [`as_file_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
   [`as_pdf_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
   [`as_json_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
-  : Convert inputs to content for multimodal API requests
+  : Convert file paths, URLs or R objects to the specified content
+  format before passing it to the LLM API
 
 ### Tools & Schemas definitions
 
@@ -558,7 +563,8 @@ using annotations or direct specification
 - [`as_tool()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md)
   [`tool()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md)
   [`schema()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md)
-  : Tool Definitions
+  : Generate tools and schemas definitions from functions annotations,
+  or direct specification
 
 # Articles
 
