@@ -4,10 +4,6 @@
 #' R6 class for interacting with local LLM servers (e.g., llama.cpp, Ollama) that implement
 #' OpenAI-compatible APIs. Provides methods for chat completions with tool calling support.
 #'
-#' @field base_url Character. Base URL of the local server
-#' @field default_model Character. Default model name
-#' @field provider_name Character. Provider name (LocalLLM)
-#'
 #' @export
 #' @examples
 #' \dontrun{
@@ -40,42 +36,52 @@ LocalLLM <- R6::R6Class( # nolint
     classname = "LocalLLM",
     inherit = Provider,
     public = list(
-        base_url = NULL,
-        default_model = NULL,
-        provider_name = "LocalLLM",
 
         # ------🔺 INIT --------------------------------------------------------
         
         #' @description
         #' Initialize a new Local LLM client
-        #' @param base_url Character. Base URL of the local server
+        #' @param base_url Character. Base URL of the local server (default: "http://localhost:5000")
         #' @param api_key Character. API key (default: "not-needed")
-        #' @param model Character. Model name (auto-detected if NULL)
+        #' @param provider_name Character. Provider name (default: "LocalLLM")
+        #' @param rate_limit Numeric. Rate limit in requests per second (default: 999999)
+        #' @param server_tools Character vector. Server-side tools available (default: character(0))
+        #' @param default_model Character. Default model name (auto-detected if NULL)
         #' @param auto_save_history Logical. Enable/disable automatic history sync (default: TRUE)
         initialize = function(
-            base_url,
+            base_url = "http://localhost:5000",
             api_key = "not-needed",
-            model = NULL,
+            provider_name = "LocalLLM",
+            rate_limit = 999999,
+            server_tools = character(0),
+            default_model = NULL,
             auto_save_history = TRUE
         ) {
-            # Set very high rate_limit to effectively disable rate limiting for local servers
-            rate_limit <- 999999
-            super$initialize(api_key, base_url, rate_limit, auto_save_history)
+            super$initialize(
+                base_url = base_url,
+                api_key = api_key,
+                provider_name = provider_name,
+                rate_limit = rate_limit,
+                server_tools = server_tools,
+                default_model = default_model,
+                auto_save_history = auto_save_history
+            )
 
             # Auto-detect model if not provided
-            if (is.null(model)) {
-                models <- self$list_models()
+            if (is.null(self$default_model)) {
+                models <- tryCatch(
+                    self$list_models(),
+                    error = function(e) NULL
+                )
+
                 if (!is.null(models) && nrow(models) > 0) {
                     self$default_model <- models$id[1]
-                    cli::cli_alert_success("[{self$provider_name}] Auto-detected model: {self$get_model_name()}")
+                    cli::cli_alert_success("[{self$provider_name}] Auto-detected model: {basename(self$default_model)}")
                 } else {
                     cli::cli_alert_warning(
-                        "[{self$provider_name}] Could not auto-detect model. Use {.fn set_default_model_id}."
+                        "[{self$provider_name}] Could not auto-detect model. Specify with default_model parameter."
                     )
-                    self$default_model <- NULL
                 }
-            } else {
-                self$default_model <- model
             }
         },
         

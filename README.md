@@ -92,14 +92,15 @@ gemini <- Google$new(api_key = Sys.getenv("GEMINI_API_KEY"))
 ```
 
 You can customize the rate limit when initializing with the `rate_limit`
-parameter.
+parameter, and the default model with the `default_model` parameter
+(‘gemini-2.5-flash’ for Google).
 
 ### Basic Completion
 
 ``` r
 gemini$chat(
     "What is the R programming language? Answer in two sentences.",
-    model = "gemini-2.5-flash"
+    model = "gemini-2.5-flash" # Not necessary, it's the default model for Google
 )
 ```
 
@@ -108,10 +109,7 @@ meaning that when using `$chat()` a second time, the model will have
 access to the previous exchanges:
 
 ``` r
-gemini$chat(
-    "Tell me more about its statistical modeling capabilities.",
-    model = "gemini-2.5-flash"
-)
+gemini$chat("Tell me more about its statistical modeling capabilities.")
 ```
 
 The chat history can be visualized by printing the provider object:

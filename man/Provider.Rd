@@ -41,6 +41,8 @@ Manual save/load available via \code{dump_history()} and \code{load_history()}.
 \item{\code{provider_name}}{Character. Provider name (Provider)}
 
 \item{\code{server_tools}}{Character vector. Server-side tools to use for API requests}
+
+\item{\code{default_model}}{Character. Default model to use for chat requests}
 }
 \if{html}{\out{</div>}}
 }
@@ -80,9 +82,12 @@ Manual save/load available via \code{dump_history()} and \code{load_history()}.
 Initialize a new Provider instance
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Provider$new(
-  api_key = NULL,
   base_url = NULL,
+  api_key = NULL,
+  provider_name = "Provider",
   rate_limit = NULL,
+  server_tools = character(0),
+  default_model = NULL,
   auto_save_history = TRUE
 )}\if{html}{\out{</div>}}
 }
@@ -90,11 +95,17 @@ Initialize a new Provider instance
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{api_key}}{Character. API key for the provider}
-
 \item{\code{base_url}}{Character. Base URL for API endpoint}
 
+\item{\code{api_key}}{Character. API key for the provider}
+
+\item{\code{provider_name}}{Character. Provider name}
+
 \item{\code{rate_limit}}{Numeric. Rate limit in requests per second}
+
+\item{\code{server_tools}}{Character vector. Server-side tools available}
+
+\item{\code{default_model}}{Character. Default model to use for chat requests}
 
 \item{\code{auto_save_history}}{Logical. Enable/disable automatic history sync (default: TRUE)}
 }

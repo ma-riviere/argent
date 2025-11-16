@@ -16,6 +16,7 @@
 #' @field history_file_path Character. Full file path for persistent history storage
 #' @field provider_name Character. Provider name (Provider)
 #' @field server_tools Character vector. Server-side tools to use for API requests
+#' @field default_model Character. Default model to use for chat requests
 #'
 #' @section History Auto-Save:
 #' History auto-save is controlled per-instance and enabled by default. To control it:
@@ -28,22 +29,35 @@
 Provider <- R6::R6Class( # nolint
     classname = "Provider",
     public = list(
+        base_url = NULL,
+        provider_name = NULL,
+        rate_limit = NULL,
+        server_tools = character(0),
+        default_model = NULL,
         chat_history = list(),
         session_history = list(),
-        rate_limit = NULL,
         history_file_path = NULL,
-        provider_name = "Provider",        
-        server_tools = character(0),
 
         # ------🔺 INIT --------------------------------------------------------
 
         #' @description
         #' Initialize a new Provider instance
-        #' @param api_key Character. API key for the provider
         #' @param base_url Character. Base URL for API endpoint
+        #' @param api_key Character. API key for the provider
+        #' @param provider_name Character. Provider name
         #' @param rate_limit Numeric. Rate limit in requests per second
+        #' @param server_tools Character vector. Server-side tools available
+        #' @param default_model Character. Default model to use for chat requests
         #' @param auto_save_history Logical. Enable/disable automatic history sync (default: TRUE)
-        initialize = function(api_key = NULL, base_url = NULL, rate_limit = NULL, auto_save_history = TRUE) {
+        initialize = function(
+            base_url = NULL,
+            api_key = NULL,
+            provider_name = "Provider",
+            rate_limit = NULL,
+            server_tools = character(0),
+            default_model = NULL,
+            auto_save_history = TRUE
+        ) {
             # Normalize base_url: remove trailing slash and /v1 suffix
             if (!is.null(base_url)) {
                 base_url <- sub("/$", "", base_url)
@@ -53,9 +67,12 @@ Provider <- R6::R6Class( # nolint
             }
 
             # Set common fields
-            if (!is.null(api_key)) private$api_key <- api_key
-            if (!is.null(base_url)) self$base_url <- base_url
-            if (!is.null(rate_limit)) self$rate_limit <- rate_limit
+            self$base_url <- base_url
+            private$api_key <- api_key
+            self$provider_name <- provider_name
+            self$rate_limit <- rate_limit
+            self$server_tools <- server_tools
+            self$default_model <- default_model
 
             # Set instance-level auto_save_history setting (default TRUE)
             private$auto_save_history_setting <- auto_save_history

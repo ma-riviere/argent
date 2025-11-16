@@ -94,15 +94,9 @@ embeddings <- openrouter$embeddings(
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{base_url}}{Character. Base URL for API endpoint}
-
-\item{\code{provider_name}}{Character. Provider name (OpenRouter)}
-
 \item{\code{allowed_providers}}{Character vector. Allowed provider slugs (default: NULL)}
 
 \item{\code{blocked_providers}}{Character vector. Blocked provider slugs (default: NULL)}
-
-\item{\code{server_tools}}{Character vector. Server-side tools to use for API requests}
 }
 \if{html}{\out{</div>}}
 }
@@ -157,9 +151,12 @@ embeddings <- openrouter$embeddings(
 Initialize a new OpenRouter client
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{OpenRouter$new(
-  api_key = Sys.getenv("OPENROUTER_API_KEY"),
   base_url = "https://openrouter.ai/api",
+  api_key = Sys.getenv("OPENROUTER_API_KEY"),
+  provider_name = "OpenRouter",
   rate_limit = 20/60,
+  server_tools = c("web_search"),
+  default_model = "openrouter/auto",
   allowed_providers = NULL,
   blocked_providers = NULL,
   auto_save_history = TRUE
@@ -169,11 +166,18 @@ Initialize a new OpenRouter client
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{api_key}}{Character. API key (default: from OPENROUTER_API_KEY env var)}
-
 \item{\code{base_url}}{Character. Base URL for API (default: "https://openrouter.ai/api")}
 
+\item{\code{api_key}}{Character. API key (default: from OPENROUTER_API_KEY env var)}
+
+\item{\code{provider_name}}{Character. Provider name (default: "OpenRouter")}
+
 \item{\code{rate_limit}}{Numeric. Rate limit in requests per second (default: 20/60)}
+
+\item{\code{server_tools}}{Character vector. Server-side tools available (default: c("web_search"))}
+
+\item{\code{default_model}}{Character. Default model to use for chat requests (default:
+"openrouter/auto")}
 
 \item{\code{allowed_providers}}{Character vector. Allowed provider slugs (default: NULL)}
 

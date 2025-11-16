@@ -165,15 +165,6 @@ results <- openai$delete_all_files()
 \section{Super class}{
 \code{argent::Provider} -> \code{OpenAI}
 }
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{base_url}}{Character. Base URL for API endpoint}
-
-\item{\code{provider_name}}{Character. Provider name (OpenAI)}
-}
-\if{html}{\out{</div>}}
-}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
@@ -248,10 +239,13 @@ results <- openai$delete_all_files()
 Initialize a new OpenAI base client
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{OpenAI$new(
-  api_key = Sys.getenv("OPENAI_API_KEY"),
-  org = Sys.getenv("OPENAI_ORG"),
   base_url = "https://api.openai.com",
+  api_key = Sys.getenv("OPENAI_API_KEY"),
+  provider_name = "OpenAI",
   rate_limit = 60/60,
+  server_tools = character(0),
+  default_model = "gpt-5-mini",
+  org = Sys.getenv("OPENAI_ORG"),
   auto_save_history = TRUE
 )}\if{html}{\out{</div>}}
 }
@@ -259,13 +253,19 @@ Initialize a new OpenAI base client
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{api_key}}{Character. API key (default: from OPENAI_API_KEY env var)}
-
-\item{\code{org}}{Character. Organization ID (default: from OPENAI_ORG env var)}
-
 \item{\code{base_url}}{Character. Base URL for API (default: "https://api.openai.com")}
 
+\item{\code{api_key}}{Character. API key (default: from OPENAI_API_KEY env var)}
+
+\item{\code{provider_name}}{Character. Provider name (default: "OpenAI")}
+
 \item{\code{rate_limit}}{Numeric. Rate limit in requests per second (default: 60/60)}
+
+\item{\code{server_tools}}{Character vector. Server-side tools available (default: character(0))}
+
+\item{\code{default_model}}{Character. Default model to use for chat requests (default: "gpt-5-mini")}
+
+\item{\code{org}}{Character. Organization ID (default: from OPENAI_ORG env var)}
 
 \item{\code{auto_save_history}}{Logical. Enable/disable automatic history sync (default: TRUE)}
 }

@@ -8,10 +8,7 @@
 #' - API reference: https://docs.claude.com/en/api/overview
 #' - API docs: https://docs.claude.com/en/docs/intro
 #'
-#' @field base_url Character. Base URL for API endpoint
-#' @field provider_name Character. Provider name (Anthropic)
 #' @field default_beta_features Character vector. Default beta features to use for API requests
-#' @field server_tools Character vector. Server-side tools to use for API requests
 #'
 #' @section Server-side tools:
 #' - "code_execution" for bash commands and file operations (pricing: $0.05/session-hour, 5-min min)
@@ -56,8 +53,6 @@ Anthropic <- R6::R6Class( # nolint
     classname = "Anthropic",
     inherit = Provider,
     public = list(
-        base_url = "https://api.anthropic.com",
-        provider_name = "Anthropic",
         default_beta_features = c(
             "prompt-caching-2024-07-31",
             "token-efficient-tools-2025-02-19",
@@ -68,23 +63,38 @@ Anthropic <- R6::R6Class( # nolint
             # "context-management-2025-06-27" # Not implemented yet (see https://docs.anthropic.com/en/docs/build-with-anthropic/context-editing)
             # "context-1m-2025-08-07" # Tier 4 and up, extra costs above 200k tokens
         ),
-        server_tools = c("code_execution", "web_search", "web_fetch"),
 
         # ------🔺 INIT --------------------------------------------------------
 
         #' @description
         #' Initialize a new Anthropic client
-        #' @param api_key Character. API key (default: from ANTHROPIC_API_KEY env var)
         #' @param base_url Character. Base URL for API (default: "https://api.anthropic.com")
+        #' @param api_key Character. API key (default: from ANTHROPIC_API_KEY env var)
+        #' @param provider_name Character. Provider name (default: "Anthropic")
         #' @param rate_limit Numeric. Rate limit in requests per second (default: 50/60)
+        #' @param server_tools Character vector. Server-side tools available (default: c("code_execution",
+        #'   "web_search", "web_fetch"))
+        #' @param default_model Character. Default model to use for chat requests (default:
+        #'   "claude-haiku-4-5-20251001")
         #' @param auto_save_history Logical. Enable/disable automatic history sync (default: TRUE)
         initialize = function(
-            api_key = Sys.getenv("ANTHROPIC_API_KEY"),
             base_url = "https://api.anthropic.com",
+            api_key = Sys.getenv("ANTHROPIC_API_KEY"),
+            provider_name = "Anthropic",
             rate_limit = 50 / 60,
+            server_tools = c("code_execution", "web_search", "web_fetch"),
+            default_model = "claude-haiku-4-5-20251001",
             auto_save_history = TRUE
         ) {
-            super$initialize(api_key, base_url, rate_limit, auto_save_history)
+            super$initialize(
+                base_url = base_url,
+                api_key = api_key,
+                provider_name = provider_name,
+                rate_limit = rate_limit,
+                server_tools = server_tools,
+                default_model = default_model,
+                auto_save_history = auto_save_history
+            )
         },
 
         # ------🔺 MODELS ------------------------------------------------------

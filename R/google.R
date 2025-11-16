@@ -7,10 +7,6 @@
 #' @section Useful links:
 #' - API reference: https://ai.google.dev/api/generate-content
 #' - API docs: https://ai.google.dev/gemini-api/docs
-#'
-#' @field base_url Character. Base URL for API endpoint
-#' @field provider_name Character. Provider name (Google)
-#' @field server_tools Character vector. Server-side tools to use for API requests
 #' 
 #' @section Server-side tools:
 #' - `code_execution`: Execute Python code
@@ -59,25 +55,40 @@ Google <- R6::R6Class( # nolint
     classname = "Google",
     inherit = Provider,
     public = list(
-        base_url = "https://generativelanguage.googleapis.com",
-        provider_name = "Google",
-        server_tools = c("code_execution", "google_search", "url_context", "google_maps", "file_search"),
         
         # ------🔺 INIT --------------------------------------------------------
 
         #' @description
         #' Initialize a new Google Gemini client
+        #' @param base_url Character. Base URL for API (default:
+        #'   "https://generativelanguage.googleapis.com")
         #' @param api_key Character. API key (default: from GEMINI_API_KEY env var)
-        #' @param base_url Character. Base URL for API (default: "https://generativelanguage.googleapis.com")
-        #' @param rate_limit Numeric. Rate limit in requests per second (default: 5/60, free tier for 2.5 Pro)
+        #' @param provider_name Character. Provider name (default: "Google")
+        #' @param rate_limit Numeric. Rate limit in requests per second (default: 5/60, free tier for
+        #'   2.5 Pro)
+        #' @param server_tools Character vector. Server-side tools available (default: c("code_execution",
+        #'   "google_search", "url_context", "google_maps", "file_search"))
+        #' @param default_model Character. Default model to use for chat requests (default:
+        #'   "gemini-2.5-flash")
         #' @param auto_save_history Logical. Enable/disable automatic history sync (default: TRUE)
         initialize = function(
-            api_key = Sys.getenv("GEMINI_API_KEY"),
             base_url = "https://generativelanguage.googleapis.com",
+            api_key = Sys.getenv("GEMINI_API_KEY"),
+            provider_name = "Google",
             rate_limit = 5 / 60,
+            server_tools = c("code_execution", "google_search", "url_context", "google_maps", "file_search"),
+            default_model = "gemini-2.5-flash",
             auto_save_history = TRUE
         ) {
-            super$initialize(api_key, base_url, rate_limit, auto_save_history)
+            super$initialize(
+                base_url = base_url,
+                api_key = api_key,
+                provider_name = provider_name,
+                rate_limit = rate_limit,
+                server_tools = server_tools,
+                default_model = default_model,
+                auto_save_history = auto_save_history
+            )
         },
 
         # ------🔺 MODELS ------------------------------------------------------

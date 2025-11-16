@@ -8,11 +8,8 @@
 #' - API reference: https://openrouter.ai/docs/api-reference/overview
 #' - API docs: https://openrouter.ai/docs/quickstart
 #'
-#' @field base_url Character. Base URL for API endpoint
-#' @field provider_name Character. Provider name (OpenRouter)
 #' @field allowed_providers Character vector. Allowed provider slugs (default: NULL)
 #' @field blocked_providers Character vector. Blocked provider slugs (default: NULL)
-#' @field server_tools Character vector. Server-side tools to use for API requests
 #'
 #' @section Server-side tools:
 #' - "web_search" for web search grounding via OpenRouter's web plugin
@@ -59,31 +56,43 @@ OpenRouter <- R6::R6Class( # nolint
     classname = "OpenRouter",
     inherit = Provider,
     public = list(
-        base_url = "https://openrouter.ai/api",
-        provider_name = "OpenRouter",
         allowed_providers = NULL,
         blocked_providers = NULL,
-        server_tools = c("web_search"),
 
         # ------🔺 INIT --------------------------------------------------------
         
         #' @description
         #' Initialize a new OpenRouter client
-        #' @param api_key Character. API key (default: from OPENROUTER_API_KEY env var)
         #' @param base_url Character. Base URL for API (default: "https://openrouter.ai/api")
+        #' @param api_key Character. API key (default: from OPENROUTER_API_KEY env var)
+        #' @param provider_name Character. Provider name (default: "OpenRouter")
         #' @param rate_limit Numeric. Rate limit in requests per second (default: 20/60)
+        #' @param server_tools Character vector. Server-side tools available (default: c("web_search"))
+        #' @param default_model Character. Default model to use for chat requests (default:
+        #'   "openrouter/auto")
         #' @param allowed_providers Character vector. Allowed provider slugs (default: NULL)
         #' @param blocked_providers Character vector. Blocked provider slugs (default: NULL)
         #' @param auto_save_history Logical. Enable/disable automatic history sync (default: TRUE)
         initialize = function(
-            api_key = Sys.getenv("OPENROUTER_API_KEY"),
             base_url = "https://openrouter.ai/api",
+            api_key = Sys.getenv("OPENROUTER_API_KEY"),
+            provider_name = "OpenRouter",
             rate_limit = 20 / 60,
+            server_tools = c("web_search"),
+            default_model = "openrouter/auto",
             allowed_providers = NULL,
             blocked_providers = NULL,
             auto_save_history = TRUE
         ) {
-            super$initialize(api_key, base_url, rate_limit, auto_save_history)
+            super$initialize(
+                base_url = base_url,
+                api_key = api_key,
+                provider_name = provider_name,
+                rate_limit = rate_limit,
+                server_tools = server_tools,
+                default_model = default_model,
+                auto_save_history = auto_save_history
+            )
             self$allowed_providers <- allowed_providers
             self$blocked_providers <- blocked_providers
         },

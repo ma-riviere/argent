@@ -93,17 +93,6 @@ embeddings <- google$embeddings(
 \section{Super class}{
 \code{argent::Provider} -> \code{Google}
 }
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{base_url}}{Character. Base URL for API endpoint}
-
-\item{\code{provider_name}}{Character. Provider name (Google)}
-
-\item{\code{server_tools}}{Character vector. Server-side tools to use for API requests}
-}
-\if{html}{\out{</div>}}
-}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
@@ -165,9 +154,13 @@ embeddings <- google$embeddings(
 Initialize a new Google Gemini client
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Google$new(
-  api_key = Sys.getenv("GEMINI_API_KEY"),
   base_url = "https://generativelanguage.googleapis.com",
+  api_key = Sys.getenv("GEMINI_API_KEY"),
+  provider_name = "Google",
   rate_limit = 5/60,
+  server_tools = c("code_execution", "google_search", "url_context", "google_maps",
+    "file_search"),
+  default_model = "gemini-2.5-flash",
   auto_save_history = TRUE
 )}\if{html}{\out{</div>}}
 }
@@ -175,11 +168,21 @@ Initialize a new Google Gemini client
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{base_url}}{Character. Base URL for API (default:
+"https://generativelanguage.googleapis.com")}
+
 \item{\code{api_key}}{Character. API key (default: from GEMINI_API_KEY env var)}
 
-\item{\code{base_url}}{Character. Base URL for API (default: "https://generativelanguage.googleapis.com")}
+\item{\code{provider_name}}{Character. Provider name (default: "Google")}
 
-\item{\code{rate_limit}}{Numeric. Rate limit in requests per second (default: 5/60, free tier for 2.5 Pro)}
+\item{\code{rate_limit}}{Numeric. Rate limit in requests per second (default: 5/60, free tier for
+2.5 Pro)}
+
+\item{\code{server_tools}}{Character vector. Server-side tools available (default: c("code_execution",
+"google_search", "url_context", "google_maps", "file_search"))}
+
+\item{\code{default_model}}{Character. Default model to use for chat requests (default:
+"gemini-2.5-flash")}
 
 \item{\code{auto_save_history}}{Logical. Enable/disable automatic history sync (default: TRUE)}
 }

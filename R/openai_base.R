@@ -5,34 +5,43 @@
 #' vector stores, and HTTP request handling. This class is inherited by OpenAI_Chat, OpenAI_Responses,
 #' and OpenAI_Assistant to provide consistent interfaces across different OpenAI APIs.
 #'
-#' @field base_url Character. Base URL for API endpoint
-#' @field provider_name Character. Provider name (OpenAI)
-#'
 #' @keywords internal
 OpenAI <- R6::R6Class( # nolint
     classname = "OpenAI",
     inherit = Provider,
     public = list(
-        base_url = "https://api.openai.com",
-        provider_name = "OpenAI",
-        
+
         # ------🔺 INIT --------------------------------------------------------
         
         #' @description
         #' Initialize a new OpenAI base client
-        #' @param api_key Character. API key (default: from OPENAI_API_KEY env var)
-        #' @param org Character. Organization ID (default: from OPENAI_ORG env var)
         #' @param base_url Character. Base URL for API (default: "https://api.openai.com")
+        #' @param api_key Character. API key (default: from OPENAI_API_KEY env var)
+        #' @param provider_name Character. Provider name (default: "OpenAI")
         #' @param rate_limit Numeric. Rate limit in requests per second (default: 60/60)
+        #' @param server_tools Character vector. Server-side tools available (default: character(0))
+        #' @param default_model Character. Default model to use for chat requests (default: "gpt-5-mini")
+        #' @param org Character. Organization ID (default: from OPENAI_ORG env var)
         #' @param auto_save_history Logical. Enable/disable automatic history sync (default: TRUE)
         initialize = function(
-            api_key = Sys.getenv("OPENAI_API_KEY"),
-            org = Sys.getenv("OPENAI_ORG"),
             base_url = "https://api.openai.com",
+            api_key = Sys.getenv("OPENAI_API_KEY"),
+            provider_name = "OpenAI",
             rate_limit = 60 / 60,
+            server_tools = character(0),
+            default_model = "gpt-5-mini",
+            org = Sys.getenv("OPENAI_ORG"),
             auto_save_history = TRUE
         ) {
-            super$initialize(api_key, base_url, rate_limit, auto_save_history)
+            super$initialize(
+                base_url = base_url,
+                api_key = api_key,
+                provider_name = provider_name,
+                rate_limit = rate_limit,
+                server_tools = server_tools,
+                default_model = default_model,
+                auto_save_history = auto_save_history
+            )
             private$org <- org
         },
 

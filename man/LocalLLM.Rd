@@ -38,17 +38,6 @@ response <- llm$chat(
 \section{Super class}{
 \code{argent::Provider} -> \code{LocalLLM}
 }
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{base_url}}{Character. Base URL of the local server}
-
-\item{\code{default_model}}{Character. Default model name}
-
-\item{\code{provider_name}}{Character. Provider name (LocalLLM)}
-}
-\if{html}{\out{</div>}}
-}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
@@ -97,9 +86,12 @@ response <- llm$chat(
 Initialize a new Local LLM client
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{LocalLLM$new(
-  base_url,
+  base_url = "http://localhost:5000",
   api_key = "not-needed",
-  model = NULL,
+  provider_name = "LocalLLM",
+  rate_limit = 999999,
+  server_tools = character(0),
+  default_model = NULL,
   auto_save_history = TRUE
 )}\if{html}{\out{</div>}}
 }
@@ -107,11 +99,17 @@ Initialize a new Local LLM client
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{base_url}}{Character. Base URL of the local server}
+\item{\code{base_url}}{Character. Base URL of the local server (default: "http://localhost:5000")}
 
 \item{\code{api_key}}{Character. API key (default: "not-needed")}
 
-\item{\code{model}}{Character. Model name (auto-detected if NULL)}
+\item{\code{provider_name}}{Character. Provider name (default: "LocalLLM")}
+
+\item{\code{rate_limit}}{Numeric. Rate limit in requests per second (default: 999999)}
+
+\item{\code{server_tools}}{Character vector. Server-side tools available (default: character(0))}
+
+\item{\code{default_model}}{Character. Default model name (auto-detected if NULL)}
 
 \item{\code{auto_save_history}}{Logical. Enable/disable automatic history sync (default: TRUE)}
 }

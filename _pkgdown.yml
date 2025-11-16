@@ -91,25 +91,32 @@ articles:
 
 reference:
 - title: Provider Classes
-  desc: R6 classes for different LLM providers
+- subtitle: Main Provider Classes
+  desc: Main classes for the supported LLM providers
   contents:
-  - starts_with("Google")
-  - starts_with("Anthropic")
+  - Google
+  - Anthropic
   - starts_with("OpenAI")
-  - starts_with("OpenRouter")
-  - starts_with("LocalLLM")
+  - OpenRouter
+  - LocalLLM
 
-- title: Multimodal Content
+- subtitle: Parent Provider Class
+  desc: Parent class for all LLM providers (internal use only)
+  contents:
+  - Provider
+
+- title: Utilities
+- subtitle: Multimodal Inputs
   desc: Helper functions for processing different types of inputs
   contents:
-  - as_text_content
-  - as_image_content
-  - as_pdf_content
-  - as_json_content
-  - as_file_content
+    - as_text_content
+    - as_image_content
+    - as_pdf_content
+    - as_json_content
+    - as_file_content
 
-- title: Tool & Schema Definition
-  desc: Define tools and schemas for structured outputs using annotations or direct specification
+- subtitle: Tools & Schemas definitions
+  desc: Helper functions to define tools and schemas for structured outputs using annotations or direct specification
   contents:
   - tool
   - as_tool

@@ -102,40 +102,99 @@ read_data_file <- function(file_path) {
 
 # -----🔺 CONVERTERS -----------------------------------------------------------
 
-#' Convert inputs to text content for multimodal API requests
+#' Convert inputs to content for multimodal API requests
 #'
-#' Converts various input types (text strings, files, URLs, R objects) into text content
-#' suitable for LLM API requests. Handles automatic detection and conversion of different
-#' file formats including JSON, YAML, CSV, XML, HTML, and plain text.
+#' @description
+#' These functions convert various input types into formats suitable for LLM API requests.
+#' Each function handles specific content types with automatic detection and conversion
+#' where applicable.
 #'
-#' @param ... One or more inputs to convert. Can be:
-#'   - Character strings (used as-is)
-#'   - File paths (local files)
-#'   - URLs (downloaded and processed)
-#'   - R objects (converted to text representation via `str()`)
-#' @param .vec_len Integer. Maximum vector length to display when converting R objects.
-#'   Default is 999.
-#' @param .nchar_max Integer. Maximum characters per element when converting R objects.
-#'   Minimum value is 17. Default is 999.
-#' @param .text_converter Function. Custom converter function with signature
-#'   `function(input, vec_len, nchar_max)`. Default is `default_text_converter`.
+#' @param ... One or more inputs to convert. Can be file paths, URLs, or R objects.
+#' @param .vec_len Integer. For `as_text_content()` only. Maximum vector length to display
+#'   when converting R objects. Default is 999.
+#' @param .nchar_max Integer. For `as_text_content()` only. Maximum characters per element
+#'   when converting R objects. Minimum value is 17. Default is 999.
+#' @param .resize Character. For `as_image_content()` only. Image resizing strategy:
+#'   - `"none"`: No resizing (default)
+#'   - `"low"`: Resize to fit within 512x512 (faster, cheaper processing)
+#'   - `"high"`: Resize to fit within 2000x768 or 768x2000 based on orientation
+#'   - Custom geometry string (e.g., "800x600", "50%", "200x200>", "300x200>!")
+#'     following magick::image_resize() syntax. Append `>` to resize only if larger,
+#'     `!` to ignore aspect ratio.
+#' @param .max_rows Integer. For `as_json_content()` only. Maximum number of rows to
+#'   include when converting data frames. Default is 10.
+#' @param .converter Function. Custom converter function. Signature varies by function:
+#'   - `as_text_content()`: `function(input, vec_len, nchar_max)`
+#'   - `as_image_content()`: `function(input)`
+#'   - `as_pdf_content()`: `function(input)`
+#'   - `as_json_content()`: `function(input, max_rows)`
+#'   Default converters are provided for each function. Can be overridden by passing a custom function.
 #' @param .provider_options List. Provider-specific options to attach as attributes.
-#'   Default is an empty list.
+#'   Default is an empty list. For OpenAI providers with images, use
+#'   `list(detail = "low")` to control image processing detail level. Options:
+#'   `"low"` (85 tokens, 512px, faster), `"high"` (better understanding), `"auto"`
+#'   (model decides). For OpenAI Assistants with PDFs, can include 'tools' to specify
+#'   which tools to use with the attachment (default: file_search).
 #'
-#' @return Character vector with processed text content. Has attribute `argent_input = TRUE`
-#'   and each element has `argent_input_type = "text"`.
+#' @return Character vector with processed content. Has attribute `argent_input = TRUE`
+#'   and each element has `argent_input_type` set to the appropriate type ("text",
+#'   "image", "file_ref", or "pdf").
 #'
+#' @details
+#' ## Supported File Formats
+#'
+#' `as_text_content()` supports:
+#' - JSON, YAML, CSV, TSV, RDS, XML, HTML, and plain text files
+#' - PDF files (requires pdftools package)
+#' - Image files (converted to base64 data URIs)
+#'
+#' `as_image_content()` supports:
+#' - Common image formats (JPEG, PNG, GIF, etc.)
+#' - PDF files (converted to images via magick)
+#'
+#' `as_pdf_content()` supports:
+#' - PDF file paths or URLs
+#' - Handling varies by provider (e.g., OpenAI Assistants API, Google Gemini File API)
+#'
+#' `as_json_content()` supports:
+#' - R objects (converted via jsonlite::toJSON)
+#' - JSON file paths
+#' - JSON URLs
+#'
+#' @name content_converters
+#' @examples
+#' \dontrun{
+#' # Text content
+#' as_text_content("Hello, world!")
+#' as_text_content(mtcars, .vec_len = 5)
+#' as_text_content("path/to/file.txt")
+#'
+#' # Image content
+#' as_image_content("image.jpg")
+#' as_image_content("large_image.jpg", .resize = "low")
+#' as_image_content("image.jpg", .provider_options = list(detail = "high"))
+#'
+#' # File references
+#' as_file_content("file-abc123")
+#'
+#' # PDF content
+#' as_pdf_content("document.pdf")
+#'
+#' # JSON content
+#' as_json_content(mtcars, .max_rows = 5)
+#' as_json_content(list(a = 1, b = 2))
+#' }
 #' @export
 as_text_content <- function(
     ...,
     .vec_len = 999,
     .nchar_max = 999,
-    .text_converter = default_text_converter,
+    .converter = default_text_converter,
     .provider_options = list()
 ) {
     inputs <- rlang::enquos(...)
     processed <- purrr::map(inputs, \(input) {
-        converted <- .text_converter(input, vec_len = .vec_len, nchar_max = .nchar_max)
+        converted <- .converter(input, vec_len = .vec_len, nchar_max = .nchar_max)
         return(structure(converted, argent_input_type = "text", argent_provider_options = .provider_options))
     })
 
@@ -186,52 +245,12 @@ default_text_converter <- function(input, vec_len = 999, nchar_max = 999) {
     }
 }
 
-#' Convert inputs to image content for multimodal API requests
-#'
-#' Converts image inputs (file paths, URLs, or image data) into a format suitable for
-#' LLM API requests. Supports automatic PDF-to-image conversion and optional resizing.
-#'
-#' @param ... One or more image inputs to convert. Can be:
-#'   - Local image file paths
-#'   - Image URLs
-#'   - PDF files (converted to images via magick)
-#' @param .resize Character. Image resizing strategy:
-#'   - `"none"`: No resizing (default)
-#'   - `"low"`: Resize to fit within 512x512 (faster, cheaper processing)
-#'   - `"high"`: Resize to fit within 2000x768 or 768x2000 based on orientation
-#'   - Custom geometry string (e.g., "800x600", "50%", "200x200>", "300x200>!")
-#'     following magick::image_resize() syntax. Append `>` to resize only if larger,
-#'     `!` to ignore aspect ratio.
-#' @param .image_converter Function. Custom converter function with signature `function(input)`. 
-#'   Default is `default_image_converter`.
-#' @param .provider_options List. Provider-specific options to attach as attributes.
-#'   For OpenAI providers, use `list(detail = "low")` to control image processing detail level.
-#'   Options: `"low"` (85 tokens, 512px, faster), `"high"` (better understanding),
-#'   `"auto"` (model decides). Default is an empty list.
-#'
-#' @return Character vector with processed image paths. Has attribute `argent_input = TRUE`
-#'   and each element has `argent_input_type = "image"`.
-#'
-#' @examples
-#' \dontrun{
-#' # OpenAI low detail (faster, cheaper)
-#' as_image_content("image.jpg", .provider_options = list(detail = "low"))
-#'
-#' # OpenAI high detail (better understanding)
-#' as_image_content("document.png", .provider_options = list(detail = "high"))
-#'
-#' # Resize to low resolution
-#' as_image_content("large_image.jpg", .resize = "low")
-#'
-#' # Custom resize
-#' as_image_content("image.jpg", .resize = "800x600>")
-#' }
-#'
+#' @rdname content_converters
 #' @export
 as_image_content <- function(
     ...,
     .resize = "none",
-    .image_converter = default_image_converter,
+    .converter = default_image_converter,
     .provider_options = list()
 ) {
     inputs <- list(...)
@@ -239,7 +258,7 @@ as_image_content <- function(
         if (is.character(input)) {
             input <- stringr::str_trim(input)
         }
-        converted <- .image_converter(input)
+        converted <- .converter(input)
 
         if (.resize != "none") {
             converted <- resize_image(converted, .resize)
@@ -332,21 +351,7 @@ default_image_converter <- function(input) {
     }
 }
 
-#' Convert inputs to file references for multimodal API requests
-#'
-#' Marks file paths or file IDs as file references to be passed to LLM APIs. This is used
-#' for providers that support file uploads (e.g., Google, Anthropic, OpenAI). The files
-#' should already be uploaded to the provider's file store.
-#'
-#' @param ... One or more file references. Can be:
-#'   - File IDs from uploaded files (e.g., from `upload_file()`)
-#'   - File paths (interpretation depends on provider)
-#' @param .provider_options List. Provider-specific options to attach as attributes.
-#'   Default is an empty list.
-#'
-#' @return Character vector with file references. Has attribute `argent_input = TRUE`
-#'   and each element has `argent_input_type = "file_ref"`.
-#'
+#' @rdname content_converters
 #' @export
 as_file_content <- function(..., .provider_options = list()) {
     inputs <- list(...)
@@ -356,28 +361,9 @@ as_file_content <- function(..., .provider_options = list()) {
     return(processed)
 }
 
-#' Convert inputs to PDF content for multimodal API requests
-#'
-#' Marks PDF file paths or URLs as PDF content to be passed to LLM APIs. Different providers
-#' handle PDFs differently:
-#' - OpenAI Assistants API: PDFs are uploaded with purpose="assistants" and attached to messages
-#' - Google Gemini: PDFs use the File API with vision models
-#' - Other providers: May convert to base64 or other formats
-#'
-#' @param ... One or more PDF inputs. Can be:
-#'   - Local PDF file paths
-#'   - PDF URLs (downloaded and uploaded for providers that don't support remote URLs)
-#' @param .pdf_converter Function. Custom converter function with signature `function(input)`.
-#'   Default is `default_pdf_converter`.
-#' @param .provider_options List. Provider-specific options to attach as attributes.
-#'   Default is an empty list. For OpenAI Assistants, can include 'tools' to specify
-#'   which tools to use with the attachment (default: file_search).
-#'
-#' @return Character vector with PDF references. Has attribute `argent_input = TRUE`
-#'   and each element has `argent_input_type = "pdf"`.
-#'
+#' @rdname content_converters
 #' @export
-as_pdf_content <- function(..., .pdf_converter = default_pdf_converter, .provider_options = list()) {
+as_pdf_content <- function(..., .converter = default_pdf_converter, .provider_options = list()) {
     inputs <- list(...)
     processed <- purrr::map(inputs, \(input) {
         if (is.character(input)) {
@@ -401,35 +387,17 @@ default_pdf_converter <- function(input) {
     return(input)
 }
 
-#' Convert inputs to JSON content for multimodal API requests
-#'
-#' Converts various input types into JSON-formatted text content suitable for LLM API
-#' requests. Particularly useful for passing structured data (data frames, lists) to models.
-#'
-#' @param ... One or more inputs to convert. Can be:
-#'   - R objects (converted to JSON via jsonlite)
-#'   - JSON file paths (parsed and re-serialized)
-#'   - JSON URLs (downloaded, parsed, and re-serialized)
-#' @param .max_rows Integer. Maximum number of rows to include when converting data frames.
-#'   Default is 10.
-#' @param .json_converter Function. Custom converter function with signature
-#'   `function(input, max_rows)`. Default is `default_json_converter`.
-#' @param .provider_options List. Provider-specific options to attach as attributes.
-#'   Default is an empty list.
-#'
-#' @return Character vector with JSON-formatted content. Has attribute `argent_input = TRUE`
-#'   and each element has `argent_input_type = "text"`.
-#'
+#' @rdname content_converters
 #' @export
 as_json_content <- function(
     ...,
     .max_rows = 10,
-    .json_converter = default_json_converter,
+    .converter = default_json_converter,
     .provider_options = list()
 ) {
     inputs <- rlang::enquos(...)
     processed <- purrr::map(inputs, \(input) {
-        converted <- .json_converter(input, max_rows = .max_rows)
+        converted <- .converter(input, max_rows = .max_rows)
         return(structure(converted, argent_input_type = "text", argent_provider_options = .provider_options))
     })
     return(processed)
