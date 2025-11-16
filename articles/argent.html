@@ -100,14 +100,14 @@
 <div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gemini</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Google.html">Google</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GEMINI_API_KEY"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
-<p>You can customize the rate limit when initializing with the <code>rate_limit</code> parameter.</p>
+<p>You can customize the rate limit when initializing with the <code>rate_limit</code> parameter, and the default model with the <code>default_model</code> parameter (‘gemini-2.5-flash’ for Google).</p>
 <section class="level2"><h3 id="basic-completion">Basic Completion<a class="anchor" aria-label="anchor" href="#basic-completion"></a>
 </h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"What is the R programming language? Answer in two sentences."</span>,</span>
-<span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span></span>
+<span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span> <span class="co"># Not necessary, it's the default model for Google</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>The chat history can be visualized by printing the provider object:</p>
@@ -319,14 +319,14 @@
 </div>
 </section><section class="level4"><h5 id="passing-uploaded-files">Passing Uploaded Files<a class="anchor" aria-label="anchor" href="#passing-uploaded-files"></a>
 </h5>
-<p>Upload a file and reference it with <code><a href="../reference/as_file_content.html">as_file_content()</a></code>:</p>
+<p>Upload a file and reference it with <code><a href="../reference/content_converters.html">as_file_content()</a></code>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">file_metadata</span> <span class="op">&lt;-</span> <span class="va">gemini</span><span class="op">$</span><span class="fu">upload_file</span><span class="op">(</span><span class="st">"https://ma-riviere.com/res/cv.pdf"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">multipart_prompt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="st">"What are my two favorite frameworks/tools ?"</span>,</span>
-<span>    <span class="fu"><a href="../reference/as_file_content.html">as_file_content</a></span><span class="op">(</span><span class="va">file_metadata</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="../reference/content_converters.html">as_file_content</a></span><span class="op">(</span><span class="va">file_metadata</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="op">!</span><span class="op">!</span><span class="op">!</span><span class="va">multipart_prompt</span>, model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span><span class="op">)</span></span>
@@ -340,7 +340,7 @@
 <div>
 <blockquote>
 <p><strong>Note</strong></p>
-<p>Here, using <code><a href="../reference/as_file_content.html">as_file_content()</a></code> is necessary to signal to the model to use this as a remote file reference, rather than just some text content.</p>
+<p>Here, using <code><a href="../reference/content_converters.html">as_file_content()</a></code> is necessary to signal to the model to use this as a remote file reference, rather than just some text content.</p>
 </blockquote>
 </div>
 <div>

@@ -21,14 +21,6 @@ completions, tool calling, and structured outputs.
 
 ## Public fields
 
-- `base_url`:
-
-  Character. Base URL for API endpoint
-
-- `provider_name`:
-
-  Character. Provider name (OpenRouter)
-
 - `allowed_providers`:
 
   Character vector. Allowed provider slugs (default: NULL)
@@ -36,10 +28,6 @@ completions, tool calling, and structured outputs.
 - `blocked_providers`:
 
   Character vector. Blocked provider slugs (default: NULL)
-
-- `server_tools`:
-
-  Character vector. Server-side tools to use for API requests
 
 ## Methods
 
@@ -101,9 +89,12 @@ Initialize a new OpenRouter client
 #### Usage
 
     OpenRouter$new(
-      api_key = Sys.getenv("OPENROUTER_API_KEY"),
       base_url = "https://openrouter.ai/api",
+      api_key = Sys.getenv("OPENROUTER_API_KEY"),
+      provider_name = "OpenRouter",
       rate_limit = 20/60,
+      server_tools = c("web_search"),
+      default_model = "openrouter/auto",
       allowed_providers = NULL,
       blocked_providers = NULL,
       auto_save_history = TRUE
@@ -111,17 +102,31 @@ Initialize a new OpenRouter client
 
 #### Arguments
 
-- `api_key`:
-
-  Character. API key (default: from OPENROUTER_API_KEY env var)
-
 - `base_url`:
 
   Character. Base URL for API (default: "https://openrouter.ai/api")
 
+- `api_key`:
+
+  Character. API key (default: from OPENROUTER_API_KEY env var)
+
+- `provider_name`:
+
+  Character. Provider name (default: "OpenRouter")
+
 - `rate_limit`:
 
   Numeric. Rate limit in requests per second (default: 20/60)
+
+- `server_tools`:
+
+  Character vector. Server-side tools available (default:
+  c("web_search"))
+
+- `default_model`:
+
+  Character. Default model to use for chat requests (default:
+  "openrouter/auto")
 
 - `allowed_providers`:
 

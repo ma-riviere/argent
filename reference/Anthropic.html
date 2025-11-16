@@ -79,20 +79,8 @@ with support for prompt caching, tool calling, and structured outputs.</p>
     </div>
     <div class="section level2">
     <h2 id="public-fields">Public fields<a class="anchor" aria-label="anchor" href="#public-fields"></a></h2>
-    <p></p><div class="r6-fields"><dl><dt><code>base_url</code></dt>
-<dd><p>Character. Base URL for API endpoint</p></dd>
-
-
-<dt><code>provider_name</code></dt>
-<dd><p>Character. Provider name (Anthropic)</p></dd>
-
-
-<dt><code>default_beta_features</code></dt>
+    <p></p><div class="r6-fields"><dl><dt><code>default_beta_features</code></dt>
 <dd><p>Character vector. Default beta features to use for API requests</p></dd>
-
-
-<dt><code>server_tools</code></dt>
-<dd><p>Character vector. Server-side tools to use for API requests</p></dd>
 
 
 </dl><p></p></div>
@@ -141,25 +129,42 @@ with support for prompt caching, tool calling, and structured outputs.</p>
 <p>Initialize a new Anthropic client</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/Anthropic.html">Anthropic</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
-<span>  api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"ANTHROPIC_API_KEY"</span><span class="op">)</span>,</span>
 <span>  base_url <span class="op">=</span> <span class="st">"https://api.anthropic.com"</span>,</span>
+<span>  api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"ANTHROPIC_API_KEY"</span><span class="op">)</span>,</span>
+<span>  provider_name <span class="op">=</span> <span class="st">"Anthropic"</span>,</span>
 <span>  rate_limit <span class="op">=</span> <span class="fl">50</span><span class="op">/</span><span class="fl">60</span>,</span>
+<span>  server_tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"code_execution"</span>, <span class="st">"web_search"</span>, <span class="st">"web_fetch"</span><span class="op">)</span>,</span>
+<span>  default_model <span class="op">=</span> <span class="st">"claude-haiku-4-5-20251001"</span>,</span>
 <span>  auto_save_history <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>api_key</code></dt>
+<p></p><div class="arguments"><dl><dt><code>base_url</code></dt>
+<dd><p>Character. Base URL for API (default: "https://api.anthropic.com")</p></dd>
+
+
+<dt><code>api_key</code></dt>
 <dd><p>Character. API key (default: from ANTHROPIC_API_KEY env var)</p></dd>
 
 
-<dt><code>base_url</code></dt>
-<dd><p>Character. Base URL for API (default: "https://api.anthropic.com")</p></dd>
+<dt><code>provider_name</code></dt>
+<dd><p>Character. Provider name (default: "Anthropic")</p></dd>
 
 
 <dt><code>rate_limit</code></dt>
 <dd><p>Numeric. Rate limit in requests per second (default: 50/60)</p></dd>
+
+
+<dt><code>server_tools</code></dt>
+<dd><p>Character vector. Server-side tools available (default: c("code_execution",
+"web_search", "web_fetch"))</p></dd>
+
+
+<dt><code>default_model</code></dt>
+<dd><p>Character. Default model to use for chat requests (default:
+"claude-haiku-4-5-20251001")</p></dd>
 
 
 <dt><code>auto_save_history</code></dt>

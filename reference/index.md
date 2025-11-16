@@ -2,7 +2,9 @@
 
 ## Provider Classes
 
-R6 classes for different LLM providers
+### Main Provider Classes
+
+Main classes for the supported LLM providers
 
 - [`Google`](https://ma-riviere.github.io/argent/reference/Google.md) :
   Google API Client
@@ -19,25 +21,30 @@ R6 classes for different LLM providers
 - [`LocalLLM`](https://ma-riviere.github.io/argent/reference/LocalLLM.md)
   : Local LLM API Client
 
-## Multimodal Content
+### Parent Provider Class
+
+Parent class for all LLM providers (internal use only)
+
+- [`Provider`](https://ma-riviere.github.io/argent/reference/Provider.md)
+  : Provider Base Class
+
+## Utilities
+
+### Multimodal Inputs
 
 Helper functions for processing different types of inputs
 
-- [`as_text_content()`](https://ma-riviere.github.io/argent/reference/as_text_content.md)
-  : Convert inputs to text content for multimodal API requests
-- [`as_image_content()`](https://ma-riviere.github.io/argent/reference/as_image_content.md)
-  : Convert inputs to image content for multimodal API requests
-- [`as_pdf_content()`](https://ma-riviere.github.io/argent/reference/as_pdf_content.md)
-  : Convert inputs to PDF content for multimodal API requests
-- [`as_json_content()`](https://ma-riviere.github.io/argent/reference/as_json_content.md)
-  : Convert inputs to JSON content for multimodal API requests
-- [`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md)
-  : Convert inputs to file references for multimodal API requests
+- [`as_text_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
+  [`as_image_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
+  [`as_file_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
+  [`as_pdf_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
+  [`as_json_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
+  : Convert inputs to content for multimodal API requests
 
-## Tool & Schema Definition
+### Tools & Schemas definitions
 
-Define tools and schemas for structured outputs using annotations or
-direct specification
+Helper functions to define tools and schemas for structured outputs
+using annotations or direct specification
 
 - [`as_tool()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md)
   [`tool()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md)

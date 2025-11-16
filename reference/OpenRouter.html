@@ -77,24 +77,12 @@ through a unified interface with support for chat completions, tool calling, and
     </div>
     <div class="section level2">
     <h2 id="public-fields">Public fields<a class="anchor" aria-label="anchor" href="#public-fields"></a></h2>
-    <p></p><div class="r6-fields"><dl><dt><code>base_url</code></dt>
-<dd><p>Character. Base URL for API endpoint</p></dd>
-
-
-<dt><code>provider_name</code></dt>
-<dd><p>Character. Provider name (OpenRouter)</p></dd>
-
-
-<dt><code>allowed_providers</code></dt>
+    <p></p><div class="r6-fields"><dl><dt><code>allowed_providers</code></dt>
 <dd><p>Character vector. Allowed provider slugs (default: NULL)</p></dd>
 
 
 <dt><code>blocked_providers</code></dt>
 <dd><p>Character vector. Blocked provider slugs (default: NULL)</p></dd>
-
-
-<dt><code>server_tools</code></dt>
-<dd><p>Character vector. Server-side tools to use for API requests</p></dd>
 
 
 </dl><p></p></div>
@@ -143,9 +131,12 @@ through a unified interface with support for chat completions, tool calling, and
 <p>Initialize a new OpenRouter client</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/OpenRouter.html">OpenRouter</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
-<span>  api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"OPENROUTER_API_KEY"</span><span class="op">)</span>,</span>
 <span>  base_url <span class="op">=</span> <span class="st">"https://openrouter.ai/api"</span>,</span>
+<span>  api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"OPENROUTER_API_KEY"</span><span class="op">)</span>,</span>
+<span>  provider_name <span class="op">=</span> <span class="st">"OpenRouter"</span>,</span>
 <span>  rate_limit <span class="op">=</span> <span class="fl">20</span><span class="op">/</span><span class="fl">60</span>,</span>
+<span>  server_tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"web_search"</span><span class="op">)</span>,</span>
+<span>  default_model <span class="op">=</span> <span class="st">"openrouter/auto"</span>,</span>
 <span>  allowed_providers <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  blocked_providers <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  auto_save_history <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -154,16 +145,29 @@ through a unified interface with support for chat completions, tool calling, and
 
 <div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>api_key</code></dt>
+<p></p><div class="arguments"><dl><dt><code>base_url</code></dt>
+<dd><p>Character. Base URL for API (default: "https://openrouter.ai/api")</p></dd>
+
+
+<dt><code>api_key</code></dt>
 <dd><p>Character. API key (default: from OPENROUTER_API_KEY env var)</p></dd>
 
 
-<dt><code>base_url</code></dt>
-<dd><p>Character. Base URL for API (default: "https://openrouter.ai/api")</p></dd>
+<dt><code>provider_name</code></dt>
+<dd><p>Character. Provider name (default: "OpenRouter")</p></dd>
 
 
 <dt><code>rate_limit</code></dt>
 <dd><p>Numeric. Rate limit in requests per second (default: 20/60)</p></dd>
+
+
+<dt><code>server_tools</code></dt>
+<dd><p>Character vector. Server-side tools available (default: c("web_search"))</p></dd>
+
+
+<dt><code>default_model</code></dt>
+<dd><p>Character. Default model to use for chat requests (default:
+"openrouter/auto")</p></dd>
 
 
 <dt><code>allowed_providers</code></dt>

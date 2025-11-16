@@ -291,12 +291,12 @@ openrouter$chat(
 > **Tip**
 >
 > Using
-> [`as_image_content()`](https://ma-riviere.github.io/argent/reference/as_image_content.md)
+> [`as_image_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 > or
-> [`as_text_content()`](https://ma-riviere.github.io/argent/reference/as_text_content.md)
+> [`as_text_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 > will force the URL to be downloaded and the image to be converted to
 > base64. Furthermore,
-> [`as_image_content()`](https://ma-riviere.github.io/argent/reference/as_image_content.md)
+> [`as_image_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 > has a `.resize` parameter to control the image size.
 
 ### PDF Comprehension
@@ -330,9 +330,9 @@ Based on the document you provided, it appears that R is your favorite programmi
 > When sending a PDF (local or URL) to OpenRouter, you can optionally
 > specify the parser engine the server will use to parse the PDF’s
 > contents via the `.provider_options` parameter of
-> [`as_pdf_content()`](https://ma-riviere.github.io/argent/reference/as_pdf_content.md).
+> [`as_pdf_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md).
 > If not specidfied (or if not using
-> [`as_pdf_content()`](https://ma-riviere.github.io/argent/reference/as_pdf_content.md)),
+> [`as_pdf_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)),
 > it will be set to `"pdf-text"` by default, which is free. The possible
 > values are: `"pdf-text"`, `"mistral-ocr"`, `"native"`. See OpenRouter
 > [documentation](https://openrouter.ai/docs/features/multimodal/pdfs)
@@ -348,7 +348,7 @@ Based on the document you provided, it appears that R is your favorite programmi
 >
 > Of course, we could parse the PDF’s contents before sending them as
 > text.
-> [`as_text_content()`](https://ma-riviere.github.io/argent/reference/as_text_content.md)
+> [`as_text_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 > does this using
 > [`pdftools::pdf_convert()`](https://docs.ropensci.org/pdftools//reference/pdf_render_page.html).
 > Or we could have implemented our own OCR solution, e.g. using a
@@ -359,7 +359,7 @@ Based on the document you provided, it appears that R is your favorite programmi
 For OpenRouter, by default, PDF URLs are sent as-is to the server.
 
 However, we can use the
-[`as_text_content()`](https://ma-riviere.github.io/argent/reference/as_text_content.md)
+[`as_text_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 helper to have
 [`pdftools::pdf_convert()`](https://docs.ropensci.org/pdftools//reference/pdf_render_page.html)
 parse the PDFs and pass their text contents to the model instead.
@@ -424,7 +424,7 @@ From analyzing this regression model, I can deduct the following 3 key points:
 > **Warning**
 >
 > Remote file references via
-> [`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md)
+> [`as_file_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 > are not supported with OpenRouter. Use local file paths or URLs
 > instead.
 

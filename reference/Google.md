@@ -27,20 +27,6 @@ structured outputs, and context caching.
 [`argent::Provider`](https://ma-riviere.github.io/argent/reference/Provider.md)
 -\> `Google`
 
-## Public fields
-
-- `base_url`:
-
-  Character. Base URL for API endpoint
-
-- `provider_name`:
-
-  Character. Provider name (Google)
-
-- `server_tools`:
-
-  Character vector. Server-side tools to use for API requests
-
 ## Methods
 
 ### Public methods
@@ -121,27 +107,46 @@ Initialize a new Google Gemini client
 #### Usage
 
     Google$new(
-      api_key = Sys.getenv("GEMINI_API_KEY"),
       base_url = "https://generativelanguage.googleapis.com",
+      api_key = Sys.getenv("GEMINI_API_KEY"),
+      provider_name = "Google",
       rate_limit = 5/60,
+      server_tools = c("code_execution", "google_search", "url_context", "google_maps",
+        "file_search"),
+      default_model = "gemini-2.5-flash",
       auto_save_history = TRUE
     )
 
 #### Arguments
-
-- `api_key`:
-
-  Character. API key (default: from GEMINI_API_KEY env var)
 
 - `base_url`:
 
   Character. Base URL for API (default:
   "https://generativelanguage.googleapis.com")
 
+- `api_key`:
+
+  Character. API key (default: from GEMINI_API_KEY env var)
+
+- `provider_name`:
+
+  Character. Provider name (default: "Google")
+
 - `rate_limit`:
 
   Numeric. Rate limit in requests per second (default: 5/60, free tier
   for 2.5 Pro)
+
+- `server_tools`:
+
+  Character vector. Server-side tools available (default:
+  c("code_execution", "google_search", "url_context", "google_maps",
+  "file_search"))
+
+- `default_model`:
+
+  Character. Default model to use for chat requests (default:
+  "gemini-2.5-flash")
 
 - `auto_save_history`:
 

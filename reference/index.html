@@ -51,7 +51,12 @@
     <div class="section level2">
       <h2 id="provider-classes">Provider Classes<a class="anchor" aria-label="anchor" href="#provider-classes"></a></h2>
 
-      <div class="section-desc"><p>R6 classes for different LLM providers</p></div>
+
+
+      <dl></dl></div><div class="section level2">
+
+      <h3 id="main-provider-classes">Main Provider Classes<a class="anchor" aria-label="anchor" href="#main-provider-classes"></a></h3>
+      <div class="section-desc"><p>Main classes for the supported LLM providers</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -107,8 +112,29 @@
         </dt>
         <dd>Local LLM API Client</dd>
       </dl></div><div class="section level2">
-      <h2 id="multimodal-content">Multimodal Content<a class="anchor" aria-label="anchor" href="#multimodal-content"></a></h2>
 
+      <h3 id="parent-provider-class">Parent Provider Class<a class="anchor" aria-label="anchor" href="#parent-provider-class"></a></h3>
+      <div class="section-desc"><p>Parent class for all LLM providers (internal use only)</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="Provider.html">Provider</a></code>
+
+        </dt>
+        <dd>Provider Base Class</dd>
+      </dl></div><div class="section level2">
+      <h2 id="utilities">Utilities<a class="anchor" aria-label="anchor" href="#utilities"></a></h2>
+
+
+
+      <dl></dl></div><div class="section level2">
+
+      <h3 id="multimodal-inputs">Multimodal Inputs<a class="anchor" aria-label="anchor" href="#multimodal-inputs"></a></h3>
       <div class="section-desc"><p>Helper functions for processing different types of inputs</p></div>
 
       <dl></dl></div><div class="section level2">
@@ -118,42 +144,14 @@
 
       <dl><dt>
 
-          <code><a href="as_text_content.html">as_text_content()</a></code>
+          <code><a href="content_converters.html">as_text_content()</a></code> <code><a href="content_converters.html">as_image_content()</a></code> <code><a href="content_converters.html">as_file_content()</a></code> <code><a href="content_converters.html">as_pdf_content()</a></code> <code><a href="content_converters.html">as_json_content()</a></code>
 
         </dt>
-        <dd>Convert inputs to text content for multimodal API requests</dd>
-
-        <dt>
-
-          <code><a href="as_image_content.html">as_image_content()</a></code>
-
-        </dt>
-        <dd>Convert inputs to image content for multimodal API requests</dd>
-
-        <dt>
-
-          <code><a href="as_pdf_content.html">as_pdf_content()</a></code>
-
-        </dt>
-        <dd>Convert inputs to PDF content for multimodal API requests</dd>
-
-        <dt>
-
-          <code><a href="as_json_content.html">as_json_content()</a></code>
-
-        </dt>
-        <dd>Convert inputs to JSON content for multimodal API requests</dd>
-
-        <dt>
-
-          <code><a href="as_file_content.html">as_file_content()</a></code>
-
-        </dt>
-        <dd>Convert inputs to file references for multimodal API requests</dd>
+        <dd>Convert inputs to content for multimodal API requests</dd>
       </dl></div><div class="section level2">
-      <h2 id="tool-schema-definition">Tool &amp; Schema Definition<a class="anchor" aria-label="anchor" href="#tool-schema-definition"></a></h2>
 
-      <div class="section-desc"><p>Define tools and schemas for structured outputs using annotations or direct specification</p></div>
+      <h3 id="tools-schemas-definitions">Tools &amp; Schemas definitions<a class="anchor" aria-label="anchor" href="#tools-schemas-definitions"></a></h3>
+      <div class="section-desc"><p>Helper functions to define tools and schemas for structured outputs using annotations or direct specification</p></div>
 
       <dl></dl></div><div class="section level2">
 

@@ -393,7 +393,7 @@ OpenAI Assistants API supports sending:
 - PDFs: URLs (as-is, base64, or text content), files (base64, or text
   content)
 - Remote files (through
-  [`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md))
+  [`as_file_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md))
 - Plain text & code files
 - Text-based data files (csv, tsv, json, ..)
 - R objects
@@ -465,7 +465,7 @@ openai_assistant$chat(
 > `as_image_content(url, .provider_options = list(detail = "low"))`.
 >
 > You could also use
-> [`as_image_content()`](https://ma-riviere.github.io/argent/reference/as_image_content.md)
+> [`as_image_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 > to resize the image before sending it with the `.resize` argument.
 >
 > OpenAI Assistants API also supports sending a file_id (i.e. the image
@@ -520,7 +520,7 @@ For OpenAI Assistants, by default, PDF URLs (or files) are uploaded to
 the server and the file_id is passed to the model.
 
 However, we can use the
-[`as_text_content()`](https://ma-riviere.github.io/argent/reference/as_text_content.md)
+[`as_text_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 helper to have
 [`pdftools::pdf_convert()`](https://docs.ropensci.org/pdftools//reference/pdf_render_page.html)
 parse the PDFs and pass their text contents to the model instead.
@@ -607,7 +607,7 @@ file_assistant$list_files()
 **Using Uploaded Files**
 
 Use
-[`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md)
+[`as_file_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 to reference uploaded files:
 
 ``` r

@@ -239,7 +239,7 @@ automatically converted to text).
 Some models support vision, to which you can send images and possibly
 PDFs. Some models will need you to convert the PDF to an image first
 (which you can do by passing the PDF path to
-[`as_image_content()`](https://ma-riviere.github.io/argent/reference/as_image_content.md)).
+[`as_image_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)).
 
 ### Image Comprehension
 
@@ -295,16 +295,16 @@ local_llama$chat(
 >
 > Some models don’t support PDF processing natively. You can either
 > convert the PDF to text using
-> [`as_text_content()`](https://ma-riviere.github.io/argent/reference/as_text_content.md)
+> [`as_text_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 > (which will use
 > [`pdftools::pdf_convert()`](https://docs.ropensci.org/pdftools//reference/pdf_render_page.html)),
 > or convert the PDF to an image using
-> [`as_image_content()`](https://ma-riviere.github.io/argent/reference/as_image_content.md)
+> [`as_image_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 > and hope the model has better image comprehension capabilities than
 > the tool you used to convert the PDF to text.
 
 Let’s send two PDF URLs and use the
-[`as_text_content()`](https://ma-riviere.github.io/argent/reference/as_text_content.md)
+[`as_text_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 helper to have
 [`pdftools::pdf_convert()`](https://docs.ropensci.org/pdftools//reference/pdf_render_page.html)
 parse the PDFs and pass the text content to the model instead of passing
@@ -375,6 +375,6 @@ It's important to remember that these deductions are based solely on the provide
 > **Warning**
 >
 > Remote file references via
-> [`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md)
+> [`as_file_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 > are not supported with local servers. Use local file paths or URLs
 > instead.

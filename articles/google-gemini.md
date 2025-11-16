@@ -488,7 +488,7 @@ Google Gemini supports sending:
 - PDF (files or URLs) as text or base64
 - Images (files or URLs) as base64
 - Remote files (through
-  [`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md))
+  [`as_file_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md))
 - Plain text & code files
 - Text-based data files (csv, tsv, json, ..)
 - R objects
@@ -583,7 +583,7 @@ Based on your resume, your favorite programming language appears to be **R**.
 For Google, by default, PDF URLs are sent as base64 to the server.
 
 However, we can use the
-[`as_text_content()`](https://ma-riviere.github.io/argent/reference/as_text_content.md)
+[`as_text_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 helper to have
 [`pdftools::pdf_convert()`](https://docs.ropensci.org/pdftools//reference/pdf_render_page.html)
 parse the PDFs and pass their text contents to the model instead.
@@ -643,7 +643,7 @@ From the provided regression model output, we can deduce the following three poi
 #### Passing Uploaded Files
 
 Upload a file and reference it with
-[`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md):
+[`as_file_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md):
 
 ``` r
 file_metadata <- google_gemini$upload_file(my_cv_url) # Pass an URL or a local file path
@@ -670,7 +670,7 @@ Here's why:
 > **Note**
 >
 > Here, using
-> [`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md)
+> [`as_file_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 > is necessary to signal to the model to use this as a remote file
 > reference, rather than just some text content.
 

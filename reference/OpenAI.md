@@ -11,16 +11,6 @@ OpenAI APIs.
 [`argent::Provider`](https://ma-riviere.github.io/argent/reference/Provider.md)
 -\> `OpenAI`
 
-## Public fields
-
-- `base_url`:
-
-  Character. Base URL for API endpoint
-
-- `provider_name`:
-
-  Character. Provider name (OpenAI)
-
 ## Methods
 
 ### Public methods
@@ -127,30 +117,46 @@ Initialize a new OpenAI base client
 #### Usage
 
     OpenAI$new(
-      api_key = Sys.getenv("OPENAI_API_KEY"),
-      org = Sys.getenv("OPENAI_ORG"),
       base_url = "https://api.openai.com",
+      api_key = Sys.getenv("OPENAI_API_KEY"),
+      provider_name = "OpenAI",
       rate_limit = 60/60,
+      server_tools = character(0),
+      default_model = "gpt-5-mini",
+      org = Sys.getenv("OPENAI_ORG"),
       auto_save_history = TRUE
     )
 
 #### Arguments
 
-- `api_key`:
-
-  Character. API key (default: from OPENAI_API_KEY env var)
-
-- `org`:
-
-  Character. Organization ID (default: from OPENAI_ORG env var)
-
 - `base_url`:
 
   Character. Base URL for API (default: "https://api.openai.com")
 
+- `api_key`:
+
+  Character. API key (default: from OPENAI_API_KEY env var)
+
+- `provider_name`:
+
+  Character. Provider name (default: "OpenAI")
+
 - `rate_limit`:
 
   Numeric. Rate limit in requests per second (default: 60/60)
+
+- `server_tools`:
+
+  Character vector. Server-side tools available (default: character(0))
+
+- `default_model`:
+
+  Character. Default model to use for chat requests (default:
+  "gpt-5-mini")
+
+- `org`:
+
+  Character. Organization ID (default: from OPENAI_ORG env var)
 
 - `auto_save_history`:
 

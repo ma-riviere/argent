@@ -80,22 +80,6 @@ model information retrieval, function calling capabilities, structured outputs, 
     <p><code><a href="Provider.html">argent::Provider</a></code> -&gt; <code>Google</code></p>
     </div>
     <div class="section level2">
-    <h2 id="public-fields">Public fields<a class="anchor" aria-label="anchor" href="#public-fields"></a></h2>
-    <p></p><div class="r6-fields"><dl><dt><code>base_url</code></dt>
-<dd><p>Character. Base URL for API endpoint</p></dd>
-
-
-<dt><code>provider_name</code></dt>
-<dd><p>Character. Provider name (Google)</p></dd>
-
-
-<dt><code>server_tools</code></dt>
-<dd><p>Character vector. Server-side tools to use for API requests</p></dd>
-
-
-</dl><p></p></div>
-    </div>
-    <div class="section level2">
     <h2 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a></h2>
 
 <div class="section">
@@ -149,25 +133,45 @@ model information retrieval, function calling capabilities, structured outputs, 
 <p>Initialize a new Google Gemini client</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/Google.html">Google</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
-<span>  api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GEMINI_API_KEY"</span><span class="op">)</span>,</span>
 <span>  base_url <span class="op">=</span> <span class="st">"https://generativelanguage.googleapis.com"</span>,</span>
+<span>  api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GEMINI_API_KEY"</span><span class="op">)</span>,</span>
+<span>  provider_name <span class="op">=</span> <span class="st">"Google"</span>,</span>
 <span>  rate_limit <span class="op">=</span> <span class="fl">5</span><span class="op">/</span><span class="fl">60</span>,</span>
+<span>  server_tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"code_execution"</span>, <span class="st">"google_search"</span>, <span class="st">"url_context"</span>, <span class="st">"google_maps"</span>,</span>
+<span>    <span class="st">"file_search"</span><span class="op">)</span>,</span>
+<span>  default_model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
 <span>  auto_save_history <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>api_key</code></dt>
+<p></p><div class="arguments"><dl><dt><code>base_url</code></dt>
+<dd><p>Character. Base URL for API (default:
+"https://generativelanguage.googleapis.com")</p></dd>
+
+
+<dt><code>api_key</code></dt>
 <dd><p>Character. API key (default: from GEMINI_API_KEY env var)</p></dd>
 
 
-<dt><code>base_url</code></dt>
-<dd><p>Character. Base URL for API (default: "https://generativelanguage.googleapis.com")</p></dd>
+<dt><code>provider_name</code></dt>
+<dd><p>Character. Provider name (default: "Google")</p></dd>
 
 
 <dt><code>rate_limit</code></dt>
-<dd><p>Numeric. Rate limit in requests per second (default: 5/60, free tier for 2.5 Pro)</p></dd>
+<dd><p>Numeric. Rate limit in requests per second (default: 5/60, free tier for
+2.5 Pro)</p></dd>
+
+
+<dt><code>server_tools</code></dt>
+<dd><p>Character vector. Server-side tools available (default: c("code_execution",
+"google_search", "url_context", "google_maps", "file_search"))</p></dd>
+
+
+<dt><code>default_model</code></dt>
+<dd><p>Character. Default model to use for chat requests (default:
+"gemini-2.5-flash")</p></dd>
 
 
 <dt><code>auto_save_history</code></dt>

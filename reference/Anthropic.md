@@ -27,21 +27,9 @@ structured outputs.
 
 ## Public fields
 
-- `base_url`:
-
-  Character. Base URL for API endpoint
-
-- `provider_name`:
-
-  Character. Provider name (Anthropic)
-
 - `default_beta_features`:
 
   Character vector. Default beta features to use for API requests
-
-- `server_tools`:
-
-  Character vector. Server-side tools to use for API requests
 
 ## Methods
 
@@ -103,25 +91,42 @@ Initialize a new Anthropic client
 #### Usage
 
     Anthropic$new(
-      api_key = Sys.getenv("ANTHROPIC_API_KEY"),
       base_url = "https://api.anthropic.com",
+      api_key = Sys.getenv("ANTHROPIC_API_KEY"),
+      provider_name = "Anthropic",
       rate_limit = 50/60,
+      server_tools = c("code_execution", "web_search", "web_fetch"),
+      default_model = "claude-haiku-4-5-20251001",
       auto_save_history = TRUE
     )
 
 #### Arguments
 
-- `api_key`:
-
-  Character. API key (default: from ANTHROPIC_API_KEY env var)
-
 - `base_url`:
 
   Character. Base URL for API (default: "https://api.anthropic.com")
 
+- `api_key`:
+
+  Character. API key (default: from ANTHROPIC_API_KEY env var)
+
+- `provider_name`:
+
+  Character. Provider name (default: "Anthropic")
+
 - `rate_limit`:
 
   Numeric. Rate limit in requests per second (default: 50/60)
+
+- `server_tools`:
+
+  Character vector. Server-side tools available (default:
+  c("code_execution", "web_search", "web_fetch"))
+
+- `default_model`:
+
+  Character. Default model to use for chat requests (default:
+  "claude-haiku-4-5-20251001")
 
 - `auto_save_history`:
 

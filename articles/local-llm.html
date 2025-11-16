@@ -298,7 +298,7 @@
 </section><section class="section level2"><h2 id="multimodal-inputs">Multimodal Inputs<a class="anchor" aria-label="anchor" href="#multimodal-inputs"></a>
 </h2>
 <p>What types of media you can send will depend on the model you are using. At the minimum, you can send any type of text content (and files/objects automatically converted to text).</p>
-<p>Some models support vision, to which you can send images and possibly PDFs. Some models will need you to convert the PDF to an image first (which you can do by passing the PDF path to <code><a href="../reference/as_image_content.html">as_image_content()</a></code>).</p>
+<p>Some models support vision, to which you can send images and possibly PDFs. Some models will need you to convert the PDF to an image first (which you can do by passing the PDF path to <code><a href="../reference/content_converters.html">as_image_content()</a></code>).</p>
 <section class="level2"><h3 id="image-comprehension">Image Comprehension<a class="anchor" aria-label="anchor" href="#image-comprehension"></a>
 </h3>
 <div class="cell">
@@ -343,10 +343,10 @@
 <div>
 <blockquote>
 <p><strong>Note</strong></p>
-<p>Some models don’t support PDF processing natively. You can either convert the PDF to text using <code><a href="../reference/as_text_content.html">as_text_content()</a></code> (which will use <code><a href="https://docs.ropensci.org/pdftools//reference/pdf_render_page.html" class="external-link">pdftools::pdf_convert()</a></code>), or convert the PDF to an image using <code><a href="../reference/as_image_content.html">as_image_content()</a></code> and hope the model has better image comprehension capabilities than the tool you used to convert the PDF to text.</p>
+<p>Some models don’t support PDF processing natively. You can either convert the PDF to text using <code><a href="../reference/content_converters.html">as_text_content()</a></code> (which will use <code><a href="https://docs.ropensci.org/pdftools//reference/pdf_render_page.html" class="external-link">pdftools::pdf_convert()</a></code>), or convert the PDF to an image using <code><a href="../reference/content_converters.html">as_image_content()</a></code> and hope the model has better image comprehension capabilities than the tool you used to convert the PDF to text.</p>
 </blockquote>
 </div>
-<p>Let’s send two PDF URLs and use the <code><a href="../reference/as_text_content.html">as_text_content()</a></code> helper to have <code><a href="https://docs.ropensci.org/pdftools//reference/pdf_render_page.html" class="external-link">pdftools::pdf_convert()</a></code> parse the PDFs and pass the text content to the model instead of passing base64.</p>
+<p>Let’s send two PDF URLs and use the <code><a href="../reference/content_converters.html">as_text_content()</a></code> helper to have <code><a href="https://docs.ropensci.org/pdftools//reference/pdf_render_page.html" class="external-link">pdftools::pdf_convert()</a></code> parse the PDFs and pass the text content to the model instead of passing base64.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r6_pdf_url</span> <span class="op">&lt;-</span> <span class="st">"https://cran.r-project.org/web/packages/R6/R6.pdf"</span></span>
@@ -354,8 +354,8 @@
 <span></span>
 <span><span class="va">multimodal_prompt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="st">"Give a 3 sentences summary of the advantages of S7 over R6"</span>,</span>
-<span>    <span class="fu"><a href="../reference/as_text_content.html">as_text_content</a></span><span class="op">(</span><span class="va">r6_pdf_url</span><span class="op">)</span>,</span>
-<span>    <span class="fu"><a href="../reference/as_text_content.html">as_text_content</a></span><span class="op">(</span><span class="va">s7_pdf_url</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/content_converters.html">as_text_content</a></span><span class="op">(</span><span class="va">r6_pdf_url</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/content_converters.html">as_text_content</a></span><span class="op">(</span><span class="va">s7_pdf_url</span><span class="op">)</span>,</span>
 <span>    <span class="st">"And give me the current versions of both packages"</span> <span class="co"># To make sure you actually read the PDFs</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -405,7 +405,7 @@
 <div>
 <blockquote>
 <p><strong>Warning</strong></p>
-<p>Remote file references via <code><a href="../reference/as_file_content.html">as_file_content()</a></code> are not supported with local servers. Use local file paths or URLs instead.</p>
+<p>Remote file references via <code><a href="../reference/content_converters.html">as_file_content()</a></code> are not supported with local servers. Use local file paths or URLs instead.</p>
 </blockquote>
 </div>
 </section></section><script id="quarto-html-after-body" type="application/javascript">

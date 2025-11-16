@@ -294,7 +294,7 @@ OpenAI Responses API supports sending:
 - Images: URLs (as-is, or base64), files (base64)
 - PDFs: URLs and files (base64, or text content)
 - Remote files (through
-  [`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md))
+  [`as_file_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md))
 - Plain text & code files
 - Text-based data files (csv, tsv, json, ..)
 - R objects
@@ -357,7 +357,7 @@ openai_chat$chat(
 > `as_image_content(url, .provider_options = list(detail = "low"))`.
 >
 > We could have used the
-> [`as_image_content()`](https://ma-riviere.github.io/argent/reference/as_image_content.md)
+> [`as_image_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 > to resize the image before sending it with the `.resize` argument.
 >
 > OpenAI Chat Completions API also supports sending a file_id (i.e. the
@@ -395,7 +395,7 @@ For OpenAI Chat Completions, by default, PDF URLs are sent as base64 to
 the server.
 
 However, we can use the
-[`as_text_content()`](https://ma-riviere.github.io/argent/reference/as_text_content.md)
+[`as_text_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 helper to have
 [`pdftools::pdf_convert()`](https://docs.ropensci.org/pdftools//reference/pdf_render_page.html)
 parse the PDFs and pass their text contents to the model instead.
@@ -472,7 +472,7 @@ openai_chat$list_files()
 **Using Uploaded Files**
 
 Use
-[`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md)
+[`as_file_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 to reference uploaded files:
 
 ``` r

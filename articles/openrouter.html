@@ -343,7 +343,7 @@
 <div>
 <blockquote>
 <p><strong>Tip</strong></p>
-<p>Using <code><a href="../reference/as_image_content.html">as_image_content()</a></code> or <code><a href="../reference/as_text_content.html">as_text_content()</a></code> will force the URL to be downloaded and the image to be converted to base64. Furthermore, <code><a href="../reference/as_image_content.html">as_image_content()</a></code> has a <code>.resize</code> parameter to control the image size.</p>
+<p>Using <code><a href="../reference/content_converters.html">as_image_content()</a></code> or <code><a href="../reference/content_converters.html">as_text_content()</a></code> will force the URL to be downloaded and the image to be converted to base64. Furthermore, <code><a href="../reference/content_converters.html">as_image_content()</a></code> has a <code>.resize</code> parameter to control the image size.</p>
 </blockquote>
 </div>
 </section><section class="level2"><h3 id="pdf-comprehension">PDF Comprehension<a class="anchor" aria-label="anchor" href="#pdf-comprehension"></a>
@@ -369,21 +369,21 @@
 <div>
 <blockquote>
 <p><strong>Note</strong></p>
-<p>When sending a PDF (local or URL) to OpenRouter, you can optionally specify the parser engine the server will use to parse the PDF’s contents via the <code>.provider_options</code> parameter of <code><a href="../reference/as_pdf_content.html">as_pdf_content()</a></code>. If not specidfied (or if not using <code><a href="../reference/as_pdf_content.html">as_pdf_content()</a></code>), it will be set to <code>"pdf-text"</code> by default, which is free. The possible values are: <code>"pdf-text"</code>, <code>"mistral-ocr"</code>, <code>"native"</code>. See OpenRouter <a href="https://openrouter.ai/docs/features/multimodal/pdfs" class="external-link">documentation</a> for more details.</p>
+<p>When sending a PDF (local or URL) to OpenRouter, you can optionally specify the parser engine the server will use to parse the PDF’s contents via the <code>.provider_options</code> parameter of <code><a href="../reference/content_converters.html">as_pdf_content()</a></code>. If not specidfied (or if not using <code><a href="../reference/content_converters.html">as_pdf_content()</a></code>), it will be set to <code>"pdf-text"</code> by default, which is free. The possible values are: <code>"pdf-text"</code>, <code>"mistral-ocr"</code>, <code>"native"</code>. See OpenRouter <a href="https://openrouter.ai/docs/features/multimodal/pdfs" class="external-link">documentation</a> for more details.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">openrouter</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"What's my favorite programming language?"</span>,</span>
-<span>    <span class="fu"><a href="../reference/as_pdf_content.html">as_pdf_content</a></span><span class="op">(</span><span class="va">my_cv_url</span>, .provider_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>pdf_parser <span class="op">=</span> <span class="st">"mistral-ocr"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/content_converters.html">as_pdf_content</a></span><span class="op">(</span><span class="va">my_cv_url</span>, .provider_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>pdf_parser <span class="op">=</span> <span class="st">"mistral-ocr"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"anthropic/claude-sonnet-4"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<p>Of course, we could parse the PDF’s contents before sending them as text. <code><a href="../reference/as_text_content.html">as_text_content()</a></code> does this using <code><a href="https://docs.ropensci.org/pdftools//reference/pdf_render_page.html" class="external-link">pdftools::pdf_convert()</a></code>. Or we could have implemented our own OCR solution, e.g. using a <code>local_llm</code> instance with a VL model like <em>Qwen3-8B-VL-instruct</em>.</p>
+<p>Of course, we could parse the PDF’s contents before sending them as text. <code><a href="../reference/content_converters.html">as_text_content()</a></code> does this using <code><a href="https://docs.ropensci.org/pdftools//reference/pdf_render_page.html" class="external-link">pdftools::pdf_convert()</a></code>. Or we could have implemented our own OCR solution, e.g. using a <code>local_llm</code> instance with a VL model like <em>Qwen3-8B-VL-instruct</em>.</p>
 </blockquote>
 </div>
 <p><strong>Sending PDF URLs:</strong></p>
 <p>For OpenRouter, by default, PDF URLs are sent as-is to the server.</p>
-<p>However, we can use the <code><a href="../reference/as_text_content.html">as_text_content()</a></code> helper to have <code><a href="https://docs.ropensci.org/pdftools//reference/pdf_render_page.html" class="external-link">pdftools::pdf_convert()</a></code> parse the PDFs and pass their text contents to the model instead.</p>
+<p>However, we can use the <code><a href="../reference/content_converters.html">as_text_content()</a></code> helper to have <code><a href="https://docs.ropensci.org/pdftools//reference/pdf_render_page.html" class="external-link">pdftools::pdf_convert()</a></code> parse the PDFs and pass their text contents to the model instead.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r6_pdf_url</span> <span class="op">&lt;-</span> <span class="st">"https://cran.r-project.org/web/packages/R6/R6.pdf"</span></span>
@@ -391,8 +391,8 @@
 <span></span>
 <span><span class="va">multimodal_prompt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="st">"Give a 3 sentences summary of the advantages of S7 over R6"</span>,</span>
-<span>    <span class="fu"><a href="../reference/as_text_content.html">as_text_content</a></span><span class="op">(</span><span class="va">r6_pdf_url</span><span class="op">)</span>,</span>
-<span>    <span class="fu"><a href="../reference/as_text_content.html">as_text_content</a></span><span class="op">(</span><span class="va">s7_pdf_url</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/content_converters.html">as_text_content</a></span><span class="op">(</span><span class="va">r6_pdf_url</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/content_converters.html">as_text_content</a></span><span class="op">(</span><span class="va">s7_pdf_url</span><span class="op">)</span>,</span>
 <span>    <span class="st">"And give me the current versions of both packages"</span> <span class="co"># To make sure you actually read the PDFs</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -437,7 +437,7 @@
 <div>
 <blockquote>
 <p><strong>Warning</strong></p>
-<p>Remote file references via <code><a href="../reference/as_file_content.html">as_file_content()</a></code> are not supported with OpenRouter. Use local file paths or URLs instead.</p>
+<p>Remote file references via <code><a href="../reference/content_converters.html">as_file_content()</a></code> are not supported with OpenRouter. Use local file paths or URLs instead.</p>
 </blockquote>
 </div>
 </section></section><section class="section level2"><h2 id="routing">Routing<a class="anchor" aria-label="anchor" href="#routing"></a>

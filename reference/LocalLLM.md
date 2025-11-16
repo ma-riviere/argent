@@ -9,20 +9,6 @@ completions with tool calling support.
 [`argent::Provider`](https://ma-riviere.github.io/argent/reference/Provider.md)
 -\> `LocalLLM`
 
-## Public fields
-
-- `base_url`:
-
-  Character. Base URL of the local server
-
-- `default_model`:
-
-  Character. Default model name
-
-- `provider_name`:
-
-  Character. Provider name (LocalLLM)
-
 ## Methods
 
 ### Public methods
@@ -77,9 +63,12 @@ Initialize a new Local LLM client
 #### Usage
 
     LocalLLM$new(
-      base_url,
+      base_url = "http://localhost:5000",
       api_key = "not-needed",
-      model = NULL,
+      provider_name = "LocalLLM",
+      rate_limit = 999999,
+      server_tools = character(0),
+      default_model = NULL,
       auto_save_history = TRUE
     )
 
@@ -87,15 +76,28 @@ Initialize a new Local LLM client
 
 - `base_url`:
 
-  Character. Base URL of the local server
+  Character. Base URL of the local server (default:
+  "http://localhost:5000")
 
 - `api_key`:
 
   Character. API key (default: "not-needed")
 
-- `model`:
+- `provider_name`:
 
-  Character. Model name (auto-detected if NULL)
+  Character. Provider name (default: "LocalLLM")
+
+- `rate_limit`:
+
+  Numeric. Rate limit in requests per second (default: 999999)
+
+- `server_tools`:
+
+  Character vector. Server-side tools available (default: character(0))
+
+- `default_model`:
+
+  Character. Default model name (auto-detected if NULL)
 
 - `auto_save_history`:
 

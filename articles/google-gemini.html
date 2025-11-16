@@ -510,7 +510,7 @@
 <ul>
 <li>PDF (files or URLs) as text or base64</li>
 <li>Images (files or URLs) as base64</li>
-<li>Remote files (through <code><a href="../reference/as_file_content.html">as_file_content()</a></code>)</li>
+<li>Remote files (through <code><a href="../reference/content_converters.html">as_file_content()</a></code>)</li>
 <li>Plain text &amp; code files</li>
 <li>Text-based data files (csv, tsv, json, ..)</li>
 <li>R objects</li>
@@ -586,7 +586,7 @@
 <p><em>Damn right!</em></p>
 <p><strong>Sending PDF URLs:</strong></p>
 <p>For Google, by default, PDF URLs are sent as base64 to the server.</p>
-<p>However, we can use the <code><a href="../reference/as_text_content.html">as_text_content()</a></code> helper to have <code><a href="https://docs.ropensci.org/pdftools//reference/pdf_render_page.html" class="external-link">pdftools::pdf_convert()</a></code> parse the PDFs and pass their text contents to the model instead.</p>
+<p>However, we can use the <code><a href="../reference/content_converters.html">as_text_content()</a></code> helper to have <code><a href="https://docs.ropensci.org/pdftools//reference/pdf_render_page.html" class="external-link">pdftools::pdf_convert()</a></code> parse the PDFs and pass their text contents to the model instead.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r6_pdf_url</span> <span class="op">&lt;-</span> <span class="st">"https://cran.r-project.org/web/packages/R6/R6.pdf"</span></span>
@@ -594,8 +594,8 @@
 <span></span>
 <span><span class="va">multimodal_prompt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="st">"Give a 3 sentences summary of the advantages of S7 over R6"</span>,</span>
-<span>    <span class="fu"><a href="../reference/as_text_content.html">as_text_content</a></span><span class="op">(</span><span class="va">r6_pdf_url</span><span class="op">)</span>,</span>
-<span>    <span class="fu"><a href="../reference/as_text_content.html">as_text_content</a></span><span class="op">(</span><span class="va">s7_pdf_url</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/content_converters.html">as_text_content</a></span><span class="op">(</span><span class="va">r6_pdf_url</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/content_converters.html">as_text_content</a></span><span class="op">(</span><span class="va">s7_pdf_url</span><span class="op">)</span>,</span>
 <span>    <span class="st">"And give me the current versions of both packages"</span> <span class="co"># To make sure you actually read the PDFs</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -634,14 +634,14 @@
 </div>
 </section><section class="level3"><h4 id="passing-uploaded-files">Passing Uploaded Files<a class="anchor" aria-label="anchor" href="#passing-uploaded-files"></a>
 </h4>
-<p>Upload a file and reference it with <code><a href="../reference/as_file_content.html">as_file_content()</a></code>:</p>
+<p>Upload a file and reference it with <code><a href="../reference/content_converters.html">as_file_content()</a></code>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">file_metadata</span> <span class="op">&lt;-</span> <span class="va">google_gemini</span><span class="op">$</span><span class="fu">upload_file</span><span class="op">(</span><span class="va">my_cv_url</span><span class="op">)</span> <span class="co"># Pass an URL or a local file path</span></span>
 <span></span>
 <span><span class="va">multipart_prompt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="st">"What are my two favorite frameworks/tools ?"</span>,</span>
-<span>    <span class="fu"><a href="../reference/as_file_content.html">as_file_content</a></span><span class="op">(</span><span class="va">file_metadata</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="../reference/content_converters.html">as_file_content</a></span><span class="op">(</span><span class="va">file_metadata</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="op">!</span><span class="op">!</span><span class="op">!</span><span class="va">multipart_prompt</span>, model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span><span class="op">)</span></span>
@@ -657,7 +657,7 @@
 <div>
 <blockquote>
 <p><strong>Note</strong></p>
-<p>Here, using <code><a href="../reference/as_file_content.html">as_file_content()</a></code> is necessary to signal to the model to use this as a remote file reference, rather than just some text content.</p>
+<p>Here, using <code><a href="../reference/content_converters.html">as_file_content()</a></code> is necessary to signal to the model to use this as a remote file reference, rather than just some text content.</p>
 </blockquote>
 </div>
 <div>

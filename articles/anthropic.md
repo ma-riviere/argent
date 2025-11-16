@@ -423,7 +423,7 @@ Anthropic Claude supports sending:
   content)
 - Images: URLs (as-is, or base64), files (base64)
 - Remote files (through
-  [`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md))
+  [`as_file_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md))
 - Plain text & code files
 - Text-based data files (csv, tsv, json, ..)
 - R objects
@@ -519,7 +519,7 @@ Based on your resume, your favorite programming language is **R**.
 For Anthropic, by default, PDF URLs are sent as-is to the server.
 
 However, we can use the
-[`as_text_content()`](https://ma-riviere.github.io/argent/reference/as_text_content.md)
+[`as_text_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 helper to have
 [`pdftools::pdf_convert()`](https://docs.ropensci.org/pdftools//reference/pdf_render_page.html)
 parse the PDFs and pass their text contents to the model instead.
@@ -542,7 +542,7 @@ anthropic$chat(!!!multimodal_prompt, model = "claude-sonnet-4-5-20250929")
 We can also send files directly to the model.
 
 Thanks to the
-[`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md)
+[`as_file_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 helper, we can pass further options to the provider:
 
 ``` r

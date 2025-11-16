@@ -504,7 +504,7 @@
 <ul>
 <li>Images: URLs (as-is, or base64), files (base64)</li>
 <li>PDFs: URLs (as-is, base64, or text content), files (base64, or text content)</li>
-<li>Remote files (through <code><a href="../reference/as_file_content.html">as_file_content()</a></code>)</li>
+<li>Remote files (through <code><a href="../reference/content_converters.html">as_file_content()</a></code>)</li>
 <li>Plain text &amp; code files</li>
 <li>Text-based data files (csv, tsv, json, ..)</li>
 <li>R objects</li>
@@ -551,7 +551,7 @@
 <p><strong>Note</strong></p>
 <p>OpenAI supports an optional <code>detail</code> parameter (low/high/auto) to control the image processing detail level when the image is sent as a URL. The default value is <code>"auto"</code>.</p>
 <p>To specify this parameter, we need to pass the image URL to <code>as_image_content(url, .provider_options = list(detail = "low"))</code>.</p>
-<p>We could have used the <code><a href="../reference/as_image_content.html">as_image_content()</a></code> to resize the image before sending it with the <code>.resize</code> argument.</p>
+<p>We could have used the <code><a href="../reference/content_converters.html">as_image_content()</a></code> to resize the image before sending it with the <code>.resize</code> argument.</p>
 <p>OpenAI Responses API also supports sending a file_id (i.e. the image <code>as_file_content(file_id)</code> after uploading it with <code>openai_responses$upload_file()</code>).</p>
 </blockquote>
 </div>
@@ -581,7 +581,7 @@
 <p><em>Probably ?!?</em></p>
 <p><strong>Sending PDF URLs:</strong></p>
 <p>For OpenAI Responses, by default, PDF URLs are sent as base64 to the server.</p>
-<p>However, we can use the <code><a href="../reference/as_text_content.html">as_text_content()</a></code> helper to have <code><a href="https://docs.ropensci.org/pdftools//reference/pdf_render_page.html" class="external-link">pdftools::pdf_convert()</a></code> parse the PDFs and pass their text contents to the model instead.</p>
+<p>However, we can use the <code><a href="../reference/content_converters.html">as_text_content()</a></code> helper to have <code><a href="https://docs.ropensci.org/pdftools//reference/pdf_render_page.html" class="external-link">pdftools::pdf_convert()</a></code> parse the PDFs and pass their text contents to the model instead.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r6_pdf_url</span> <span class="op">&lt;-</span> <span class="st">"https://cran.r-project.org/web/packages/R6/R6.pdf"</span></span>
@@ -589,8 +589,8 @@
 <span></span>
 <span><span class="va">multimodal_prompt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="st">"Give a 3 sentences summary of the advantages of S7 over R6"</span>,</span>
-<span>    <span class="fu"><a href="../reference/as_text_content.html">as_text_content</a></span><span class="op">(</span><span class="va">r6_pdf_url</span><span class="op">)</span>,</span>
-<span>    <span class="fu"><a href="../reference/as_text_content.html">as_text_content</a></span><span class="op">(</span><span class="va">s7_pdf_url</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/content_converters.html">as_text_content</a></span><span class="op">(</span><span class="va">r6_pdf_url</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/content_converters.html">as_text_content</a></span><span class="op">(</span><span class="va">s7_pdf_url</span><span class="op">)</span>,</span>
 <span>    <span class="st">"And give me the current versions of both packages"</span> <span class="co"># To make sure it actually reads the PDFs</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -641,12 +641,12 @@
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>   &lt;chr&gt;  &lt;chr&gt;                       &lt;chr&gt;      &lt;chr&gt;                   &lt;int&gt; &lt;dttm&gt;              &lt;lgl&gt;      &lt;chr&gt;     &lt;lgl&gt;         </span>
 <span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a> 1 file   file-C6FSoAhHoAkyxV61djbB6D user_data  file92917bdad4ff.pdf   431965 2025-11-14 11:52:18 NA         processed NA            </span></code></pre></div>
 <p><strong>Using Uploaded Files</strong></p>
-<p>Use <code><a href="../reference/as_file_content.html">as_file_content()</a></code> to reference uploaded files:</p>
+<p>Use <code><a href="../reference/content_converters.html">as_file_content()</a></code> to reference uploaded files:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">openai_responses</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"What are my two favorite frameworks/tools ?"</span>,</span>
-<span>    <span class="fu"><a href="../reference/as_file_content.html">as_file_content</a></span><span class="op">(</span><span class="va">file_metadata</span><span class="op">$</span><span class="va">id</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/content_converters.html">as_file_content</a></span><span class="op">(</span><span class="va">file_metadata</span><span class="op">$</span><span class="va">id</span><span class="op">)</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gpt-5-mini"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>

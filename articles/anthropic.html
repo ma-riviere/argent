@@ -470,7 +470,7 @@
 <ul>
 <li>PDFs: URLs (as-is, base64, or text content), files (base64, or text content)</li>
 <li>Images: URLs (as-is, or base64), files (base64)</li>
-<li>Remote files (through <code><a href="../reference/as_file_content.html">as_file_content()</a></code>)</li>
+<li>Remote files (through <code><a href="../reference/content_converters.html">as_file_content()</a></code>)</li>
 <li>Plain text &amp; code files</li>
 <li>Text-based data files (csv, tsv, json, ..)</li>
 <li>R objects</li>
@@ -545,7 +545,7 @@
 <p><em>Damn right!</em></p>
 <p><strong>Sending PDF URLs:</strong></p>
 <p>For Anthropic, by default, PDF URLs are sent as-is to the server.</p>
-<p>However, we can use the <code><a href="../reference/as_text_content.html">as_text_content()</a></code> helper to have <code><a href="https://docs.ropensci.org/pdftools//reference/pdf_render_page.html" class="external-link">pdftools::pdf_convert()</a></code> parse the PDFs and pass their text contents to the model instead.</p>
+<p>However, we can use the <code><a href="../reference/content_converters.html">as_text_content()</a></code> helper to have <code><a href="https://docs.ropensci.org/pdftools//reference/pdf_render_page.html" class="external-link">pdftools::pdf_convert()</a></code> parse the PDFs and pass their text contents to the model instead.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r6_pdf_url</span> <span class="op">&lt;-</span> <span class="st">"https://cran.r-project.org/web/packages/R6/R6.pdf"</span></span>
@@ -553,8 +553,8 @@
 <span></span>
 <span><span class="va">multimodal_prompt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="st">"Give a short summary of the pros and cons of the two class systems in the following PDFs:"</span>,</span>
-<span>    <span class="fu"><a href="../reference/as_text_content.html">as_text_content</a></span><span class="op">(</span><span class="va">r6_pdf_url</span><span class="op">)</span>,</span>
-<span>    <span class="fu"><a href="../reference/as_text_content.html">as_text_content</a></span><span class="op">(</span><span class="va">s7_pdf_url</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="../reference/content_converters.html">as_text_content</a></span><span class="op">(</span><span class="va">r6_pdf_url</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/content_converters.html">as_text_content</a></span><span class="op">(</span><span class="va">s7_pdf_url</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">anthropic</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="op">!</span><span class="op">!</span><span class="op">!</span><span class="va">multimodal_prompt</span>, model <span class="op">=</span> <span class="st">"claude-sonnet-4-5-20250929"</span><span class="op">)</span></span></code></pre></div>
@@ -562,12 +562,12 @@
 </section><section class="level2"><h3 id="sending-files">Sending files<a class="anchor" aria-label="anchor" href="#sending-files"></a>
 </h3>
 <p>We can also send files directly to the model.</p>
-<p>Thanks to the <code><a href="../reference/as_file_content.html">as_file_content()</a></code> helper, we can pass further options to the provider:</p>
+<p>Thanks to the <code><a href="../reference/content_converters.html">as_file_content()</a></code> helper, we can pass further options to the provider:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cv_metadata</span> <span class="op">&lt;-</span> <span class="va">anthropic</span><span class="op">$</span><span class="fu">upload_file</span><span class="op">(</span><span class="va">my_cv_url</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">cv_file_ref</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_file_content.html">as_file_content</a></span><span class="op">(</span></span>
+<span><span class="va">cv_file_ref</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/content_converters.html">as_file_content</a></span><span class="op">(</span></span>
 <span>    <span class="va">cv_metadata</span><span class="op">$</span><span class="va">id</span>,</span>
 <span>    .provider_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>        title <span class="op">=</span> <span class="st">"Some stuff I've done"</span>, </span>
@@ -592,8 +592,8 @@
 <div class="sourceCode cell-code" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">multimodal_prompt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="st">"Give a 3 sentences summary of the advantages of S7 over R6"</span>,</span>
-<span>    <span class="fu"><a href="../reference/as_text_content.html">as_text_content</a></span><span class="op">(</span><span class="va">r6_pdf_url</span><span class="op">)</span>,</span>
-<span>    <span class="fu"><a href="../reference/as_text_content.html">as_text_content</a></span><span class="op">(</span><span class="va">s7_pdf_url</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="../reference/content_converters.html">as_text_content</a></span><span class="op">(</span><span class="va">r6_pdf_url</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/content_converters.html">as_text_content</a></span><span class="op">(</span><span class="va">s7_pdf_url</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">anthropic</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="op">!</span><span class="op">!</span><span class="op">!</span><span class="va">multimodal_prompt</span>, model <span class="op">=</span> <span class="st">"claude-haiku-4-5-20251001"</span>, cache_prompt <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>

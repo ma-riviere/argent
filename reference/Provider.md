@@ -55,6 +55,10 @@ Manual save/load available via `dump_history()` and `load_history()`.
 
   Character vector. Server-side tools to use for API requests
 
+- `default_model`:
+
+  Character. Default model to use for chat requests
+
 ## Methods
 
 ### Public methods
@@ -116,25 +120,40 @@ Initialize a new Provider instance
 #### Usage
 
     Provider$new(
-      api_key = NULL,
       base_url = NULL,
+      api_key = NULL,
+      provider_name = "Provider",
       rate_limit = NULL,
+      server_tools = character(0),
+      default_model = NULL,
       auto_save_history = TRUE
     )
 
 #### Arguments
 
-- `api_key`:
-
-  Character. API key for the provider
-
 - `base_url`:
 
   Character. Base URL for API endpoint
 
+- `api_key`:
+
+  Character. API key for the provider
+
+- `provider_name`:
+
+  Character. Provider name
+
 - `rate_limit`:
 
   Numeric. Rate limit in requests per second
+
+- `server_tools`:
+
+  Character vector. Server-side tools available
+
+- `default_model`:
+
+  Character. Default model to use for chat requests
 
 - `auto_save_history`:
 

@@ -14,14 +14,15 @@ gemini <- Google$new(api_key = Sys.getenv("GEMINI_API_KEY"))
 ```
 
 You can customize the rate limit when initializing with the `rate_limit`
-parameter.
+parameter, and the default model with the `default_model` parameter
+(‘gemini-2.5-flash’ for Google).
 
 ### Basic Completion
 
 ``` r
 gemini$chat(
     "What is the R programming language? Answer in two sentences.",
-    model = "gemini-2.5-flash"
+    model = "gemini-2.5-flash" # Not necessary, it's the default model for Google
 )
 ```
 
@@ -273,7 +274,7 @@ From the provided regression model output, we can deduce the following three poi
 ##### Passing Uploaded Files
 
 Upload a file and reference it with
-[`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md):
+[`as_file_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md):
 
 ``` r
 file_metadata <- gemini$upload_file("https://ma-riviere.com/res/cv.pdf")
@@ -298,7 +299,7 @@ Based on the "Frameworks & Tools" section and the overall context of the resume,
 > **Note**
 >
 > Here, using
-> [`as_file_content()`](https://ma-riviere.github.io/argent/reference/as_file_content.md)
+> [`as_file_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
 > is necessary to signal to the model to use this as a remote file
 > reference, rather than just some text content.
 

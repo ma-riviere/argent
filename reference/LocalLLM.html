@@ -63,22 +63,6 @@ OpenAI-compatible APIs. Provides methods for chat completions with tool calling 
     <p><code><a href="Provider.html">argent::Provider</a></code> -&gt; <code>LocalLLM</code></p>
     </div>
     <div class="section level2">
-    <h2 id="public-fields">Public fields<a class="anchor" aria-label="anchor" href="#public-fields"></a></h2>
-    <p></p><div class="r6-fields"><dl><dt><code>base_url</code></dt>
-<dd><p>Character. Base URL of the local server</p></dd>
-
-
-<dt><code>default_model</code></dt>
-<dd><p>Character. Default model name</p></dd>
-
-
-<dt><code>provider_name</code></dt>
-<dd><p>Character. Provider name (LocalLLM)</p></dd>
-
-
-</dl><p></p></div>
-    </div>
-    <div class="section level2">
     <h2 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a></h2>
 
 <div class="section">
@@ -119,9 +103,12 @@ OpenAI-compatible APIs. Provides methods for chat completions with tool calling 
 <p>Initialize a new Local LLM client</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/LocalLLM.html">LocalLLM</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
-<span>  <span class="va">base_url</span>,</span>
+<span>  base_url <span class="op">=</span> <span class="st">"http://localhost:5000"</span>,</span>
 <span>  api_key <span class="op">=</span> <span class="st">"not-needed"</span>,</span>
-<span>  model <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  provider_name <span class="op">=</span> <span class="st">"LocalLLM"</span>,</span>
+<span>  rate_limit <span class="op">=</span> <span class="fl">999999</span>,</span>
+<span>  server_tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span>,</span>
+<span>  default_model <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  auto_save_history <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -129,15 +116,27 @@ OpenAI-compatible APIs. Provides methods for chat completions with tool calling 
 <div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>base_url</code></dt>
-<dd><p>Character. Base URL of the local server</p></dd>
+<dd><p>Character. Base URL of the local server (default: "http://localhost:5000")</p></dd>
 
 
 <dt><code>api_key</code></dt>
 <dd><p>Character. API key (default: "not-needed")</p></dd>
 
 
-<dt><code>model</code></dt>
-<dd><p>Character. Model name (auto-detected if NULL)</p></dd>
+<dt><code>provider_name</code></dt>
+<dd><p>Character. Provider name (default: "LocalLLM")</p></dd>
+
+
+<dt><code>rate_limit</code></dt>
+<dd><p>Numeric. Rate limit in requests per second (default: 999999)</p></dd>
+
+
+<dt><code>server_tools</code></dt>
+<dd><p>Character vector. Server-side tools available (default: character(0))</p></dd>
+
+
+<dt><code>default_model</code></dt>
+<dd><p>Character. Default model name (auto-detected if NULL)</p></dd>
 
 
 <dt><code>auto_save_history</code></dt>

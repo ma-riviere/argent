@@ -25,11 +25,7 @@
 <url><loc>https://ma-riviere.github.io/argent/reference/OpenRouter.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/reference/Provider.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/reference/argent-package.html</loc></url>
-<url><loc>https://ma-riviere.github.io/argent/reference/as_file_content.html</loc></url>
-<url><loc>https://ma-riviere.github.io/argent/reference/as_image_content.html</loc></url>
-<url><loc>https://ma-riviere.github.io/argent/reference/as_json_content.html</loc></url>
-<url><loc>https://ma-riviere.github.io/argent/reference/as_pdf_content.html</loc></url>
-<url><loc>https://ma-riviere.github.io/argent/reference/as_text_content.html</loc></url>
+<url><loc>https://ma-riviere.github.io/argent/reference/content_converters.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/reference/index.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/reference/tool_definitions.html</loc></url>
 </urlset>

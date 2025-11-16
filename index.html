@@ -478,21 +478,18 @@ Active
 <p>Here is a quick example using Google Gemini:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gemini</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/Google.html">Google</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GEMINI_API_KEY"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>You can customize the rate limit when initializing with the <code>rate_limit</code> parameter.</p>
+<p>You can customize the rate limit when initializing with the <code>rate_limit</code> parameter, and the default model with the <code>default_model</code> parameter (‘gemini-2.5-flash’ for Google).</p>
 <div class="section level3">
 <h3 id="basic-completion">Basic Completion<a class="anchor" aria-label="anchor" href="#basic-completion"></a>
 </h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"What is the R programming language? Answer in two sentences."</span>,</span>
-<span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span></span>
+<span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span> <span class="co"># Not necessary, it's the default model for Google</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><code>argent</code> will maintain a conversation history in the provider object, meaning that when using <code>$chat()</code> a second time, the model will have access to the previous exchanges:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
-<span>    <span class="st">"Tell me more about its statistical modeling capabilities."</span>,</span>
-<span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="st">"Tell me more about its statistical modeling capabilities."</span><span class="op">)</span></span></code></pre></div>
 <p>The chat history can be visualized by printing the provider object:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">gemini</span><span class="op">)</span></span></code></pre></div>
@@ -688,7 +685,7 @@ Active
 <p><strong>Note</strong></p>
 <p>Here, the URL was automatically detected, downloaded in a temporary file, and converted to base64, before being passed to the model.</p>
 <p>Other providers may have different behavior. For example, Anthropic supports passing images &amp; PDFs URLs directly.</p>
-<p>Helper functions like <code><a href="reference/as_text_content.html">as_text_content()</a></code> are available to force some behaviors (like extracting the contents of the PDF instead of passing base64).</p>
+<p>Helper functions like <code><a href="reference/content_converters.html">as_text_content()</a></code> are available to force some behaviors (like extracting the contents of the PDF instead of passing base64).</p>
 </blockquote>
 <blockquote>
 <p><strong>Tip</strong></p>
@@ -705,7 +702,7 @@ Active
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">multipart_prompt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="st">"What is my favorite programming language?"</span>,</span>
-<span>    <span class="fu"><a href="reference/as_file_content.html">as_file_content</a></span><span class="op">(</span><span class="va">file_metadata</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="reference/content_converters.html">as_file_content</a></span><span class="op">(</span><span class="va">file_metadata</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="op">!</span><span class="op">!</span><span class="op">!</span><span class="va">multipart_prompt</span>, model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span><span class="op">)</span></span></code></pre></div>
@@ -716,7 +713,7 @@ Active
 <span><span class="co">#&gt; ✔ [Google] File deleted: files/7xulp36j9jq1</span></span></code></pre></div>
 <blockquote>
 <p><strong>Note</strong></p>
-<p>Here, using <code><a href="reference/as_file_content.html">as_file_content()</a></code> signals to the model that this is a remote file reference, rather than just some text content.</p>
+<p>Here, using <code><a href="reference/content_converters.html">as_file_content()</a></code> signals to the model that this is a remote file reference, rather than just some text content.</p>
 </blockquote>
 <blockquote>
 <p><strong>Tip</strong></p>
