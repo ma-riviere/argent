@@ -231,12 +231,17 @@ Detailed guides for each provider:
 Guides for OpenAI's three different APIs:
 
 - [Chat Completions API](articles/openai-completions.html) - Standard OpenAI chat interface
-- [Responses API](articles/openai-responses.html) - Newest API combining the functionalities of the Chat Completions and Assistants
+- [Responses API](articles/openai-responses.html) - Newest API combining the functionalities of the Chat and Assistants
 - [Assistants API](articles/openai-assistants.html) - Deprecated
 
 #### Other Providers
 
-- [Using Other Compatible APIs](articles/other-providers.html) - Use argent classes with compatible services (e.g., Minimax instead of Claude)
+- [Using Other Compatible APIs](articles/other-providers.html) - Use argent with providers offering compatible APIs (e.g., Minimax, Qwen, ...)
+
+### Advanced Topics
+
+- [RAG Applications](articles/advanced-rag.html) - How to use `argent` & `ragnar` for RAG applications
+- [Advanced MCP Tools](articles/advanced-mcp.html) - How to use MCP servers with `argent`
 
 
 ## Other Topics

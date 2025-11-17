@@ -37,7 +37,7 @@ But I will be progressively migrating my projects to `ellmer`, so I'm not sure h
 
 ## In a Nutshell
 
-`argent` provides a unified interface to build AI agents with conversation history management, server or client-side tool calling, multimodal inputs, and universal structured outputs.
+`argent` provides a unified interface to build AI agents with conversation history management, local function & MCP tools, server-side tools, multimodal inputs, and universal structured outputs.
 
 It supports most **server-side tools** (code execution, web search, file search, etc.) and allows to easily define **client-side tools** using plumber2-style annotations within R functions.
 It allows sending **multimodal inputs** (i.e. mixing text, images, PDFs, data files, URLs, remote files, and R objects) in a single request, and it supports **structured outputs** for _**any**_ model supporting tool calling, whatever other tools/functions are used.
@@ -46,7 +46,7 @@ It allows sending **multimodal inputs** (i.e. mixing text, images, PDFs, data fi
 
 | Feature | Google | Anthropic | OpenAI Chat | OpenAI Responses | OpenAI Assistants | OpenRouter | Local LLM |
 |---------|--------|-----------|-------------|------------------|-------------------|------------|-----------|
-| **Tool calling** | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️[^1] | ⚠️[^1] |
+| **Function & MCP tools** | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️[^1] | ⚠️[^1] |
 | **Structured outputs** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅[^2] | ✅[^2] |
 | **Multimodal inputs** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️[^3] |
 | **Server-side tools** | ✅[^4] | ✅[^5] | ⚠️[^6] | ✅[^7] | ✅[^8] | ⚠️[^9] | ❌ |
@@ -437,11 +437,12 @@ Guides for OpenAI's three different APIs:
 
 #### Other Providers
 
-- [Using Other Compatible APIs](articles/other-providers.html) - Use argent classes with compatible services (e.g., Minimax instead of Claude)
+- [Using Other Compatible APIs](articles/other-providers.html) - Use argent with providers offering compatible APIs (e.g., Minimax, Qwen, ...)
 
 ### Advanced Topics
 
-- [RAG Applications](articles/usecase-rag.html) - Retrieval-Augmented Generation patterns
+- [RAG Applications](articles/advanced-rag.html) - How to use `argent` & `ragnar` for RAG applications
+- [Advanced MCP Tools](articles/advanced-mcp.html) - How to use MCP servers with `argent`
 
 ## Contributing
 

@@ -33,13 +33,13 @@ outputs.
 > I’m putting `argent` out there in case it supports some edge cases
 > that other packages don’t, and because I didn’t want to let all that
 > work go to waste. But I will be progressively migrating my projects to
-> `ellmer`, and I am not sure how long I’ll maintain `argent`.
+> `ellmer`, so I’m not sure how long I’ll maintain `argent`.
 
 ## In a Nutshell
 
 `argent` provides a unified interface to build AI agents with
-conversation history management, server or client-side tool calling,
-multimodal inputs, and universal structured outputs.
+conversation history management, local function & MCP tools, server-side
+tools, multimodal inputs, and universal structured outputs.
 
 It supports most **server-side tools** (code execution, web search, file
 search, etc.) and allows to easily define **client-side tools** using
@@ -53,7 +53,7 @@ whatever other tools/functions are used.
 
 | Feature | Google | Anthropic | OpenAI Chat | OpenAI Responses | OpenAI Assistants | OpenRouter | Local LLM |
 |----|----|----|----|----|----|----|----|
-| **Tool calling** | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️[^1] | ⚠️[^2] |
+| **Function & MCP tools** | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️[^1] | ⚠️[^2] |
 | **Structured outputs** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅[^3] | ✅[^4] |
 | **Multimodal inputs** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️[^5] |
 | **Server-side tools** | ✅[^6] | ✅[^7] | ⚠️[^8] | ✅[^9] | ✅[^10] | ⚠️[^11] | ❌ |
@@ -443,13 +443,15 @@ Guides for OpenAI’s three different APIs:
 #### Other Providers
 
 - [Using Other Compatible APIs](articles/other-providers.html) - Use
-  argent classes with compatible services (e.g., Minimax instead of
-  Claude)
+  argent with providers offering compatible APIs (e.g., Minimax, Qwen,
+  …)
 
 ### Advanced Topics
 
-- [RAG Applications](articles/usecase-rag.html) - Retrieval-Augmented
-  Generation patterns
+- [RAG Applications](articles/advanced-rag.html) - How to use `argent` &
+  `ragnar` for RAG applications
+- [Advanced MCP Tools](articles/advanced-mcp.html) - How to use MCP
+  servers with `argent`
 
 ## Contributing
 

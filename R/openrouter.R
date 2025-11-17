@@ -412,7 +412,7 @@ OpenRouter <- R6::R6Class( # nolint
         chat = function(
             ...,
             system = .default_system_prompt,
-            model = "openrouter/auto",
+            model = self$default_model,
             temperature = 1,
             max_tokens = 4096,
             top_p = NULL,
@@ -525,14 +525,25 @@ OpenRouter <- R6::R6Class( # nolint
 
             # ---- Process tools ----
 
+            private$reset_active_tools()
+
             # Separate server tools from client function tools
             function_tools <- list()
 
             if (!is.null(tools)) {
                 for (tool in tools) {
-                    if (is_client_tool(tool)) {
+                    if (is_mcp_tool(tool)) {
                         converted_tool <- as_tool_openrouter(tool)
                         function_tools <- append(function_tools, list(converted_tool))
+
+                        # We add the original tool because the converted one no longer has the .mcp metadata
+                        private$add_active_tool(type = "mcp", tool = tool)
+
+                    } else if (is_client_tool(tool)) {
+                        converted_tool <- as_tool_openrouter(tool)
+                        function_tools <- append(function_tools, list(converted_tool))
+
+                        private$add_active_tool(type = "client", tool = tool)
 
                     } else if (is_server_tool(tool, self$server_tools)) {
                         tool_name <- get_server_tool_name(tool)

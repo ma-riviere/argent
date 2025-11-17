@@ -81,15 +81,6 @@ response <- openai$chat(
 \section{Super classes}{
 \code{argent::Provider} -> \code{argent::OpenAI} -> \code{OpenAI_Chat}
 }
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{provider_name}}{Character. Provider name (OpenAI Chat)}
-
-\item{\code{server_tools}}{Character vector. Server-side tools to use for API requests}
-}
-\if{html}{\out{</div>}}
-}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
@@ -165,10 +156,13 @@ response <- openai$chat(
 Initialize a new OpenAI Chat client
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{OpenAI_Chat$new(
-  api_key = Sys.getenv("OPENAI_API_KEY"),
-  org = Sys.getenv("OPENAI_ORG"),
   base_url = "https://api.openai.com",
+  api_key = Sys.getenv("OPENAI_API_KEY"),
+  provider_name = "OpenAI Chat",
   rate_limit = 60/60,
+  server_tools = c("web_search"),
+  default_model = "gpt-5-mini",
+  org = Sys.getenv("OPENAI_ORG"),
   auto_save_history = TRUE
 )}\if{html}{\out{</div>}}
 }
@@ -176,13 +170,19 @@ Initialize a new OpenAI Chat client
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{api_key}}{Character. API key (default: from OPENAI_API_KEY env var)}
-
-\item{\code{org}}{Character. Organization ID (default: from OPENAI_ORG env var)}
-
 \item{\code{base_url}}{Character. Base URL for API (default: "https://api.openai.com")}
 
+\item{\code{api_key}}{Character. API key (default: from OPENAI_API_KEY env var)}
+
+\item{\code{provider_name}}{Character. Provider name (default: "OpenAI Chat")}
+
 \item{\code{rate_limit}}{Numeric. Rate limit in requests per second (default: 60/60)}
+
+\item{\code{server_tools}}{Character vector. Server-side tools available (default: c("web_search"))}
+
+\item{\code{default_model}}{Character. Default model to use for chat requests (default: "gpt-5-mini")}
+
+\item{\code{org}}{Character. Organization ID (default: from OPENAI_ORG env var)}
 
 \item{\code{auto_save_history}}{Logical. Enable/disable automatic history sync (default: TRUE)}
 }
@@ -198,7 +198,7 @@ Send a chat completion request to OpenAI
 \if{html}{\out{<div class="r">}}\preformatted{OpenAI_Chat$chat(
   ...,
   system = .default_system_prompt,
-  model = "gpt-5-mini",
+  model = self$default_model,
   temperature = 1,
   max_completion_tokens = 4096,
   top_p = 1,

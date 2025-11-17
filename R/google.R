@@ -800,7 +800,7 @@ Google <- R6::R6Class( # nolint
         #' @return Character (or List if return_full_response = TRUE). Google API's response object.
         chat = function(
             ...,
-            model = "gemini-2.5-flash",
+            model = self$default_model,
             system = .default_system_prompt,
             max_tokens = 8000,
             temperature = 1,
@@ -838,6 +838,8 @@ Google <- R6::R6Class( # nolint
 
             # ---- Process tools and inject into message ----
 
+            private$reset_active_tools()
+
             tool_list <- list()
             function_declarations <- list()
             built_in_added <- character(0)
@@ -845,10 +847,19 @@ Google <- R6::R6Class( # nolint
 
             if (!is.null(tools)) {
                 for (tool in tools) {
-                    if (is_client_tool(tool)) {
+                    if (is_mcp_tool(tool)) {
                         converted_tool <- as_tool_google(tool)
                         function_declarations <- append(function_declarations, list(converted_tool))
-                        
+
+                        # We add the original tool because the converted one no longer has the .mcp metadata
+                        private$add_active_tool(type = "mcp", tool = tool)
+
+                    } else if (is_client_tool(tool)) {
+                        converted_tool <- as_tool_google(tool)
+                        function_declarations <- append(function_declarations, list(converted_tool))
+
+                        private$add_active_tool(type = "client", tool = tool)
+
                     } else if (is_server_tool(tool, self$server_tools)) {
                         tool_name <- get_server_tool_name(tool)
 

@@ -65,5 +65,24 @@ named_list <- function(...) {
     return(dots)
 }
 
+#' Flatten a list of elements to a single-depth list
+#' @param ... One or more elements or lists to flatten
+#' @return List with all elements at depth 1
+#' @export
+flat_list <- function(...) {
+    dots <- rlang::list2(...)
+    result <- list()
+    
+    for (el in dots) {
+        if (is.list(el) && is.null(names(el))) {
+            result <- c(result, flat_list(!!!el))
+        } else {
+            result <- c(result, list(el))
+        }
+    }
+    
+    return(result)
+}
+
 first <- function(x) if (is.null(x) || purrr::is_empty(x)) NULL else x[[1L]]
 last <- function(x) if (is.null(x) || purrr::is_empty(x)) NULL else x[[length(x)]]

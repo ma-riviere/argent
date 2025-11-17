@@ -167,7 +167,7 @@ LocalLLM <- R6::R6Class( # nolint
         chat = function(
             ...,
             system = .default_system_prompt,
-            model = NULL,
+            model = self$default_model,
             temperature = 1,
             max_tokens = 4096,
             top_p = NULL,
@@ -215,16 +215,32 @@ LocalLLM <- R6::R6Class( # nolint
             # ---- Build API request ----
 
             # Prepare tools if provided
+            private$reset_active_tools()
+
             converted_tools <- NULL
             if (!is.null(tools)) {
-                converted_tools <- lapply(tools, \(tool) {
+                converted_tools <- list()
+                for (tool in tools) {
                     converted <- as_tool_local(tool)
-                    list(type = "function", `function` = list(
-                        name = converted$name,
-                        description = converted$description,
-                        parameters = converted$parameters
-                    ))
-                })
+
+                    # Register client/MCP tools in active_tools
+                    if (is_mcp_tool(tool)) {
+                        # We add the original tool because the converted one no longer has the .mcp metadata
+                        private$add_active_tool(type = "mcp", tool = tool)
+                    } else if (is_client_tool(tool)) {
+                        private$add_active_tool(type = "client", tool = tool)
+                    }
+
+                    # Add to API format
+                    converted_tools <- append(converted_tools, list(list(
+                        type = "function",
+                        `function` = list(
+                            name = converted$name,
+                            description = converted$description,
+                            parameters = converted$parameters
+                        )
+                    )))
+                }
             }
 
             query_data <- list3(
@@ -683,7 +699,7 @@ LocalLLM <- R6::R6Class( # nolint
             }
 
             normalized_tools <- purrr::map(tools, \(tool) {
-                # LocalLLM only supports client function tools (no server tools)
+                # LocalLLM only supports client function & MCP tools, which are both processed the same way
                 if (purrr::pluck(tool, "type") == "function") {
                     func_def <- purrr::pluck(tool, "function")
                     param_props <- purrr::pluck(func_def, "parameters", "properties", .default = list())

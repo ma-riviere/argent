@@ -28,6 +28,7 @@ Imports:
     httr2,
     jsonlite,
     lubridate,
+    mcptools,
     mime,
     purrr,
     R6,

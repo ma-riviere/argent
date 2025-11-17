@@ -699,7 +699,7 @@ signatures increase input token costs when sent back in requests. See
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Google$chat(
   ...,
-  model = "gemini-2.5-flash",
+  model = self$default_model,
   system = .default_system_prompt,
   max_tokens = 8000,
   temperature = 1,

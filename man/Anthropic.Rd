@@ -411,7 +411,7 @@ Send a chat completion request to Anthropic
 \if{html}{\out{<div class="r">}}\preformatted{Anthropic$chat(
   ...,
   cache_prompt = FALSE,
-  model = "claude-haiku-4-5-20251001",
+  model = self$default_model,
   system = .default_system_prompt,
   cache_system = FALSE,
   max_tokens = 4096,

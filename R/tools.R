@@ -139,6 +139,29 @@
 #'     zip = "string Postal code"
 #'   )
 #' )
+#'
+#' # Using MCP tools alongside custom tools
+#' github_server <- mcp_server(
+#'   name = "github",
+#'   type = "http",
+#'   url = "https://api.githubcopilot.com/mcp",
+#'   headers = list(
+#'     Authorization = paste("Bearer", Sys.getenv("GITHUB_PAT"))
+#'   )
+#' )
+#'
+#' github_tools <- mcp_tools(github_server)
+#'
+#' # Combine MCP tools with custom tools in chat
+#' google <- Google$new()
+#' google$chat(
+#'   "Create an issue about the bug I found",
+#'   tools = list(
+#'     github_tools,          # MCP tools from server
+#'     as_tool(my_fn),        # Custom R function
+#'     search_tool            # Direct specification
+#'   )
+#' )
 #' }
 NULL
 
@@ -233,7 +256,47 @@ as_tool <- function(fn) {
 }
 
 
-# Internal helper functions ---------------------------------------------------
+#' @rdname tool_definitions
+#' @export
+tool <- function(name, description, ...) {
+    if (!is.character(name) || length(name) != 1 || nchar(name) == 0) {
+        cli::cli_abort("{.arg name} must be a non-empty string")
+    }
+
+    if (!is.character(description) || length(description) != 1 || nchar(description) == 0) {
+        cli::cli_abort("{.arg description} must be a non-empty string")
+    }
+
+    params <- list(...)
+
+    if (length(params) == 0) {
+        cli::cli_warn("No parameters specified for tool {.val {name}}")
+    }
+
+    build_spec_from_params(name, description, params)
+}
+
+#' @rdname tool_definitions
+#' @export
+schema <- function(name, description, ..., strict = TRUE, additional_properties = FALSE) {
+    if (!is.character(name) || length(name) != 1 || nchar(name) == 0) {
+        cli::cli_abort("{.arg name} must be a non-empty string")
+    }
+
+    if (!is.character(description) || length(description) != 1 || nchar(description) == 0) {
+        cli::cli_abort("{.arg description} must be a non-empty string")
+    }
+
+    params <- list(...)
+
+    if (length(params) == 0) {
+        cli::cli_warn("No parameters specified for schema {.val {name}}")
+    }
+
+    build_spec_from_params(name, description, params, strict = strict, additional_properties = additional_properties)
+}
+
+# -----🔺 INTERNAL -------------------------------------------------------------
 
 #' Extract annotation lines from function body
 #' @noRd
@@ -418,62 +481,6 @@ parse_openapi_type <- function(type_str) {
     list(type = "string")
 }
 
-#' Infer whether a parameter is required
-#' @noRd
-infer_required <- function(param_name, has_star, has_default) {
-    if (has_star) {
-        return(TRUE)
-    }
-    if (has_default) {
-        return(FALSE)
-    }
-    return(FALSE)
-}
-
-# Direct specification functions ----------------------------------------------
-
-#' @rdname tool_definitions
-#' @export
-tool <- function(name, description, ...) {
-    if (!is.character(name) || length(name) != 1 || nchar(name) == 0) {
-        cli::cli_abort("{.arg name} must be a non-empty string")
-    }
-
-    if (!is.character(description) || length(description) != 1 || nchar(description) == 0) {
-        cli::cli_abort("{.arg description} must be a non-empty string")
-    }
-
-    params <- list(...)
-
-    if (length(params) == 0) {
-        cli::cli_warn("No parameters specified for tool {.val {name}}")
-    }
-
-    build_spec_from_params(name, description, params)
-}
-
-#' @rdname tool_definitions
-#' @export
-schema <- function(name, description, ..., strict = TRUE, additional_properties = FALSE) {
-    if (!is.character(name) || length(name) != 1 || nchar(name) == 0) {
-        cli::cli_abort("{.arg name} must be a non-empty string")
-    }
-
-    if (!is.character(description) || length(description) != 1 || nchar(description) == 0) {
-        cli::cli_abort("{.arg description} must be a non-empty string")
-    }
-
-    params <- list(...)
-
-    if (length(params) == 0) {
-        cli::cli_warn("No parameters specified for schema {.val {name}}")
-    }
-
-    build_spec_from_params(name, description, params, strict = strict, additional_properties = additional_properties)
-}
-
-# -----🔺 INTERNAL -------------------------------------------------------------
-
 #' Build specification from parameter list
 #' @keywords internal
 #' @noRd
@@ -639,55 +646,19 @@ parse_list_spec <- function(spec_list, param_name) {
     )
 }
 
-# Tool validation functions ---------------------------------------------------
-
-#' Check if an object is a valid custom tool definition
-#'
-#' Validates that an object conforms to the expected structure for a custom tool
-#' definition, with a name, description, and one of the schema fields
-#' (args_schema, parameters, or input_schema). Custom tools are user-defined
-#' functions with parameter schemas, as opposed to server tools.
-#'
-#' @param obj Object to check
-#' @return Logical. TRUE if obj is a valid custom tool definition, FALSE otherwise
-#' @keywords internal
+#' Infer whether a parameter is required
 #' @noRd
-is_client_tool <- function(obj) {
-    if (!is.list(obj)) {
-        return(FALSE)
-    }
-
-    has_name <- !is.null(obj$name) && is.character(obj$name) && length(obj$name) == 1
-    if (isFALSE(has_name)) {
-        return(FALSE)
-    }
-
-    # Must have one of the schema fields (args_schema, parameters, input_schema)
-    has_schema <- !is.null(obj$args_schema) || !is.null(obj$parameters) || !is.null(obj$input_schema)
-    if (has_schema) {
-        # Validate the schema is a list with type and properties
-        schema <- obj$args_schema %||% obj$parameters %||% obj$input_schema
-
-        if (!is.list(schema)) {
-            return(FALSE)
-        }
-
-        return(TRUE)
-    } else {
-        has_type <- !is.null(obj$type) && is.character(obj$type) && length(obj$type) == 1
-        if (isTRUE(has_type)) {
-            # OpenAI-like schema will have type = "function"
-            if (obj$type == "function") {
-                return(TRUE)
-            }
-            # Anthropic server tools will have type = something else (e.g. web_search_20250305, ...)
-            return(FALSE)
-        }
-
-        # For tools without arguments (no parameters/properties), consider it a custom tool anyway
+infer_required <- function(param_name, has_star, has_default) {
+    if (has_star) {
         return(TRUE)
     }
+    if (has_default) {
+        return(FALSE)
+    }
+    return(FALSE)
 }
+
+# -----🔺 UTILS ----------------------------------------------------------------
 
 #' Check if a tool specification is a server tool
 #'
@@ -745,4 +716,58 @@ get_server_tool_name <- function(tool) {
         return(tool$name %||% tool$type)
     }
     return(NULL)
+}
+
+
+#' Check if an object is a valid custom tool definition
+#'
+#' Validates that an object conforms to the expected structure for a custom tool
+#' definition, with a name, description, and one of the schema fields
+#' (args_schema, parameters, or input_schema). Custom tools are user-defined
+#' functions with parameter schemas, as opposed to server tools or MCP tools.
+#'
+#' @param obj Object to check
+#' @return Logical. TRUE if obj is a valid custom tool definition, FALSE otherwise
+#' @keywords internal
+#' @noRd
+is_client_tool <- function(obj) {
+    if (!is.list(obj)) {
+        return(FALSE)
+    }
+
+    # MCP tools are not client tools
+    if (!is.null(purrr::pluck(obj, ".mcp"))) {
+        return(FALSE)
+    }
+
+    has_name <- !is.null(obj$name) && is.character(obj$name) && length(obj$name) == 1
+    if (isFALSE(has_name)) {
+        return(FALSE)
+    }
+
+    # Must have one of the schema fields (args_schema, parameters, input_schema)
+    has_schema <- !is.null(obj$args_schema) || !is.null(obj$parameters) || !is.null(obj$input_schema)
+    if (has_schema) {
+        # Validate the schema is a list with type and properties
+        schema <- obj$args_schema %||% obj$parameters %||% obj$input_schema
+
+        if (!is.list(schema)) {
+            return(FALSE)
+        }
+
+        return(TRUE)
+    } else {
+        has_type <- !is.null(obj$type) && is.character(obj$type) && length(obj$type) == 1
+        if (isTRUE(has_type)) {
+            # OpenAI-like schema will have type = "function"
+            if (obj$type == "function") {
+                return(TRUE)
+            }
+            # Anthropic server tools will have type = something else (e.g. web_search_20250305, ...)
+            return(FALSE)
+        }
+
+        # For tools without arguments (no parameters/properties), consider it a custom tool anyway
+        return(TRUE)
+    }
 }

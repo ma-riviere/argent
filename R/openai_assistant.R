@@ -35,8 +35,6 @@
 #'
 #' @field assistant List. Current assistant object
 #' @field thread List. Current thread object
-#' @field provider_name Character. Provider name (OpenAI Assistant)
-#' @field server_tools Character vector. Server-side tools to use for API requests
 #'
 #' @export
 #' @examples
@@ -103,25 +101,30 @@ OpenAI_Assistant <- R6::R6Class( # nolint
     # The newer Responses API offers a simpler input/output model with better performance.
     # Users should migrate to OpenAI_Responses (see R/openai_responses.R) for new projects.
     public = list(
-        provider_name = "OpenAI Assistant",
-        server_tools = c("file_search", "code_interpreter"),
         assistant = NULL,
         thread = NULL,
 
         # ------🔺 INIT --------------------------------------------------------
-        
+
         #' @description
         #' Initialize a new OpenAI Assistant client
-        #' @param api_key Character. API key (default: from OPENAI_API_KEY env var)
-        #' @param org Character. Organization ID (default: from OPENAI_ORG env var)
         #' @param base_url Character. Base URL for API (default: "https://api.openai.com")
+        #' @param api_key Character. API key (default: from OPENAI_API_KEY env var)
+        #' @param provider_name Character. Provider name (default: "OpenAI Assistant")
         #' @param rate_limit Numeric. Rate limit in requests per second (default: 60/60)
+        #' @param server_tools Character vector. Server-side tools available (default: c("file_search",
+        #'   "code_interpreter"))
+        #' @param default_model Character. Default model to use for chat requests (default: "gpt-4o")
+        #' @param org Character. Organization ID (default: from OPENAI_ORG env var)
         #' @param auto_save_history Logical. Enable/disable automatic history sync (default: TRUE)
         initialize = function(
-            api_key = Sys.getenv("OPENAI_API_KEY"),
-            org = Sys.getenv("OPENAI_ORG"),
             base_url = "https://api.openai.com",
+            api_key = Sys.getenv("OPENAI_API_KEY"),
+            provider_name = "OpenAI Assistant",
             rate_limit = 60 / 60,
+            server_tools = c("file_search", "code_interpreter"),
+            default_model = "gpt-4o",
+            org = Sys.getenv("OPENAI_ORG"),
             auto_save_history = TRUE
         ) {
             cli::cli_alert_warning(c(
@@ -130,7 +133,16 @@ OpenAI_Assistant <- R6::R6Class( # nolint
                 "i" = "See: https://platform.openai.com/docs/assistants/migration"
             ))
 
-            super$initialize(api_key, org, base_url, rate_limit, auto_save_history)
+            super$initialize(
+                base_url = base_url,
+                api_key = api_key,
+                provider_name = provider_name,
+                rate_limit = rate_limit,
+                server_tools = server_tools,
+                default_model = default_model,
+                org = org,
+                auto_save_history = auto_save_history
+            )
         },
 
         # ------🔺 MODELS ------------------------------------------------------
@@ -232,7 +244,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
         #' }
         create_assistant = function(
             name,
-            model = "gpt-4o",
+            model = self$default_model,
             system = .default_system_prompt,
             temperature = 1,
             top_p = 1,
@@ -358,6 +370,9 @@ OpenAI_Assistant <- R6::R6Class( # nolint
 
             self$assistant <- res
 
+            # Populate active_tools from provided tools
+            self$register_tools(tools)
+
             if (getOption("argent.verbose", TRUE)) {
                 cli::cli_alert_success("[{self$provider_name}] Assistant created: {self$assistant$id}")
                 private$display_assistant_info()
@@ -391,6 +406,46 @@ OpenAI_Assistant <- R6::R6Class( # nolint
             }
 
             invisible(self$assistant)
+        },
+
+        #' @description
+        #' Register client/MCP tools for use with the current assistant
+        #' @param tools List. Tool definitions (client functions or MCP tools)
+        #' @details
+        #' This method is used to register tools after loading an existing assistant.
+        #' When you load an assistant that was created with client/MCP tools, you must
+        #' call this method to re-register those tools for execution.
+        #' @return Self (invisibly) for method chaining
+        #' @examples
+        #' \dontrun{
+        #' assistant <- OpenAI_Assistant$new()
+        #' assistant$load_assistant(id = "asst_...")
+        #' assistant$register_tools(list(my_tool_function))
+        #' }
+        register_tools = function(tools) {
+            if (is.null(self$assistant)) {
+                cli::cli_abort("No assistant loaded. Use {.fun create_assistant} or {.fun load_assistant} first.")
+            }
+
+            if (is.null(tools) || length(tools) == 0) {
+                return(invisible(self))
+            }
+
+            private$reset_active_tools()
+
+            for (tool in tools) {
+                if (is_mcp_tool(tool)) {
+                    # We add the original tool because the converted one no longer has the .mcp metadata
+                    private$add_active_tool(type = "mcp", tool = tool)
+                } else if (is_client_tool(tool)) {
+                    private$add_active_tool(type = "client", tool = tool)
+                } else if (is_server_tool(tool, self$server_tools)) {
+                    # Server tools are not added to active_tools (they're API-side)
+                    next
+                }
+            }
+
+            invisible(self)
         },
 
         #' @description

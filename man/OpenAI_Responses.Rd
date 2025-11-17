@@ -182,15 +182,6 @@ path <- responses$download_container_file(
 \section{Super classes}{
 \code{argent::Provider} -> \code{argent::OpenAI} -> \code{OpenAI_Responses}
 }
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{provider_name}}{Character. Provider name (OpenAI Responses)}
-
-\item{\code{server_tools}}{Character vector. Server-side tools to use for API requests}
-}
-\if{html}{\out{</div>}}
-}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
@@ -275,10 +266,13 @@ path <- responses$download_container_file(
 Initialize a new OpenAI Responses client
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{OpenAI_Responses$new(
-  api_key = Sys.getenv("OPENAI_API_KEY"),
-  org = Sys.getenv("OPENAI_ORG"),
   base_url = "https://api.openai.com",
+  api_key = Sys.getenv("OPENAI_API_KEY"),
+  provider_name = "OpenAI Responses",
   rate_limit = 60/60,
+  server_tools = c("web_search", "file_search", "code_interpreter"),
+  default_model = "gpt-5-mini",
+  org = Sys.getenv("OPENAI_ORG"),
   auto_save_history = TRUE
 )}\if{html}{\out{</div>}}
 }
@@ -286,13 +280,20 @@ Initialize a new OpenAI Responses client
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{api_key}}{Character. API key (default: from OPENAI_API_KEY env var)}
-
-\item{\code{org}}{Character. Organization ID (default: from OPENAI_ORG env var)}
-
 \item{\code{base_url}}{Character. Base URL for API (default: "https://api.openai.com")}
 
+\item{\code{api_key}}{Character. API key (default: from OPENAI_API_KEY env var)}
+
+\item{\code{provider_name}}{Character. Provider name (default: "OpenAI Responses")}
+
 \item{\code{rate_limit}}{Numeric. Rate limit in requests per second (default: 60/60)}
+
+\item{\code{server_tools}}{Character vector. Server-side tools available (default: c("web_search",
+"file_search", "code_interpreter"))}
+
+\item{\code{default_model}}{Character. Default model to use for chat requests (default: "gpt-5-mini")}
+
+\item{\code{org}}{Character. Organization ID (default: from OPENAI_ORG env var)}
 
 \item{\code{auto_save_history}}{Logical. Enable/disable automatic history sync (default: TRUE)}
 }
@@ -615,7 +616,7 @@ See: \url{https://platform.openai.com/docs/api-reference/responses/create}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{OpenAI_Responses$chat(
   ...,
-  model = "gpt-5-mini",
+  model = self$default_model,
   system = .default_system_prompt,
   temperature = 1,
   max_tokens = 4096,

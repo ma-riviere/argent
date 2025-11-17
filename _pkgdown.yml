@@ -62,8 +62,10 @@ navbar:
     advanced:
       text: Advanced Use
       menu:
-      - text: RAG Applications
-        href: articles/usecase-rag.html
+      - text: RAG with `ragnar`
+        href: articles/advanced-rag.html
+      - text: Using MCP Servers
+        href: articles/advanced-mcp.html
 
 articles:
 - title: Provider Guides
@@ -89,6 +91,7 @@ articles:
   navbar: Advanced Use
   contents:
     - articles/advanced-rag
+    - articles/advanced-mcp
 
 reference:
 - title: Provider Classes
@@ -123,3 +126,17 @@ reference:
   - tool
   - as_tool
   - schema
+
+- subtitle: MCP
+  desc: Helper functions for MCP integration
+  contents:
+  - mcp_server
+  - mcp_tools
+  - mcp_resources
+  - mcp_prompts
+  - execute_mcp_tool
+
+- subtitle: Helpers
+  desc: Helper functions
+  contents:
+  - flat_list

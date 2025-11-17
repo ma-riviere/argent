@@ -415,6 +415,7 @@ Provider <- R6::R6Class( # nolint
     private = list(
         api_key = NULL,
         auto_save_history_setting = TRUE,
+        active_tools = list(mcp = list(), client = list()),
 
         # ------🔺 HISTORY MANAGEMENT ------------------------------------------
 
@@ -734,6 +735,22 @@ Provider <- R6::R6Class( # nolint
 
         # ------🔺 TOOLS -------------------------------------------------------
 
+        add_active_tool = function(type, tool) {
+            if (type == "client") {
+                private$active_tools$client[[tool$name]] <- tool
+            } else if (type == "mcp") {
+                private$active_tools$mcp[[tool$name]] <- tool
+            } else {
+                cli::cli_abort("Invalid tool type: {type}")
+            }
+            invisible(self)
+        },
+
+        reset_active_tools = function() {
+            private$active_tools <- list(mcp = list(), client = list())
+            invisible(self)
+        },
+
         is_tool_call = function(input) {
             if (!private$is_root(input)) {
                 input <- private$extract_root(input)
@@ -750,40 +767,88 @@ Provider <- R6::R6Class( # nolint
             return(!purrr::is_empty(tool_res))
         },
 
-        # Execute a tool call (partial/abstract implementation)
-        use_tool = function(fn_name, args) {
-            if (is.null(fn_name)) {
-                if (isTRUE(getOption("argent.debug", default = FALSE))) {
-                    cli::cli_alert_warning(c("!" = "[{self$provider_name}] Tool call has no function name"))
-                }
-                output <- paste0("Function '", fn_name, "' does not exist")
+        # Execute a client tool (R function)
+        use_client_tool = function(tool_def, arguments) {
+            fn_name <- tool_def$name
 
-            } else if (exists(fn_name) && is.function(get(fn_name))) {
-                cli::cli_alert_info(
-                    "[{self$provider_name}] Calling: {.emph {cli::col_yellow(format_tool_call(fn_name, args))}}"
+            if (!exists(fn_name) || !is.function(get(fn_name))) {
+                cli::cli_abort(
+                    "Client tool {.val {fn_name}} is not a function in the global environment"
                 )
-                output <- rlang::exec(fn_name, !!!args)
-                if (purrr::is_empty(output)) {
-                    output <- "The tool returned nothing."
-                }
-
-                # To maintain a trace of the tool name and the arguments used for that tool call in the tool results.
-                output_tagged <- list(
-                    name = fn_name,
-                    arguments = args,
-                    result = output
-                )
-                return(output_tagged)
-            } else {
-                if (isTRUE(getOption("argent.debug", default = FALSE))) {
-                    cli::cli_alert_warning(
-                        c("!" = "[{self$provider_name}] Attempted to call a function that does not exist: {fn_name}")
-                    )
-                }
-                output <- "Attempted to call a tool without providing a function name"
             }
 
-            return(output)
+            cli::cli_alert_info(
+                "[{self$provider_name}] Calling: {.emph {cli::col_yellow(format_tool_call(fn_name, arguments))}}"
+            )
+
+            output <- rlang::exec(fn_name, !!!arguments)
+
+            if (purrr::is_empty(output)) {
+                output <- "The tool returned nothing."
+            }
+
+            output_tagged <- list(
+                name = fn_name,
+                arguments = arguments,
+                result = output
+            )
+
+            return(output_tagged)
+        },
+
+        # Execute a tool call (dispatcher)
+        use_tool = function(fn_name, args) {
+            if (is.null(fn_name)) {
+                cli::cli_abort("Tool call has no function name")
+            }
+
+            mcp_tool_def <- purrr::pluck(private$active_tools, "mcp", fn_name)
+            client_tool_def <- purrr::pluck(private$active_tools, "client", fn_name)
+
+            if (is.null(mcp_tool_def) && is.null(client_tool_def)) {
+                cli::cli_abort(c(
+                    "Tool {.val {fn_name}} not found in active tools",
+                    "i" = "Available tools: {.val {names(c(private$active_tools$mcp, private$active_tools$client))}}"
+                ))
+            }
+
+            if (!is.null(mcp_tool_def)) {
+                return(private$use_mcp_tool(mcp_tool_def, args))
+            } else {
+                return(private$use_client_tool(client_tool_def, args))
+            }
+        },
+
+        # Execute an MCP tool call
+        use_mcp_tool = function(tool_def, arguments) {
+            fn_name <- tool_def$name
+
+            cli::cli_alert_info(
+                "[{self$provider_name}] Calling MCP tool: {.emph {cli::col_blue(format_tool_call(fn_name, arguments))}}"
+            )
+
+            # Execute MCP tool via the helper function in R/tools-mcp.R
+            output <- tryCatch(
+                execute_mcp_tool(tool_def, arguments),
+                error = function(e) {
+                    cli::cli_alert_danger(
+                        "[{self$provider_name}] Calling MCP tool {.val {fn_name}} failed:\n {e$message}"
+                    )
+                }
+            )
+
+            if (purrr::is_empty(output)) {
+                output <- "The tool returned nothing."
+            }
+
+            # Return in same format as use_client_tool
+            output_tagged <- list(
+                name = fn_name,
+                arguments = arguments,
+                result = output
+            )
+
+            return(output_tagged)
         },
 
         use_tools = function(api_resp) {

@@ -129,6 +129,16 @@ assistant$create_assistant(
 assistant <- OpenAI_Assistant$new()
 assistant$load_assistant(id = "asst_...")
 }
+
+## ------------------------------------------------
+## Method `OpenAI_Assistant$register_tools`
+## ------------------------------------------------
+
+\dontrun{
+assistant <- OpenAI_Assistant$new()
+assistant$load_assistant(id = "asst_...")
+assistant$register_tools(list(my_tool_function))
+}
 }
 \section{Super classes}{
 \code{argent::Provider} -> \code{argent::OpenAI} -> \code{OpenAIAssistant}
@@ -139,10 +149,6 @@ assistant$load_assistant(id = "asst_...")
 \item{\code{assistant}}{List. Current assistant object}
 
 \item{\code{thread}}{List. Current thread object}
-
-\item{\code{provider_name}}{Character. Provider name (OpenAI Assistant)}
-
-\item{\code{server_tools}}{Character vector. Server-side tools to use for API requests}
 }
 \if{html}{\out{</div>}}
 }
@@ -160,6 +166,7 @@ assistant$load_assistant(id = "asst_...")
 \item \href{#method-OpenAIAssistant-set_assistant_id}{\code{OpenAI_Assistant$set_assistant_id()}}
 \item \href{#method-OpenAIAssistant-create_assistant}{\code{OpenAI_Assistant$create_assistant()}}
 \item \href{#method-OpenAIAssistant-load_assistant}{\code{OpenAI_Assistant$load_assistant()}}
+\item \href{#method-OpenAIAssistant-register_tools}{\code{OpenAI_Assistant$register_tools()}}
 \item \href{#method-OpenAIAssistant-read_assistant}{\code{OpenAI_Assistant$read_assistant()}}
 \item \href{#method-OpenAIAssistant-delete_assistant}{\code{OpenAI_Assistant$delete_assistant()}}
 \item \href{#method-OpenAIAssistant-delete_assistant_and_contents}{\code{OpenAI_Assistant$delete_assistant_and_contents()}}
@@ -232,10 +239,13 @@ assistant$load_assistant(id = "asst_...")
 Initialize a new OpenAI Assistant client
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$new(
-  api_key = Sys.getenv("OPENAI_API_KEY"),
-  org = Sys.getenv("OPENAI_ORG"),
   base_url = "https://api.openai.com",
+  api_key = Sys.getenv("OPENAI_API_KEY"),
+  provider_name = "OpenAI Assistant",
   rate_limit = 60/60,
+  server_tools = c("file_search", "code_interpreter"),
+  default_model = "gpt-4o",
+  org = Sys.getenv("OPENAI_ORG"),
   auto_save_history = TRUE
 )}\if{html}{\out{</div>}}
 }
@@ -243,13 +253,20 @@ Initialize a new OpenAI Assistant client
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{api_key}}{Character. API key (default: from OPENAI_API_KEY env var)}
-
-\item{\code{org}}{Character. Organization ID (default: from OPENAI_ORG env var)}
-
 \item{\code{base_url}}{Character. Base URL for API (default: "https://api.openai.com")}
 
+\item{\code{api_key}}{Character. API key (default: from OPENAI_API_KEY env var)}
+
+\item{\code{provider_name}}{Character. Provider name (default: "OpenAI Assistant")}
+
 \item{\code{rate_limit}}{Numeric. Rate limit in requests per second (default: 60/60)}
+
+\item{\code{server_tools}}{Character vector. Server-side tools available (default: c("file_search",
+"code_interpreter"))}
+
+\item{\code{default_model}}{Character. Default model to use for chat requests (default: "gpt-4o")}
+
+\item{\code{org}}{Character. Organization ID (default: from OPENAI_ORG env var)}
 
 \item{\code{auto_save_history}}{Logical. Enable/disable automatic history sync (default: TRUE)}
 }
@@ -378,7 +395,7 @@ Create a new assistant
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$create_assistant(
   name,
-  model = "gpt-4o",
+  model = self$default_model,
   system = .default_system_prompt,
   temperature = 1,
   top_p = 1,
@@ -456,6 +473,44 @@ The assistant object (invisibly)
 \preformatted{\dontrun{
 assistant <- OpenAI_Assistant$new()
 assistant$load_assistant(id = "asst_...")
+}
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-OpenAIAssistant-register_tools"></a>}}
+\if{latex}{\out{\hypertarget{method-OpenAIAssistant-register_tools}{}}}
+\subsection{Method \code{register_tools()}}{
+Register client/MCP tools for use with the current assistant
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$register_tools(tools)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{tools}}{List. Tool definitions (client functions or MCP tools)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+This method is used to register tools after loading an existing assistant.
+When you load an assistant that was created with client/MCP tools, you must
+call this method to re-register those tools for execution.
+}
+
+\subsection{Returns}{
+Self (invisibly) for method chaining
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{\dontrun{
+assistant <- OpenAI_Assistant$new()
+assistant$load_assistant(id = "asst_...")
+assistant$register_tools(list(my_tool_function))
 }
 }
 \if{html}{\out{</div>}}

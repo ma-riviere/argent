@@ -400,7 +400,7 @@ Anthropic <- R6::R6Class( # nolint
         chat = function(
             ...,
             cache_prompt = FALSE,
-            model = "claude-haiku-4-5-20251001",
+            model = self$default_model,
             system = .default_system_prompt,
             cache_system = FALSE,
             max_tokens = 4096,
@@ -525,6 +525,8 @@ Anthropic <- R6::R6Class( # nolint
 
             # ---- Process tools and inject into message ----
 
+            private$reset_active_tools()
+
             tool_list <- list()
             container_id <- NULL
 
@@ -532,9 +534,18 @@ Anthropic <- R6::R6Class( # nolint
                 tools_added <- c()
 
                 for (tool in tools) {
-                    if (is_client_tool(tool)) {
+                    if (is_mcp_tool(tool)) {
                         converted_tool <- as_tool_anthropic(tool)
                         tool_list <- append(tool_list, list(converted_tool))
+
+                        # We add the original tool because the converted one no longer has the .mcp metadata
+                        private$add_active_tool(type = "mcp", tool = tool)
+
+                    } else if (is_client_tool(tool)) {
+                        converted_tool <- as_tool_anthropic(tool)
+                        tool_list <- append(tool_list, list(converted_tool))
+
+                        private$add_active_tool(type = "client", tool = tool)
 
                     } else if (is_server_tool(tool, self$server_tools)) {
                         tool_name <- get_server_tool_name(tool)

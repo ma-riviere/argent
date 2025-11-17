@@ -27,9 +27,6 @@
 #' @section Structured outputs:
 #' Fully native structured outputs via JSON schema. No additional API calls required.
 #'
-#' @field provider_name Character. Provider name (OpenAI Chat)
-#' @field server_tools Character vector. Server-side tools to use for API requests
-#'
 #' @export
 #' @examples
 #' \dontrun{
@@ -64,26 +61,39 @@ OpenAI_Chat <- R6::R6Class( # nolint
     classname = "OpenAI_Chat",
     inherit = OpenAI,
     public = list(
-        provider_name = "OpenAI Chat",
-        server_tools = c("web_search"),
 
         # ------🔺 INIT --------------------------------------------------------
-        
+
         #' @description
         #' Initialize a new OpenAI Chat client
-        #' @param api_key Character. API key (default: from OPENAI_API_KEY env var)
-        #' @param org Character. Organization ID (default: from OPENAI_ORG env var)
         #' @param base_url Character. Base URL for API (default: "https://api.openai.com")
+        #' @param api_key Character. API key (default: from OPENAI_API_KEY env var)
+        #' @param provider_name Character. Provider name (default: "OpenAI Chat")
         #' @param rate_limit Numeric. Rate limit in requests per second (default: 60/60)
+        #' @param server_tools Character vector. Server-side tools available (default: c("web_search"))
+        #' @param default_model Character. Default model to use for chat requests (default: "gpt-5-mini")
+        #' @param org Character. Organization ID (default: from OPENAI_ORG env var)
         #' @param auto_save_history Logical. Enable/disable automatic history sync (default: TRUE)
         initialize = function(
-            api_key = Sys.getenv("OPENAI_API_KEY"),
-            org = Sys.getenv("OPENAI_ORG"),
             base_url = "https://api.openai.com",
+            api_key = Sys.getenv("OPENAI_API_KEY"),
+            provider_name = "OpenAI Chat",
             rate_limit = 60 / 60,
+            server_tools = c("web_search"),
+            default_model = "gpt-5-mini",
+            org = Sys.getenv("OPENAI_ORG"),
             auto_save_history = TRUE
         ) {
-            super$initialize(api_key, org, base_url, rate_limit, auto_save_history)
+            super$initialize(
+                base_url = base_url,
+                api_key = api_key,
+                provider_name = provider_name,
+                rate_limit = rate_limit,
+                server_tools = server_tools,
+                default_model = default_model,
+                org = org,
+                auto_save_history = auto_save_history
+            )
         },
 
         # ------🔺 CHAT --------------------------------------------------------
@@ -131,7 +141,7 @@ OpenAI_Chat <- R6::R6Class( # nolint
         chat = function(
             ...,
             system = .default_system_prompt,
-            model = "gpt-5-mini",
+            model = self$default_model,
             temperature = 1,
             max_completion_tokens = 4096,
             top_p = 1,
@@ -266,21 +276,37 @@ OpenAI_Chat <- R6::R6Class( # nolint
                 query_data$web_search_options <- named_list()
             }
 
+            private$reset_active_tools()
+
             if (!is.null(tools)) {
                 # Filter out web_search (it's not a function tool, handled separately via web_search_options)
-                client_tools <- purrr::discard(tools, \(tool) is_server_tool(tool, self$server_tools))
+                # Keep client tools and MCP tools
+                function_tools <- purrr::discard(tools, \(tool) is_server_tool(tool, self$server_tools))
 
-                if (length(client_tools) > 0) {
+                if (length(function_tools) > 0) {
                     # Convert tools to OpenAI format if needed
-                    converted_tools <- lapply(client_tools, \(tool) {
+                    converted_tools <- list()
+                    for (tool in function_tools) {
                         converted <- as_tool_openai(tool)
+
+                        # Register client/MCP tools in active_tools
+                        if (is_mcp_tool(tool)) {
+                            # We add the original tool because the converted one no longer has the .mcp metadata
+                            private$add_active_tool(type = "mcp", tool = tool)
+                        } else if (is_client_tool(tool)) {
+                            private$add_active_tool(type = "client", tool = tool)
+                        }
+
                         # Convert returns {type, name, description, parameters}, wrap for API
-                        list(type = "function", `function` = list(
-                            name = converted$name,
-                            description = converted$description,
-                            parameters = converted$parameters
-                        ))
-                    })
+                        converted_tools <- append(converted_tools, list(list(
+                            type = "function",
+                            `function` = list(
+                                name = converted$name,
+                                description = converted$description,
+                                parameters = converted$parameters
+                            )
+                        )))
+                    }
                     query_data$tools <- converted_tools
                     query_data$tool_choice <- tool_choice
                 }
@@ -466,8 +492,7 @@ OpenAI_Chat <- R6::R6Class( # nolint
 
             normalized_tools <- purrr::map(tools, \(tool) {
                 # Check client tools first (precedence over server-side tools)
-                if (purrr::pluck(tool, "type") == "function" &&
-                        is_client_tool(purrr::pluck(tool, "function"))) {
+                if (purrr::pluck(tool, "type") == "function" && is_client_tool(purrr::pluck(tool, "function"))) {
                     func_def <- purrr::pluck(tool, "function")
                     param_props <- purrr::pluck(func_def, "parameters", "properties", .default = list())
                     param_names <- names(param_props)

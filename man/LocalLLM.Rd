@@ -213,7 +213,7 @@ Send a chat completion request to the local LLM
 \if{html}{\out{<div class="r">}}\preformatted{LocalLLM$chat(
   ...,
   system = .default_system_prompt,
-  model = NULL,
+  model = self$default_model,
   temperature = 1,
   max_tokens = 4096,
   top_p = NULL,

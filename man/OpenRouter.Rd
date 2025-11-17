@@ -408,7 +408,7 @@ Send a chat completion request to OpenRouter
 \if{html}{\out{<div class="r">}}\preformatted{OpenRouter$chat(
   ...,
   system = .default_system_prompt,
-  model = "openrouter/auto",
+  model = self$default_model,
   temperature = 1,
   max_tokens = 4096,
   top_p = NULL,

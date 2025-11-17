@@ -31,9 +31,6 @@
 #' @section Structured outputs:
 #' Fully native structured outputs via JSON schema. No additional API calls required.
 #'
-#' @field provider_name Character. Provider name (OpenAI Responses)
-#' @field server_tools Character vector. Server-side tools to use for API requests
-#'
 #' @export
 #' @examples
 #' \dontrun{
@@ -70,26 +67,40 @@ OpenAI_Responses <- R6::R6Class( # nolint
     classname = "OpenAI_Responses",
     inherit = OpenAI,
     public = list(
-        provider_name = "OpenAI Responses",
-        server_tools = c("web_search", "file_search", "code_interpreter"),
 
         # ------🔺 INIT --------------------------------------------------------
-        
+
         #' @description
         #' Initialize a new OpenAI Responses client
-        #' @param api_key Character. API key (default: from OPENAI_API_KEY env var)
-        #' @param org Character. Organization ID (default: from OPENAI_ORG env var)
         #' @param base_url Character. Base URL for API (default: "https://api.openai.com")
+        #' @param api_key Character. API key (default: from OPENAI_API_KEY env var)
+        #' @param provider_name Character. Provider name (default: "OpenAI Responses")
         #' @param rate_limit Numeric. Rate limit in requests per second (default: 60/60)
+        #' @param server_tools Character vector. Server-side tools available (default: c("web_search",
+        #'   "file_search", "code_interpreter"))
+        #' @param default_model Character. Default model to use for chat requests (default: "gpt-5-mini")
+        #' @param org Character. Organization ID (default: from OPENAI_ORG env var)
         #' @param auto_save_history Logical. Enable/disable automatic history sync (default: TRUE)
         initialize = function(
-            api_key = Sys.getenv("OPENAI_API_KEY"),
-            org = Sys.getenv("OPENAI_ORG"),
             base_url = "https://api.openai.com",
+            api_key = Sys.getenv("OPENAI_API_KEY"),
+            provider_name = "OpenAI Responses",
             rate_limit = 60 / 60,
+            server_tools = c("web_search", "file_search", "code_interpreter"),
+            default_model = "gpt-5-mini",
+            org = Sys.getenv("OPENAI_ORG"),
             auto_save_history = TRUE
         ) {
-            super$initialize(api_key, org, base_url, rate_limit, auto_save_history)
+            super$initialize(
+                base_url = base_url,
+                api_key = api_key,
+                provider_name = provider_name,
+                rate_limit = rate_limit,
+                server_tools = server_tools,
+                default_model = default_model,
+                org = org,
+                auto_save_history = auto_save_history
+            )
         },
 
         # ------🔺 RESPONSE HELPERS --------------------------------------------
@@ -349,7 +360,7 @@ OpenAI_Responses <- R6::R6Class( # nolint
         #' @return Character (or List if return_full_response = TRUE). OpenAI Responses API's response object.
         chat = function(
             ...,
-            model = "gpt-5-mini",
+            model = self$default_model,
             system = .default_system_prompt,
             temperature = 1,
             max_tokens = 4096,
@@ -418,6 +429,8 @@ OpenAI_Responses <- R6::R6Class( # nolint
 
             # ---- Process tools and inject into message ----
 
+            private$reset_active_tools()
+
             tool_list <- NULL
             tool_choice_final <- NULL
 
@@ -425,10 +438,18 @@ OpenAI_Responses <- R6::R6Class( # nolint
                 tool_list <- list()
 
                 for (tool in tools) {
-                    if (is_client_tool(tool)) {
-                        # Convert custom function tools to OpenAI format
+                    if (is_mcp_tool(tool)) {
                         converted_tool <- as_tool_openai(tool)
                         tool_list <- append(tool_list, list(converted_tool))
+
+                        # We add the original tool because the converted one no longer has the .mcp metadata
+                        private$add_active_tool(type = "mcp", tool = tool)
+
+                    } else if (is_client_tool(tool)) {
+                        converted_tool <- as_tool_openai(tool)
+                        tool_list <- append(tool_list, list(converted_tool))
+
+                        private$add_active_tool(type = "client", tool = tool)
 
                     } else if (is_server_tool(tool, self$server_tools)) {
                         tool_name <- get_server_tool_name(tool)
