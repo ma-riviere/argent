@@ -38,10 +38,8 @@ website.
 
 ``` r
 quarto_docs_url_filter <- function(urls) {
-    cleaned_urls <- str_subset(urls, "https://quarto.org/docs/") |> 
+    str_subset(urls, "https://quarto.org/docs/") |> 
         str_subset(regex("\\.html$", ignore_case = FALSE))
-
-    return(cleaned_urls)
 }
 
 paths <- ragnar::ragnar_find_links(
@@ -54,9 +52,11 @@ paths <- ragnar::ragnar_find_links(
 #### Create Store with Embeddings
 
 ``` r
+gemini_embedding_fn <- \(text) ragnar::embed_google_gemini(text, model = "text-embedding-004")
+
 store <- ragnar::ragnar_store_create(
     "data/quarto-docs.duckdb",
-    embed = \(text) ragnar::embed_google_gemini(text, model = "text-embedding-004")
+    embed = gemini_embedding_fn
 )
 ```
 
@@ -69,7 +69,7 @@ store <- ragnar::ragnar_store_create(
 > local_embedding_fn <- function(text) {
 >     argent::LocalLLM$new(
 >         base_url = "http://127.0.0.1:5000",
->         model = "Qwen3-Embedding-8B-Q8_0.gguf"
+>         default_model = "Qwen3-Embedding-8B-Q8_0.gguf"
 >     )$embeddings(text)
 > }
 >
@@ -79,10 +79,8 @@ store <- ragnar::ragnar_store_create(
 > )
 > ```
 >
-> > **Note**
-> >
-> > Google, OpenAI (all 3 classes), OpenRouter, and local LLM all
-> > support embeddings.
+> Google, OpenAI (all 3 classes), OpenRouter, and local LLM all support
+> embeddings.
 
 #### Process and Index Documents
 
@@ -127,10 +125,8 @@ retrieve_docs <- function(query) {
     # Update state with newly retrieved chunk IDs
     retrieve_state$set("retrieved_chunks", c(retrieved_ids, purrr::flatten_int(chunks$chunk_id)))
 
-    # Format results as JSON for the LLM
     results <- dplyr::select(chunks, text, origin, context)
-
-    jsonlite::toJSON(results, auto_unbox = TRUE)
+    return(jsonlite::toJSON(results, auto_unbox = TRUE))
 }
 ```
 

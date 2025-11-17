@@ -1,4 +1,4 @@
-# argent: LLM Agents in R
+# argent
 
 **argent** provides a unified R6-based interface for interacting with
 Large Language Models (LLMs) from multiple providers, specialized for
