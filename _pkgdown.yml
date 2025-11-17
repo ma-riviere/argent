@@ -1,4 +1,5 @@
 url: https://ma-riviere.github.io/argent/
+logo: man/figures/logo.png
 home:
   title: Creating AI Agents in R
   description: A unified R6-based interface for interacting with Large Language Models
@@ -11,19 +12,21 @@ authors:
 
 template:
   bootstrap: 5
+  light-switch: true
   bslib:
     font_scale: 1.0
-    bg: '#fcfbf9'
-    fg: '#231F20'
-    primary: '#272b30'
-    secondary: '#BED4E2'
-    link-color: '#437597'
-    info: '#BED4E2'
-    headings-color: '#336688'
-    navbar-bg: '#fcfbf9'
-    navbar-light-color: '#272b30'
-    navbar-light-hover-color: '#336688'
+    link-color: '#5d7291'
+    info: '#a3b5c7'
+    headings-color: '#3d4f63'
+    navbar-dark-bg: '#2b323e'
+    navbar-dark-color: '#ffffff'
+    navbar-dark-hover-color: '#d1d9e3'
+    border-radius: 0.5rem
+    btn-border-radius: 0.25rem
   opengraph:
+    image:
+      src: man/figures/logo.png
+      alt: "Creating AI Agents in R"
     twitter:
       creator: '@mariviere1'
       card: summary
@@ -34,6 +37,7 @@ development:
   mode: auto
 
 navbar:
+  type: dark
   structure:
     left:  [intro, providers, advanced, reference]
     right: [search, github, lightswitch]

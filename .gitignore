@@ -8,3 +8,4 @@ data
 .playwright-mcp
 _TODO/
 docs
+node_modules/

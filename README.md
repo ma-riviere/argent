@@ -4,7 +4,7 @@
 
 <!-- README.md is generated from README.qmd. Please edit that file instead. -->
 
-# argent: LLM Agents in R
+# argent <a href="https://ma-riviere.github.io/argent/index.html"><img src="man/figures/logo.png" align="right" height="138" alt="argent documentation website" /></a>
 
 <!-- badges: start -->
 

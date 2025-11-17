@@ -6,6 +6,8 @@
 \alias{argent-package}
 \title{argent: Argent: LLM Agents in R}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 Provides a unified R6-based interface for creating AI agents that can interact with multiple Large Language Model (LLM) providers including Google Gemini, Anthropic Claude, OpenAI GPT, OpenRouter, and local LLM servers. Supports chat completions, function calling, structured outputs, conversation history, and advanced features like prompt caching and vector stores.
 
 The argent package provides a unified interface for creating AI agents that can interact with multiple Large Language Model
