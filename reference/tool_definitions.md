@@ -183,5 +183,28 @@ create_user_tool <- tool(
     zip = "string Postal code"
   )
 )
+
+# Using MCP tools alongside custom tools
+github_server <- mcp_server(
+  name = "github",
+  type = "http",
+  url = "https://api.githubcopilot.com/mcp",
+  headers = list(
+    Authorization = paste("Bearer", Sys.getenv("GITHUB_PAT"))
+  )
+)
+
+github_tools <- mcp_tools(github_server)
+
+# Combine MCP tools with custom tools in chat
+google <- Google$new()
+google$chat(
+  "Create an issue about the bug I found",
+  tools = list(
+    github_tools,          # MCP tools from server
+    as_tool(my_fn),        # Custom R function
+    search_tool            # Direct specification
+  )
+)
 } # }
 ```

@@ -33,7 +33,8 @@ OpenAI-compatible APIs."><meta name="twitter:card" content="summary"><meta name=
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-advanced-use" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Advanced Use</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-advanced-use"><li><a class="dropdown-item" href="../articles/usecase-rag.html">RAG Applications</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-advanced-use"><li><a class="dropdown-item" href="../articles/advanced-rag.html">RAG with `ragnar`</a></li>
+    <li><a class="dropdown-item" href="../articles/advanced-mcp.html">Using MCP Servers</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -235,7 +236,7 @@ an additional API query with full chat history (incurs extra cost).</p>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">LocalLLM</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>  <span class="va">...</span>,</span>
 <span>  system <span class="op">=</span> <span class="va">.default_system_prompt</span>,</span>
-<span>  model <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  model <span class="op">=</span> <span class="va">self</span><span class="op">$</span><span class="va">default_model</span>,</span>
 <span>  temperature <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  max_tokens <span class="op">=</span> <span class="fl">4096</span>,</span>
 <span>  top_p <span class="op">=</span> <span class="cn">NULL</span>,</span>

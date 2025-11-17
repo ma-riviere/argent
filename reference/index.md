@@ -56,3 +56,22 @@ using annotations or direct specification
   [`schema()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md)
   : Generate tools and schemas definitions from functions annotations,
   or direct specification
+
+### MCP
+
+Helper functions for MCP integration
+
+- [`mcp_server()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)
+  [`mcp_tools()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)
+  [`mcp_resources()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)
+  [`mcp_prompts()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)
+  : MCP (Model Context Protocol) Integration
+- [`execute_mcp_tool()`](https://ma-riviere.github.io/argent/reference/execute_mcp_tool.md)
+  : Execute an MCP tool
+
+### Helpers
+
+Helper functions
+
+- [`flat_list()`](https://ma-riviere.github.io/argent/reference/flat_list.md)
+  : Flatten a list of elements to a single-depth list

@@ -727,7 +727,7 @@ when sent back in requests. See
 
     Google$chat(
       ...,
-      model = "gemini-2.5-flash",
+      model = self$default_model,
       system = .default_system_prompt,
       max_tokens = 8000,
       temperature = 1,

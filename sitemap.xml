@@ -2,6 +2,7 @@
 <url><loc>https://ma-riviere.github.io/argent/404.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/LICENSE-text.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/LICENSE.html</loc></url>
+<url><loc>https://ma-riviere.github.io/argent/articles/advanced-mcp.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/articles/advanced-rag.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/articles/anthropic.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/articles/argent.html</loc></url>
@@ -26,7 +27,10 @@
 <url><loc>https://ma-riviere.github.io/argent/reference/Provider.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/reference/argent-package.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/reference/content_converters.html</loc></url>
+<url><loc>https://ma-riviere.github.io/argent/reference/execute_mcp_tool.html</loc></url>
+<url><loc>https://ma-riviere.github.io/argent/reference/flat_list.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/reference/index.html</loc></url>
+<url><loc>https://ma-riviere.github.io/argent/reference/mcp_integration.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/reference/tool_definitions.html</loc></url>
 </urlset>
 

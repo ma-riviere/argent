@@ -1,0 +1,132 @@
+# Using MCP Servers with `argent`
+
+## Introduction
+
+The Model Context Protocol (MCP) enables LLMs to securely interact with
+external tools and data sources. This vignette demonstrates how to
+integrate MCP servers with argent to extend your AI agent’s
+capabilities.
+
+MCP (Model Context Protocol) is an open protocol that standardizes how
+applications provide context to LLMs. MCP servers expose three main
+primitives:
+
+- **Tools**: Executable functions the LLM can call
+- **Resources**: File-like structured data the LLM can access (not
+  supported yet)
+- **Prompts**: Predefined templates for interactions (not supported yet)
+
+There are two main types of MCP servers: *HTTP* and *stdio*. HTTP
+servers are typically used for cloud-based services like GitHub, while
+stdio servers are typically used for local services like Docker or npx.
+Both types of MCP servers can be used with `argent`.
+
+> **Note**
+>
+> We rely on the `mcptools` package for interacting with *stdio* MCP
+> servers.
+
+## Basic Usage
+
+### Using an ‘HTTP’ MCP Server
+
+Let’s look at the GitHub MCP server as an example. It is a HTTP server
+that can be used to interact with the GitHub API.
+
+``` r
+github_mcp_server <- mcp_server(
+    name = "github",
+    type = "http",
+    url = "https://api.githubcopilot.com/mcp",
+    headers = list(
+        Authorization = paste("Bearer", Sys.getenv("GITHUB_PAT"))
+    )
+)
+```
+
+Then, we can get the tools we want from the GitHub MCP server:
+
+``` r
+github_mcp_tools <- mcp_tools(github_mcp_server, tools = c("get_file_contents", "search_code"))
+```
+
+Finally, we can call the `get_file_contents` tool manually to see if it
+works:
+
+``` r
+get_file_contents_mcp_tool <- purrr::keep(github_mcp_tools, \(tool) tool$name == "get_file_contents")[[1]]
+
+execute_mcp_tool(
+    tool_def = get_file_contents_mcp_tool,
+    arguments = list(
+        owner = "ma-riviere",
+        repo = "argent",
+        path = "R/aaa-utils.R",
+        ref = "main"
+    )
+)
+```
+
+### Using a ‘stdio’ MCP Server
+
+Let’s look at the Filesystem MCP server as an example. It is a stdio
+server that can be used to interact with the filesystem.
+
+``` r
+filesystem_mcp_server <- mcp_server(
+    name = "filesystem",
+    type = "stdio",
+    command = "npx",
+    args = c("-y", "@modelcontextprotocol/server-filesystem", "/tmp"),
+    env = list()
+)
+```
+
+Then, we can get the tools we want from the Filesystem MCP server:
+
+``` r
+filesystem_mcp_tools <- mcp_tools(filesystem_mcp_server, tools = c("search_files", "directory_tree", "read_file"))
+```
+
+Finally, we can call the `directory_tree` tool manually to see if it
+works:
+
+``` r
+directory_tree_mcp_tool <- purrr::keep(filesystem_mcp_tools, \(tool) tool$name == "directory_tree")[[1]]
+
+directory_tree_result <- execute_mcp_tool(
+    tool_def = directory_tree_mcp_tool,
+    arguments = list(
+        path = "/tmp/test_dir/" # Needs to be within the server's root directory (/tmp)
+    )
+)
+```
+
+## Argent + MCP Servers
+
+Let’s use the GitHub MCP server to analyze the `mcptools` repository.
+This demonstrates how LLMs can interact with GitHub APIs through MCP.
+
+``` r
+google <- Google$new()
+
+tools <- flat_list(github_mcp_tools, as_tool(web_search), as_tool(web_fetch))
+
+res <- google$chat(
+    "Has 'posit-dev/mcptools' implemented the ability to use HTTP MCP servers with ellmer ?",
+    "You can use the `get_file_contents` tool to list the contents of subdirectories, e.g. with path = '/' or 'subdir/'.",
+    model = "gemini-2.5-flash-lite",
+    tools = tools
+)
+
+print(google, show_tools = TRUE)
+```
+
+### Further Reading
+
+- [MCP Specification](https://spec.modelcontextprotocol.io/)
+- [MCP Servers](https://github.com/modelcontextprotocol/servers)
+- [mcptools Documentation](https://posit-dev.github.io/mcptools/)
+- [GitHub MCP Server](https://github.com/github/github-mcp-server)
+- [Claude Desktop MCP
+  Guide](https://docs.claude.com/en/docs/agents-and-tools/mcp-connector)

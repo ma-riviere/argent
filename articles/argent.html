@@ -53,7 +53,8 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-advanced-use" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Advanced Use</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-advanced-use">
-<li><a class="dropdown-item" href="../articles/usecase-rag.html">RAG Applications</a></li>
+<li><a class="dropdown-item" href="../articles/advanced-rag.html">RAG with `ragnar`</a></li>
+    <li><a class="dropdown-item" href="../articles/advanced-mcp.html">Using MCP Servers</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -152,7 +153,7 @@
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web_fetch</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">url</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="co">#' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content. Automatically falls back to alternative methods if the primary fetch fails.</span></span>
+<span>    <span class="co">#' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.</span></span>
 <span>    <span class="co">#' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.</span></span>
 <span>    </span>
 <span>    <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">web_fetch_trafilatura</span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
@@ -367,15 +368,23 @@
 <li>
 <a href="articles/openai-completions.html">Chat Completions API</a> - Standard OpenAI chat interface</li>
 <li>
-<a href="articles/openai-responses.html">Responses API</a> - Newest API combining the functionalities of the Chat Completions and Assistants</li>
+<a href="articles/openai-responses.html">Responses API</a> - Newest API combining the functionalities of the Chat and Assistants</li>
 <li>
 <a href="articles/openai-assistants.html">Assistants API</a> - Deprecated</li>
 </ul></section><section class="level4"><h5 id="other-providers">Other Providers<a class="anchor" aria-label="anchor" href="#other-providers"></a>
 </h5>
 <ul>
 <li>
-<a href="articles/other-providers.html">Using Other Compatible APIs</a> - Use argent classes with compatible services (e.g., Minimax instead of Claude)</li>
-</ul></section></section></section><section class="level2"><h3 id="other-topics">Other Topics<a class="anchor" aria-label="anchor" href="#other-topics"></a>
+<a href="articles/other-providers.html">Using Other Compatible APIs</a> - Use argent with providers offering compatible APIs (e.g., Minimax, Qwen, …)</li>
+</ul></section></section><section class="level3"><h4 id="advanced-topics">Advanced Topics<a class="anchor" aria-label="anchor" href="#advanced-topics"></a>
+</h4>
+<ul>
+<li>
+<a href="articles/advanced-rag.html">RAG Applications</a> - How to use <code>argent</code> &amp; <code>ragnar</code> for RAG applications</li>
+<li>
+<a href="articles/advanced-mcp.html">Advanced MCP Tools</a> - How to use MCP servers with <code>argent</code>
+</li>
+</ul></section></section><section class="level2"><h3 id="other-topics">Other Topics<a class="anchor" aria-label="anchor" href="#other-topics"></a>
 </h3>
 </section><section class="level2"><h3 id="chat-history-management">Chat History Management<a class="anchor" aria-label="anchor" href="#chat-history-management"></a>
 </h3>

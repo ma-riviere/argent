@@ -97,7 +97,8 @@ A list: For nested objects with type field and nested properties
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-advanced-use" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Advanced Use</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-advanced-use"><li><a class="dropdown-item" href="../articles/usecase-rag.html">RAG Applications</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-advanced-use"><li><a class="dropdown-item" href="../articles/advanced-rag.html">RAG with `ragnar`</a></li>
+    <li><a class="dropdown-item" href="../articles/advanced-mcp.html">Using MCP Servers</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -112,7 +113,7 @@ A list: For nested objects with type field and nested properties
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Generate tools and schemas definitions from functions annotations, or direct specification</h1>
-      <small class="dont-index">Source: <a href="https://github.com/ma-riviere/argent/blob/main/R/tool.R" class="external-link"><code>R/tool.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ma-riviere/argent/blob/main/R/tools.R" class="external-link"><code>R/tools.R</code></a></small>
       <div class="d-none name"><code>tool_definitions.Rd</code></div>
     </div>
 
@@ -280,6 +281,29 @@ properties in the schema (defaults to FALSE). Added to <code>args_schema</code>.
 <span class="r-in"><span>    street <span class="op">=</span> <span class="st">"string* Street address"</span>,</span></span>
 <span class="r-in"><span>    city <span class="op">=</span> <span class="st">"string* City name"</span>,</span></span>
 <span class="r-in"><span>    zip <span class="op">=</span> <span class="st">"string Postal code"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Using MCP tools alongside custom tools</span></span></span>
+<span class="r-in"><span><span class="va">github_server</span> <span class="op">&lt;-</span> <span class="fu"><a href="mcp_integration.html">mcp_server</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  name <span class="op">=</span> <span class="st">"github"</span>,</span></span>
+<span class="r-in"><span>  type <span class="op">=</span> <span class="st">"http"</span>,</span></span>
+<span class="r-in"><span>  url <span class="op">=</span> <span class="st">"https://api.githubcopilot.com/mcp"</span>,</span></span>
+<span class="r-in"><span>  headers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    Authorization <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Bearer"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_PAT"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">github_tools</span> <span class="op">&lt;-</span> <span class="fu"><a href="mcp_integration.html">mcp_tools</a></span><span class="op">(</span><span class="va">github_server</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Combine MCP tools with custom tools in chat</span></span></span>
+<span class="r-in"><span><span class="va">google</span> <span class="op">&lt;-</span> <span class="va"><a href="Google.html">Google</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">google</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="st">"Create an issue about the bug I found"</span>,</span></span>
+<span class="r-in"><span>  tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">github_tools</span>,          <span class="co"># MCP tools from server</span></span></span>
+<span class="r-in"><span>    <span class="fu">as_tool</span><span class="op">(</span><span class="va">my_fn</span><span class="op">)</span>,        <span class="co"># Custom R function</span></span></span>
+<span class="r-in"><span>    <span class="va">search_tool</span>            <span class="co"># Direct specification</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>

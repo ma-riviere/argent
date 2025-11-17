@@ -74,7 +74,7 @@ web_search_tavily <- function(query) {
 
 ``` r
 web_fetch <- function(url) {
-    #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content. Automatically falls back to alternative methods if the primary fetch fails.
+    #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.
     #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
     
     res <- web_fetch_trafilatura(url)
@@ -331,8 +331,7 @@ Guides for OpenAI’s three different APIs:
   Standard OpenAI chat interface
 - [Responses
   API](https://ma-riviere.github.io/argent/articles/articles/openai-responses.md) -
-  Newest API combining the functionalities of the Chat Completions and
-  Assistants
+  Newest API combining the functionalities of the Chat and Assistants
 - [Assistants
   API](https://ma-riviere.github.io/argent/articles/articles/openai-assistants.md) -
   Deprecated
@@ -341,8 +340,17 @@ Guides for OpenAI’s three different APIs:
 
 - [Using Other Compatible
   APIs](https://ma-riviere.github.io/argent/articles/articles/other-providers.md) -
-  Use argent classes with compatible services (e.g., Minimax instead of
-  Claude)
+  Use argent with providers offering compatible APIs (e.g., Minimax,
+  Qwen, …)
+
+#### Advanced Topics
+
+- [RAG
+  Applications](https://ma-riviere.github.io/argent/articles/articles/advanced-rag.md) -
+  How to use `argent` & `ragnar` for RAG applications
+- [Advanced MCP
+  Tools](https://ma-riviere.github.io/argent/articles/articles/advanced-mcp.md) -
+  How to use MCP servers with `argent`
 
 ### Other Topics
 

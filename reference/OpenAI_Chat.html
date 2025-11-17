@@ -33,7 +33,8 @@ Inherits file management and vector store methods from OpenAI_Base."><meta name=
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-advanced-use" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Advanced Use</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-advanced-use"><li><a class="dropdown-item" href="../articles/usecase-rag.html">RAG Applications</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-advanced-use"><li><a class="dropdown-item" href="../articles/advanced-rag.html">RAG with `ragnar`</a></li>
+    <li><a class="dropdown-item" href="../articles/advanced-mcp.html">Using MCP Servers</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -99,18 +100,6 @@ Inherits file management and vector store methods from OpenAI_Base.</p>
     <div class="section level2">
     <h2 id="super-classes">Super classes<a class="anchor" aria-label="anchor" href="#super-classes"></a></h2>
     <p><code><a href="Provider.html">argent::Provider</a></code> -&gt; <code><a href="OpenAI.html">argent::OpenAI</a></code> -&gt; <code>OpenAI_Chat</code></p>
-    </div>
-    <div class="section level2">
-    <h2 id="public-fields">Public fields<a class="anchor" aria-label="anchor" href="#public-fields"></a></h2>
-    <p></p><div class="r6-fields"><dl><dt><code>provider_name</code></dt>
-<dd><p>Character. Provider name (OpenAI Chat)</p></dd>
-
-
-<dt><code>server_tools</code></dt>
-<dd><p>Character vector. Server-side tools to use for API requests</p></dd>
-
-
-</dl><p></p></div>
     </div>
     <div class="section level2">
     <h2 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a></h2>
@@ -180,30 +169,45 @@ Inherits file management and vector store methods from OpenAI_Base.</p>
 <p>Initialize a new OpenAI Chat client</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/OpenAI_Chat.html">OpenAI_Chat</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
-<span>  api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"OPENAI_API_KEY"</span><span class="op">)</span>,</span>
-<span>  org <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"OPENAI_ORG"</span><span class="op">)</span>,</span>
 <span>  base_url <span class="op">=</span> <span class="st">"https://api.openai.com"</span>,</span>
+<span>  api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"OPENAI_API_KEY"</span><span class="op">)</span>,</span>
+<span>  provider_name <span class="op">=</span> <span class="st">"OpenAI Chat"</span>,</span>
 <span>  rate_limit <span class="op">=</span> <span class="fl">60</span><span class="op">/</span><span class="fl">60</span>,</span>
+<span>  server_tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"web_search"</span><span class="op">)</span>,</span>
+<span>  default_model <span class="op">=</span> <span class="st">"gpt-5-mini"</span>,</span>
+<span>  org <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"OPENAI_ORG"</span><span class="op">)</span>,</span>
 <span>  auto_save_history <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>api_key</code></dt>
+<p></p><div class="arguments"><dl><dt><code>base_url</code></dt>
+<dd><p>Character. Base URL for API (default: "https://api.openai.com")</p></dd>
+
+
+<dt><code>api_key</code></dt>
 <dd><p>Character. API key (default: from OPENAI_API_KEY env var)</p></dd>
 
 
-<dt><code>org</code></dt>
-<dd><p>Character. Organization ID (default: from OPENAI_ORG env var)</p></dd>
-
-
-<dt><code>base_url</code></dt>
-<dd><p>Character. Base URL for API (default: "https://api.openai.com")</p></dd>
+<dt><code>provider_name</code></dt>
+<dd><p>Character. Provider name (default: "OpenAI Chat")</p></dd>
 
 
 <dt><code>rate_limit</code></dt>
 <dd><p>Numeric. Rate limit in requests per second (default: 60/60)</p></dd>
+
+
+<dt><code>server_tools</code></dt>
+<dd><p>Character vector. Server-side tools available (default: c("web_search"))</p></dd>
+
+
+<dt><code>default_model</code></dt>
+<dd><p>Character. Default model to use for chat requests (default: "gpt-5-mini")</p></dd>
+
+
+<dt><code>org</code></dt>
+<dd><p>Character. Organization ID (default: from OPENAI_ORG env var)</p></dd>
 
 
 <dt><code>auto_save_history</code></dt>
@@ -220,7 +224,7 @@ Inherits file management and vector store methods from OpenAI_Base.</p>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">OpenAI_Chat</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>  <span class="va">...</span>,</span>
 <span>  system <span class="op">=</span> <span class="va">.default_system_prompt</span>,</span>
-<span>  model <span class="op">=</span> <span class="st">"gpt-5-mini"</span>,</span>
+<span>  model <span class="op">=</span> <span class="va">self</span><span class="op">$</span><span class="va">default_model</span>,</span>
 <span>  temperature <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  max_completion_tokens <span class="op">=</span> <span class="fl">4096</span>,</span>
 <span>  top_p <span class="op">=</span> <span class="fl">1</span>,</span>

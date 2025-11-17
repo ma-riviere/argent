@@ -19,13 +19,13 @@ outputs.
 > I’m putting `argent` out there in case it supports some edge cases
 > that other packages don’t, and because I didn’t want to let all that
 > work go to waste. But I will be progressively migrating my projects to
-> `ellmer`, and I am not sure how long I’ll maintain `argent`.
+> `ellmer`, so I’m not sure how long I’ll maintain `argent`.
 
 ## In a Nutshell
 
 `argent` provides a unified interface to build AI agents with
-conversation history management, server or client-side tool calling,
-multimodal inputs, and universal structured outputs.
+conversation history management, local function & MCP tools, server-side
+tools, multimodal inputs, and universal structured outputs.
 
 It supports most **server-side tools** (code execution, web search, file
 search, etc.) and allows to easily define **client-side tools** using
@@ -39,7 +39,7 @@ whatever other tools/functions are used.
 
 | Feature                  | Google      | Anthropic   | OpenAI Chat   | OpenAI Responses | OpenAI Assistants         | OpenRouter    | Local LLM     |
 |--------------------------|-------------|-------------|---------------|------------------|---------------------------|---------------|---------------|
-| **Tool calling**         | ✅          | ✅          | ✅            | ✅               | ✅                        | ⚠️[¹](#fn1)   | ⚠️[²](#fn2)   |
+| **Function & MCP tools** | ✅          | ✅          | ✅            | ✅               | ✅                        | ⚠️[¹](#fn1)   | ⚠️[²](#fn2)   |
 | **Structured outputs**   | ✅          | ✅          | ✅            | ✅               | ✅                        | ✅[³](#fn3)   | ✅[⁴](#fn4)   |
 | **Multimodal inputs**    | ✅          | ✅          | ✅            | ✅               | ✅                        | ✅            | ⚠️[⁵](#fn5)   |
 | **Server-side tools**    | ✅[⁶](#fn6) | ✅[⁷](#fn7) | ⚠️[⁸](#fn8)   | ✅[⁹](#fn9)      | ✅[¹⁰](#fn10)             | ⚠️[¹¹](#fn11) | ❌            |
@@ -441,14 +441,17 @@ Guides for OpenAI’s three different APIs:
 
 - [Using Other Compatible
   APIs](https://ma-riviere.github.io/argent/articles/other-providers.md) -
-  Use argent classes with compatible services (e.g., Minimax instead of
-  Claude)
+  Use argent with providers offering compatible APIs (e.g., Minimax,
+  Qwen, …)
 
 ### Advanced Topics
 
 - [RAG
-  Applications](https://ma-riviere.github.io/argent/articles/usecase-rag.md) -
-  Retrieval-Augmented Generation patterns
+  Applications](https://ma-riviere.github.io/argent/articles/advanced-rag.md) -
+  How to use `argent` & `ragnar` for RAG applications
+- [Advanced MCP
+  Tools](https://ma-riviere.github.io/argent/articles/advanced-mcp.md) -
+  How to use MCP servers with `argent`
 
 ## Contributing
 

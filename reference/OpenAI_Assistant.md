@@ -69,14 +69,6 @@ with token counts (unreliable).
 
   List. Current thread object
 
-- `provider_name`:
-
-  Character. Provider name (OpenAI Assistant)
-
-- `server_tools`:
-
-  Character vector. Server-side tools to use for API requests
-
 ## Methods
 
 ### Public methods
@@ -102,6 +94,8 @@ with token counts (unreliable).
 - [`OpenAI_Assistant$create_assistant()`](#method-OpenAIAssistant-create_assistant)
 
 - [`OpenAI_Assistant$load_assistant()`](#method-OpenAIAssistant-load_assistant)
+
+- [`OpenAI_Assistant$register_tools()`](#method-OpenAIAssistant-register_tools)
 
 - [`OpenAI_Assistant$read_assistant()`](#method-OpenAIAssistant-read_assistant)
 
@@ -177,30 +171,46 @@ Initialize a new OpenAI Assistant client
 #### Usage
 
     OpenAI_Assistant$new(
-      api_key = Sys.getenv("OPENAI_API_KEY"),
-      org = Sys.getenv("OPENAI_ORG"),
       base_url = "https://api.openai.com",
+      api_key = Sys.getenv("OPENAI_API_KEY"),
+      provider_name = "OpenAI Assistant",
       rate_limit = 60/60,
+      server_tools = c("file_search", "code_interpreter"),
+      default_model = "gpt-4o",
+      org = Sys.getenv("OPENAI_ORG"),
       auto_save_history = TRUE
     )
 
 #### Arguments
 
-- `api_key`:
-
-  Character. API key (default: from OPENAI_API_KEY env var)
-
-- `org`:
-
-  Character. Organization ID (default: from OPENAI_ORG env var)
-
 - `base_url`:
 
   Character. Base URL for API (default: "https://api.openai.com")
 
+- `api_key`:
+
+  Character. API key (default: from OPENAI_API_KEY env var)
+
+- `provider_name`:
+
+  Character. Provider name (default: "OpenAI Assistant")
+
 - `rate_limit`:
 
   Numeric. Rate limit in requests per second (default: 60/60)
+
+- `server_tools`:
+
+  Character vector. Server-side tools available (default:
+  c("file_search", "code_interpreter"))
+
+- `default_model`:
+
+  Character. Default model to use for chat requests (default: "gpt-4o")
+
+- `org`:
+
+  Character. Organization ID (default: from OPENAI_ORG env var)
 
 - `auto_save_history`:
 
@@ -332,7 +342,7 @@ Create a new assistant
 
     OpenAI_Assistant$create_assistant(
       name,
-      model = "gpt-4o",
+      model = self$default_model,
       system = .default_system_prompt,
       temperature = 1,
       top_p = 1,
@@ -421,6 +431,41 @@ The assistant object (invisibly)
     \dontrun{
     assistant <- OpenAI_Assistant$new()
     assistant$load_assistant(id = "asst_...")
+    }
+
+------------------------------------------------------------------------
+
+### Method `register_tools()`
+
+Register client/MCP tools for use with the current assistant
+
+#### Usage
+
+    OpenAI_Assistant$register_tools(tools)
+
+#### Arguments
+
+- `tools`:
+
+  List. Tool definitions (client functions or MCP tools)
+
+#### Details
+
+This method is used to register tools after loading an existing
+assistant. When you load an assistant that was created with client/MCP
+tools, you must call this method to re-register those tools for
+execution.
+
+#### Returns
+
+Self (invisibly) for method chaining
+
+#### Examples
+
+    \dontrun{
+    assistant <- OpenAI_Assistant$new()
+    assistant$load_assistant(id = "asst_...")
+    assistant$register_tools(list(my_tool_function))
     }
 
 ------------------------------------------------------------------------
@@ -640,5 +685,15 @@ assistant$create_assistant(
 if (FALSE) { # \dontrun{
 assistant <- OpenAI_Assistant$new()
 assistant$load_assistant(id = "asst_...")
+} # }
+
+## ------------------------------------------------
+## Method `OpenAI_Assistant$register_tools`
+## ------------------------------------------------
+
+if (FALSE) { # \dontrun{
+assistant <- OpenAI_Assistant$new()
+assistant$load_assistant(id = "asst_...")
+assistant$register_tools(list(my_tool_function))
 } # }
 ```
