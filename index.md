@@ -456,40 +456,40 @@ gemini$delete_file(file_metadata$name)
 Detailed guides for each provider:
 
 - [Google
-  Gemini](https://ma-riviere.github.io/argent/articles/google-gemini.md)
+  Gemini](https://ma-riviere.github.io/argent/articles/google-gemini.html)
 - [Anthropic
-  Claude](https://ma-riviere.github.io/argent/articles/anthropic.md)
-- [OpenRouter](https://ma-riviere.github.io/argent/articles/openrouter.md)
+  Claude](https://ma-riviere.github.io/argent/articles/anthropic.html)
+- [OpenRouter](https://ma-riviere.github.io/argent/articles/openrouter.html)
 - [Local
-  LLMs](https://ma-riviere.github.io/argent/articles/local-llm.md)
+  LLMs](https://ma-riviere.github.io/argent/articles/local-llm.html)
 
 #### OpenAI APIs
 
 Guides for OpenAI’s three different APIs:
 
 - [Chat Completions
-  API](https://ma-riviere.github.io/argent/articles/openai-completions.md) -
+  API](https://ma-riviere.github.io/argent/articles/openai-completions.html) -
   Standard OpenAI chat interface
 - [Responses
-  API](https://ma-riviere.github.io/argent/articles/openai-responses.md) -
+  API](https://ma-riviere.github.io/argent/articles/openai-responses.html) -
   Newest API combining the functionalities of the Chat and Assistants
 - [Assistants
-  API](https://ma-riviere.github.io/argent/articles/openai-assistants.md) -
+  API](https://ma-riviere.github.io/argent/articles/openai-assistants.html) -
   Deprecated
 
 #### Other Providers
 
 - [Using Other Compatible
-  APIs](https://ma-riviere.github.io/argent/articles/other-providers.md) -
+  APIs](https://ma-riviere.github.io/argent/articles/other-providers.html) -
   Use argent with providers offering compatible APIs (e.g., Minimax,
   Qwen, …)
 
 ### Advanced Topics
 
-- [RAG](https://ma-riviere.github.io/argent/articles/advanced-rag.md) -
+- [RAG](https://ma-riviere.github.io/argent/articles/advanced-rag.html) -
   How to use `argent` & `ragnar` for RAG
 - [MCP Servers &
-  Tools](https://ma-riviere.github.io/argent/articles/advanced-mcp.md) -
+  Tools](https://ma-riviere.github.io/argent/articles/advanced-mcp.html) -
   How to use MCP server tools with `argent`
 
 ## Contributing
