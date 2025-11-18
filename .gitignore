@@ -4,6 +4,7 @@ NOTES.*
 .Rprofile
 CLAUDE.md
 .claude/
+.cursor/
 data
 .playwright-mcp
 _TODO/

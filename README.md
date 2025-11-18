@@ -12,6 +12,7 @@
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Lifecycle:
 questioning](https://img.shields.io/badge/lifecycle-questioning-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#questioning)
+[![R-CMD-check](https://github.com/ma-riviere/argent/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ma-riviere/argent/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 **argent** provides a unified R6-based interface for interacting with
