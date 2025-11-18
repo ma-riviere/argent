@@ -199,6 +199,29 @@ user_info_schema <- schema(
 )
 ```
 
+``` yaml
+name: user_info
+description: Information about the user
+strict: yes
+args_schema:
+  type: object
+  properties:
+    user_name:
+      type: string
+      description: The name of the user
+    favorite_language:
+      type: string
+      description: The user's favorite programming language
+    favorite_framework:
+      type: string
+      description: The user's favorite framework
+  required:
+  - user_name
+  - favorite_language
+  - favorite_framework
+  additionalProperties: no
+```
+
 Run the agent:
 
 ``` r
@@ -241,36 +264,53 @@ print(gemini, show_tools = TRUE)
 ```
 
 ``` default
-── [ <Google> turns: 4 | Current context: 480 | Cumulated tokens: 773 ] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── [ <Google> turns: 4 | Current context: 496 | Cumulated tokens: 786 ] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 
-── user [216 / 293] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── user [216 / 290] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 The user's name is Marc. Give me the information about the user.
 
 ── System ──
 
-You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-15
+You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-18
 
-── assistant [293 / 293] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Tool Definitions ──
 
-── Thinking ──
+• get_user_info(user_name): Provides information about the user, like their favorite programming language
 
-**Accessing User Information: Marc**
-
-Okay, so I need to find some information about a user named Marc.  The `get_user_info` tool looks like the perfect candidate for this. It's designed specifically for retrieving user details, and the `user_name` parameter is exactly what I need.  It's straightforward; I can just call the tool with `user_name='Marc'` and expect a detailed response. Simple and efficient, just the way I like it.
-
-
-── tool [404 / 773] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-
-── assistant [480 / 773] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── assistant [290 / 290] ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 ── Thinking ──
 
-**Understanding Marc's Preferences**
+**Getting the Goods on Marc**
 
-Okay, so the user wants to know about Marc. My first instinct, as always, is to leverage my tools. I employed the `get_user_info` function, specifically targeting 'Marc'. The response I received confirmed what I suspected: Marc's a fellow R enthusiast! Apparently, R is his favorite language. And beyond that, it looks like Shiny's the framework he gravitates towards. With this knowledge in hand, I can now craft a concise and informative response to the user's query, highlighting Marc's language and framework preferences, which are key elements to understand the landscape of skills.
+Okay, so I see a user asking for information about "Marc". Naturally, my mind jumps to the `get_user_info` tool - that's *exactly* what this thing is designed for! Seems straightforward enough. The tool needs a `user_name` argument, which, thankfully, the user has explicitly provided. So, my action item is clear: I need to call the `get_user_info` tool and set `user_name` to 'Marc'. Simple as that. Let's get this done.
 
+
+── Tool Calls ──
+
+• get_user_info(user_name = "Marc")
+
+── tool [420 / 786] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• Result from get_user_info:
+
+name: get_user_info
+arguments:
+  user_name: Marc
+result:
+  favorite_language: R
+  favorite_framework: Shiny
+
+
+── assistant [496 / 786] ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+── Thinking ──
+
+**Delivering on the Marc Inquiry**
+
+Okay, the user needed some quick intel on Marc. Time to leverage the tools. Let's see...I fired up the `get_user_info` tool and plugged in "Marc" as the `user_name`. Alright, the tool spat back his favorite programming language as "R" - interesting, I know a few folks that are passionate about that. And his favorite framework is "Shiny". Now I have the goods! I can go ahead and package this up for the user. Nothing too groundbreaking, but hopefully, it's exactly what they were looking for.
 
 
 Marc's favorite programming language is R and his favorite framework is Shiny.
@@ -349,8 +389,8 @@ The characters shown are:
 > Here, the URL was automatically detected, downloaded in a temporary
 > file, and converted to base64, before being passed to the model.
 >
-> Other providers may have different behavior. For example, Anthropic
-> supports passing images & PDFs URLs directly.
+> Other providers may have different behavior. For example, the image or
+> PDF’s URL will be passed as-is to Anthropic’s API.
 >
 > Helper functions like
 > [`as_text_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md)
@@ -446,12 +486,11 @@ Guides for OpenAI’s three different APIs:
 
 ### Advanced Topics
 
-- [RAG
-  Applications](https://ma-riviere.github.io/argent/articles/advanced-rag.md) -
-  How to use `argent` & `ragnar` for RAG applications
-- [Advanced MCP
+- [RAG](https://ma-riviere.github.io/argent/articles/advanced-rag.md) -
+  How to use `argent` & `ragnar` for RAG
+- [MCP Servers &
   Tools](https://ma-riviere.github.io/argent/articles/advanced-mcp.md) -
-  How to use MCP servers with `argent`
+  How to use MCP server tools with `argent`
 
 ## Contributing
 
