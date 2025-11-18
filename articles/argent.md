@@ -229,8 +229,8 @@ Based on your resume, your favorite programming language appears to be **R**.
 > Here, the URL was automatically detected, downloaded in a temporary
 > file, and converted to base64, before being passed to the model.
 >
-> Other providers may have different behavior. For example, Anthropic
-> supports passing PDF files URLs directly.
+> Other providers may have different behavior. For example, the image or
+> PDF’s URL will be passed as-is to Anthropic’s API.
 >
 > You can use the `as_text_content(url)` helper to force the conversion
 > to text content.
@@ -345,12 +345,11 @@ Guides for OpenAI’s three different APIs:
 
 #### Advanced Topics
 
-- [RAG
-  Applications](https://ma-riviere.github.io/argent/articles/articles/advanced-rag.md) -
-  How to use `argent` & `ragnar` for RAG applications
-- [Advanced MCP
+- [RAG](https://ma-riviere.github.io/argent/articles/articles/advanced-rag.md) -
+  How to use `argent` & `ragnar` for RAG
+- [MCP Servers &
   Tools](https://ma-riviere.github.io/argent/articles/articles/advanced-mcp.md) -
-  How to use MCP servers with `argent`
+  How to use MCP server tools with `argent`
 
 ### Other Topics
 
