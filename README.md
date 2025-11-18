@@ -466,33 +466,42 @@ gemini$delete_file(file_metadata$name)
 
 Detailed guides for each provider:
 
-- [Google Gemini](articles/google-gemini.html)
-- [Anthropic Claude](articles/anthropic.html)
-- [OpenRouter](articles/openrouter.html)
-- [Local LLMs](articles/local-llm.html)
+- [Google
+  Gemini](https://ma-riviere.github.io/argent/articles/google-gemini.html)
+- [Anthropic
+  Claude](https://ma-riviere.github.io/argent/articles/anthropic.html)
+- [OpenRouter](https://ma-riviere.github.io/argent/articles/openrouter.html)
+- [Local
+  LLMs](https://ma-riviere.github.io/argent/articles/local-llm.html)
 
 #### OpenAI APIs
 
 Guides for OpenAI’s three different APIs:
 
-- [Chat Completions API](articles/openai-completions.html) - Standard
-  OpenAI chat interface
-- [Responses API](articles/openai-responses.html) - Newest API combining
-  the functionalities of the Chat and Assistants
-- [Assistants API](articles/openai-assistants.html) - Deprecated
+- [Chat Completions
+  API](https://ma-riviere.github.io/argent/articles/openai-completions.html) -
+  Standard OpenAI chat interface
+- [Responses
+  API](https://ma-riviere.github.io/argent/articles/openai-responses.html) -
+  Newest API combining the functionalities of the Chat and Assistants
+- [Assistants
+  API](https://ma-riviere.github.io/argent/articles/openai-assistants.html) -
+  Deprecated
 
 #### Other Providers
 
-- [Using Other Compatible APIs](articles/other-providers.html) - Use
-  argent with providers offering compatible APIs (e.g., Minimax, Qwen,
-  …)
+- [Using Other Compatible
+  APIs](https://ma-riviere.github.io/argent/articles/other-providers.html) -
+  Use argent with providers offering compatible APIs (e.g., Minimax,
+  Qwen, …)
 
 ### Advanced Topics
 
-- [RAG](articles/advanced-rag.html) - How to use `argent` & `ragnar` for
-  RAG
-- [MCP Servers & Tools](articles/advanced-mcp.html) - How to use MCP
-  server tools with `argent`
+- [RAG](https://ma-riviere.github.io/argent/articles/advanced-rag.html) -
+  How to use `argent` & `ragnar` for RAG
+- [MCP Servers &
+  Tools](https://ma-riviere.github.io/argent/articles/advanced-mcp.html) -
+  How to use MCP server tools with `argent`
 
 ## Contributing
 
