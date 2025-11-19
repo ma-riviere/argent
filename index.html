@@ -624,10 +624,10 @@ Active
 <p>To see more, we can print the provider object with <code>show_tools = TRUE</code> to show to tool definitions, calls, and results:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">gemini</span>, show_tools <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>── [ &lt;Google&gt; turns: 6 | Current context: 697 | Cumulated tokens: 1570 ] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<div class="sourceCode" id="cb17"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>── [ &lt;Google&gt; turns: 6 | Current context: 677 | Cumulated tokens: 1449 ] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
 <span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>── user [216 / 327] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>── user [216 / 289] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
 <span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a></span>
 <span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>The user's name is Marc. Give me the information about the user.</span>
 <span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a></span>
@@ -639,20 +639,20 @@ Active
 <span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a></span>
 <span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a>• get_user_info(user_name): Provides information about the user, like their favorite programming language</span>
 <span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a></span>
-<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a>── assistant [327 / 327] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a>── assistant [289 / 289] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
 <span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a></span>
 <span id="cb17-18"><a href="#cb17-18" tabindex="-1"></a>── Thinking ──</span>
 <span id="cb17-19"><a href="#cb17-19" tabindex="-1"></a></span>
-<span id="cb17-20"><a href="#cb17-20" tabindex="-1"></a>**Thinking about Retrieving Information on "Marc"**</span>
+<span id="cb17-20"><a href="#cb17-20" tabindex="-1"></a>**Processing a User Query**</span>
 <span id="cb17-21"><a href="#cb17-21" tabindex="-1"></a></span>
-<span id="cb17-22"><a href="#cb17-22" tabindex="-1"></a>Okay, so the user wants info on a "Marc".  My initial thought is, "Perfect! The `get_user_info` tool should be exactly what I need here."  It's designed to provide details about users, including, apparently, their preferred programming language, which is often a helpful piece of context.  The prompt is clear: the user is asking specifically about someone named "Marc."  The `user_name` argument is a requirement, and it's crystal clear that I need to set that value to "Marc" to address the query.  So, I should call the `get_user_info` tool with `user_name='Marc'` and see what I can find. That should do the trick.</span>
+<span id="cb17-22"><a href="#cb17-22" tabindex="-1"></a>Okay, so someone's asking about a user named Marc.  My gut says the `get_user_info` tool is the way to go. It's purpose-built for retrieving user data, and the `user_name` parameter is exactly what I need.  It's pretty straightforward, actually.  I'll just call the tool and pass 'Marc' as the `user_name` value. Should be a quick and efficient way to get the information.  Let's see what comes back.</span>
 <span id="cb17-23"><a href="#cb17-23" tabindex="-1"></a></span>
 <span id="cb17-24"><a href="#cb17-24" tabindex="-1"></a></span>
 <span id="cb17-25"><a href="#cb17-25" tabindex="-1"></a>── Tool Calls ──</span>
 <span id="cb17-26"><a href="#cb17-26" tabindex="-1"></a></span>
 <span id="cb17-27"><a href="#cb17-27" tabindex="-1"></a>• get_user_info(user_name = "Marc")</span>
 <span id="cb17-28"><a href="#cb17-28" tabindex="-1"></a></span>
-<span id="cb17-29"><a href="#cb17-29" tabindex="-1"></a>── tool [467 / 873] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb17-29"><a href="#cb17-29" tabindex="-1"></a>── tool [417 / 772] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
 <span id="cb17-30"><a href="#cb17-30" tabindex="-1"></a></span>
 <span id="cb17-31"><a href="#cb17-31" tabindex="-1"></a>• Result from get_user_info:</span>
 <span id="cb17-32"><a href="#cb17-32" tabindex="-1"></a></span>
@@ -664,19 +664,19 @@ Active
 <span id="cb17-38"><a href="#cb17-38" tabindex="-1"></a>  favorite_framework: Shiny</span>
 <span id="cb17-39"><a href="#cb17-39" tabindex="-1"></a></span>
 <span id="cb17-40"><a href="#cb17-40" tabindex="-1"></a></span>
-<span id="cb17-41"><a href="#cb17-41" tabindex="-1"></a>── assistant [546 / 873] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb17-41"><a href="#cb17-41" tabindex="-1"></a>── assistant [483 / 772] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
 <span id="cb17-42"><a href="#cb17-42" tabindex="-1"></a></span>
 <span id="cb17-43"><a href="#cb17-43" tabindex="-1"></a>── Thinking ──</span>
 <span id="cb17-44"><a href="#cb17-44" tabindex="-1"></a></span>
-<span id="cb17-45"><a href="#cb17-45" tabindex="-1"></a>**Understanding Marc's Preferences**</span>
+<span id="cb17-45"><a href="#cb17-45" tabindex="-1"></a>**Analyzing the Marc Inquiry**</span>
 <span id="cb17-46"><a href="#cb17-46" tabindex="-1"></a></span>
-<span id="cb17-47"><a href="#cb17-47" tabindex="-1"></a>Okay, the user wants to know about Marc. My first step is to use the `get_user_info` tool, specifying "Marc" as the target. Let's see what comes back. Ah, here we are! The tool reports that Marc's favorite language is R and his preferred framework is Shiny. This is useful information. I can now synthesize this data and present it back to the user in a clear and concise way. They'll appreciate knowing his technical leanings.</span>
+<span id="cb17-47"><a href="#cb17-47" tabindex="-1"></a>Okay, so the user needed some quick background on "Marc." That's easy enough.  I leveraged the `get_user_info` tool, feeding it `user_name='Marc'`, and the results are pretty straightforward.  It seems Marc's a bit of an R aficionado, which isn't entirely surprising - there's a strong R community out there.  The Shiny framework mention is interesting, though. It suggests he's not just into statistical computing, but also interested in building interactive web applications or dashboards.  I can already start to picture the types of projects he might be involved in.  This information is pretty valuable context.</span>
 <span id="cb17-48"><a href="#cb17-48" tabindex="-1"></a></span>
 <span id="cb17-49"><a href="#cb17-49" tabindex="-1"></a></span>
 <span id="cb17-50"><a href="#cb17-50" tabindex="-1"></a></span>
-<span id="cb17-51"><a href="#cb17-51" tabindex="-1"></a>Marc's favorite programming language is R and his favorite framework is Shiny.</span>
+<span id="cb17-51"><a href="#cb17-51" tabindex="-1"></a>Marc's favorite programming language is R, and his favorite framework is Shiny.</span>
 <span id="cb17-52"><a href="#cb17-52" tabindex="-1"></a></span>
-<span id="cb17-53"><a href="#cb17-53" tabindex="-1"></a>── user [552 / 1570] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb17-53"><a href="#cb17-53" tabindex="-1"></a>── user [537 / 1449] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
 <span id="cb17-54"><a href="#cb17-54" tabindex="-1"></a></span>
 <span id="cb17-55"><a href="#cb17-55" tabindex="-1"></a>Please format your previous response according to the requested schema.</span>
 <span id="cb17-56"><a href="#cb17-56" tabindex="-1"></a></span>
@@ -684,9 +684,27 @@ Active
 <span id="cb17-58"><a href="#cb17-58" tabindex="-1"></a></span>
 <span id="cb17-59"><a href="#cb17-59" tabindex="-1"></a>You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-19</span>
 <span id="cb17-60"><a href="#cb17-60" tabindex="-1"></a></span>
-<span id="cb17-61"><a href="#cb17-61" tabindex="-1"></a>── assistant [697 / 1570] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb17-61"><a href="#cb17-61" tabindex="-1"></a>── Output Schema ──</span>
 <span id="cb17-62"><a href="#cb17-62" tabindex="-1"></a></span>
-<span id="cb17-63"><a href="#cb17-63" tabindex="-1"></a>{ "user_name": "Marc", "favorite_language": "R", "favorite_framework": "Shiny" }</span></code></pre></div>
+<span id="cb17-63"><a href="#cb17-63" tabindex="-1"></a>type: object</span>
+<span id="cb17-64"><a href="#cb17-64" tabindex="-1"></a>properties:</span>
+<span id="cb17-65"><a href="#cb17-65" tabindex="-1"></a>  user_name:</span>
+<span id="cb17-66"><a href="#cb17-66" tabindex="-1"></a>    type: string</span>
+<span id="cb17-67"><a href="#cb17-67" tabindex="-1"></a>    description: The name of the user</span>
+<span id="cb17-68"><a href="#cb17-68" tabindex="-1"></a>  favorite_language:</span>
+<span id="cb17-69"><a href="#cb17-69" tabindex="-1"></a>    type: string</span>
+<span id="cb17-70"><a href="#cb17-70" tabindex="-1"></a>    description: The user's favorite programming language</span>
+<span id="cb17-71"><a href="#cb17-71" tabindex="-1"></a>  favorite_framework:</span>
+<span id="cb17-72"><a href="#cb17-72" tabindex="-1"></a>    type: string</span>
+<span id="cb17-73"><a href="#cb17-73" tabindex="-1"></a>    description: The user's favorite framework</span>
+<span id="cb17-74"><a href="#cb17-74" tabindex="-1"></a>required:</span>
+<span id="cb17-75"><a href="#cb17-75" tabindex="-1"></a>- user_name</span>
+<span id="cb17-76"><a href="#cb17-76" tabindex="-1"></a>- favorite_language</span>
+<span id="cb17-77"><a href="#cb17-77" tabindex="-1"></a>- favorite_framework</span>
+<span id="cb17-78"><a href="#cb17-78" tabindex="-1"></a></span>
+<span id="cb17-79"><a href="#cb17-79" tabindex="-1"></a>── assistant [677 / 1449] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb17-80"><a href="#cb17-80" tabindex="-1"></a></span>
+<span id="cb17-81"><a href="#cb17-81" tabindex="-1"></a>{"user_name": "Marc", "favorite_language": "R", "favorite_framework": "Shiny"}</span></code></pre></div>
 <blockquote>
 <p><strong>Note</strong></p>
 <p>You may have noticed an extra user input at the end of the conversation history. This is because Google does not support structured outputs when tools are used, so, behind the scenes, <code>argent</code> makes a final call to the model to format the previous response according to the requested schema, without any tools.</p>

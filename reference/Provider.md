@@ -571,6 +571,7 @@ Print chat history in a formatted view. Inspired by ellmer
       show_code = FALSE,
       show_tools = FALSE,
       show_supplementary = FALSE,
+      show_output_schema = TRUE,
       max_content_length = 999
     )
 
@@ -596,6 +597,10 @@ Print chat history in a formatted view. Inspired by ellmer
 
   Logical. Include supplementary data like annotations, citations
   (default: FALSE)
+
+- `show_output_schema`:
+
+  Logical. Include output schema in query display (default: TRUE)
 
 - `max_content_length`:
 
