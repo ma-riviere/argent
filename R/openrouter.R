@@ -653,7 +653,7 @@ OpenRouter <- R6::R6Class( # nolint
                     # Hack: Convert tool_use to text for both histories, 
                     #  as if it was the return of a native structured output of the API.
                     json_text <- jsonlite::toJSON(tool_result, auto_unbox = TRUE, pretty = TRUE)
-                    browser()
+                    
                     purrr::pluck(self$chat_history, length(self$chat_history), "content") <- list(
                         private$text_input(json_text)
                     )

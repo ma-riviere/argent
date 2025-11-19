@@ -1,18 +1,35 @@
 ## usethis namespace: start
 #' @importFrom R6 R6Class
 #' @importFrom base64enc base64encode
-#' @importFrom cli cli_abort cli_alert_danger cli_alert_info cli_alert_success cli_alert_warning cli_text
+#' @importFrom cli cli_abort cli_alert_danger cli_alert_info cli_alert_success cli_alert_warning cli_bullets
+#' @importFrom cli cli_bullets_raw cli_h1 cli_h2 cli_h3 cli_text cli_warn col_blue col_cyan col_green col_grey
+#' @importFrom cli col_magenta col_red col_silver col_yellow style_italic
 #' @importFrom curl form_file
-#' @importFrom dplyr arrange desc filter mutate semi_join
-#' @importFrom httr2 req_body_json req_body_multipart req_error req_headers req_headers_redacted req_method
-#' @importFrom httr2 req_perform req_retry req_throttle req_timeout req_url_query request
-#' @importFrom httr2 resp_body_json resp_body_raw resp_content_type resp_has_body resp_is_error resp_status
+#' @importFrom dplyr arrange bind_cols bind_rows desc filter first mutate select select_if semi_join
+#' @importFrom fs dir_create dir_exists file_exists is_dir is_file path path_norm
+#' @importFrom here here
+#' @importFrom httr2 req_body_file req_body_json req_body_multipart req_error req_headers req_headers_redacted
+#' @importFrom httr2 req_method req_perform req_retry req_throttle req_timeout req_url_path_append req_url_query
+#' @importFrom httr2 request resp_body_json resp_body_raw resp_body_string resp_content_type resp_has_body
+#' @importFrom httr2 resp_header resp_is_error resp_status
 #' @importFrom jsonlite fromJSON toJSON
-#' @importFrom lubridate as_datetime today
-#' @importFrom mime guess_type
-#' @importFrom purrr compact detect is_empty keep list_c list_rbind map map_dfr map_if modify_at modify_tree pluck quietly
-#' @importFrom rlang exec
-#' @importFrom stringr str_detect str_ends str_glue
+#' @importFrom lubridate as_datetime today ymd_hms
+#' @importFrom mime guess_type mimemap
+#' @importFrom purrr compact detect discard discard_at imap imap_chr is_empty iwalk keep list_c
+#' @importFrom purrr list_flatten list_modify list_rbind map map_chr map_dfr map_if map_int map_lgl modify_at
+#' @importFrom purrr modify_tree pluck possibly quietly reduce some walk
+#' @importFrom rlang as_label enquos eval_tidy exec is_quosure is_symbol list2 new_quosure quo_get_env
+#' @importFrom rlang quo_get_expr
+#' @importFrom stats setNames
+#' @importFrom stringr fixed str_c str_detect str_ends str_extract str_glue str_match str_remove
+#' @importFrom stringr str_replace_all str_split_1 str_starts str_trim
+#' @importFrom tibble as_tibble
+#' @importFrom tidyr unnest unnest_wider
+#' @importFrom tidyselect all_of everything
+#' @importFrom tools file_ext
+#' @importFrom utils type.convert
+#' @importFrom xml2 read_html read_xml
+#' @importFrom yaml as.yaml read_yaml
 ## usethis namespace: end
 NULL
 
