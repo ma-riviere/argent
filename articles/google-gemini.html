@@ -115,7 +115,7 @@
 <div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"What's the R programming language? Answer in three sentences."</span>,</span>
-<span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span></span>
+<span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span> <span class="co"># Default model for Google</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 </section><section class="section level2"><h2 id="tool-calling-structured-output-thinking">Tool Calling + Structured Output + Thinking<a class="anchor" aria-label="anchor" href="#tool-calling-structured-output-thinking"></a>
@@ -300,8 +300,7 @@
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
-<span>    <span class="st">"Summarize the main changes in the current development version of the R 'ellmer' package in 2 sentences: \ </span></span>
-<span><span class="st">    https://raw.githubusercontent.com/tidyverse/ellmer/main/NEWS.md"</span>,</span>
+<span>    <span class="st">"Summarize the main changes in the current development version of the R 'ellmer' package in 2 sentences: https://raw.githubusercontent.com/tidyverse/ellmer/main/NEWS.md"</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
 <span>    tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"url_context"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -393,7 +392,7 @@
 <p>Extract the widget context token:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">get_supplementary</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">get_supplementary</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/pluck.html" class="external-link">pluck</a></span><span class="op">(</span><span class="st">"grounding_metadata"</span>, <span class="st">"googleMapsWidgetContextToken"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>The widget token can be passed to the Google Maps API to display interactive maps with markers in your frontend.</p>

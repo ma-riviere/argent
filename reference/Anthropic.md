@@ -406,8 +406,7 @@ Send a chat completion request to Anthropic
       tool_choice = list(type = "auto"),
       cache_tools = FALSE,
       output_schema = NULL,
-      thinking_budget = 0,
-      return_full_response = FALSE
+      thinking_budget = 0
     )
 
 #### Arguments
@@ -493,14 +492,9 @@ Send a chat completion request to Anthropic
   Integer. Thinking budget in tokens: 0 (disabled), or 1024-max_tokens
   (default: 0). Minimum is 1024 tokens.
 
-- `return_full_response`:
-
-  Logical. Return full API response (default: FALSE)
-
 #### Returns
 
-Character (or List if return_full_response = TRUE). Anthropic API's
-response object.
+Character. Text response from the model.
 
 ------------------------------------------------------------------------
 

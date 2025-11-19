@@ -1,11 +1,8 @@
 # argent: Argent: LLM Agents in R
 
-Provides a unified R6-based interface for creating AI agents that can
-interact with multiple Large Language Model (LLM) providers including
-Google Gemini, Anthropic Claude, OpenAI GPT, OpenRouter, and local LLM
-servers. Supports chat completions, function calling, structured
-outputs, conversation history, and advanced features like prompt caching
-and vector stores.
+Provides a unified interface for interacting with Large Language Models
+(LLMs) from multiple providers, specialized for creating AI agents with
+tool calling, multimodal inputs, and structured outputs.
 
 The argent package provides a unified interface for creating AI agents
 that can interact with multiple Large Language Model (LLM) providers
@@ -82,8 +79,6 @@ Useful links:
 - <https://ma-riviere.github.io/argent>
 
 - <https://github.com/ma-riviere/argent>
-
-- <https://ma-riviere.github.io/argent/>
 
 ## Author
 

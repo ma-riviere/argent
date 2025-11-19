@@ -25,7 +25,7 @@ google_gemini$list_models() |>
 ``` r
 google_gemini$chat(
     "What's the R programming language? Answer in three sentences.",
-    model = "gemini-2.5-flash"
+    model = "gemini-2.5-flash" # Default model for Google
 )
 ```
 
@@ -228,8 +228,7 @@ JPEG, WebP), and PDFs.
 
 ``` r
 google_gemini$chat(
-    "Summarize the main changes in the current development version of the R 'ellmer' package in 2 sentences: \ 
-    https://raw.githubusercontent.com/tidyverse/ellmer/main/NEWS.md",
+    "Summarize the main changes in the current development version of the R 'ellmer' package in 2 sentences: https://raw.githubusercontent.com/tidyverse/ellmer/main/NEWS.md",
     model = "gemini-2.5-flash",
     tools = list("url_context")
 )
@@ -342,7 +341,7 @@ In the evening, enjoy a beer by the Nidelva river at Den Gode Nabo AS. This high
 Extract the widget context token:
 
 ``` r
-google_gemini$get_supplementary() |> 
+google_gemini$get_supplementary() |>
     purrr::pluck("grounding_metadata", "googleMapsWidgetContextToken")
 ```
 

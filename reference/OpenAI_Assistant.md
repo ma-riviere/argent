@@ -550,8 +550,7 @@ After sending a message, you can use base class methods like
       ...,
       in_new_thread = FALSE,
       output_schema = NULL,
-      remove_citations = TRUE,
-      return_full_response = FALSE
+      remove_citations = TRUE
     )
 
 #### Arguments
@@ -578,18 +577,11 @@ After sending a message, you can use base class methods like
 
   Logical. Remove file_search citation markers (default: TRUE). When
   TRUE, removes citation markers like 【35†source】 and \[3:0†source\]
-  from responses. Only applies when return_full_response = FALSE.
-
-- `return_full_response`:
-
-  Logical. Return full message object (default: FALSE). If FALSE,
-  returns only the text content via cat(). If TRUE, returns complete
-  message object.
+  from responses.
 
 #### Returns
 
-Character (or List if return_full_response = TRUE). OpenAI Assistant
-API's response object.
+Character. OpenAI Assistant API's response object.
 
 ------------------------------------------------------------------------
 
@@ -634,15 +626,7 @@ assistant$create_assistant(
   model = "gpt-4o",
   instructions = "Research assistant with web access",
   tools = list(
-    list(type = "file_search", store_ids = list(store_id)),
-    list(
-      name = "web_search",
-      description = "Search the web",
-      parameters = list(
-        type = "object",
-        properties = list(query = list(type = "string", description = "The search query"))
-      )
-    )
+    list(type = "file_search", store_ids = list(store_id))
   )
 )
 

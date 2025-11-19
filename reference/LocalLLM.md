@@ -216,8 +216,7 @@ Send a chat completion request to the local LLM
       seed = NULL,
       tools = NULL,
       tool_choice = "auto",
-      output_schema = NULL,
-      return_full_response = FALSE
+      output_schema = NULL
     )
 
 #### Arguments
@@ -299,14 +298,9 @@ Send a chat completion request to the local LLM
 
   List. JSON schema for structured output (optional)
 
-- `return_full_response`:
-
-  Logical. Return full API response (default: FALSE)
-
 #### Returns
 
-Character (or List if return_full_response = TRUE). Local LLM API's
-response object.
+Character. Text response from the model.
 
 ------------------------------------------------------------------------
 
@@ -316,7 +310,7 @@ Generate embeddings for text input
 
 #### Usage
 
-    LocalLLM$embeddings(input, model = NULL, return_full_response = FALSE)
+    LocalLLM$embeddings(input, model = NULL)
 
 #### Arguments
 
@@ -328,14 +322,9 @@ Generate embeddings for text input
 
   Character. Model to use (default: current model)
 
-- `return_full_response`:
-
-  Logical. Return full API response (default: FALSE)
-
 #### Returns
 
-Numeric matrix (or List if return_full_response = TRUE). Embeddings with
-one row per input text
+Numeric matrix. Embeddings with one row per input text
 
 ------------------------------------------------------------------------
 

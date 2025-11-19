@@ -738,8 +738,7 @@ when sent back in requests. See
       tool_choice = list(mode = "AUTO"),
       output_schema = NULL,
       thinking_budget = 0,
-      include_thoughts = FALSE,
-      return_full_response = FALSE
+      include_thoughts = FALSE
     )
 
 #### Arguments
@@ -857,14 +856,9 @@ when sent back in requests. See
   FALSE). If TRUE but thinking_budget is 0, a warning is issued and
   include_thoughts is set to FALSE.
 
-- `return_full_response`:
-
-  Logical. Return full API response (default: FALSE)
-
 #### Returns
 
-Character (or List if return_full_response = TRUE). Google API's
-response object.
+Character. Text response from the model.
 
 ------------------------------------------------------------------------
 

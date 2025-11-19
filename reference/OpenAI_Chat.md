@@ -198,8 +198,7 @@ Send a chat completion request to OpenAI
       output_schema = NULL,
       reasoning_effort = NULL,
       verbosity = "medium",
-      store = FALSE,
-      return_full_response = FALSE
+      store = FALSE
     )
 
 #### Arguments
@@ -304,14 +303,9 @@ Send a chat completion request to OpenAI
   Logical. Whether or not to store the output of this chat completion
   request in OpenAI servers (default: FALSE)
 
-- `return_full_response`:
-
-  Logical. Return full API response (default: FALSE)
-
 #### Returns
 
-Character (or List if return_full_response = TRUE). OpenAI Chat API's
-response object.
+Character. OpenAI Chat API's response object.
 
 ------------------------------------------------------------------------
 

@@ -518,8 +518,7 @@ See: <https://platform.openai.com/docs/api-reference/responses/create>
       output_schema = NULL,
       output_verbosity = "medium",
       reasoning_effort = NULL,
-      reasoning_summary = NULL,
-      return_full_response = FALSE
+      reasoning_summary = NULL
     )
 
 #### Arguments
@@ -643,14 +642,9 @@ See: <https://platform.openai.com/docs/api-reference/responses/create>
   Character. Reasoning summary mode: "auto", "concise", or "detailed"
   (optional, requires reasoning_effort to be set)
 
-- `return_full_response`:
-
-  Logical. Return full API response (default: FALSE)
-
 #### Returns
 
-Character (or List if return_full_response = TRUE). OpenAI Responses
-API's response object.
+Character. OpenAI Responses API's response object.
 
 ------------------------------------------------------------------------
 

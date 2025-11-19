@@ -238,8 +238,7 @@ Inherits file management and vector store methods from OpenAI_Base.</p>
 <span>  output_schema <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  reasoning_effort <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbosity <span class="op">=</span> <span class="st">"medium"</span>,</span>
-<span>  store <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  return_full_response <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  store <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -333,15 +332,11 @@ frequency_penalty, presence_penalty, n). These are automatically omitted when us
 <dd><p>Logical. Whether or not to store the output of this chat completion request in OpenAI servers (default: FALSE)</p></dd>
 
 
-<dt><code>return_full_response</code></dt>
-<dd><p>Logical. Return full API response (default: FALSE)</p></dd>
-
-
 </dl><p></p></div>
 </div>
 <div class="section">
 <h4 id="returns">Returns<a class="anchor" aria-label="anchor" href="#returns"></a></h4>
-<p>Character (or List if return_full_response = TRUE). OpenAI Chat API's response object.</p>
+<p>Character. OpenAI Chat API's response object.</p>
 </div>
 
 </div><p></p><hr><a id="method-OpenAI_Chat-clone"></a><div class="section">

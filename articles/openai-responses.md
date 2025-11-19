@@ -881,12 +881,7 @@ The Responses API supports server-side state management via
 `previous_response_id`.
 
 ``` r
-res1 <- openai_responses$chat(
-    "Tell me a joke about R programming",
-    model = "gpt-5-mini",
-    return_full_response = TRUE
-)
-cat(openai_responses$get_content_text(res1), "\n")
+openai_responses$chat("Tell me a joke about R programming")
 ```
 
 ``` default
@@ -897,8 +892,7 @@ There were too many NAs — he just couldn't find her complete.cases().
 ``` r
 openai_responses$chat(
     "Explain why it's funny",
-    previous_response_id = res1$id,
-    model = "gpt-5-mini"
+    previous_response_id = openai_responses$get_last_response_id()
 )
 ```
 

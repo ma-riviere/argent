@@ -250,8 +250,7 @@ an additional API query with full chat history (incurs extra cost).</p>
 <span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tools <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tool_choice <span class="op">=</span> <span class="st">"auto"</span>,</span>
-<span>  output_schema <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  return_full_response <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  output_schema <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -332,22 +331,18 @@ include their names and structure in the context sent to the model.</p></dd>
 <dd><p>List. JSON schema for structured output (optional)</p></dd>
 
 
-<dt><code>return_full_response</code></dt>
-<dd><p>Logical. Return full API response (default: FALSE)</p></dd>
-
-
 </dl><p></p></div>
 </div>
 <div class="section">
 <h4 id="returns-3">Returns<a class="anchor" aria-label="anchor" href="#returns-3"></a></h4>
-<p>Character (or List if return_full_response = TRUE). Local LLM API's response object.</p>
+<p>Character. Text response from the model.</p>
 </div>
 
 </div><p></p><hr><a id="method-LocalLLM-embeddings"></a><div class="section">
 <h3 id="method-embeddings-">Method <code>embeddings()</code><a class="anchor" aria-label="anchor" href="#method-embeddings-"></a></h3>
 <p>Generate embeddings for text input</p><div class="section">
 <h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">LocalLLM</span><span class="op">$</span><span class="fu">embeddings</span><span class="op">(</span><span class="va">input</span>, model <span class="op">=</span> <span class="cn">NULL</span>, return_full_response <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">LocalLLM</span><span class="op">$</span><span class="fu">embeddings</span><span class="op">(</span><span class="va">input</span>, model <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -360,15 +355,11 @@ include their names and structure in the context sent to the model.</p></dd>
 <dd><p>Character. Model to use (default: current model)</p></dd>
 
 
-<dt><code>return_full_response</code></dt>
-<dd><p>Logical. Return full API response (default: FALSE)</p></dd>
-
-
 </dl><p></p></div>
 </div>
 <div class="section">
 <h4 id="returns-4">Returns<a class="anchor" aria-label="anchor" href="#returns-4"></a></h4>
-<p>Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row per input text</p>
+<p>Numeric matrix. Embeddings with one row per input text</p>
 </div>
 
 </div><p></p><hr><a id="method-LocalLLM-clone"></a><div class="section">

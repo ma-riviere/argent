@@ -736,8 +736,7 @@ signatures increase input token costs when sent back in requests. See
 <span>  tool_choice <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>mode <span class="op">=</span> <span class="st">"AUTO"</span><span class="op">)</span>,</span>
 <span>  output_schema <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  thinking_budget <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  include_thoughts <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  return_full_response <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  include_thoughts <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -819,15 +818,11 @@ or 0-24575/32768 (fixed budget). Default: 0.</p></dd>
 If TRUE but thinking_budget is 0, a warning is issued and include_thoughts is set to FALSE.</p></dd>
 
 
-<dt><code>return_full_response</code></dt>
-<dd><p>Logical. Return full API response (default: FALSE)</p></dd>
-
-
 </dl><p></p></div>
 </div>
 <div class="section">
 <h4 id="returns-18">Returns<a class="anchor" aria-label="anchor" href="#returns-18"></a></h4>
-<p>Character (or List if return_full_response = TRUE). Google API's response object.</p>
+<p>Character. Text response from the model.</p>
 </div>
 
 </div><p></p><hr><a id="method-Google-clone"></a><div class="section">

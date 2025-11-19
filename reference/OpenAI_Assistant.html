@@ -226,8 +226,7 @@ a client-side <code>session_history</code> for tracking conversations with token
 
 
 <dt><code>server_tools</code></dt>
-<dd><p>Character vector. Server-side tools available (default: c("file_search",
-"code_interpreter"))</p></dd>
+<dd><p>Character vector. Server-side tools available (default: c("file_search", "code_interpreter"))</p></dd>
 
 
 <dt><code>default_model</code></dt>
@@ -560,8 +559,7 @@ is set during initialization and cannot be changed per-chat.</p>
 <span>  <span class="va">...</span>,</span>
 <span>  in_new_thread <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  output_schema <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  remove_citations <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  return_full_response <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  remove_citations <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -585,20 +583,14 @@ When assistant uses server tools, forces a second call with only the schema to e
 
 <dt><code>remove_citations</code></dt>
 <dd><p>Logical. Remove file_search citation markers (default: TRUE).
-When TRUE, removes citation markers like 【35†source】 and [3:0†source] from responses.
-Only applies when return_full_response = FALSE.</p></dd>
-
-
-<dt><code>return_full_response</code></dt>
-<dd><p>Logical. Return full message object (default: FALSE).
-If FALSE, returns only the text content via cat(). If TRUE, returns complete message object.</p></dd>
+When TRUE, removes citation markers like 【35†source】 and [3:0†source] from responses.</p></dd>
 
 
 </dl><p></p></div>
 </div>
 <div class="section">
 <h4 id="returns-10">Returns<a class="anchor" aria-label="anchor" href="#returns-10"></a></h4>
-<p>Character (or List if return_full_response = TRUE). OpenAI Assistant API's response object.</p>
+<p>Character. OpenAI Assistant API's response object.</p>
 </div>
 
 </div><p></p><hr><a id="method-OpenAIAssistant-clone"></a><div class="section">
@@ -647,15 +639,7 @@ If FALSE, returns only the text content via cat(). If TRUE, returns complete mes
 <span class="r-in"><span>  model <span class="op">=</span> <span class="st">"gpt-4o"</span>,</span></span>
 <span class="r-in"><span>  instructions <span class="op">=</span> <span class="st">"Research assistant with web access"</span>,</span></span>
 <span class="r-in"><span>  tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"file_search"</span>, store_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">store_id</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>      name <span class="op">=</span> <span class="st">"web_search"</span>,</span></span>
-<span class="r-in"><span>      description <span class="op">=</span> <span class="st">"Search the web"</span>,</span></span>
-<span class="r-in"><span>      parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>        type <span class="op">=</span> <span class="st">"object"</span>,</span></span>
-<span class="r-in"><span>        properties <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"string"</span>, description <span class="op">=</span> <span class="st">"The search query"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>      <span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"file_search"</span>, store_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">store_id</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

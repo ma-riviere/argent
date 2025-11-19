@@ -425,8 +425,7 @@ raw_content &lt;- anthropic$download_file(file_id = "file-abc123", dest_path = N
 <span>  tool_choice <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span>,</span>
 <span>  cache_tools <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  output_schema <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  thinking_budget <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  return_full_response <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  thinking_budget <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -500,15 +499,11 @@ list(type = "tool", name = "tool_name"), or NULL for none (default: list(type = 
 (default: 0). Minimum is 1024 tokens.</p></dd>
 
 
-<dt><code>return_full_response</code></dt>
-<dd><p>Logical. Return full API response (default: FALSE)</p></dd>
-
-
 </dl><p></p></div>
 </div>
 <div class="section">
 <h4 id="returns-8">Returns<a class="anchor" aria-label="anchor" href="#returns-8"></a></h4>
-<p>Character (or List if return_full_response = TRUE). Anthropic API's response object.</p>
+<p>Character. Text response from the model.</p>
 </div>
 
 </div><p></p><hr><a id="method-Anthropic-clone"></a><div class="section">

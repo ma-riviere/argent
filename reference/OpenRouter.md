@@ -401,8 +401,7 @@ Send a chat completion request to OpenRouter
       thinking_budget = 0,
       verbosity = NULL,
       provider_options = NULL,
-      output_schema = NULL,
-      return_full_response = FALSE
+      output_schema = NULL
     )
 
 #### Arguments
@@ -590,14 +589,9 @@ Send a chat completion request to OpenRouter
 
   List. JSON schema for structured output (optional)
 
-- `return_full_response`:
-
-  Logical. Return full API response (default: FALSE)
-
 #### Returns
 
-Character (or List if return_full_response = TRUE). OpenRouter API's
-response object.
+Character. OpenRouter API's response object.
 
 ------------------------------------------------------------------------
 

@@ -841,12 +841,7 @@
 <p>The Responses API supports server-side state management via <code>previous_response_id</code>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb56"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">res1</span> <span class="op">&lt;-</span> <span class="va">openai_responses</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
-<span>    <span class="st">"Tell me a joke about R programming"</span>,</span>
-<span>    model <span class="op">=</span> <span class="st">"gpt-5-mini"</span>,</span>
-<span>    return_full_response <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">openai_responses</span><span class="op">$</span><span class="fu">get_content_text</span><span class="op">(</span><span class="va">res1</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">openai_responses</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="st">"Tell me a joke about R programming"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="sourceCode" id="cb57"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>Why did the R programmer break up with his girlfriend?  </span>
 <span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>There were too many NAs — he just couldn't find her complete.cases().</span></code></pre></div>
@@ -854,8 +849,7 @@
 <div class="sourceCode cell-code" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">openai_responses</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"Explain why it's funny"</span>,</span>
-<span>    previous_response_id <span class="op">=</span> <span class="va">res1</span><span class="op">$</span><span class="va">id</span>,</span>
-<span>    model <span class="op">=</span> <span class="st">"gpt-5-mini"</span></span>
+<span>    previous_response_id <span class="op">=</span> <span class="va">openai_responses</span><span class="op">$</span><span class="fu">get_last_response_id</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="sourceCode" id="cb59"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>Sure — here's why that joke lands for R users:</span>
