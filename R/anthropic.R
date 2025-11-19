@@ -1070,6 +1070,15 @@ Anthropic <- R6::R6Class( # nolint
             return(normalized_tools)
         },
 
+        extract_output_schema = function(entry_data) {
+            # Try to extract from output_format field (native structured output)
+            output_format <- purrr::pluck(entry_data, "output_format")
+            if (!is.null(output_format) && output_format$type == "json_schema") {
+                return(output_format$schema)
+            }
+            return(NULL)
+        },
+
         extract_citations = function(root) {
             role <- private$extract_role(root)
 

@@ -372,6 +372,7 @@ Provider <- R6::R6Class( # nolint
         #' @param show_code Logical. Include code blocks (default: FALSE)
         #' @param show_tools Logical. Include tool calls and results (default: FALSE)
         #' @param show_supplementary Logical. Include supplementary data like annotations, citations (default: FALSE)
+        #' @param show_output_schema Logical. Include output schema in query display (default: TRUE)
         #' @param max_content_length Integer. Maximum content length before truncation (default: 999)
         #' @return Self (invisibly) for method chaining
         print = function(
@@ -380,6 +381,7 @@ Provider <- R6::R6Class( # nolint
             show_code = FALSE,
             show_tools = FALSE,
             show_supplementary = FALSE,
+            show_output_schema = TRUE,
             max_content_length = 999
         ) {
             if (purrr::is_empty(self$session_history)) {
@@ -405,6 +407,7 @@ Provider <- R6::R6Class( # nolint
                     show_code,
                     show_tools,
                     show_supplementary,
+                    show_output_schema,
                     max_content_length
                 )
             }
@@ -1037,6 +1040,10 @@ Provider <- R6::R6Class( # nolint
             private$abort_if_no_child_impl()
         },
 
+        extract_output_schema = function(entry_data) {
+            private$abort_if_no_child_impl()
+        },
+
         # ------🔺 PRINT -------------------------------------------------------
 
         format_session_entry = function(
@@ -1046,6 +1053,7 @@ Provider <- R6::R6Class( # nolint
             show_code = FALSE,
             show_tools = FALSE,
             show_supplementary = FALSE,
+            show_output_schema = TRUE,
             max_content_length = NULL
         ) {
             index <- purrr::pluck(entry, "index", .default = 0)
@@ -1131,6 +1139,12 @@ Provider <- R6::R6Class( # nolint
                             private$display_tool_definitions(tool_definitions)
                         }
                     }
+                    if (isTRUE(show_output_schema)) {
+                        output_schema <- private$extract_output_schema(entry_data) # Not in root
+                        if (!purrr::is_empty(output_schema)) {
+                            private$display_output_schema(output_schema)
+                        }
+                    }
                 }
             }
 
@@ -1214,6 +1228,11 @@ Provider <- R6::R6Class( # nolint
         display_supplementary = function(supplementary_data) {
             cli::cli_h2(cli::col_cyan("Supplementary Data"))
             cat(cli::col_cyan(yaml::as.yaml(supplementary_data)), "\n", sep = "")
+        },
+
+        display_output_schema = function(output_schema) {
+            cli::cli_h2(cli::col_green("Output Schema"))
+            cat(cli::col_green(yaml::as.yaml(output_schema)), "\n", sep = "")
         },
 
         display_content = function(content, max_content_length = NULL) {

@@ -275,10 +275,10 @@ print(gemini, show_tools = TRUE)
 ```
 
 ```{verbatim}	
-── [ <Google> turns: 6 | Current context: 697 | Cumulated tokens: 1570 ] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── [ <Google> turns: 6 | Current context: 677 | Cumulated tokens: 1449 ] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 
-── user [216 / 327] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── user [216 / 289] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 The user's name is Marc. Give me the information about the user.
 
@@ -290,20 +290,20 @@ You are a helpful AI assistant. Use your knowledge, the files you have access to
 
 • get_user_info(user_name): Provides information about the user, like their favorite programming language
 
-── assistant [327 / 327] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── assistant [289 / 289] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 ── Thinking ──
 
-**Thinking about Retrieving Information on "Marc"**
+**Processing a User Query**
 
-Okay, so the user wants info on a "Marc".  My initial thought is, "Perfect! The `get_user_info` tool should be exactly what I need here."  It's designed to provide details about users, including, apparently, their preferred programming language, which is often a helpful piece of context.  The prompt is clear: the user is asking specifically about someone named "Marc."  The `user_name` argument is a requirement, and it's crystal clear that I need to set that value to "Marc" to address the query.  So, I should call the `get_user_info` tool with `user_name='Marc'` and see what I can find. That should do the trick.
+Okay, so someone's asking about a user named Marc.  My gut says the `get_user_info` tool is the way to go. It's purpose-built for retrieving user data, and the `user_name` parameter is exactly what I need.  It's pretty straightforward, actually.  I'll just call the tool and pass 'Marc' as the `user_name` value. Should be a quick and efficient way to get the information.  Let's see what comes back.
 
 
 ── Tool Calls ──
 
 • get_user_info(user_name = "Marc")
 
-── tool [467 / 873] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── tool [417 / 772] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 • Result from get_user_info:
 
@@ -315,19 +315,19 @@ result:
   favorite_framework: Shiny
 
 
-── assistant [546 / 873] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── assistant [483 / 772] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 ── Thinking ──
 
-**Understanding Marc's Preferences**
+**Analyzing the Marc Inquiry**
 
-Okay, the user wants to know about Marc. My first step is to use the `get_user_info` tool, specifying "Marc" as the target. Let's see what comes back. Ah, here we are! The tool reports that Marc's favorite language is R and his preferred framework is Shiny. This is useful information. I can now synthesize this data and present it back to the user in a clear and concise way. They'll appreciate knowing his technical leanings.
+Okay, so the user needed some quick background on "Marc." That's easy enough.  I leveraged the `get_user_info` tool, feeding it `user_name='Marc'`, and the results are pretty straightforward.  It seems Marc's a bit of an R aficionado, which isn't entirely surprising - there's a strong R community out there.  The Shiny framework mention is interesting, though. It suggests he's not just into statistical computing, but also interested in building interactive web applications or dashboards.  I can already start to picture the types of projects he might be involved in.  This information is pretty valuable context.
 
 
 
-Marc's favorite programming language is R and his favorite framework is Shiny.
+Marc's favorite programming language is R, and his favorite framework is Shiny.
 
-── user [552 / 1570] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── user [537 / 1449] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 Please format your previous response according to the requested schema.
 
@@ -335,9 +335,27 @@ Please format your previous response according to the requested schema.
 
 You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-19
 
-── assistant [697 / 1570] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Output Schema ──
 
-{ "user_name": "Marc", "favorite_language": "R", "favorite_framework": "Shiny" }
+type: object
+properties:
+  user_name:
+    type: string
+    description: The name of the user
+  favorite_language:
+    type: string
+    description: The user's favorite programming language
+  favorite_framework:
+    type: string
+    description: The user's favorite framework
+required:
+- user_name
+- favorite_language
+- favorite_framework
+
+── assistant [677 / 1449] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+{"user_name": "Marc", "favorite_language": "R", "favorite_framework": "Shiny"}
 ```
 
 :::{.callout-note appearance="simple"}

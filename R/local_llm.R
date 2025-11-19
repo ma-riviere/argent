@@ -724,6 +724,10 @@ LocalLLM <- R6::R6Class( # nolint
             return(normalized_tools)
         },
 
+        extract_output_schema = function(entry_data) {
+            return(NULL)
+        },
+
         extract_supplementary = function(api_res) {
             return(NULL)
         },

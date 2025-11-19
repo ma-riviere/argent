@@ -1194,6 +1194,10 @@ OpenAI_Assistant <- R6::R6Class( # nolint
             return(normalized_tools)
         },
 
+        extract_output_schema = function(entry_data) {
+            return(NULL)
+        },
+
         is_root = function(input) {
             is.list(input)
         },

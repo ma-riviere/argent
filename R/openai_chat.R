@@ -517,6 +517,10 @@ OpenAI_Chat <- R6::R6Class( # nolint
             return(normalized_tools)
         },
 
+        extract_output_schema = function(entry_data) {
+            return(purrr::pluck(entry_data, "response_format", "json_schema"))
+        },
+
         extract_annotations = function(root) {
             annotations <- purrr::pluck(root, "annotations")
 

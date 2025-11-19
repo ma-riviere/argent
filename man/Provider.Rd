@@ -494,6 +494,7 @@ Print chat history in a formatted view. Inspired by ellmer
   show_code = FALSE,
   show_tools = FALSE,
   show_supplementary = FALSE,
+  show_output_schema = TRUE,
   max_content_length = 999
 )}\if{html}{\out{</div>}}
 }
@@ -510,6 +511,8 @@ Print chat history in a formatted view. Inspired by ellmer
 \item{\code{show_tools}}{Logical. Include tool calls and results (default: FALSE)}
 
 \item{\code{show_supplementary}}{Logical. Include supplementary data like annotations, citations (default: FALSE)}
+
+\item{\code{show_output_schema}}{Logical. Include output schema in query display (default: TRUE)}
 
 \item{\code{max_content_length}}{Integer. Maximum content length before truncation (default: 999)}
 }

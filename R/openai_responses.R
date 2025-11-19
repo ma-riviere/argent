@@ -1014,6 +1014,14 @@ OpenAI_Responses <- R6::R6Class( # nolint
             return(normalized_tools)
         },
 
+        extract_output_schema = function(entry_data) {
+            text_format <- purrr::pluck(entry_data, "text", "format")
+            if (!is.null(text_format) && text_format$type == "json_schema") {
+                return(text_format)
+            }
+            return(NULL)
+        },
+
         # ------🔺 HISTORY -----------------------------------------------------
 
         trim_response_for_chat_history = function(res) {

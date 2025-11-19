@@ -1426,6 +1426,10 @@ Google <- R6::R6Class( # nolint
             return(normalized_tools)
         },
 
+        extract_output_schema = function(entry_data) {
+            return(purrr::pluck(entry_data, "generationConfig", "responseSchema"))
+        },
+
         extract_grounding_metadata = function(api_res) {
             metadata <- purrr::pluck(api_res, "candidates", 1, "groundingMetadata")
             if (purrr::is_empty(metadata)) {
