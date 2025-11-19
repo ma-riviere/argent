@@ -151,53 +151,217 @@
 </div>
 </section><section class="level2"><h3 id="using-a-stdio-mcp-server">Using a ‘stdio’ MCP Server<a class="anchor" aria-label="anchor" href="#using-a-stdio-mcp-server"></a>
 </h3>
-<p>Let’s look at the Filesystem MCP server as an example. It is a stdio server that can be used to interact with the filesystem.</p>
+<p>Let’s look at the BTW MCP server as an example (which requires the <a href="https://github.com/posit-dev/btw" class="external-link"><code>btw</code></a> package to be installed). It is a stdio server that can be used to interact with the <code>btw</code> package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">filesystem_mcp_server</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_server</a></span><span class="op">(</span></span>
-<span>    name <span class="op">=</span> <span class="st">"filesystem"</span>,</span>
+<code class="sourceCode R"><span><span class="va">btw_mcp_server</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_server</a></span><span class="op">(</span></span>
+<span>    name <span class="op">=</span> <span class="st">"btw"</span>,</span>
 <span>    type <span class="op">=</span> <span class="st">"stdio"</span>,</span>
-<span>    command <span class="op">=</span> <span class="st">"npx"</span>,</span>
-<span>    args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-y"</span>, <span class="st">"@modelcontextprotocol/server-filesystem"</span>, <span class="st">"/tmp"</span><span class="op">)</span>,</span>
+<span>    command <span class="op">=</span> <span class="st">"Rscript"</span>,</span>
+<span>    args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>        <span class="st">"-e"</span>,</span>
+<span>        <span class="st">"btw::btw_mcp_server(tools = btw::btw_tools(c('docs', 'env', 'ide', 'search', 'session')))"</span></span>
+<span>    <span class="op">)</span>,</span>
 <span>    env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<p>Then, we can get the tools we want from the Filesystem MCP server:</p>
+<p>Then, we can get the tools we want from the <code>btw</code> MCP server:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">filesystem_mcp_tools</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_tools</a></span><span class="op">(</span><span class="va">filesystem_mcp_server</span>, tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"search_files"</span>, <span class="st">"directory_tree"</span>, <span class="st">"read_file"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">btw_mcp_tools</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_tools</a></span><span class="op">(</span></span>
+<span>    <span class="va">btw_mcp_server</span>,</span>
+<span>    tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>        <span class="st">"btw_tool_session_check_package_installed"</span>,</span>
+<span>        <span class="st">"btw_tool_docs_available_vignettes"</span>,</span>
+<span>        <span class="st">"btw_tool_docs_package_help_topics"</span>,</span>
+<span>        <span class="st">"btw_tool_docs_help_page"</span>,</span>
+<span>        <span class="st">"btw_tool_docs_vignette"</span>,</span>
+<span>        <span class="st">"btw_tool_session_package_info"</span>,</span>
+<span>        <span class="st">"btw_tool_docs_package_help_topics"</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
-<p>Finally, we can call the <code>directory_tree</code> tool manually to see if it works:</p>
+<p>Finally, we can call the <code>help_topics</code> tool manually to see if it works:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">directory_tree_mcp_tool</span> <span class="op">&lt;-</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/keep.html" class="external-link">keep</a></span><span class="op">(</span><span class="va">filesystem_mcp_tools</span>, \<span class="op">(</span><span class="va">tool</span><span class="op">)</span> <span class="va">tool</span><span class="op">$</span><span class="va">name</span> <span class="op">==</span> <span class="st">"directory_tree"</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">help_topics_tool</span> <span class="op">&lt;-</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/keep.html" class="external-link">keep</a></span><span class="op">(</span><span class="va">btw_mcp_tools</span>, \<span class="op">(</span><span class="va">tool</span><span class="op">)</span> <span class="va">tool</span><span class="op">$</span><span class="va">name</span> <span class="op">==</span> <span class="st">"btw_tool_docs_package_help_topics"</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
-<span><span class="va">directory_tree_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/execute_mcp_tool.html">execute_mcp_tool</a></span><span class="op">(</span></span>
-<span>    tool_def <span class="op">=</span> <span class="va">directory_tree_mcp_tool</span>,</span>
+<span><span class="fu"><a href="../reference/execute_mcp_tool.html">execute_mcp_tool</a></span><span class="op">(</span></span>
+<span>    tool_def <span class="op">=</span> <span class="va">help_topics_tool</span>,</span>
 <span>    arguments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>        path <span class="op">=</span> <span class="st">"/tmp/test_dir/"</span> <span class="co"># Needs to be within the server's root directory (/tmp)</span></span>
+<span>        package_name <span class="op">=</span> <span class="st">"argent"</span>,</span>
+<span>        `_intent` <span class="op">=</span> <span class="st">"Vignettes explaining how to use MCP servers with argent"</span></span>
 <span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 </section></section><section class="section level2"><h2 id="argent-mcp-servers">Argent + MCP Servers<a class="anchor" aria-label="anchor" href="#argent-mcp-servers"></a>
 </h2>
-<p>Let’s use the GitHub MCP server to analyze the <code>mcptools</code> repository. This demonstrates how LLMs can interact with GitHub APIs through MCP.</p>
+<p>Let’s use the GitHub MCP server and the BTW MCP server to ask a complex question about the <code>mcptools</code> and <code>ellmer</code> packages.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Google.html">Google</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">tools</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/flat_list.html">flat_list</a></span><span class="op">(</span><span class="va">github_mcp_tools</span>, <span class="fu"><a href="../reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">web_search</span><span class="op">)</span>, <span class="fu"><a href="../reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">web_fetch</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">tools</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/flat_list.html">flat_list</a></span><span class="op">(</span><span class="va">github_mcp_tools</span>, <span class="va">btw_mcp_tools</span>, <span class="fu"><a href="../reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">web_search</span><span class="op">)</span>, <span class="fu"><a href="../reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">web_fetch</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">google</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
-<span>    <span class="st">"Has 'posit-dev/mcptools' implemented the ability to use HTTP MCP servers with ellmer ?"</span>,</span>
-<span>    <span class="st">"You can use the `get_file_contents` tool to list the contents of subdirectories, e.g. with path = '/' or 'subdir/'."</span>,</span>
-<span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash-lite"</span>,</span>
+<span>    <span class="st">"Has 'posit-dev/mcptools' implemented the ability to use HTTP MCP servers with 'ellmer' ?"</span>,</span>
+<span>    <span class="st">"Use the `get_file_contents` tool to list the contents of GitHub subdirectories, e.g. with path = '/' or 'dir/'."</span>,</span>
+<span>    <span class="st">"Use the `btw` tools to explore the help pages and vignettes of the local installation of the `mcptools` package."</span>,</span>
+<span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
 <span>    tools <span class="op">=</span> <span class="va">tools</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">google</span>, show_tools <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
-<section class="level2"><h3 id="further-reading">Further Reading<a class="anchor" aria-label="anchor" href="#further-reading"></a>
+<div class="sourceCode" id="cb8"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>`posit-dev/mcptools` does not directly implement the ability to use HTTP MCP servers with `ellmer`. When `mcptools` acts as an MCP *client* via `ellmer`, it only supports the local (stdio) protocol. To connect to remote (HTTP) MCP servers, the `mcptools` documentation recommends using `mcp-remote`, an external tool (a local stdio MCP server) that converts remote HTTP servers to `mcptools`-compatible local ones. This allows `ellmer` (using the stdio protocol) to interact with remote HTTP MCP servers through `mcp-remote`.</span></code></pre></div>
+<details><summary><code>print(google, show_tools = TRUE)</code></summary><div class="sourceCode" id="cb9"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>── [ &lt;Google&gt; turns: 10 | Current context: 62853 | Cumulated tokens: 196436 ] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>── user [1789 / 2107] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>Has 'posit-dev/mcptools' implemented the ability to use HTTP MCP servers with ellmer ? Use the `get_file_contents` tool to list the contents of GitHub subdirectories, e.g. with path = '/' or 'dir/'. Use the `btw` tools to explore the help pages and vignettes of the local installation of the `mcptools` package.</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>── System ──</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-19</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>── Tool Definitions ──</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>• get_file_contents(owner, path, ref, repo, sha): Get the contents of a file or directory from a GitHub repository</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>• search_code(order, page, perPage, query, sort): Fast and precise code search across ALL GitHub repositories using GitHub's native search engine. Best for finding exact symbols, functions, classes, or specific</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  code patterns.</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>• btw_tool_docs_package_help_topics(package_name, _intent): Get available help topics for an R package.</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>• btw_tool_docs_help_page(package_name, topic, _intent): Get help page from package.</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>• btw_tool_docs_available_vignettes(package_name, _intent): List available vignettes for an R package. Vignettes are articles describing key concepts or features of an R package. Returns the listing as a JSON</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  array of `vignette` and `title`. To read a vignette, use `btw_tool_docs_vignette(package_name, vignette)`.</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>• btw_tool_docs_vignette(package_name, vignette, _intent): Get a package vignette in plain text.</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>• btw_tool_session_check_package_installed(package_name, _intent): Check if a package is installed in the current session.</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>• btw_tool_session_package_info(packages, dependencies, _intent): Verify that a specific package is installed, or find out which packages are in use in the current session. As a last resort, this function can</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  also list all installed packages.</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>• web_search(query): Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  any data not in your training data.</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>• web_fetch(url): Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>  articles, documentation, blog posts, or any web page content.</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>── assistant [2107 / 2107] ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>── Tool Calls ──</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>• get_file_contents(repo = "mcptools", owner = "posit-dev", path = "/")</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>── tool [8379 / 10686] ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>• Result from get_file_contents:</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>name: get_file_contents</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>arguments:</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>  repo: mcptools</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>  owner: posit-dev</span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>  path: /</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>result:</span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>  content:</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>  - type: text</span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>    text: '[{"type":"file","size":210,"name":".Rbuildignore","path":".Rbuildignore","sha":"8fe0bfc60f1d4655aff00d34de75b22f1e6bb7c3","url":"https://api.github.com/repos/posit-dev/mcptools/contents/.Rbuildignore?ref=4f91a58684555e66fd46414f2dc63c46c3802d89","git_url":"https://api.github.com/repos/posit-dev/mcptools/git/blobs/8fe0bfc60f1d4655aff00d34de75b22f1e6bb7c3","html_url":"https://github.com/posit-dev/mcptools/blob/4f91a58684555e66fd46414f2dc63c46c3802d89/.Rbuildignore","download_url":"https://raw.githubusercontent.com/posit-dev/mcptools/4f91a58684555e66fd46414f2dc63c46c3802d89/.Rbuildignore"},{"type":"dir","size":0,"name":".github","path":".github","sha":"c1a387a5ec7f8bf8c6626c7d04d8d00551252def","url":"https://api.github.com/repos/posit-dev/mcptools/contents/.github?ref=4f91a58684555e66fd46414f2dc63c46c3802d89","git_url":"https://api.github.com/repos/posit-dev/mcpto...</span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>── assistant [8579 / 10686] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>── Tool Calls ──</span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>• search_code(query = "ellmer repo:posit-dev/mcptools")</span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>• search_code(query = "http mcp server repo:posit-dev/mcptools")</span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>── tool [60874 / 72190] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>• Result from search_code:</span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a>name: search_code</span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a>arguments:</span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>  query: ellmer repo:posit-dev/mcptools</span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a>result:</span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>  content:</span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a>  - type: text</span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a>    text: '{"total_count":17,"incomplete_results":false,"items":[{"name":"example-ellmer-tools.R","path":"inst/example-ellmer-tools.R","sha":"bfde4b0d734301e24a4908ec1054a5e0c7997b4c","html_url":"https://github.com/posit-dev/mcptools/blob/4f91a58684555e66fd46414f2dc63c46c3802d89/inst/example-ellmer-tools.R","repository":{"id":955571244,"node_id":"R_kgDOOPTcLA","owner":{"login":"posit-dev","id":107264312,"node_id":"O_kgDOBmS5OA","avatar_url":"https://avatars.githubusercontent.com/u/107264312?v=4","html_url":"https://github.com/posit-dev","gravatar_id":"","type":"Organization","site_admin":false,"url":"https://api.github.com/users/posit-dev","events_url":"https://api.github.com/users/posit-dev/events{/privacy}","following_url":"https://api.github.com/users/posit-dev/following{/other_user}","followers_url":"https://api.github.com/users/posit-dev/followers","gists_url":"https://api.githu...</span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a>• Result from search_code:</span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a>name: search_code</span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a>arguments:</span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a>  query: http mcp server repo:posit-dev/mcptools</span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a>result:</span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a>  content:</span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a>  - type: text</span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a>    text: '{"total_count":16,"incomplete_results":false,"items":[{"name":"server.R","path":"R/server.R","sha":"c554b70c68889735629019c4b8d14d9a83f05a4b","html_url":"https://github.com/posit-dev/mcptools/blob/4f91a58684555e66fd46414f2dc63c46c3802d89/R/server.R","repository":{"id":955571244,"node_id":"R_kgDOOPTcLA","owner":{"login":"posit-dev","id":107264312,"node_id":"O_kgDOBmS5OA","avatar_url":"https://avatars.githubusercontent.com/u/107264312?v=4","html_url":"https://github.com/posit-dev","gravatar_id":"","type":"Organization","site_admin":false,"url":"https://api.github.com/users/posit-dev","events_url":"https://api.github.com/users/posit-dev/events{/privacy}","following_url":"https://api.github.com/users/posit-dev/following{/other_user}","followers_url":"https://api.github.com/users/posit-dev/followers","gists_url":"https://api.github.com/users/posit-dev/gists{/gist_id}",...</span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a>── assistant [61504 / 72190] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a>── Tool Calls ──</span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a>• btw_tool_docs_package_help_topics(package_name = "mcptools", _intent = "Check for relevant help topics in mcptools documentation regarding ellmer and HTTP MCP servers")</span>
+<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a>── tool [61172 / 133583] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a>• Result from btw_tool_docs_package_help_topics:</span>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a>name: btw_tool_docs_package_help_topics</span>
+<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a>arguments:</span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a>  package_name: mcptools</span>
+<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a>  _intent: Check for relevant help topics in mcptools documentation regarding ellmer</span>
+<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a>    and HTTP MCP servers</span>
+<span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a>result:</span>
+<span id="cb9-95"><a href="#cb9-95" aria-hidden="true" tabindex="-1"></a>  content:</span>
+<span id="cb9-96"><a href="#cb9-96" aria-hidden="true" tabindex="-1"></a>  - type: text</span>
+<span id="cb9-97"><a href="#cb9-97" aria-hidden="true" tabindex="-1"></a>    text: |-</span>
+<span id="cb9-98"><a href="#cb9-98" aria-hidden="true" tabindex="-1"></a>      [</span>
+<span id="cb9-99"><a href="#cb9-99" aria-hidden="true" tabindex="-1"></a>        {"topic_id":"client","title":"R as a client: Define ellmer tools from MCP servers","aliases":["client","mcp_tools","mcp_client"]},</span>
+<span id="cb9-100"><a href="#cb9-100" aria-hidden="true" tabindex="-1"></a>        {"topic_id":"mcptools-package","title":"mcptools: Model Context Protocol Servers and Clients","aliases":["mcptools","mcptools-package"]},</span>
+<span id="cb9-101"><a href="#cb9-101" aria-hidden="true" tabindex="-1"></a>        {"topic_id":"server","title":"R as a server: Configure R-based tools with LLM-enabled apps","aliases":["server","mcp_server","mcp_session","server"]}</span>
+<span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a>      ]</span>
+<span id="cb9-103"><a href="#cb9-103" aria-hidden="true" tabindex="-1"></a>  isError: no</span>
+<span id="cb9-104"><a href="#cb9-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-105"><a href="#cb9-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-106"><a href="#cb9-106" aria-hidden="true" tabindex="-1"></a>── assistant [61393 / 133583] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb9-107"><a href="#cb9-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-108"><a href="#cb9-108" aria-hidden="true" tabindex="-1"></a>── Tool Calls ──</span>
+<span id="cb9-109"><a href="#cb9-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-110"><a href="#cb9-110" aria-hidden="true" tabindex="-1"></a>• btw_tool_docs_help_page(package_name = "mcptools", topic = "client", _intent = "Get details on how ellmer tools are defined from MCP servers")</span>
+<span id="cb9-111"><a href="#cb9-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-112"><a href="#cb9-112" aria-hidden="true" tabindex="-1"></a>── tool [62486 / 196436] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb9-113"><a href="#cb9-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-114"><a href="#cb9-114" aria-hidden="true" tabindex="-1"></a>• Result from btw_tool_docs_help_page:</span>
+<span id="cb9-115"><a href="#cb9-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-116"><a href="#cb9-116" aria-hidden="true" tabindex="-1"></a>name: btw_tool_docs_help_page</span>
+<span id="cb9-117"><a href="#cb9-117" aria-hidden="true" tabindex="-1"></a>arguments:</span>
+<span id="cb9-118"><a href="#cb9-118" aria-hidden="true" tabindex="-1"></a>  package_name: mcptools</span>
+<span id="cb9-119"><a href="#cb9-119" aria-hidden="true" tabindex="-1"></a>  topic: client</span>
+<span id="cb9-120"><a href="#cb9-120" aria-hidden="true" tabindex="-1"></a>  _intent: Get details on how ellmer tools are defined from MCP servers</span>
+<span id="cb9-121"><a href="#cb9-121" aria-hidden="true" tabindex="-1"></a>result:</span>
+<span id="cb9-122"><a href="#cb9-122" aria-hidden="true" tabindex="-1"></a>  content:</span>
+<span id="cb9-123"><a href="#cb9-123" aria-hidden="true" tabindex="-1"></a>  - type: text</span>
+<span id="cb9-124"><a href="#cb9-124" aria-hidden="true" tabindex="-1"></a>    text: |-</span>
+<span id="cb9-125"><a href="#cb9-125" aria-hidden="true" tabindex="-1"></a>      ## `help(package = "mcptools", "client")`</span>
+<span id="cb9-126"><a href="#cb9-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-127"><a href="#cb9-127" aria-hidden="true" tabindex="-1"></a>      ### R as a client: Define ellmer tools from MCP servers</span>
+<span id="cb9-128"><a href="#cb9-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-129"><a href="#cb9-129" aria-hidden="true" tabindex="-1"></a>      #### Description</span>
+<span id="cb9-130"><a href="#cb9-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-131"><a href="#cb9-131" aria-hidden="true" tabindex="-1"></a>      These functions implement R as an MCP *client*, so that ellmer chats can</span>
+<span id="cb9-132"><a href="#cb9-132" aria-hidden="true" tabindex="-1"></a>      register functionality from third-party MCP servers such as those listed</span>
+<span id="cb9-133"><a href="#cb9-133" aria-hidden="true" tabindex="-1"></a>      here: &lt;https://github.com/modelcontextprotocol/servers&gt;.</span>
+<span id="cb9-134"><a href="#cb9-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-135"><a href="#cb9-135" aria-hidden="true" tabindex="-1"></a>      `mcp_tools()` fetches tools from MCP servers configured in the mcptools</span>
+<span id="cb9-136"><a href="#cb9-136" aria-hidden="true" tabindex="-1"></a>      server config file and converts them to a list of tools compatible with</span>
+<span id="cb9-137"><a href="#cb9-137" aria-hidden="true" tabindex="-1"></a>      the `⁠$set_tools()⁠` method of ellmer::Chat objects.</span>
+<span id="cb9-138"><a href="#cb9-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-139"><a href="#cb9-139" aria-hidden="true" tabindex="-1"></a>      #### Arguments</span>
+<span id="cb9-140"><a href="#cb9-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-141"><a href="#cb9-141" aria-hidden="true" tabindex="-1"></a>      |  |  |</span>
+<span id="cb9-142"><a href="#cb9-142" aria-hidden="true" tabindex="-1"></a>      |----|----|</span>
+<span id="cb9-143"><a href="#cb9-143" aria-hidden="true" tabindex="-1"></a>      | `config` | A single string indicating the path to the mcptools MCP servers configuration f...</span>
+<span id="cb9-144"><a href="#cb9-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-145"><a href="#cb9-145" aria-hidden="true" tabindex="-1"></a>── assistant [62853 / 196436] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb9-146"><a href="#cb9-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-147"><a href="#cb9-147" aria-hidden="true" tabindex="-1"></a>`posit-dev/mcptools` does not directly implement the ability to use HTTP MCP servers with `ellmer`. When `mcptools` acts as an MCP *client* via `ellmer`, it only supports the local (stdio) protocol. To connect to remote (HTTP) MCP servers, the `mcptools` documentation recommends using `mcp-remote`, an external tool (a local stdio MCP server) that converts remote HTTP servers to `mcptools`-compatible local ones. This allows `ellmer` (using the stdio protocol) to interact with remote HTTP MCP servers through `mcp-remote`.</span></code></pre></div>
+</details><section class="level2"><h3 id="further-reading">Further Reading<a class="anchor" aria-label="anchor" href="#further-reading"></a>
 </h3>
 <ul>
 <li><a href="https://spec.modelcontextprotocol.io/" class="external-link">MCP Specification</a></li>
