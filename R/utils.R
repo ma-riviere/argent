@@ -9,10 +9,9 @@
 #' @noRd
 make_format_prompt <- function(tool_name = "json_formatting_tool") {
     stringr::str_glue(
-        "Extract relevant information from the chat history (and only from those messages) to use the {tool_name} tool.",
+        "Using only the information in the current conversation history, make a call to the {tool_name} tool.",
         "Only generate the tool call. No other text, reasoning, or special formatting.",
         "Make the tool call no matter what, even with insufficient information.",
-        "If the content provided lacks required information for the tool call, leave those arguments empty.",
         .sep = "\n"
     )
 }

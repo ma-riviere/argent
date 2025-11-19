@@ -395,8 +395,7 @@ Anthropic <- R6::R6Class( # nolint
         #' @param output_schema List. JSON schema for structured output (optional)
         #' @param thinking_budget Integer. Thinking budget in tokens: 0 (disabled), or 1024-max_tokens
         #'   (default: 0). Minimum is 1024 tokens.
-        #' @param return_full_response Logical. Return full API response (default: FALSE)
-        #' @return Character (or List if return_full_response = TRUE). Anthropic API's response object.
+        #' @return Character. Text response from the model.
         chat = function(
             ...,
             cache_prompt = FALSE,
@@ -411,8 +410,7 @@ Anthropic <- R6::R6Class( # nolint
             tool_choice = list(type = "auto"),
             cache_tools = FALSE,
             output_schema = NULL,
-            thinking_budget = 0,
-            return_full_response = FALSE
+            thinking_budget = 0
         ) {
 
             # Count how many cache breakpoints are in the chat history already
@@ -681,16 +679,25 @@ Anthropic <- R6::R6Class( # nolint
 
             if (private$is_tool_call(res)) {
 
-                # Final round of forced JSON output: return the tool call as is without executing it
-                # See: https://docs.anthropic.com/en/docs/build-with-anthropic/tool-use#json-output
+                # Final round of forced JSON output: extract the tool call as is without executing it
                 if (isTRUE(output_schema)) {
-                    if (!isTRUE(return_full_response)) {
-                        first_tool_call <- private$extract_root(res) |>
-                            private$extract_tool_calls() |>
-                            purrr::pluck(1)
-                        return(private$extract_tool_call_args(first_tool_call))
-                    }
-                    return(res)
+                    tool_result <- private$extract_root(res) |>
+                        private$extract_tool_calls() |>
+                        purrr::pluck(1) |>
+                        private$extract_tool_call_args()
+
+                    # Hack: Convert tool_use to text for both histories, 
+                    #  as if it was the return of a native structured output of the API.
+                    json_text <- jsonlite::toJSON(tool_result, auto_unbox = TRUE, pretty = TRUE)
+                    text_content <- list(private$text_input(json_text))
+
+                    purrr::pluck(self$chat_history, length(self$chat_history), "content") <- text_content
+                    purrr::pluck(self$session_history, length(self$session_history), "data", "content") <- text_content
+
+                    # Trigger auto-save to persist changes
+                    private$auto_save_history()
+
+                    return(tool_result)
                 }
 
                 # Execute tools and add results to history
@@ -711,8 +718,7 @@ Anthropic <- R6::R6Class( # nolint
                         tool_choice = list(type = "auto"),
                         cache_tools = cache_tools,
                         output_schema = output_schema,
-                        thinking_budget = thinking_budget,
-                        return_full_response = return_full_response
+                        thinking_budget = thinking_budget
                     )
                 )
             }
@@ -724,52 +730,34 @@ Anthropic <- R6::R6Class( # nolint
 
                 # Use native structured output if model supports it and code_execution is not present
                 if (private$supports_native_structured_output(model) && !code_execution_present) {
-                    if (!isTRUE(return_full_response)) {
-                        text_output <- self$get_content_text(res)
-                        return(jsonlite::fromJSON(text_output, simplifyDataFrame = FALSE))
-                    }
-                    return(res)
+                    text_output <- self$get_content_text(res)
+                    return(jsonlite::fromJSON(text_output, simplifyDataFrame = FALSE))
                 }
 
                 # Fall back to tool call trick for haiku, unknown models, or when code_execution is present
                 format_tool <- response_schema_to_tool_anthropic(output_schema)
                 format_prompt <- make_format_prompt(format_tool$name)
 
-                # Create a separate instance for JSON formatting
-                format_instance <- Anthropic$new(
-                    api_key = private$api_key,
-                    base_url = self$base_url,
-                    rate_limit = self$rate_limit,
-                    auto_save_history = FALSE
+                return(
+                    self$chat(
+                        format_prompt,
+                        cache_prompt = cache_prompt,
+                        model = model,
+                        system = system,
+                        cache_system = cache_system,
+                        max_tokens = max_tokens,
+                        temperature = 0, # Use deterministic sampling for formatting task
+                        tools = list(format_tool),
+                        tool_choice = list(type = "tool", name = format_tool$name),
+                        cache_tools = FALSE,
+                        thinking_budget = 0,
+                        output_schema = TRUE
+                    )
                 )
-                format_instance$set_history(self$get_history())
-
-                # Use deterministic sampling for formatting task
-                format_result <- format_instance$chat(
-                    prompt = format_prompt,
-                    cache_prompt = FALSE,
-                    model = model,
-                    system = system,
-                    cache_system = FALSE,
-                    max_tokens = max_tokens,
-                    temperature = 0,
-                    tools = list(format_tool),
-                    tool_choice = list(type = "tool", name = format_tool$name),
-                    cache_tools = FALSE,
-                    thinking_budget = 0,
-                    output_schema = TRUE,
-                    return_full_response = return_full_response
-                )
-                rm(format_instance)
-
-                return(format_result)
             }
 
-            # No output schema: return the response content or the full response
-            if (!isTRUE(return_full_response)) {
-                return(self$get_content_text(res))
-            }
-            return(res)
+            # No output schema: return the response text
+            return(self$get_content_text(res))
         }
     ),
     private = list(
@@ -1332,15 +1320,13 @@ Anthropic <- R6::R6Class( # nolint
 #' @keywords internal
 #' @noRd
 as_tool_anthropic <- function(tool_schema) {
-    if (!is.null(tool_schema$input_schema)) {
-        return(tool_schema)
-    }
-
     # Anthropic requires a non-empty input_schema even if it has no properties
+    tool_args <- tool_schema$args_schema %||% tool_schema$parameters %||% tool_schema$input_schema %||% 
+        list(type = "object")
     list3(
         name = tool_schema$name,
         description = tool_schema$description,
-        input_schema = if (is.null(tool_schema$args_schema)) list(type = "object") else tool_schema$args_schema
+        input_schema = tool_args
     )
 }
 
@@ -1381,7 +1367,7 @@ response_schema_to_tool_anthropic <- function(response_schema) {
     }
 
     tool_def <- list(
-        name = "json_formatting_tool",
+        name = response_schema$name,
         description = response_schema$description %||%
             "This tool is used to reformat the response to the user into a well-structured JSON object.",
         input_schema = schema_to_use

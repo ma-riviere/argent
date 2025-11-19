@@ -228,8 +228,7 @@ Send a chat completion request to the local LLM
   seed = NULL,
   tools = NULL,
   tool_choice = "auto",
-  output_schema = NULL,
-  return_full_response = FALSE
+  output_schema = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -274,13 +273,11 @@ include their names and structure in the context sent to the model.}
 \item{\code{tool_choice}}{Character or List. Tool choice mode (default: "auto")}
 
 \item{\code{output_schema}}{List. JSON schema for structured output (optional)}
-
-\item{\code{return_full_response}}{Logical. Return full API response (default: FALSE)}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-Character (or List if return_full_response = TRUE). Local LLM API's response object.
+Character. Text response from the model.
 }
 }
 \if{html}{\out{<hr>}}
@@ -289,7 +286,7 @@ Character (or List if return_full_response = TRUE). Local LLM API's response obj
 \subsection{Method \code{embeddings()}}{
 Generate embeddings for text input
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{LocalLLM$embeddings(input, model = NULL, return_full_response = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{LocalLLM$embeddings(input, model = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -298,13 +295,11 @@ Generate embeddings for text input
 \item{\code{input}}{Character vector. Text(s) to embed}
 
 \item{\code{model}}{Character. Model to use (default: current model)}
-
-\item{\code{return_full_response}}{Logical. Return full API response (default: FALSE)}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row per input text
+Numeric matrix. Embeddings with one row per input text
 }
 }
 \if{html}{\out{<hr>}}

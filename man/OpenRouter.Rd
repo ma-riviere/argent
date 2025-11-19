@@ -431,8 +431,7 @@ Send a chat completion request to OpenRouter
   thinking_budget = 0,
   verbosity = NULL,
   provider_options = NULL,
-  output_schema = NULL,
-  return_full_response = FALSE
+  output_schema = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -540,13 +539,11 @@ https://openrouter.ai/docs/features/provider-routing for details. Possible eleme
 }}
 
 \item{\code{output_schema}}{List. JSON schema for structured output (optional)}
-
-\item{\code{return_full_response}}{Logical. Return full API response (default: FALSE)}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-Character (or List if return_full_response = TRUE). OpenRouter API's response object.
+Character. OpenRouter API's response object.
 }
 }
 \if{html}{\out{<hr>}}

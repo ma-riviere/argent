@@ -213,8 +213,7 @@ Send a chat completion request to OpenAI
   output_schema = NULL,
   reasoning_effort = NULL,
   verbosity = "medium",
-  store = FALSE,
-  return_full_response = FALSE
+  store = FALSE
 )}\if{html}{\out{</div>}}
 }
 
@@ -276,13 +275,11 @@ frequency_penalty, presence_penalty, n). These are automatically omitted when us
 \item{\code{verbosity}}{Character. Verbosity level for output: "low", "medium", or "high" (default: "medium")}
 
 \item{\code{store}}{Logical. Whether or not to store the output of this chat completion request in OpenAI servers (default: FALSE)}
-
-\item{\code{return_full_response}}{Logical. Return full API response (default: FALSE)}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-Character (or List if return_full_response = TRUE). OpenAI Chat API's response object.
+Character. OpenAI Chat API's response object.
 }
 }
 \if{html}{\out{<hr>}}

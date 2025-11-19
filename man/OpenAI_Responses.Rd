@@ -633,8 +633,7 @@ See: \url{https://platform.openai.com/docs/api-reference/responses/create}
   output_schema = NULL,
   output_verbosity = "medium",
   reasoning_effort = NULL,
-  reasoning_summary = NULL,
-  return_full_response = FALSE
+  reasoning_summary = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -700,13 +699,11 @@ or "high" (optional, only for o1/o3/gpt-5 models)}
 
 \item{\code{reasoning_summary}}{Character. Reasoning summary mode: "auto", "concise", or "detailed"
 (optional, requires reasoning_effort to be set)}
-
-\item{\code{return_full_response}}{Logical. Return full API response (default: FALSE)}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-Character (or List if return_full_response = TRUE). OpenAI Responses API's response object.
+Character. OpenAI Responses API's response object.
 }
 }
 \if{html}{\out{<hr>}}

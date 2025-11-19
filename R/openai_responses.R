@@ -356,8 +356,7 @@ OpenAI_Responses <- R6::R6Class( # nolint
         #'   or "high" (optional, only for o1/o3/gpt-5 models)
         #' @param reasoning_summary Character. Reasoning summary mode: "auto", "concise", or "detailed"
         #'   (optional, requires reasoning_effort to be set)
-        #' @param return_full_response Logical. Return full API response (default: FALSE)
-        #' @return Character (or List if return_full_response = TRUE). OpenAI Responses API's response object.
+        #' @return Character. OpenAI Responses API's response object.
         chat = function(
             ...,
             model = self$default_model,
@@ -377,8 +376,7 @@ OpenAI_Responses <- R6::R6Class( # nolint
             output_schema = NULL, # If NULL, response_format is "text" (default). If a JSON schema is provided, response_format is "json_schema".
             output_verbosity = "medium", # low, medium (default), and high
             reasoning_effort = NULL, # minimal, low, medium, or high
-            reasoning_summary = NULL, # auto, concise, or detailed
-            return_full_response = FALSE
+            reasoning_summary = NULL # auto, concise, or detailed
         ) {
 
             # ---- Build input ----
@@ -643,24 +641,20 @@ OpenAI_Responses <- R6::R6Class( # nolint
                         output_schema = output_schema,
                         output_verbosity = output_verbosity,
                         reasoning_effort = reasoning_effort,
-                        reasoning_summary = reasoning_summary,
-                        return_full_response = return_full_response
+                        reasoning_summary = reasoning_summary
                     )
                 )
             }
 
-            # ---- Final response (i.e. no more tool calls) ----         
+            # ---- Final response (i.e. no more tool calls) ----
 
-            # Return based on preference
-            if (!isTRUE(return_full_response)) {
-                text_output <- self$get_content_text(res)
-                if (!is.null(output_schema) && is.list(output_schema)) {
-                    return(jsonlite::fromJSON(text_output, simplifyDataFrame = FALSE))
-                } else {
-                    return(text_output)
-                }
+            # Return processed output
+            text_output <- self$get_content_text(res)
+            if (!is.null(output_schema) && is.list(output_schema)) {
+                return(jsonlite::fromJSON(text_output, simplifyDataFrame = FALSE))
+            } else {
+                return(text_output)
             }
-            return(res)
         }
     ),
 

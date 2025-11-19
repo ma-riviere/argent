@@ -15,10 +15,9 @@ questioning](https://img.shields.io/badge/lifecycle-questioning-blue.svg)](https
 [![R-CMD-check](https://github.com/ma-riviere/argent/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ma-riviere/argent/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-**argent** provides a unified R6-based interface for interacting with
-Large Language Models (LLMs) from multiple providers, specialized for
-creating AI agents with tool calling, multimodal inputs, and structured
-outputs.
+**argent** provides a unified interface for interacting with Large
+Language Models (LLMs) from multiple providers, specialized for creating
+AI agents with tool calling, multimodal inputs, and structured outputs.
 
 > [!IMPORTANT]
 >
@@ -161,15 +160,15 @@ gemini$reset_history()
 
 ### Tool Calling + Structured Output
 
-First, let’s define a mock function for the LLM:
+First, let’s define a mock function for the LLM, that returns some
+information about the user for a given name:
 
 ``` r
 get_user_info <- function(user_name) {
     #' @description Provides information about the user, like their favorite programming language
     #' @param user_name:string* The name of the user
-    
-    switch(
-        user_name,
+
+    switch(user_name,
         "Marc" = list(favorite_language = "R", favorite_framework = "Shiny"),
         "Alice" = list(favorite_language = "Python", favorite_framework = "Flask"),
         "Bob" = list(favorite_language = "JavaScript", favorite_framework = "React"),
@@ -278,35 +277,35 @@ print(gemini, show_tools = TRUE)
 ```
 
 ``` default
-── [ <Google> turns: 4 | Current context: 496 | Cumulated tokens: 786 ] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── [ <Google> turns: 6 | Current context: 697 | Cumulated tokens: 1570 ] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 
-── user [216 / 290] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── user [216 / 327] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 The user's name is Marc. Give me the information about the user.
 
 ── System ──
 
-You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-18
+You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-19
 
 ── Tool Definitions ──
 
 • get_user_info(user_name): Provides information about the user, like their favorite programming language
 
-── assistant [290 / 290] ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── assistant [327 / 327] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 ── Thinking ──
 
-**Getting the Goods on Marc**
+**Thinking about Retrieving Information on "Marc"**
 
-Okay, so I see a user asking for information about "Marc". Naturally, my mind jumps to the `get_user_info` tool - that's *exactly* what this thing is designed for! Seems straightforward enough. The tool needs a `user_name` argument, which, thankfully, the user has explicitly provided. So, my action item is clear: I need to call the `get_user_info` tool and set `user_name` to 'Marc'. Simple as that. Let's get this done.
+Okay, so the user wants info on a "Marc".  My initial thought is, "Perfect! The `get_user_info` tool should be exactly what I need here."  It's designed to provide details about users, including, apparently, their preferred programming language, which is often a helpful piece of context.  The prompt is clear: the user is asking specifically about someone named "Marc."  The `user_name` argument is a requirement, and it's crystal clear that I need to set that value to "Marc" to address the query.  So, I should call the `get_user_info` tool with `user_name='Marc'` and see what I can find. That should do the trick.
 
 
 ── Tool Calls ──
 
 • get_user_info(user_name = "Marc")
 
-── tool [420 / 786] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── tool [467 / 873] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 • Result from get_user_info:
 
@@ -318,17 +317,44 @@ result:
   favorite_framework: Shiny
 
 
-── assistant [496 / 786] ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── assistant [546 / 873] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 ── Thinking ──
 
-**Delivering on the Marc Inquiry**
+**Understanding Marc's Preferences**
 
-Okay, the user needed some quick intel on Marc. Time to leverage the tools. Let's see...I fired up the `get_user_info` tool and plugged in "Marc" as the `user_name`. Alright, the tool spat back his favorite programming language as "R" - interesting, I know a few folks that are passionate about that. And his favorite framework is "Shiny". Now I have the goods! I can go ahead and package this up for the user. Nothing too groundbreaking, but hopefully, it's exactly what they were looking for.
+Okay, the user wants to know about Marc. My first step is to use the `get_user_info` tool, specifying "Marc" as the target. Let's see what comes back. Ah, here we are! The tool reports that Marc's favorite language is R and his preferred framework is Shiny. This is useful information. I can now synthesize this data and present it back to the user in a clear and concise way. They'll appreciate knowing his technical leanings.
+
 
 
 Marc's favorite programming language is R and his favorite framework is Shiny.
+
+── user [552 / 1570] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+Please format your previous response according to the requested schema.
+
+── System ──
+
+You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-19
+
+── assistant [697 / 1570] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+{ "user_name": "Marc", "favorite_language": "R", "favorite_framework": "Shiny" }
 ```
+
+> [!NOTE]
+>
+> You may have noticed an extra user input at the end of the
+> conversation history. This is because Google does not support
+> structured outputs when tools are used, so, behind the scenes,
+> `argent` makes a final call to the model to format the previous
+> response according to the requested schema, without any tools.
+>
+> For other providers that do not support structured outputs at all,
+> `argent` will turn the output schema into a tool and make a final call
+> to the model with just that tool, intercept the tool call and return
+> it as the result. This ‘trick’ allows to support structured outputs on
+> any model supporting tool calling.
 
 ### Server-side Tools
 

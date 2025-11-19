@@ -407,8 +407,7 @@ OpenRouter <- R6::R6Class( # nolint
         #'   - sort: Character. Sort providers by "price" or "throughput"
         #'   - max_price: List. Maximum pricing (e.g., list(prompt = 0.001, completion = 0.002))
         #' @param output_schema List. JSON schema for structured output (optional)
-        #' @param return_full_response Logical. Return full API response (default: FALSE)
-        #' @return Character (or List if return_full_response = TRUE). OpenRouter API's response object.
+        #' @return Character. OpenRouter API's response object.
         chat = function(
             ...,
             system = .default_system_prompt,
@@ -435,8 +434,7 @@ OpenRouter <- R6::R6Class( # nolint
             thinking_budget = 0,
             verbosity = NULL,
             provider_options = NULL,
-            output_schema = NULL,
-            return_full_response = FALSE
+            output_schema = NULL
         ) {
 
             # Capture prompt inputs as quosures
@@ -647,15 +645,37 @@ OpenRouter <- R6::R6Class( # nolint
 
                 # Final round of forced JSON output: return the tool call as is without executing it
                 if (isTRUE(output_schema)) {
-                    if (!isTRUE(return_full_response)) {
-                        return(
-                            private$extract_root(res) |>
-                                private$extract_tool_calls() |>
-                                purrr::pluck(1) |>
-                                private$extract_tool_call_args()
+                    tool_result <- private$extract_root(res) |>
+                        private$extract_tool_calls() |>
+                        purrr::pluck(1) |>
+                        private$extract_tool_call_args()
+
+                    # Hack: Convert tool_use to text for both histories, 
+                    #  as if it was the return of a native structured output of the API.
+                    json_text <- jsonlite::toJSON(tool_result, auto_unbox = TRUE, pretty = TRUE)
+                    browser()
+                    purrr::pluck(self$chat_history, length(self$chat_history), "content") <- list(
+                        private$text_input(json_text)
+                    )
+                    purrr::pluck(self$session_history, length(self$session_history), "data", "choices") <- list(
+                        list(
+                            logprobs = list(),
+                            finish_reason = "stop",
+                            native_finish_reason = "stop",
+                            index = 0,
+                            message = list(
+                                role = "assistant",
+                                content = json_text,
+                                refusal = list(),
+                                reasoning = list()
+                            )
                         )
-                    }
-                    return(res)
+                    )
+
+                    # Trigger auto-save to persist changes
+                    private$auto_save_history()
+
+                    return(tool_result)
                 }
 
                 # Execute tools and add results to history
@@ -688,8 +708,7 @@ OpenRouter <- R6::R6Class( # nolint
                         thinking_budget = thinking_budget,
                         verbosity = verbosity,
                         provider_options = provider_options,
-                        output_schema = output_schema,
-                        return_full_response = return_full_response
+                        output_schema = output_schema
                     )
                 )
 
@@ -703,45 +722,40 @@ OpenRouter <- R6::R6Class( # nolint
                 format_tool <- response_schema_to_tool_openrouter(output_schema)
                 format_prompt <- make_format_prompt(format_tool$name)
 
-                # Create a separate instance for JSON formatting
-                format_instance <- OpenRouter$new(
-                    api_key = private$api_key,
-                    base_url = self$base_url,
-                    rate_limit = self$rate_limit,
-                    auto_save_history = FALSE
+                return(
+                    self$chat(
+                        format_prompt,
+                        system = system,
+                        model = model,
+                        max_tokens = max_tokens,
+                        temperature = 0,
+                        top_p = top_p,
+                        top_k = top_k,
+                        frequency_penalty = frequency_penalty,
+                        presence_penalty = presence_penalty,
+                        repetition_penalty = repetition_penalty,
+                        min_p = min_p,
+                        top_a = top_a,
+                        seed = seed,
+                        stop_sequences = stop_sequences,
+                        logit_bias = logit_bias,
+                        logprobs = logprobs,
+                        top_logprobs = top_logprobs,
+                        tools = list(format_tool),
+                        tool_choice = "auto",
+                        parallel_tool_calls = parallel_tool_calls,
+                        cache_prompt = FALSE,
+                        cache_system = FALSE,
+                        thinking_budget = thinking_budget,
+                        verbosity = verbosity,
+                        provider_options = provider_options,
+                        output_schema = TRUE
+                    )
                 )
-                format_instance$set_history(self$get_history())
-
-                # Use same provider preferences for structured output call
-                # Use deterministic sampling for formatting task
-                format_result <- format_instance$chat(
-                    prompt = format_prompt,
-                    model = model,
-                    system = system,
-                    max_tokens = max_tokens,
-                    temperature = 0,
-                    seed = seed,
-                    logit_bias = logit_bias,
-                    tools = list(format_tool),
-                    tool_choice = "auto", # We can't use required/function because not all models/providers support it
-                    parallel_tool_calls = parallel_tool_calls,
-                    cache_prompt = FALSE,
-                    cache_system = FALSE,
-                    thinking_budget = thinking_budget,
-                    provider_options = provider_options,
-                    output_schema = TRUE,
-                    return_full_response = return_full_response
-                )
-                rm(format_instance)
-
-                return(format_result)
             }
 
-            # No structured output: return the response content or the full response
-            if (!isTRUE(return_full_response)) {
-                return(self$get_content_text(res))
-            }
-            return(res)
+            # No structured output: return the response content
+            return(self$get_content_text(res))
         }
     ),
     private = list(
@@ -1171,15 +1185,13 @@ OpenRouter <- R6::R6Class( # nolint
 #' @keywords internal
 #' @noRd
 as_tool_openrouter <- function(tool_schema) {
-    if (!is.null(tool_schema$parameters) && !is.null(tool_schema$type)) {
-        return(tool_schema)
-    }
-
     # OpenRouter requires a non-empty parameters even if it has no properties
+    tool_args <- tool_schema$args_schema %||% tool_schema$parameters %||% tool_schema$input_schema %||% 
+        list(type = "object")
     list3(
         name = tool_schema$name,
         description = tool_schema$description,
-        parameters = if (is.null(tool_schema$args_schema)) list(type = "object") else tool_schema$args_schema
+        parameters = tool_args
     )
 }
 

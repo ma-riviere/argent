@@ -796,8 +796,7 @@ Google <- R6::R6Class( # nolint
         #'   or 0-24575/32768 (fixed budget). Default: 0.
         #' @param include_thoughts Logical. Whether to include thought parts in the response (default: FALSE).
         #'   If TRUE but thinking_budget is 0, a warning is issued and include_thoughts is set to FALSE.
-        #' @param return_full_response Logical. Return full API response (default: FALSE)
-        #' @return Character (or List if return_full_response = TRUE). Google API's response object.
+        #' @return Character. Text response from the model.
         chat = function(
             ...,
             model = self$default_model,
@@ -811,8 +810,7 @@ Google <- R6::R6Class( # nolint
             tool_choice = list(mode = "AUTO"),
             output_schema = NULL,
             thinking_budget = 0,
-            include_thoughts = FALSE,
-            return_full_response = FALSE
+            include_thoughts = FALSE
         ) {
 
             # ---- Validate parameters ----
@@ -1110,8 +1108,7 @@ Google <- R6::R6Class( # nolint
                         tool_choice = tool_choice,
                         output_schema = output_schema,
                         thinking_budget = thinking_budget,
-                        include_thoughts = include_thoughts,
-                        return_full_response = return_full_response
+                        include_thoughts = include_thoughts
                     )
                 )
             }
@@ -1134,35 +1131,27 @@ Google <- R6::R6Class( # nolint
                     format_instance$set_history(self$get_history())
 
                     # Make final call with native structured output (no tools)
-                    format_result <- format_instance$chat(
-                        prompt = "Please format your previous response according to the requested schema.",
-                        model = "gemini-2.5-flash", # We don't need a powerful model for this
-                        system = .default_system_prompt,
-                        max_tokens = 8000,
-                        temperature = 0,
-                        tools = NULL,
-                        output_schema = output_schema,
-                        thinking_budget = 0,
-                        return_full_response = return_full_response
+                    return(
+                        self$chat(
+                            "Please format your previous response according to the requested schema.",
+                            model = model,
+                            system = system,
+                            max_tokens = max_tokens,
+                            temperature = 0,
+                            tools = NULL,
+                            output_schema = output_schema,
+                            thinking_budget = thinking_budget
+                        )
                     )
-                    rm(format_instance)
-
-                    return(format_result)
                 }
 
                 # No tools were present, native structured output was already applied
-                if (!isTRUE(return_full_response)) {
-                    text_output <- self$get_content_text(res)
-                    return(jsonlite::fromJSON(text_output, simplifyDataFrame = FALSE))
-                }
-                return(res)
+                text_output <- self$get_content_text(res)
+                return(jsonlite::fromJSON(text_output, simplifyDataFrame = FALSE))
             }
 
-            # No output schema: return the response content or the full response
-            if (!isTRUE(return_full_response)) {
-                return(self$get_content_text(res))
-            }
-            return(res)
+            # No output schema: return the response text
+            return(self$get_content_text(res))
         }
     ),
     private = list(
@@ -1262,9 +1251,9 @@ Google <- R6::R6Class( # nolint
             role <- private$extract_role(root)
 
             if (role %in% c("model")) {
-                tool_calls <- purrr::pluck(root, "parts") |> 
-                    purrr::keep(\(part) !is.null(part$functionCall)) |> 
-                    purrr::map("functionCall") # We lose the associated thoughtSignature
+                tool_calls <- purrr::pluck(root, "parts") |>
+                    purrr::keep(\(part) !is.null(part$functionCall)) |>
+                    purrr::map("functionCall") # Note: thoughtSignature preserved in chat_history
                 
                 if (purrr::is_empty(tool_calls)) {
                     return(NULL)
@@ -1740,14 +1729,11 @@ Google <- R6::R6Class( # nolint
 #' @keywords internal
 #' @noRd
 as_tool_google <- function(tool_schema) {
-    if (!is.null(tool_schema$parameters)) {
-        return(tool_schema)
-    }
-
+    tool_args <- tool_schema$args_schema %||% tool_schema$parameters %||% tool_schema$input_schema %||% NULL
     list3(
         name = tool_schema$name,
         description = tool_schema$description,
-        parameters = tool_schema$args_schema
+        parameters = tool_args
     )
 }
 

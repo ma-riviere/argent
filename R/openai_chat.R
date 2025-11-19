@@ -136,8 +136,7 @@ OpenAI_Chat <- R6::R6Class( # nolint
         #'   (optional). Only applicable to reasoning models (o1, o3, o4, gpt-5). Default: NULL (uses model default)
         #' @param verbosity Character. Verbosity level for output: "low", "medium", or "high" (default: "medium")
         #' @param store Logical. Whether or not to store the output of this chat completion request in OpenAI servers (default: FALSE)
-        #' @param return_full_response Logical. Return full API response (default: FALSE)
-        #' @return Character (or List if return_full_response = TRUE). OpenAI Chat API's response object.
+        #' @return Character. OpenAI Chat API's response object.
         chat = function(
             ...,
             system = .default_system_prompt,
@@ -156,8 +155,7 @@ OpenAI_Chat <- R6::R6Class( # nolint
             output_schema = NULL,
             reasoning_effort = NULL,
             verbosity = "medium",
-            store = FALSE,
-            return_full_response = FALSE
+            store = FALSE
         ) {
 
             # ---- Build input ----
@@ -372,26 +370,21 @@ OpenAI_Chat <- R6::R6Class( # nolint
                         output_schema = output_schema,
                         reasoning_effort = reasoning_effort,
                         verbosity = verbosity,
-                        store = store,
-                        return_full_response = return_full_response
+                        store = store
                     )
                 )
             }
 
             # ---- Final response ----
 
-            if (!isTRUE(return_full_response)) {
-                res_text <- self$get_content_text(res)
+            res_text <- self$get_content_text(res)
 
-                if (!is.null(output_schema) && is.list(output_schema)) {
-                    # Quick fix for OpenAI-4.1-mini weird JSON duplicated responses
-                    res_text <- clean_malformed_json(res_text)
-                    return(jsonlite::fromJSON(res_text, simplifyDataFrame = FALSE))
-                } else {
-                    return(res_text)
-                }
+            if (!is.null(output_schema) && is.list(output_schema)) {
+                # Quick fix for OpenAI-4.1-mini weird JSON duplicated responses
+                res_text <- clean_malformed_json(res_text)
+                return(jsonlite::fromJSON(res_text, simplifyDataFrame = FALSE))
             } else {
-                return(res)
+                return(res_text)
             }
         }
     ),

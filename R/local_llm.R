@@ -162,8 +162,7 @@ LocalLLM <- R6::R6Class( # nolint
         #' @param tools List. Function definitions for tool calling (optional)
         #' @param tool_choice Character or List. Tool choice mode (default: "auto")
         #' @param output_schema List. JSON schema for structured output (optional)
-        #' @param return_full_response Logical. Return full API response (default: FALSE)
-        #' @return Character (or List if return_full_response = TRUE). Local LLM API's response object.
+        #' @return Character. Text response from the model.
         chat = function(
             ...,
             system = .default_system_prompt,
@@ -182,8 +181,7 @@ LocalLLM <- R6::R6Class( # nolint
             seed = NULL,
             tools = NULL,
             tool_choice = "auto",
-            output_schema = NULL,
-            return_full_response = FALSE
+            output_schema = NULL
         ) {
 
             # ---- Validate parameters ----
@@ -290,15 +288,33 @@ LocalLLM <- R6::R6Class( # nolint
 
                 # Final round of forced JSON output: return the tool call as is without executing it
                 if (isTRUE(output_schema)) {
-                    if (!isTRUE(return_full_response)) {
-                        return(
-                            private$extract_root(res) |>
-                                private$extract_tool_calls() |>
-                                purrr::pluck(1) |>
-                                private$extract_tool_call_args()
+                    tool_result <- private$extract_root(res) |>
+                        private$extract_tool_calls() |>
+                        purrr::pluck(1) |>
+                        private$extract_tool_call_args()
+
+                    # Hack: Convert tool_use to text for both histories, 
+                    #  as if it was the return of a native structured output of the API.
+                    json_text <- jsonlite::toJSON(tool_result, auto_unbox = TRUE, pretty = TRUE)
+
+                    purrr::pluck(self$chat_history, length(self$chat_history), "content") <- list(
+                        private$text_input(json_text)
+                    )
+                    purrr::pluck(self$session_history, length(self$session_history), "data", "choices") <- list(
+                        list(
+                            finish_reason = "stop",
+                            index = 0,
+                            message = list(
+                                role = "assistant",
+                                content = json_text
+                            )
                         )
-                    }
-                    return(res)
+                    )
+
+                    # Trigger auto-save to persist changes
+                    private$auto_save_history()
+
+                    return(tool_result)
                 }
 
                 # Execute tools and add results to history
@@ -323,8 +339,7 @@ LocalLLM <- R6::R6Class( # nolint
                         seed = seed,
                         tools = tools,
                         tool_choice = tool_choice,
-                        output_schema = output_schema,
-                        return_full_response = return_full_response
+                        output_schema = output_schema
                     )
                 )
             }
@@ -338,11 +353,8 @@ LocalLLM <- R6::R6Class( # nolint
                     "i" = "Check if reasoning_content contains the tool call output."
                 ))
                 
-                # Return empty result or the response as-is
-                if (!isTRUE(return_full_response)) {
-                    return(list())
-                }
-                return(res)
+                # Return empty result
+                return(list())
             }
 
             # ---- Final response ----
@@ -360,37 +372,32 @@ LocalLLM <- R6::R6Class( # nolint
                 format_tool <- response_schema_to_tool_local(output_schema)
                 format_prompt <- make_format_prompt(format_tool$name)
 
-                # Create a separate instance for JSON formatting
-                format_instance <- LocalLLM$new(
-                    base_url = self$base_url,
-                    api_key = private$api_key,
-                    model = model,
-                    auto_save_history = FALSE
+                return(
+                    self$chat(
+                        format_prompt,
+                        system = system,
+                        model = model,
+                        max_tokens = max_tokens,
+                        temperature = 0,
+                        top_p = top_p,
+                        top_k = top_k,
+                        min_p = min_p,
+                        repeat_penalty = repeat_penalty,
+                        presence_penalty = presence_penalty,
+                        frequency_penalty = frequency_penalty,
+                        mirostat = mirostat,
+                        mirostat_tau = mirostat_tau,
+                        mirostat_eta = mirostat_eta,
+                        seed = seed,
+                        tools = list(format_tool),
+                        tool_choice = "auto",
+                        output_schema = TRUE
+                    )
                 )
-                format_instance$set_history(self$get_history())
-
-                # Use deterministic sampling for formatting task
-                format_result <- format_instance$chat(
-                    prompt = format_prompt,
-                    model = model,
-                    system = system,
-                    max_tokens = max_tokens,
-                    temperature = 0,
-                    tools = list(format_tool),
-                    tool_choice = "auto",
-                    output_schema = TRUE,
-                    return_full_response = return_full_response
-                )
-                rm(format_instance)
-
-                return(format_result)
             }
 
-            # No output schema: return the response content or the full response
-            if (!isTRUE(return_full_response)) {
-                return(self$get_content_text(res))
-            }
-            return(res)
+            # No output schema: return the response text
+            return(self$get_content_text(res))
         },
 
         # ------🔺 EMBEDDINGS --------------------------------------------------
@@ -399,12 +406,10 @@ LocalLLM <- R6::R6Class( # nolint
         #' Generate embeddings for text input
         #' @param input Character vector. Text(s) to embed
         #' @param model Character. Model to use (default: current model)
-        #' @param return_full_response Logical. Return full API response (default: FALSE)
-        #' @return Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row per input text
+        #' @return Numeric matrix. Embeddings with one row per input text
         embeddings = function(
             input,
-            model = NULL,
-            return_full_response = FALSE
+            model = NULL
         ) {
             # Use default_model if model is not specified
             if (is.null(model)) {
@@ -433,11 +438,6 @@ LocalLLM <- R6::R6Class( # nolint
             # Handle API errors
             if (purrr::is_empty(res$data)) {
                 cli::cli_abort("[{self$provider_name}] Error: API request failed or returned no data")
-            }
-
-            # Return full response if requested
-            if (isTRUE(return_full_response)) {
-                return(res)
             }
 
             # Extract embeddings and return as matrix
@@ -820,14 +820,11 @@ LocalLLM <- R6::R6Class( # nolint
 #' @keywords internal
 #' @noRd
 as_tool_local <- function(tool_schema) {
-    if (!is.null(tool_schema$parameters) && !is.null(tool_schema$type)) {
-        return(tool_schema)
-    }
-
+    tool_args <- tool_schema$args_schema %||% tool_schema$parameters %||% tool_schema$input_schema %||% NULL
     list3(
         name = tool_schema$name,
         description = tool_schema$description,
-        parameters = tool_schema$args_schema
+        parameters = tool_args
     )
 }
 

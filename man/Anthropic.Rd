@@ -422,8 +422,7 @@ Send a chat completion request to Anthropic
   tool_choice = list(type = "auto"),
   cache_tools = FALSE,
   output_schema = NULL,
-  thinking_budget = 0,
-  return_full_response = FALSE
+  thinking_budget = 0
 )}\if{html}{\out{</div>}}
 }
 
@@ -471,13 +470,11 @@ list(type = "tool", name = "tool_name"), or NULL for none (default: list(type = 
 
 \item{\code{thinking_budget}}{Integer. Thinking budget in tokens: 0 (disabled), or 1024-max_tokens
 (default: 0). Minimum is 1024 tokens.}
-
-\item{\code{return_full_response}}{Logical. Return full API response (default: FALSE)}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-Character (or List if return_full_response = TRUE). Anthropic API's response object.
+Character. Text response from the model.
 }
 }
 \if{html}{\out{<hr>}}

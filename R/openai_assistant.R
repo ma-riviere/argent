@@ -62,15 +62,7 @@
 #'   model = "gpt-4o",
 #'   instructions = "Research assistant with web access",
 #'   tools = list(
-#'     list(type = "file_search", store_ids = list(store_id)),
-#'     list(
-#'       name = "web_search",
-#'       description = "Search the web",
-#'       parameters = list(
-#'         type = "object",
-#'         properties = list(query = list(type = "string", description = "The search query"))
-#'       )
-#'     )
+#'     list(type = "file_search", store_ids = list(store_id))
 #'   )
 #' )
 #'
@@ -112,8 +104,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
         #' @param api_key Character. API key (default: from OPENAI_API_KEY env var)
         #' @param provider_name Character. Provider name (default: "OpenAI Assistant")
         #' @param rate_limit Numeric. Rate limit in requests per second (default: 60/60)
-        #' @param server_tools Character vector. Server-side tools available (default: c("file_search",
-        #'   "code_interpreter"))
+        #' @param server_tools Character vector. Server-side tools available (default: c("file_search", "code_interpreter"))
         #' @param default_model Character. Default model to use for chat requests (default: "gpt-4o")
         #' @param org Character. Organization ID (default: from OPENAI_ORG env var)
         #' @param auto_save_history Logical. Enable/disable automatic history sync (default: TRUE)
@@ -272,7 +263,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
                 extracted_file_search_config <- NULL
 
                 assistant_params$tools <- purrr::map(tools, \(tool) {
-                    if (is_server_tool(tool, c("code_interpreter", "code_execution"))) {
+                    if (is_server_tool(tool, "code_interpreter")) {
                         if (is.list(tool) && !is.null(tool$file_ids)) {
                             extracted_code_exec_file_ids <<- c(
                                 extracted_code_exec_file_ids,
@@ -300,7 +291,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
                     } else if (is.character(tool)) {
                         cli::cli_abort(c(
                             "[{self$provider_name}] Invalid server tool: {tool}.",
-                            "i" = "Valid tools: {.field {list('file_search', 'code_interpreter', 'code_execution')}}."
+                            "i" = "Valid tools: {.field {self$server_tools}}."
                         ))
                     }
 
@@ -523,16 +514,12 @@ OpenAI_Assistant <- R6::R6Class( # nolint
         #'   When assistant uses server tools, forces a second call with only the schema to ensure structured output.
         #' @param remove_citations Logical. Remove file_search citation markers (default: TRUE).
         #'   When TRUE, removes citation markers like 【35†source】 and \[3:0†source\] from responses.
-        #'   Only applies when return_full_response = FALSE.
-        #' @param return_full_response Logical. Return full message object (default: FALSE).
-        #'   If FALSE, returns only the text content via cat(). If TRUE, returns complete message object.
-        #' @return Character (or List if return_full_response = TRUE). OpenAI Assistant API's response object.
+        #' @return Character. OpenAI Assistant API's response object.
         chat = function(
             ...,
             in_new_thread = FALSE,
             output_schema = NULL,
-            remove_citations = TRUE,
-            return_full_response = FALSE
+            remove_citations = TRUE
         ) {
 
             # Ensure assistant is loaded
@@ -656,7 +643,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
 
                 if (run_status == "completed") {
 
-                    # Force a JSON response when schema provided AND server tools exist (two-call approach)
+                    # Force a JSON response when schema provided AND server tools exist
                     if (is.list(output_schema) && private$has_server_tools()) {
 
                         private$append_to_session_history(
@@ -665,17 +652,27 @@ OpenAI_Assistant <- R6::R6Class( # nolint
                             tokens = private$extract_total_token_count(run)
                         )
 
-                        run <- private$create_and_run_thread(
-                            query = "Use the provided JSON schema to format the response to the last user query.",
+                        # Add message to existing thread (preserving conversation history)
+                        formatting_msg <- private$add_msg_to_thread(
+                            query = "Use the provided JSON schema to format the response to the last user query."
+                        )
+
+                        # Save the formatting query to history
+                        private$append_to_session_history(
+                            type = "query",
+                            data = formatting_msg,
+                            tokens = 0
+                        )
+
+                        # Run the existing thread with JSON schema and no tools
+                        run <- private$run_thread(
                             tools = list(),
-                            tool_resources = NULL,
                             response_format = list(
                                 type = "json_schema",
                                 json_schema = as_schema_openai(output_schema)
                             )
                         )
 
-                        self$thread <- private$read_thread(run$thread_id)
                         run_id <- run$id
                         run_status <- run$status
 
@@ -684,31 +681,26 @@ OpenAI_Assistant <- R6::R6Class( # nolint
                     } else {
                         assistant_msg <- private$get_thread_last_msg()
 
-                        if (use_direct_schema || purrr::is_empty(output_schema)) {
-                            private$append_to_session_history(
-                                type = "response",
-                                data = assistant_msg,
-                                tokens = private$extract_total_token_count(run)
-                            )
+                        private$append_to_session_history(
+                            type = "response",
+                            data = assistant_msg,
+                            tokens = private$extract_total_token_count(run)
+                        )
+
+                        res_text <- self$get_content_text(assistant_msg)
+
+                        # Remove citations if requested
+                        if (remove_citations) {
+                            res_text <- gsub("\u3010[0-9]+\u2020source\u3011", "", res_text)
+                            res_text <- gsub("\\[[0-9]+:[0-9]+\u2020source\\]", "", res_text)
                         }
 
-                        if (!isTRUE(return_full_response)) {
-                            res_text <- self$get_content_text(assistant_msg)
-
-                            # Remove citations if requested
-                            if (remove_citations) {
-                                res_text <- gsub("\u3010[0-9]+\u2020source\u3011", "", res_text)
-                                res_text <- gsub("\\[[0-9]+:[0-9]+\u2020source\\]", "", res_text)
-                            }
-
-                            # Return parsed JSON if schema was used (either direct or two-call)
-                            if (use_direct_schema || isTRUE(output_schema)) {
-                                return(jsonlite::fromJSON(res_text, simplifyDataFrame = FALSE))
-                            } else {
-                                return(res_text)
-                            }
+                        # Return parsed JSON if schema was used (either direct or two-call)
+                        if (use_direct_schema || isTRUE(output_schema)) {
+                            return(jsonlite::fromJSON(res_text, simplifyDataFrame = FALSE))
+                        } else {
+                            return(res_text)
                         }
-                        return(assistant_msg)
                     }
                 }
             }
@@ -1034,9 +1026,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
                 return(FALSE)
             }
 
-            purrr::some(self$assistant$tools, \(tool) {
-                is_server_tool(tool, c("file_search", "code_interpreter"))
-            })
+            purrr::some(self$assistant$tools, \(tool) is_server_tool(tool, c("file_search", "code_interpreter")))
         },
 
         # ------🔺 HISTORY -----------------------------------------------------
@@ -1183,7 +1173,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
                         type = "client",
                         parameters = param_names
                     ))
-                } else if (is_server_tool(tool, c("file_search", "code_interpreter", "code_execution"))) {
+                } else if (is_server_tool(tool, self$server_tools)) {
                     tool_name <- get_server_tool_name(tool)
                     return(list(
                         name = tool_name,

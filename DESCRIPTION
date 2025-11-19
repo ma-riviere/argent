@@ -9,15 +9,12 @@ Authors@R:
         role = c("aut", "cre"),
         comment = c(ORCID = "0000-0002-5108-3382")
     )
-Description: Provides a unified R6-based interface for creating AI agents that can interact with multiple Large Language 
-    Model (LLM) providers including Google Gemini, Anthropic Claude, OpenAI GPT, OpenRouter, and 
-    local LLM servers. Supports chat completions, function calling, structured outputs, conversation 
-    history, and advanced features like prompt caching and vector stores.
+Description: Provides a unified interface for interacting with Large Language Models (LLMs) from multiple providers, specialized for creating AI agents with tool calling, multimodal inputs, and structured outputs.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-URL: https://ma-riviere.github.io/argent, https://github.com/ma-riviere/argent, https://ma-riviere.github.io/argent/
+URL: https://ma-riviere.github.io/argent, https://github.com/ma-riviere/argent
 Depends:
     R (>= 4.2.0)
 Imports:

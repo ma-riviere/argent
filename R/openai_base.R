@@ -932,7 +932,7 @@ response_schema_to_tool_openai <- function(response_schema) {
 
     tool_def <- list(
         type = "function",
-        name = "json_formatting_tool",
+        name = response_schema$name,
         description = response_schema$description %||%
             "This tool is used to reformat the response to the user into a well-structured JSON object.",
         parameters = schema_to_use
