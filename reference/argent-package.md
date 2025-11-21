@@ -9,6 +9,10 @@ that can interact with multiple Large Language Model (LLM) providers
 through R6 classes. It supports Google, Anthropic, OpenAI, OpenRouter,
 and local LLM servers (e.g., llama.cpp, Ollama).
 
+argent is specialized for building AI agents with conversation history
+management, local function and MCP tools, server-side tools, multimodal
+inputs, and universal structured outputs.
+
 ## Main Classes
 
 The package provides the following R6 classes:
@@ -16,22 +20,25 @@ The package provides the following R6 classes:
 - [`Google`](https://ma-riviere.github.io/argent/reference/Google.md):
 
   Client for Google's API with support for chat completions, function
-  calling, and thinking mode
+  calling, thinking mode, code execution, and web search
 
 - [`Anthropic`](https://ma-riviere.github.io/argent/reference/Anthropic.md):
 
-  Client for Anthropic's API with prompt caching and tool calling
-  capabilities
+  Client for Anthropic's API with prompt caching, tool calling, and
+  extended thinking capabilities
 
-- [`OpenAI`](https://ma-riviere.github.io/argent/reference/OpenAI.md):
+- [`OpenAI_Chat`](https://ma-riviere.github.io/argent/reference/OpenAI_Chat.md):
 
-  Client for OpenAI's API with comprehensive file management, vector
-  stores, and chat completions
+  Client for OpenAI's Chat Completions API
 
-- `OpenAIAssistant`:
+- [`OpenAI_Responses`](https://ma-riviere.github.io/argent/reference/OpenAI_Responses.md):
 
-  Client for OpenAI's Assistants API with thread management and
-  persistent conversations
+  Client for OpenAI's Responses API with comprehensive file management,
+  vector stores, code execution, and web search
+
+- [`OpenAI_Assistant`](https://ma-riviere.github.io/argent/reference/OpenAI_Assistant.md):
+
+  Client for OpenAI's Assistants API (Deprecated)
 
 - [`OpenRouter`](https://ma-riviere.github.io/argent/reference/OpenRouter.md):
 
@@ -46,17 +53,54 @@ The package provides the following R6 classes:
 
 - Unified interface across multiple LLM providers
 
-- Support for function/tool calling
+- Function and MCP tool calling with parallel execution support
 
-- Structured JSON outputs
+- Universal structured JSON outputs (works with any model supporting
+  tool calling)
 
-- Conversation history management
+- Multimodal inputs (text, images, PDFs, data files, URLs, R objects)
 
-- Prompt caching (Anthropic)
+- Server-side tools (code execution, web search, file search, RAG)
 
-- File and vector store management (OpenAI)
+- Conversation history management with automatic persistence
 
-- Local LLM support
+- Prompt caching (Anthropic, OpenAI)
+
+- File upload and vector store management (Google, Anthropic, OpenAI)
+
+- Reasoning and thinking modes (Google, Anthropic, OpenAI)
+
+## Parallel Tool Calls
+
+Tool calls can be executed in parallel using
+[`mirai::daemons()`](https://mirai.r-lib.org/reference/daemons.html).
+This can significantly speed up responses when multiple tools are called
+simultaneously.
+
+To enable parallel execution:
+
+- Set up mirai daemons before making requests: `mirai::daemons(6)`
+
+- argent will automatically parallelize multiple tool calls in the same
+  response
+
+- Without daemons, tool calls execute sequentially (default fallback
+  behavior)
+
+To ensure parallel execution is always used, add
+[`mirai::require_daemons()`](https://mirai.r-lib.org/reference/require_daemons.html)
+before making requests. To disable parallel processing, call
+`mirai::daemons(0)`.
+
+Performance considerations:
+
+- Parallelization overhead can outweigh benefits for very fast tool
+  calls
+
+- Most beneficial when tools take 100+ microseconds per call
+
+- As a rule of thumb, use at most one fewer daemon than available CPU
+  cores
 
 ## Getting Started
 
@@ -100,8 +144,8 @@ response <- anthropic$chat(
   model = "claude-sonnet-4-5-20250929"
 )
 
-# OpenAI
-openai <- OpenAI$new()
+# OpenAI Responses API
+openai <- OpenAI_Responses$new()
 response <- openai$chat(
   prompt = "Write a haiku about R",
   model = "gpt-5-chat-latest"
@@ -117,5 +161,24 @@ response <- openrouter$chat(
 # Local LLM
 llm <- LocalLLM$new(base_url = "http://localhost:5000")
 response <- llm$chat(prompt = "Hello!")
+
+# Parallel tool calling
+library(mirai)
+daemons(4)  # Set up 4 parallel workers
+
+get_weather <- function(location) {
+  #' @description Get weather information for a location
+  #' @param location:string* The location to get weather for
+  paste("Weather in", location, "is sunny")
+}
+
+google$chat(
+  "What's the weather in Paris, London, and Tokyo?",
+  tools = list(as_tool(get_weather)),
+  model = "gemini-2.5-flash"
+)
+# Tool calls will execute in parallel across the 4 workers
+
+daemons(0)  # Clean up when done
 } # }
 ```

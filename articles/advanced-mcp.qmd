@@ -1,45 +1,40 @@
-# Using MCP Servers with `argent`
+---
+title: "Using MCP Servers with `argent`"
+format: html
+execute:
+  echo: true
+  eval: false
+---
 
-## Introduction
+# Introduction
 
-The Model Context Protocol (MCP) enables LLMs to securely interact with
-external tools and data sources. This vignette demonstrates how to
-integrate MCP servers with argent to extend your AI agent’s
-capabilities.
+The Model Context Protocol (MCP) enables LLMs to securely interact with external tools and data sources. This vignette demonstrates how to integrate MCP servers with argent to extend your AI agent's capabilities.
 
-MCP (Model Context Protocol) is an open protocol that standardizes how
-applications provide context to LLMs. MCP servers expose three main
-primitives:
+MCP (Model Context Protocol) is an open protocol that standardizes how applications provide context to LLMs. MCP servers expose three main primitives:
 
 - **Tools**: Executable functions the LLM can call
-- **Resources**: File-like structured data the LLM can access (not
-  supported yet)
+- **Resources**: File-like structured data the LLM can access (not supported yet)
 - **Prompts**: Predefined templates for interactions (not supported yet)
 
-There are two main types of MCP servers: *HTTP* and *stdio*. HTTP
-servers are typically used for cloud-based services like GitHub, while
-stdio servers are typically used for local services like Docker or npx.
-Both types of MCP servers can be used with `argent`.
+There are two main types of MCP servers: *HTTP* and *stdio*. HTTP servers are typically used for cloud-based services like GitHub, while stdio servers are typically used for local services like Docker or npx. Both types of MCP servers can be used with `argent`.
 
-> **Note**
->
-> We rely on the `mcptools` package for interacting with *stdio* MCP
-> servers.
+::: {.callout-note appearance="simple"}
+We rely on the `mcptools` package for interacting with *stdio* MCP servers.
+:::
 
-## Setup
+# Setup
 
-``` r
+```{r}
 mirai::daemons(4) # To enable parallel tool calling
 ```
 
-## Basic Usage
+# Basic Usage
 
-### Using an ‘HTTP’ MCP Server
+## Using an 'HTTP' MCP Server
 
-Let’s look at the GitHub MCP server as an example. It is a HTTP server
-that can be used to interact with the GitHub API.
+Let's look at the GitHub MCP server as an example. It is a HTTP server that can be used to interact with the GitHub API.
 
-``` r
+```{r}
 github_mcp_server <- mcp_server(
     name = "github",
     type = "http",
@@ -52,14 +47,13 @@ github_mcp_server <- mcp_server(
 
 Then, we can get the tools we want from the GitHub MCP server:
 
-``` r
+```{r}
 github_mcp_tools <- mcp_tools(github_mcp_server, tools = c("get_file_contents", "search_code"))
 ```
 
-Finally, we can call the `get_file_contents` tool manually to see if it
-works:
+Finally, we can call the `get_file_contents` tool manually to see if it works:
 
-``` r
+```{r}
 get_file_contents_mcp_tool <- purrr::keep(github_mcp_tools, \(tool) tool$name == "get_file_contents")[[1]]
 
 execute_mcp_tool(
@@ -73,13 +67,13 @@ execute_mcp_tool(
 )
 ```
 
-### Using a ‘stdio’ MCP Server
 
-Let’s look at the BTW MCP server as an example (which requires the
-[`btw`](https://github.com/posit-dev/btw) package to be installed). It
-is a stdio server that can be used to interact with the `btw` package.
+## Using a 'stdio' MCP Server
 
-``` r
+Let's look at the BTW MCP server as an example (which requires the [`btw`](https://github.com/posit-dev/btw) package to be installed). 
+It is a stdio server that can be used to interact with the `btw` package.
+
+```{r}
 btw_mcp_server <- mcp_server(
     name = "btw",
     type = "stdio",
@@ -94,7 +88,7 @@ btw_mcp_server <- mcp_server(
 
 Then, we can get the tools we want from the `btw` MCP server:
 
-``` r
+```{r}
 btw_mcp_tools <- mcp_tools(
     btw_mcp_server,
     tools = c(
@@ -111,7 +105,7 @@ btw_mcp_tools <- mcp_tools(
 
 Finally, we can call the `help_topics` tool manually to see if it works:
 
-``` r
+```{r}
 help_topics_tool <- purrr::keep(btw_mcp_tools, \(tool) tool$name == "btw_tool_docs_package_help_topics")[[1]]
 
 execute_mcp_tool(
@@ -123,12 +117,12 @@ execute_mcp_tool(
 )
 ```
 
-## Argent + MCP Servers
 
-Let’s use the GitHub MCP server and the BTW MCP server to ask a complex
-question about the `mcptools` and `ellmer` packages.
+# Argent + MCP Servers
 
-``` r
+Let's use the GitHub MCP server and the BTW MCP server to ask a complex question about the `mcptools` and `ellmer` packages.
+
+```{r}
 google <- Google$new()
 
 tools <- flat_list(github_mcp_tools, btw_mcp_tools, as_tool(web_search), as_tool(web_fetch))
@@ -144,13 +138,16 @@ res <- google$chat(
 print(google, show_tools = TRUE)
 ```
 
-``` default
+```{verbatim}
 `posit-dev/mcptools` does not directly implement the ability to use HTTP MCP servers with `ellmer`. When `mcptools` acts as an MCP *client* via `ellmer`, it only supports the local (stdio) protocol. To connect to remote (HTTP) MCP servers, the `mcptools` documentation recommends using `mcp-remote`, an external tool (a local stdio MCP server) that converts remote HTTP servers to `mcptools`-compatible local ones. This allows `ellmer` (using the stdio protocol) to interact with remote HTTP MCP servers through `mcp-remote`.
 ```
 
-`print(google, show_tools = TRUE)`
+```{=html}
+<details>
+<summary><code>print(google, show_tools = TRUE)</code></summary>
+```
 
-``` default
+```{verbatim}
 ── [ <Google> turns: 10 | Current context: 62853 | Cumulated tokens: 196436 ] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 
@@ -300,11 +297,12 @@ result:
 `posit-dev/mcptools` does not directly implement the ability to use HTTP MCP servers with `ellmer`. When `mcptools` acts as an MCP *client* via `ellmer`, it only supports the local (stdio) protocol. To connect to remote (HTTP) MCP servers, the `mcptools` documentation recommends using `mcp-remote`, an external tool (a local stdio MCP server) that converts remote HTTP servers to `mcptools`-compatible local ones. This allows `ellmer` (using the stdio protocol) to interact with remote HTTP MCP servers through `mcp-remote`.
 ```
 
-### Further Reading
+</details>
+
+## Further Reading
 
 - [MCP Specification](https://spec.modelcontextprotocol.io/)
 - [MCP Servers](https://github.com/modelcontextprotocol/servers)
 - [mcptools Documentation](https://posit-dev.github.io/mcptools/)
 - [GitHub MCP Server](https://github.com/github/github-mcp-server)
-- [Claude Desktop MCP
-  Guide](https://docs.claude.com/en/docs/agents-and-tools/mcp-connector)
+- [Claude Desktop MCP Guide](https://docs.claude.com/en/docs/agents-and-tools/mcp-connector)

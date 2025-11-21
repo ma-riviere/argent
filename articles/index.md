@@ -33,3 +33,5 @@ Advanced features and techniques
   \`ragnar\`](https://ma-riviere.github.io/argent/articles/advanced-rag.md):
 - [Using MCP Servers with
   \`argent\`](https://ma-riviere.github.io/argent/articles/advanced-mcp.md):
+- [Advanced Agentic
+  Workflows](https://ma-riviere.github.io/argent/articles/advanced-argentic-workflow.md):

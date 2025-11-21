@@ -39,7 +39,7 @@ be:
 ``` r
 as_tool(fn)
 
-tool(name, description, ...)
+tool(name, description, ..., fn = NULL)
 
 schema(name, description, ..., strict = TRUE, additional_properties = FALSE)
 ```
@@ -48,20 +48,12 @@ schema(name, description, ..., strict = TRUE, additional_properties = FALSE)
 
 - fn:
 
-  A function with annotations in its body comments using `#'` prefix.
-  Supported tags:
-
-  - `@description`: Function description
-
-  - `@param name:type* description`: Parameter specification
-
-  Supported types: `string`, `integer`, `number`, `boolean`, `date`,
-  `date-time`, and arrays using `[type]` syntax (e.g., `[integer]`).
-
-  The `*` suffix marks a parameter as required. If a parameter has a
-  default value in the function signature and no `*` suffix, it is
-  optional. If it has a `*` suffix, it overrides the default and becomes
-  required.
+  Function. For `tool()` only. Optional function implementation to store
+  with the tool definition. When provided, this function (with its
+  closure) will be called when the LLM invokes the tool, supporting
+  locally-defined functions with access to local variables. If NULL
+  (default), the function is looked up by name in the global
+  environment.
 
 - name:
 
@@ -87,6 +79,17 @@ schema(name, description, ..., strict = TRUE, additional_properties = FALSE)
 
 ## Value
 
+For `as_tool()`: A list with:
+
+- `name`: Tool name (character)
+
+- `description`: Tool description (character)
+
+- `args_schema`: JSON Schema object with `type`, `properties`, and
+  `required` fields
+
+- `.fn`: The original function (with closure) for execution
+
 For `tool()`: A list with:
 
 - `name`: Tool name (character)
@@ -96,7 +99,16 @@ For `tool()`: A list with:
 - `args_schema`: JSON Schema object with `type`, `properties`, and
   `required` fields
 
-For `schema()`: Same as `tool()` but with additional fields:
+- `.fn`: Optional function implementation (if `fn` parameter provided)
+
+For `schema()`: A list with:
+
+- `name`: Schema name (character)
+
+- `description`: Schema description (character)
+
+- `args_schema`: JSON Schema object with `type`, `properties`, and
+  `required` fields
 
 - `strict`: Logical (at root level)
 
@@ -183,6 +195,21 @@ create_user_tool <- tool(
     zip = "string Postal code"
   )
 )
+
+# Using closures with local state
+create_counter_tool <- function() {
+  count <- 0
+
+  increment <- function() {
+    count <<- count + 1
+    count
+  }
+
+  as_tool(increment)
+}
+
+counter_tool <- create_counter_tool()
+# The LLM can now call this tool and it maintains state via closure
 
 # Using MCP tools alongside custom tools
 github_server <- mcp_server(

@@ -62,6 +62,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-advanced-use">
 <li><a class="dropdown-item" href="../articles/advanced-rag.html">RAG with `ragnar`</a></li>
     <li><a class="dropdown-item" href="../articles/advanced-mcp.html">Using MCP Servers</a></li>
+    <li><a class="dropdown-item" href="../articles/advanced-argentic-workflow.html">Advanced Argentic Workflow</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -135,11 +136,15 @@
 <span>    default_model <span class="op">=</span> <span class="st">"gemma-3-27b-it-IQ4_XS.gguf"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<p>On initialization, <code>argent</code> will automatically detect the available model from the server and set it as the default model for all future <code>chat()</code> calls. You can check the current default model with <code>get_default_model_id()</code>:</p>
+<p>On initialization, <code>argent</code> will automatically detect the available model from the server and set it as the default model for all future <code>chat()</code> calls. You can check the current default model with <code>get_default_model_id()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">mirai</span><span class="fu">::</span><span class="fu"><a href="https://mirai.r-lib.org/reference/daemons.html" class="external-link">daemons</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span> <span class="co"># To enable parallel tool calling</span></span></code></pre></div>
+</div>
 </section></section><section class="section level2"><h2 id="basic-completion">Basic Completion<a class="anchor" aria-label="anchor" href="#basic-completion"></a>
 </h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">local_llama</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="st">"What's the R programming language? Answer in three sentences."</span><span class="op">)</span></span></code></pre></div>
 </div>
 </section><section class="section level2"><h2 id="tool-calling-structured-output">Tool Calling + Structured Output<a class="anchor" aria-label="anchor" href="#tool-calling-structured-output"></a>
@@ -147,7 +152,7 @@
 <p>First, define some web-related tools (search, crawl, fetch, and a general-use tool) bundled in a <code>web_tools</code> list:</p>
 <details><summary>Web Tools Implementation</summary><p><strong>Search:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web_search</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">query</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="co">#' @description Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or any data not in your training data.</span></span>
 <span>    <span class="co">#' @param query:string* The search query string. Be specific and use keywords that will yield the most relevant results.</span></span>
@@ -177,24 +182,37 @@
 </div>
 <p><strong>Fetch:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web_fetch</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">url</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="co">#' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.</span></span>
 <span>    <span class="co">#' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.</span></span>
 <span>    </span>
-<span>    <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">web_fetch_trafilatura</span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
+<span>    <span class="va">trafilatura_installed</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"which trafilatura"</span>, intern <span class="op">=</span> <span class="cn">TRUE</span>, ignore.stderr <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span>    <span class="op">}</span>,</span>
+<span>    warning <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="fu">cli</span><span class="fu">::</span><span class="fu"><a href="https://cli.r-lib.org/reference/cli_alert.html" class="external-link">cli_alert_warning</a></span><span class="op">(</span><span class="st">"trafilatura is not installed. Install with: {.code pip install trafilatura}"</span><span class="op">)</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
 <span></span>
-<span>    <span class="va">could_not_fetch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>        <span class="st">"Impossible to fetch the contents of this web page"</span>,</span>
-<span>        <span class="st">"Please reload this page"</span>,</span>
-<span>        <span class="st">"There was an error while loading"</span>,</span>
-<span>        <span class="st">"404"</span></span>
-<span>    <span class="op">)</span></span>
-<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span> <span class="op">||</span></span>
-<span>        <span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">res</span>, <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/modifiers.html" class="external-link">fixed</a></span><span class="op">(</span><span class="va">could_not_fetch</span>, ignore_case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>        <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">web_fetch_rvest</span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">trafilatura_installed</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">web_fetch_trafilatura</span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
+<span></span>
+<span>        <span class="va">could_not_fetch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>            <span class="st">"Impossible to fetch the contents of this web page"</span>,</span>
+<span>            <span class="st">"Please reload this page"</span>,</span>
+<span>            <span class="st">"There was an error while loading"</span>,</span>
+<span>            <span class="st">"404"</span></span>
+<span>        <span class="op">)</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span> <span class="op">||</span></span>
+<span>            <span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">res</span>, <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/modifiers.html" class="external-link">fixed</a></span><span class="op">(</span><span class="va">could_not_fetch</span>, ignore_case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">web_fetch_rvest</span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span>    <span class="op">}</span></span>
-<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">web_fetch_rvest</span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="va">web_fetch_trafilatura</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">url</span><span class="op">)</span> <span class="op">{</span></span>
@@ -240,7 +258,7 @@
 </div>
 </details><p>Then, let’s define a JSON schema for the structured output using <code><a href="../reference/tool_definitions.html">schema()</a></code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">package_info_schema</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tool_definitions.html">schema</a></span><span class="op">(</span></span>
 <span>    name <span class="op">=</span> <span class="st">"package_info"</span>,</span>
 <span>    description <span class="op">=</span> <span class="st">"Information about an R package release"</span>,</span>
@@ -249,18 +267,18 @@
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">local_llama</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"When was the first release of the R 'ellmer' package on GitHub?"</span>,</span>
 <span>    tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="../reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">web_search</span><span class="op">)</span>, <span class="fu"><a href="../reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">web_fetch</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    output_schema <span class="op">=</span> <span class="va">package_info_schema</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>$release_version</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>[1] "0.2.0"</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>$release_date</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>[1] "2025-05-01"</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>$release_version</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>[1] "0.2.0"</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>$release_date</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>[1] "2025-05-01"</span></code></pre></div>
 <p><em>Wrong answer, but it used the tools and returned a structured output. Not too bad for a small local model.</em></p>
 <div>
 <blockquote>
@@ -273,7 +291,7 @@
 <p><strong>Note</strong></p>
 <p>Depending on your local machine’s speed, you may need to increase the request timeout to let the server complete the task. You can do this by setting the <code>argent.timeout</code> option:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>argent.timeout <span class="op">=</span> <span class="fl">120</span><span class="op">)</span></span></code></pre></div>
 </div>
 </blockquote>
@@ -282,7 +300,7 @@
 </h2>
 <p>If available, you can extract reasoning from the response using <code>get_reasoning_text()</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">local_llama</span><span class="op">$</span><span class="fu">get_reasoning_text</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>Alternatively, simply <code>print(local_llama)</code> to see the reasoning and answers’ text in the console, turn by turn.</p>
@@ -311,7 +329,7 @@
 <section class="level2"><h3 id="image-comprehension">Image Comprehension<a class="anchor" aria-label="anchor" href="#image-comprehension"></a>
 </h3>
 <div class="cell">
-<details class="code-fold"><summary>Downloading an example image</summary><div class="sourceCode cell-code" id="cb11"><pre class="downlit sourceCode r">
+<details class="code-fold"><summary>Downloading an example image</summary><div class="sourceCode cell-code" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bsg04_cast_image_url</span> <span class="op">&lt;-</span> <span class="st">"https://upload.wikimedia.org/wikipedia/en/1/1a/Battlestar_Galactica_%282004%29_cast.jpg"</span></span>
 <span><span class="va">bsg04_cast_image_path</span> <span class="op">&lt;-</span> <span class="fu">download_temp_file</span><span class="op">(</span><span class="va">bsg04_cast_image_url</span><span class="op">)</span></span></code></pre></div>
 </details>
@@ -319,29 +337,29 @@
 <p><strong>Sending a local image:</strong></p>
 <p>When providing a path to a local image, it will automatically be converted to base64 before being sent to the server.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">local_llama</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span>    </span>
 <span>    <span class="st">"Who are the characters in this image, and what show is it from?"</span>,</span>
 <span>    <span class="va">bsg04_cast_image_path</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb13"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>Based on the image, the characters are from the science fiction television series *Battlestar Galactica*. </span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>From left to right, the characters appear to be:</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>*   **William Adama** (Edward James Olmos)</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>*   **Laura Roslin** (Mary McDonnell)</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>*   **Lee Adama** (Jamie Bamber)</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>*   **Kara "Starbuck" Thrace** (Katee Sackhoff)</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>*   **Number Six** (Tricia Helfer)</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>*   **Daniel "Crashdown" Tyrol** (Aaron D'Alessandro)</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>*   **Sharon "Boomer" Valerii/Sharon "Athena" Agathon** (Grace Park)</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>I am confident in this identification, as the image is a promotional photo associated with the show and its primary cast.</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>Based on the image, the characters are from the science fiction television series *Battlestar Galactica*. </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>From left to right, the characters appear to be:</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>*   **William Adama** (Edward James Olmos)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>*   **Laura Roslin** (Mary McDonnell)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>*   **Lee Adama** (Jamie Bamber)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>*   **Kara "Starbuck" Thrace** (Katee Sackhoff)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>*   **Number Six** (Tricia Helfer)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>*   **Daniel "Crashdown" Tyrol** (Aaron D'Alessandro)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>*   **Sharon "Boomer" Valerii/Sharon "Athena" Agathon** (Grace Park)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>I am confident in this identification, as the image is a promotional photo associated with the show and its primary cast.</span></code></pre></div>
 <p><em>So say we all!</em></p>
 <p><strong>Sending an image URL:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">local_llama</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"Who are the characters in this image, and what show is it from?"</span>,</span>
 <span>    <span class="va">bsg04_cast_image_url</span></span>
@@ -357,7 +375,7 @@
 </div>
 <p>Let’s send two PDF URLs and use the <code><a href="../reference/content_converters.html">as_text_content()</a></code> helper to have <code><a href="https://docs.ropensci.org/pdftools//reference/pdf_render_page.html" class="external-link">pdftools::pdf_convert()</a></code> parse the PDFs and pass the text content to the model instead of passing base64.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r6_pdf_url</span> <span class="op">&lt;-</span> <span class="st">"https://cran.r-project.org/web/packages/R6/R6.pdf"</span></span>
 <span><span class="va">s7_pdf_url</span> <span class="op">&lt;-</span> <span class="st">"https://cran.r-project.org/web/packages/S7/S7.pdf"</span></span>
 <span></span>
@@ -370,21 +388,21 @@
 <span></span>
 <span><span class="va">local_llama</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="op">!</span><span class="op">!</span><span class="op">!</span><span class="va">multimodal_prompt</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb16"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>Here's a 3-sentence summary of the advantages of S7 over R6, based on the provided documentation:</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>S7 offers a more formal and robust object-oriented programming system compared to R6, designed as a successor to both S3 and S4, and incorporates formal class and method specification with a limited form of multiple dispatch. Unlike R6's reliance on environments, S7 aims to provide a more structured approach with explicit class definitions and inheritance.  S7 also allows for integration with existing S3 and S4 systems, providing flexibility and a pathway for migrating existing code.</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>According to the provided documentation:</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>*   **S7 version:** 0.2.0 (Published 2024-11-07)</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>*   **R6 version:** 2.6.1 (Published 2025-02-15)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>Here's a 3-sentence summary of the advantages of S7 over R6, based on the provided documentation:</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>S7 offers a more formal and robust object-oriented programming system compared to R6, designed as a successor to both S3 and S4, and incorporates formal class and method specification with a limited form of multiple dispatch. Unlike R6's reliance on environments, S7 aims to provide a more structured approach with explicit class definitions and inheritance.  S7 also allows for integration with existing S3 and S4 systems, providing flexibility and a pathway for migrating existing code.</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>According to the provided documentation:</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>*   **S7 version:** 0.2.0 (Published 2024-11-07)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>*   **R6 version:** 2.6.1 (Published 2025-02-15)</span></code></pre></div>
 </section><section class="level2"><h3 id="passing-r-objects">Passing R Objects<a class="anchor" aria-label="anchor" href="#passing-r-objects"></a>
 </h3>
 <p>You can pass any R object to <code>chat()</code> as is:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lm_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">body_mass</span> <span class="op">~</span> <span class="va">species</span> <span class="op">+</span> <span class="va">sex</span>, data <span class="op">=</span> <span class="fu">datasets</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/datasets/penguins.html" class="external-link">penguins</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">local_llama</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
@@ -392,17 +410,17 @@
 <span>    <span class="va">lm_obj</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb18"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>Here's what we can deduce from the provided regression model summary:</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>1.  **Model Type:** The model is a linear regression (`lm` object).</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>2.  **Predictors:** The model predicts `body_mass` based on `species` and `sex`.</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>3.  **Coefficients:**</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    *   The intercept is 3372.4.</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    *   The coefficient for `species` is 26.9. This suggests that for each unit change in species (relative to the baseline species), body mass increases by 26.9 units, holding sex constant.</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    *   The coefficient for `species` is 1377.9. </span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    *   The coefficient for `sex` is 667.6. This suggests that males have, on average, a body mass 667.6 units higher than females, holding species constant.</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>It's important to remember that these deductions are based solely on the provided output and do not include information about statistical significance (p-values), R-squared, or residual analysis, which would provide a more comprehensive understanding of the model's fit and reliability.</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>Here's what we can deduce from the provided regression model summary:</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>1.  **Model Type:** The model is a linear regression (`lm` object).</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>2.  **Predictors:** The model predicts `body_mass` based on `species` and `sex`.</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>3.  **Coefficients:**</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    *   The intercept is 3372.4.</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    *   The coefficient for `species` is 26.9. This suggests that for each unit change in species (relative to the baseline species), body mass increases by 26.9 units, holding sex constant.</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    *   The coefficient for `species` is 1377.9. </span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    *   The coefficient for `sex` is 667.6. This suggests that males have, on average, a body mass 667.6 units higher than females, holding species constant.</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>It's important to remember that these deductions are based solely on the provided output and do not include information about statistical significance (p-values), R-squared, or residual analysis, which would provide a more comprehensive understanding of the model's fit and reliability.</span></code></pre></div>
 <div>
 <blockquote>
 <p><strong>Note</strong></p>

@@ -62,6 +62,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-advanced-use">
 <li><a class="dropdown-item" href="../articles/advanced-rag.html">RAG with `ragnar`</a></li>
     <li><a class="dropdown-item" href="../articles/advanced-mcp.html">Using MCP Servers</a></li>
+    <li><a class="dropdown-item" href="../articles/advanced-argentic-workflow.html">Advanced Argentic Workflow</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -102,9 +103,14 @@
 <div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Google.html">Google</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GEMINI_API_KEY"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
-<p><strong>Available Models</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">mirai</span><span class="fu">::</span><span class="fu"><a href="https://mirai.r-lib.org/reference/daemons.html" class="external-link">daemons</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span> <span class="co"># To enable parallel tool calling</span></span></code></pre></div>
+</div>
+</section><section class="section level2"><h2 id="discovering-models">Discovering Models<a class="anchor" aria-label="anchor" href="#discovering-models"></a>
+</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">list_models</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">name</span>, <span class="st">"2.5-flash|2.5-pro|3-pro"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">description</span><span class="op">)</span></span></code></pre></div>
@@ -112,7 +118,7 @@
 </section><section class="section level2"><h2 id="basic-completion">Basic Completion<a class="anchor" aria-label="anchor" href="#basic-completion"></a>
 </h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"What's the R programming language? Answer in three sentences."</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span> <span class="co"># Default model for Google</span></span>
@@ -123,7 +129,7 @@
 <p>First, define some web-related tools (search, crawl, fetch, and a general-use tool) bundled in a <code>web_tools</code> list:</p>
 <details><summary>Web Tools Implementation</summary><p><strong>Search:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web_search</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">query</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="co">#' @description Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or any data not in your training data.</span></span>
 <span>    <span class="co">#' @param query:string* The search query string. Be specific and use keywords that will yield the most relevant results.</span></span>
@@ -153,24 +159,37 @@
 </div>
 <p><strong>Fetch:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web_fetch</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">url</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="co">#' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.</span></span>
 <span>    <span class="co">#' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.</span></span>
 <span>    </span>
-<span>    <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">web_fetch_trafilatura</span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
+<span>    <span class="va">trafilatura_installed</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"which trafilatura"</span>, intern <span class="op">=</span> <span class="cn">TRUE</span>, ignore.stderr <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span>    <span class="op">}</span>,</span>
+<span>    warning <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="fu">cli</span><span class="fu">::</span><span class="fu"><a href="https://cli.r-lib.org/reference/cli_alert.html" class="external-link">cli_alert_warning</a></span><span class="op">(</span><span class="st">"trafilatura is not installed. Install with: {.code pip install trafilatura}"</span><span class="op">)</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
 <span></span>
-<span>    <span class="va">could_not_fetch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>        <span class="st">"Impossible to fetch the contents of this web page"</span>,</span>
-<span>        <span class="st">"Please reload this page"</span>,</span>
-<span>        <span class="st">"There was an error while loading"</span>,</span>
-<span>        <span class="st">"404"</span></span>
-<span>    <span class="op">)</span></span>
-<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span> <span class="op">||</span></span>
-<span>        <span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">res</span>, <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/modifiers.html" class="external-link">fixed</a></span><span class="op">(</span><span class="va">could_not_fetch</span>, ignore_case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>        <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">web_fetch_rvest</span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">trafilatura_installed</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">web_fetch_trafilatura</span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
+<span></span>
+<span>        <span class="va">could_not_fetch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>            <span class="st">"Impossible to fetch the contents of this web page"</span>,</span>
+<span>            <span class="st">"Please reload this page"</span>,</span>
+<span>            <span class="st">"There was an error while loading"</span>,</span>
+<span>            <span class="st">"404"</span></span>
+<span>        <span class="op">)</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span> <span class="op">||</span></span>
+<span>            <span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">res</span>, <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/modifiers.html" class="external-link">fixed</a></span><span class="op">(</span><span class="va">could_not_fetch</span>, ignore_case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">web_fetch_rvest</span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span>    <span class="op">}</span></span>
-<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">web_fetch_rvest</span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="va">web_fetch_trafilatura</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">url</span><span class="op">)</span> <span class="op">{</span></span>
@@ -216,7 +235,7 @@
 </div>
 </details><p>Then, let’s define a JSON schema for the structured output using <code><a href="../reference/tool_definitions.html">schema()</a></code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">package_info_schema</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tool_definitions.html">schema</a></span><span class="op">(</span></span>
 <span>    name <span class="op">=</span> <span class="st">"package_info"</span>,</span>
 <span>    description <span class="op">=</span> <span class="st">"Information about an R package release"</span>,</span>
@@ -226,7 +245,7 @@
 </div>
 <p>Then, run the agent:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"When was the first release of the R 'ellmer' package on GitHub?"</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
@@ -236,16 +255,16 @@
 <span>    output_schema <span class="op">=</span> <span class="va">package_info_schema</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>$release_version</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>[1] "0.1.0"</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>$release_date</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>[1] "2025-01-09"</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>$release_version</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>[1] "0.1.0"</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>$release_date</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>[1] "2025-01-09"</span></code></pre></div>
 <p>The model will keep calling tools until it has enough information to answer the question.</p>
 <section class="level2"><h3 id="extracting-reasoning">Extracting Reasoning<a class="anchor" aria-label="anchor" href="#extracting-reasoning"></a>
 </h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">get_reasoning_text</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>Alternatively, simply <code>print(google_gemini)</code> to see the reasoning and answers’ text in the console, turn by turn.</p>
@@ -275,7 +294,7 @@
 </h3>
 <p>The server-side web search tool provides search results with citations:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"What's the latest version of the R 'ellmer' package?"</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
@@ -285,7 +304,7 @@
 </div>
 <p><strong>Extract grounding metadata</strong> (citations and sources):</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">get_supplementary</span><span class="op">(</span><span class="op">)</span> <span class="co"># Defaults to the last response</span></span></code></pre></div>
 </div>
 <div>
@@ -298,14 +317,14 @@
 </h3>
 <p>This server tool lets the LLM fetch the contents of URLs given to it in the prompt. It supports fetching text (HTML, JSON, XML), images (PNG, JPEG, WebP), and PDFs.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"Summarize the main changes in the current development version of the R 'ellmer' package in 2 sentences: https://raw.githubusercontent.com/tidyverse/ellmer/main/NEWS.md"</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
 <span>    tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"url_context"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb13"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>The current development version of the R 'ellmer' package introduces several significant changes, including enhanced control over model reasoning effort with new `reasoning_effort` and `reasoning_tokens` parameters for various chat functions. Additionally, it refines API key handling by using a `credentials` function to retrieve keys on demand, preventing their storage in chat objects, and supports image generation through `chat_google_gemini()` and `chat_openai_responses()`.</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>The current development version of the R 'ellmer' package introduces several significant changes, including enhanced control over model reasoning effort with new `reasoning_effort` and `reasoning_tokens` parameters for various chat functions. Additionally, it refines API key handling by using a `credentials` function to retrieve keys on demand, preventing their storage in chat objects, and supports image generation through `chat_google_gemini()` and `chat_openai_responses()`.</span></code></pre></div>
 <p><strong>Limitations:</strong></p>
 <ul>
 <li>Maximum 20 URLs per request</li>
@@ -327,7 +346,7 @@
 <section class="level3"><h4 id="basic-usage">Basic Usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
 </h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"What are the 5 best Italian restaurants within a 15-minute walk from Times Square?"</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
@@ -336,7 +355,7 @@
 </div>
 <p>We can also provide a specific location for more relevant results:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"Give me 5 good coffee shops with outdoor seating in a 1km radius from here."</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
@@ -351,22 +370,22 @@
 <span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb16"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>Here are 5 good coffee shops with outdoor seating near you:</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>1.  **Jacobsen &amp; Svart Coffee Roasters** - This coffee shop has a rating of 4.7 stars and is currently open until 5:00 PM today.</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>2.  **Tantes Hage** - With a rating of 4.8 stars, this cafe offers outdoor seating. Please note that Tantes Hage is closed today, but open on Sundays from 10:00 AM to 6:00 PM.</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>3.  **Café Løkka** - This cafe has a 4.3-star rating and is currently open until 12:00 AM.</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>4.  **Dromedar Kaffebar, Nordre** - Rated 4.3 stars, this coffee shop is open until 7:00 PM today.</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>5.  **Espresso House** (Nordre gate 1-3) - This cafe has a rating of 4.2 stars and is currently open until 8:00 PM.</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>Here are 5 good coffee shops with outdoor seating near you:</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>1.  **Jacobsen &amp; Svart Coffee Roasters** - This coffee shop has a rating of 4.7 stars and is currently open until 5:00 PM today.</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>2.  **Tantes Hage** - With a rating of 4.8 stars, this cafe offers outdoor seating. Please note that Tantes Hage is closed today, but open on Sundays from 10:00 AM to 6:00 PM.</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>3.  **Café Løkka** - This cafe has a 4.3-star rating and is currently open until 12:00 AM.</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>4.  **Dromedar Kaffebar, Nordre** - Rated 4.3 stars, this coffee shop is open until 7:00 PM today.</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>5.  **Espresso House** (Nordre gate 1-3) - This cafe has a rating of 4.2 stars and is currently open until 8:00 PM.</span></code></pre></div>
 <p><strong>Extract grounding metadata</strong> (citations and sources):</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">get_supplementary</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p><strong>Enabling the Maps Widget</strong></p>
 <p>Enable the widget context token to render interactive Google Maps widgets using the Maps API:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"Plan a day in Trondheim. I want to see the Nidaros, swim in a lake, and have a beer by the river."</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
@@ -382,16 +401,16 @@
 <span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb19"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>Here's a possible plan for your day in Trondheim:</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>Start your day by visiting the magnificent Nidaros Cathedral, a Gothic cathedral dating from the 13th century located at Kongsgårdsgata 2. The cathedral typically opens at 9:00 AM on weekdays.</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>After exploring the cathedral, head to Theisendammen badeplass for a refreshing swim in a lake. This park is open 24 hours, highly-rated, and is a good option for swimming.</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>In the evening, enjoy a beer by the Nidelva river at Den Gode Nabo AS. This highly-rated bar, located at Øvre Bakklandet 66, offers outdoor seating, perfect for enjoying the riverside atmosphere.</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>Here's a possible plan for your day in Trondheim:</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>Start your day by visiting the magnificent Nidaros Cathedral, a Gothic cathedral dating from the 13th century located at Kongsgårdsgata 2. The cathedral typically opens at 9:00 AM on weekdays.</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>After exploring the cathedral, head to Theisendammen badeplass for a refreshing swim in a lake. This park is open 24 hours, highly-rated, and is a good option for swimming.</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>In the evening, enjoy a beer by the Nidelva river at Den Gode Nabo AS. This highly-rated bar, located at Øvre Bakklandet 66, offers outdoor seating, perfect for enjoying the riverside atmosphere.</span></code></pre></div>
 <p>Extract the widget context token:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">get_supplementary</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/pluck.html" class="external-link">pluck</a></span><span class="op">(</span><span class="st">"grounding_metadata"</span>, <span class="st">"googleMapsWidgetContextToken"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -412,7 +431,7 @@
 <p><strong>Example: Analyzing the Penguins Dataset</strong></p>
 <p>Let’s upload the penguins dataset as a remote file and use the code execution tool:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">penguins_url</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/allisonhorst/palmerpenguins/refs/heads/main/inst/extdata/penguins.csv"</span></span>
 <span><span class="va">penguins_file_metadata</span> <span class="op">&lt;-</span> <span class="va">google_gemini</span><span class="op">$</span><span class="fu">upload_file</span><span class="op">(</span><span class="va">penguins_url</span><span class="op">)</span></span>
 <span></span>
@@ -424,66 +443,66 @@
 </div>
 <p>Inspect the generated code:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">get_generated_code</span><span class="op">(</span>langs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"python"</span><span class="op">)</span>, as_chunks <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
-<details><summary>Generated Code</summary><div class="sourceCode" id="cb23"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the CSV file</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"input_file_0.csv"</span>)</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the first few rows and information about the DataFrame</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DataFrame Head:"</span>)</span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.head())</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">DataFrame Info:"</span>)</span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.info())</span></code></pre></div>
-<div class="sourceCode" id="cb24"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Group by species, sex, and year and calculate the average body_mass_g</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>summary_table <span class="op">=</span> df.groupby([<span class="st">'species'</span>, <span class="st">'sex'</span>, <span class="st">'year'</span>])[<span class="st">'body_mass_g'</span>].mean().reset_index()</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename the 'body_mass_g' column to 'average_body_mass_g' for clarity</span></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>summary_table <span class="op">=</span> summary_table.rename(columns<span class="op">=</span>{<span class="st">'body_mass_g'</span>: <span class="st">'average_body_mass_g'</span>})</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the summary table to a CSV file</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>output_filename <span class="op">=</span> <span class="st">"average_body_mass_summary.csv"</span></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>summary_table.to_csv(output_filename, index<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Summary table saved to </span><span class="sc">{</span>output_filename<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Summary Table Head:"</span>)</span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(summary_table.head())</span></code></pre></div>
+<details><summary>Generated Code</summary><div class="sourceCode" id="cb24"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the CSV file</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"input_file_0.csv"</span>)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the first few rows and information about the DataFrame</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DataFrame Head:"</span>)</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.head())</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">DataFrame Info:"</span>)</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.info())</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Group by species, sex, and year and calculate the average body_mass_g</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>summary_table <span class="op">=</span> df.groupby([<span class="st">'species'</span>, <span class="st">'sex'</span>, <span class="st">'year'</span>])[<span class="st">'body_mass_g'</span>].mean().reset_index()</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename the 'body_mass_g' column to 'average_body_mass_g' for clarity</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>summary_table <span class="op">=</span> summary_table.rename(columns<span class="op">=</span>{<span class="st">'body_mass_g'</span>: <span class="st">'average_body_mass_g'</span>})</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the summary table to a CSV file</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>output_filename <span class="op">=</span> <span class="st">"average_body_mass_summary.csv"</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>summary_table.to_csv(output_filename, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Summary table saved to </span><span class="sc">{</span>output_filename<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Summary Table Head:"</span>)</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(summary_table.head())</span></code></pre></div>
 </details><p>Download the generated files:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">downloaded_path</span> <span class="op">&lt;-</span> <span class="va">google_gemini</span><span class="op">$</span><span class="fu">download_generated_files</span><span class="op">(</span>dest_path <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ✔ File saved: data/generated_file_9604db3d-57fc-4aab-bd60-bf4c194ab6e5.csv</span></span></code></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">downloaded_path</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb27"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>     species    sex year average_body_mass_g</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>1     Adelie female 2007            3389.773</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>2     Adelie female 2008            3386.000</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>3     Adelie female 2009            3334.615</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>4     Adelie   male 2007            4038.636</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>5     Adelie   male 2008            4098.000</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>6     Adelie   male 2009            3995.192</span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>7  Chinstrap female 2007            3569.231</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>8  Chinstrap female 2008            3472.222</span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>9  Chinstrap female 2009            3522.917</span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>10 Chinstrap   male 2007            3819.231</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>11 Chinstrap   male 2008            4127.778</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>12 Chinstrap   male 2009            3927.083</span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>13    Gentoo female 2007            4618.750</span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>14    Gentoo female 2008            4627.273</span>
-<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>15    Gentoo female 2009            4786.250</span>
-<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>16    Gentoo   male 2007            5552.941</span>
-<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>17    Gentoo   male 2008            5410.870</span>
-<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>18    Gentoo   male 2009            5510.714</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>     species    sex year average_body_mass_g</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>1     Adelie female 2007            3389.773</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>2     Adelie female 2008            3386.000</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>3     Adelie female 2009            3334.615</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>4     Adelie   male 2007            4038.636</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>5     Adelie   male 2008            4098.000</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>6     Adelie   male 2009            3995.192</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>7  Chinstrap female 2007            3569.231</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>8  Chinstrap female 2008            3472.222</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>9  Chinstrap female 2009            3522.917</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>10 Chinstrap   male 2007            3819.231</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>11 Chinstrap   male 2008            4127.778</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>12 Chinstrap   male 2009            3927.083</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>13    Gentoo female 2007            4618.750</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>14    Gentoo female 2008            4627.273</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>15    Gentoo female 2009            4786.250</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>16    Gentoo   male 2007            5552.941</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>17    Gentoo   male 2008            5410.870</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>18    Gentoo   male 2009            5510.714</span></code></pre></div>
 <p>Continue asking questions in the same context:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">penguin_output_schema</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tool_definitions.html">schema</a></span><span class="op">(</span></span>
 <span>    name <span class="op">=</span> <span class="st">"penguin_output"</span>,</span>
 <span>    description <span class="op">=</span> <span class="st">"Schema for the penguin output"</span>,</span>
@@ -499,17 +518,17 @@
 <span>    output_schema <span class="op">=</span> <span class="va">penguin_output_schema</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb29"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>$species</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>[1] "Adelie"</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>$sex</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>[1] "females"</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>$year</span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>[1] 2009</span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>$average_body_mass</span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>[1] 3334.62</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>$species</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>[1] "Adelie"</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>$sex</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>[1] "females"</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>$year</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>[1] 2009</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>$average_body_mass</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>[1] 3334.62</span></code></pre></div>
 </section><section class="level2"><h3 id="multimodal-inputs">Multimodal Inputs<a class="anchor" aria-label="anchor" href="#multimodal-inputs"></a>
 </h3>
 <p>Google Gemini supports sending:</p>
@@ -524,7 +543,7 @@
 <section class="level3"><h4 id="image-comprehension">Image Comprehension<a class="anchor" aria-label="anchor" href="#image-comprehension"></a>
 </h4>
 <div class="cell">
-<details class="code-fold"><summary>Downloading an example image</summary><div class="sourceCode cell-code" id="cb30"><pre class="downlit sourceCode r">
+<details class="code-fold"><summary>Downloading an example image</summary><div class="sourceCode cell-code" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bsg04_cast_image_url</span> <span class="op">&lt;-</span> <span class="st">"https://upload.wikimedia.org/wikipedia/en/1/1a/Battlestar_Galactica_%282004%29_cast.jpg"</span></span>
 <span><span class="va">bsg04_cast_image_path</span> <span class="op">&lt;-</span> <span class="fu">download_temp_file</span><span class="op">(</span><span class="va">bsg04_cast_image_url</span><span class="op">)</span></span></code></pre></div>
 </details>
@@ -532,26 +551,26 @@
 <p><strong>Sending a local image:</strong></p>
 <p>When providing a path to a local image, it will automatically be converted to base64 before being sent to the server.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"Who are the characters in this image, and what show is it from?"</span>,</span>
 <span>    <span class="va">bsg04_cast_image_path</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb32"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>The characters in the image are from the show **Battlestar Galactica**.</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>From left to right, the characters are:</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>*   **Admiral William Adama** (played by Edward James Olmos)</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>*   **President Laura Roslin** (played by Mary McDonnell)</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>*   **Captain Lee "Apollo" Adama** (played by Jamie Bamber)</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>*   **Lieutenant Kara "Starbuck" Thrace** (played by Katee Sackhoff)</span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>*   **Number Six** (played by Tricia Helfer)</span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>*   **Gaius Baltar** (played by James Callis)</span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>*   **Sharon "Boomer" Valerii / Sharon "Athena" Agathon** (played by Grace Park)</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>The characters in the image are from the show **Battlestar Galactica**.</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>From left to right, the characters are:</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>*   **Admiral William Adama** (played by Edward James Olmos)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>*   **President Laura Roslin** (played by Mary McDonnell)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>*   **Captain Lee "Apollo" Adama** (played by Jamie Bamber)</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>*   **Lieutenant Kara "Starbuck" Thrace** (played by Katee Sackhoff)</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>*   **Number Six** (played by Tricia Helfer)</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>*   **Gaius Baltar** (played by James Callis)</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>*   **Sharon "Boomer" Valerii / Sharon "Athena" Agathon** (played by Grace Park)</span></code></pre></div>
 <p><em>So say we all!</em></p>
 <p><strong>Sending an image URL:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">reset_history</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
@@ -575,26 +594,26 @@
 </section><section class="level3"><h4 id="pdf-comprehension">PDF Comprehension<a class="anchor" aria-label="anchor" href="#pdf-comprehension"></a>
 </h4>
 <div class="cell">
-<details class="code-fold"><summary>Downloading an example PDF (my CV)</summary><div class="sourceCode cell-code" id="cb34"><pre class="downlit sourceCode r">
+<details class="code-fold"><summary>Downloading an example PDF (my CV)</summary><div class="sourceCode cell-code" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">my_cv_url</span> <span class="op">&lt;-</span> <span class="st">"https://ma-riviere.com/res/cv.pdf"</span></span>
 <span><span class="va">my_cv_pdf_path</span> <span class="op">&lt;-</span> <span class="fu">download_temp_file</span><span class="op">(</span><span class="va">my_cv_url</span><span class="op">)</span></span></code></pre></div>
 </details>
 </div>
 <p><strong>Sending a local PDF:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"What's my favorite programming language ?"</span>,</span>
 <span>    <span class="va">my_cv_pdf_path</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb36"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>Based on your resume, your favorite programming language appears to be **R**.</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>Based on your resume, your favorite programming language appears to be **R**.</span></code></pre></div>
 <p><em>Damn right!</em></p>
 <p><strong>Sending PDF URLs:</strong></p>
 <p>For Google, by default, PDF URLs are sent as base64 to the server.</p>
 <p>However, we can use the <code><a href="../reference/content_converters.html">as_text_content()</a></code> helper to have <code><a href="https://docs.ropensci.org/pdftools//reference/pdf_render_page.html" class="external-link">pdftools::pdf_convert()</a></code> parse the PDFs and pass their text contents to the model instead.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r6_pdf_url</span> <span class="op">&lt;-</span> <span class="st">"https://cran.r-project.org/web/packages/R6/R6.pdf"</span></span>
 <span><span class="va">s7_pdf_url</span> <span class="op">&lt;-</span> <span class="st">"https://cran.r-project.org/web/packages/S7/S7.pdf"</span></span>
 <span></span>
@@ -607,16 +626,16 @@
 <span></span>
 <span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="op">!</span><span class="op">!</span><span class="op">!</span><span class="va">multimodal_prompt</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb38"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>S7 offers a more formal and comprehensive object-oriented system for R, explicitly designed as a successor to both S3 and S4, featuring formal class, generic, and method specifications. It supports limited multiple dispatch, allowing method selection based on the types of multiple arguments, a capability not natively offered by R6. Furthermore, S7 is the result of a collaborative effort by the R Consortium Object-Oriented Programming Working Group, suggesting a broader community consensus and potential for standardization in R's future.</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>The current versions of the packages are:</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>*   **R6:** 2.6.1 (published 2025-02-15)</span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>*   **S7:** 0.2.0 (published 2024-11-07)</span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>S7 offers a more formal and comprehensive object-oriented system for R, explicitly designed as a successor to both S3 and S4, featuring formal class, generic, and method specifications. It supports limited multiple dispatch, allowing method selection based on the types of multiple arguments, a capability not natively offered by R6. Furthermore, S7 is the result of a collaborative effort by the R Consortium Object-Oriented Programming Working Group, suggesting a broader community consensus and potential for standardization in R's future.</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>The current versions of the packages are:</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>*   **R6:** 2.6.1 (published 2025-02-15)</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>*   **S7:** 0.2.0 (published 2024-11-07)</span></code></pre></div>
 </section><section class="level3"><h4 id="passing-r-objects">Passing R Objects<a class="anchor" aria-label="anchor" href="#passing-r-objects"></a>
 </h4>
 <p>You can pass any R object to <code>chat()</code> as is:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lm_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">body_mass</span> <span class="op">~</span> <span class="va">species</span> <span class="op">+</span> <span class="va">sex</span>, data <span class="op">=</span> <span class="fu">datasets</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/datasets/penguins.html" class="external-link">penguins</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
@@ -625,13 +644,13 @@
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb40"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>From the provided regression model output, we can deduce the following three points:</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>1.  **Model Type and Purpose**: This is a linear regression model (`lm_obj`) attempting to explain or predict `body_mass` based on two categorical predictor variables: `species` and `sex`. The model was fitted using the `datasets::penguins` dataset.</span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>2.  **Intercept and Reference Group Body Mass**: The estimated intercept is 3372.4. Given that `contr.treatment` was used for both categorical variables, this intercept represents the estimated average `body_mass` (likely in grams) for the baseline group: an **Adelie female penguin**.</span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>3.  **Estimated Effects of Predictors**:</span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    *   **Species Effect**: Compared to Adelie penguins (the reference species), Chinstrap penguins are estimated to have an average `body_mass` that is 26.9 units higher, and Gentoo penguins are estimated to have an average `body_mass` that is 1377.9 units higher, assuming sex is held constant.</span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    *   **Sex Effect**: Compared to female penguins (the reference sex), male penguins are estimated to have an average `body_mass` that is 667.6 units higher, assuming species is held constant.</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>From the provided regression model output, we can deduce the following three points:</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>1.  **Model Type and Purpose**: This is a linear regression model (`lm_obj`) attempting to explain or predict `body_mass` based on two categorical predictor variables: `species` and `sex`. The model was fitted using the `datasets::penguins` dataset.</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>2.  **Intercept and Reference Group Body Mass**: The estimated intercept is 3372.4. Given that `contr.treatment` was used for both categorical variables, this intercept represents the estimated average `body_mass` (likely in grams) for the baseline group: an **Adelie female penguin**.</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>3.  **Estimated Effects of Predictors**:</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>    *   **Species Effect**: Compared to Adelie penguins (the reference species), Chinstrap penguins are estimated to have an average `body_mass` that is 26.9 units higher, and Gentoo penguins are estimated to have an average `body_mass` that is 1377.9 units higher, assuming sex is held constant.</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>    *   **Sex Effect**: Compared to female penguins (the reference sex), male penguins are estimated to have an average `body_mass` that is 667.6 units higher, assuming species is held constant.</span></code></pre></div>
 <div>
 <blockquote>
 <p><strong>Note</strong></p>
@@ -642,7 +661,7 @@
 </h4>
 <p>Upload a file and reference it with <code><a href="../reference/content_converters.html">as_file_content()</a></code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">file_metadata</span> <span class="op">&lt;-</span> <span class="va">google_gemini</span><span class="op">$</span><span class="fu">upload_file</span><span class="op">(</span><span class="va">my_cv_url</span><span class="op">)</span> <span class="co"># Pass an URL or a local file path</span></span>
 <span></span>
 <span><span class="va">multipart_prompt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -654,12 +673,12 @@
 <span></span>
 <span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">delete_file</span><span class="op">(</span><span class="va">file_metadata</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb42"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>Based on your resume, your two favorite frameworks/tools appear to be **Shiny** and **Quarto/R Markdown**.</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>Here's why:</span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>*   Your most recent role is "R/Shiny Developer," highlighting Shiny as a primary tool.</span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>*   Shiny is listed first and prominently in your "Frameworks &amp; Tools" section.</span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>*   "Quarto, R Markdown" is also listed prominently and is explicitly mentioned in your "Consulting" section, and is a natural pairing with R and Shiny for scientific publishing and interactive content.</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>Based on your resume, your two favorite frameworks/tools appear to be **Shiny** and **Quarto/R Markdown**.</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>Here's why:</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>*   Your most recent role is "R/Shiny Developer," highlighting Shiny as a primary tool.</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>*   Shiny is listed first and prominently in your "Frameworks &amp; Tools" section.</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>*   "Quarto, R Markdown" is also listed prominently and is explicitly mentioned in your "Consulting" section, and is a natural pairing with R and Shiny for scientific publishing and interactive content.</span></code></pre></div>
 <div>
 <blockquote>
 <p><strong>Note</strong></p>
@@ -679,7 +698,7 @@
 </h3>
 <p>First, create a file search store to hold your files:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">store</span> <span class="op">&lt;-</span> <span class="va">google_gemini</span><span class="op">$</span><span class="fu">create_store</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"R OOP Store"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ✔ [Google] File search store created: fileSearchStores/r-oop-store-bkd207kkacou</span></span></code></pre></div>
 </div>
@@ -688,7 +707,7 @@
 <p>You can either upload files directly or import existing File API files:</p>
 <p><strong>Direct upload:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r6_pdf_url</span> <span class="op">&lt;-</span> <span class="st">"https://cran.r-project.org/web/packages/R6/R6.pdf"</span></span>
 <span></span>
 <span><span class="va">doc</span> <span class="op">&lt;-</span> <span class="va">google_gemini</span><span class="op">$</span><span class="fu">add_file_to_store</span><span class="op">(</span></span>
@@ -701,7 +720,7 @@
 <p><strong>Import from File API:</strong></p>
 <p>Another way to upload files is to use the <code>upload_file()</code>, and then import the uploaded file into the store. The result will be the same.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">file_metadata</span> <span class="op">&lt;-</span> <span class="va">google_gemini</span><span class="op">$</span><span class="fu">upload_file</span><span class="op">(</span><span class="va">r6_pdf_url</span>, name <span class="op">=</span> <span class="st">"R6 Package Documentation 2"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ✔ [Google] File uploaded: files/ie6e5jfpuwpf</span></span>
 <span></span>
@@ -715,7 +734,7 @@
 </h3>
 <p>Once files are uploaded, use the file_search tool in your chat requests:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"What are the key features of R6 classes compared to reference classes? In three sentences."</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
@@ -726,54 +745,54 @@
 </div>
 <p><strong>Extract grounding metadata with citations:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu">yaml</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/yaml/man/as.yaml.html" class="external-link">as.yaml</a></span><span class="op">(</span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">get_supplementary</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="cell">
-<details class="code-fold"><summary>Grounding metadata with file citations</summary><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grounding_metadata</span><span class="kw">:</span></span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">groundingChunks</span><span class="kw">:</span></span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">retrievedContext</span><span class="kw">:</span></span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">title</span><span class="kw">:</span><span class="at"> je792h7nxtr4</span></span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="fu">      text</span><span class="kw">: </span><span class="ch">|-</span></span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>        above) of the object.</span>
-<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>        The default print method of R6 objects can be redefined, by supplying a public print method.</span>
-<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>         (print members that are not functions are ignored.) This method is automatically called when-</span>
-<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>         ever the object is printed, e.g. when the object's name is typed at the command prompt, or when</span>
-<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>         print(obj) is called. It can also be called directly via obj\$print(). All extra arguments from a</span>
-<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>         print(obj,...) call are passed on to the obj\$print(...) method.</span>
-<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>        Portable and non-portable classes</span>
-<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a>        When R6 classes are portable (the default), they can be inherited across packages without compli-</span>
-<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a>         cation. However, when in portable mode, members must be accessed with self and private, as in</span>
-<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a>         self\$x and private\$y.</span>
-<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-20"><a href="#cb48-20" aria-hidden="true" tabindex="-1"></a>        --- PAGE 5 ---</span>
-<span id="cb48-21"><a href="#cb48-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-22"><a href="#cb48-22" aria-hidden="true" tabindex="-1"></a>        R6Class</span>
-<span id="cb48-23"><a href="#cb48-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-24"><a href="#cb48-24" aria-hidden="true" tabindex="-1"></a>        5</span>
-<span id="cb48-25"><a href="#cb48-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-26"><a href="#cb48-26" aria-hidden="true" tabindex="-1"></a>        When used in non-portable mode, R6 classes behave more like reference classes: inheritance across</span>
-<span id="cb48-27"><a href="#cb48-27" aria-hidden="true" tabindex="-1"></a>         packages will not work well, and self and private are not necessary for accessing fields.</span>
-<span id="cb48-28"><a href="#cb48-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-29"><a href="#cb48-29" aria-hidden="true" tabindex="-1"></a>        Cloning objects</span>
-<span id="cb48-30"><a href="#cb48-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-31"><a href="#cb48-31" aria-hidden="true" tabindex="-1"></a>        R6 objects have a method named clone by default. To disable this, use cloneable=FALSE. Having</span>
-<span id="cb48-32"><a href="#cb48-32" aria-hidden="true" tabindex="-1"></a>         the clone method present will slightly increase the memory footprint of R6 objects, but since the</span>
-<span id="cb48-33"><a href="#cb48-33" aria-hidden="true" tabindex="-1"></a>         method will be shared across all R6 objects, the memory use will be negligible.</span>
-<span id="cb48-34"><a href="#cb48-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-35"><a href="#cb48-35" aria-hidden="true" tabindex="-1"></a>        By default, calling x\$clone() on an R6 object will result in a shallow</span>
-<span id="cb48-36"><a href="#cb48-36" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">fileSearchStore</span><span class="kw">:</span><span class="at"> fileSearchStores/r-oop-store-bkd207kkacou</span></span>
-<span id="cb48-37"><a href="#cb48-37" aria-hidden="true" tabindex="-1"></a><span class="co">...</span></span></code></pre></div>
+<details class="code-fold"><summary>Grounding metadata with file citations</summary><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grounding_metadata</span><span class="kw">:</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">groundingChunks</span><span class="kw">:</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">retrievedContext</span><span class="kw">:</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">title</span><span class="kw">:</span><span class="at"> je792h7nxtr4</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a><span class="fu">      text</span><span class="kw">: </span><span class="ch">|-</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>        above) of the object.</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>        The default print method of R6 objects can be redefined, by supplying a public print method.</span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>         (print members that are not functions are ignored.) This method is automatically called when-</span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>         ever the object is printed, e.g. when the object's name is typed at the command prompt, or when</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>         print(obj) is called. It can also be called directly via obj\$print(). All extra arguments from a</span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>         print(obj,...) call are passed on to the obj\$print(...) method.</span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>        Portable and non-portable classes</span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>        When R6 classes are portable (the default), they can be inherited across packages without compli-</span>
+<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>         cation. However, when in portable mode, members must be accessed with self and private, as in</span>
+<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a>         self\$x and private\$y.</span>
+<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a>        --- PAGE 5 ---</span>
+<span id="cb49-21"><a href="#cb49-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-22"><a href="#cb49-22" aria-hidden="true" tabindex="-1"></a>        R6Class</span>
+<span id="cb49-23"><a href="#cb49-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-24"><a href="#cb49-24" aria-hidden="true" tabindex="-1"></a>        5</span>
+<span id="cb49-25"><a href="#cb49-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-26"><a href="#cb49-26" aria-hidden="true" tabindex="-1"></a>        When used in non-portable mode, R6 classes behave more like reference classes: inheritance across</span>
+<span id="cb49-27"><a href="#cb49-27" aria-hidden="true" tabindex="-1"></a>         packages will not work well, and self and private are not necessary for accessing fields.</span>
+<span id="cb49-28"><a href="#cb49-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-29"><a href="#cb49-29" aria-hidden="true" tabindex="-1"></a>        Cloning objects</span>
+<span id="cb49-30"><a href="#cb49-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-31"><a href="#cb49-31" aria-hidden="true" tabindex="-1"></a>        R6 objects have a method named clone by default. To disable this, use cloneable=FALSE. Having</span>
+<span id="cb49-32"><a href="#cb49-32" aria-hidden="true" tabindex="-1"></a>         the clone method present will slightly increase the memory footprint of R6 objects, but since the</span>
+<span id="cb49-33"><a href="#cb49-33" aria-hidden="true" tabindex="-1"></a>         method will be shared across all R6 objects, the memory use will be negligible.</span>
+<span id="cb49-34"><a href="#cb49-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-35"><a href="#cb49-35" aria-hidden="true" tabindex="-1"></a>        By default, calling x\$clone() on an R6 object will result in a shallow</span>
+<span id="cb49-36"><a href="#cb49-36" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">fileSearchStore</span><span class="kw">:</span><span class="at"> fileSearchStores/r-oop-store-bkd207kkacou</span></span>
+<span id="cb49-37"><a href="#cb49-37" aria-hidden="true" tabindex="-1"></a><span class="co">...</span></span></code></pre></div>
 </details>
 </div>
 </section><section class="level2"><h3 id="using-metadata-filtering">Using Metadata Filtering<a class="anchor" aria-label="anchor" href="#using-metadata-filtering"></a>
 </h3>
 <p>Add custom metadata to files for filtering:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">s7_pdf_url</span> <span class="op">&lt;-</span> <span class="st">"https://cran.r-project.org/web/packages/S7/S7.pdf"</span></span>
 <span></span>
 <span><span class="va">doc2</span> <span class="op">&lt;-</span> <span class="va">google_gemini</span><span class="op">$</span><span class="fu">add_file_to_store</span><span class="op">(</span></span>
@@ -804,7 +823,7 @@
 </h3>
 <p>Control how files are chunked for better retrieval.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">doc3</span> <span class="op">&lt;-</span> <span class="va">google_gemini</span><span class="op">$</span><span class="fu">add_file_to_store</span><span class="op">(</span></span>
 <span>    file_path <span class="op">=</span> <span class="va">s7_pdf_url</span>,</span>
 <span>    store_name <span class="op">=</span> <span class="va">store</span><span class="op">$</span><span class="va">name</span>,</span>
@@ -820,7 +839,7 @@
 </h3>
 <p>You can also query specific files without using the chat interface:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">query_file</span><span class="op">(</span></span>
 <span>    file_name <span class="op">=</span> <span class="va">doc</span><span class="op">$</span><span class="va">name</span>,</span>
 <span>    query <span class="op">=</span> <span class="st">"What are active bindings?"</span>,</span>
@@ -831,27 +850,27 @@
 </h3>
 <p><strong>List all stores:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">list_stores</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p><strong>List files in a store:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">list_files_in_store</span><span class="op">(</span><span class="va">store</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p><strong>Get file details:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">read_file_from_store</span><span class="op">(</span><span class="va">doc</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p><strong>Delete a file:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">delete_file_from_store</span><span class="op">(</span><span class="va">doc</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p><strong>Delete a store:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google_gemini</span><span class="op">$</span><span class="fu">delete_store</span><span class="op">(</span><span class="va">store</span><span class="op">$</span><span class="va">name</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div>

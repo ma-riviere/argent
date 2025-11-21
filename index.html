@@ -62,6 +62,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-advanced-use">
 <li><a class="dropdown-item" href="articles/advanced-rag.html">RAG with `ragnar`</a></li>
     <li><a class="dropdown-item" href="articles/advanced-mcp.html">Using MCP Servers</a></li>
+    <li><a class="dropdown-item" href="articles/advanced-argentic-workflow.html">Advanced Argentic Workflow</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
@@ -96,8 +97,8 @@
 <div class="section level2">
 <h2 id="in-a-nutshell">In a Nutshell<a class="anchor" aria-label="anchor" href="#in-a-nutshell"></a>
 </h2>
-<p><code>argent</code> provides a unified interface to build AI agents with conversation history management, local function &amp; MCP tools, server-side tools, multimodal inputs, and universal structured outputs.</p>
-<p>It supports most <strong>server-side tools</strong> (code execution, web search, file search, etc.) and allows to easily define <strong>client-side tools</strong> using plumber2-style annotations within R functions. It allows sending <strong>multimodal inputs</strong> (i.e. mixing text, images, PDFs, data files, URLs, remote files, and R objects) in a single request, and it supports <strong>structured outputs</strong> for <strong><em>any</em></strong> model supporting tool calling, whatever other tools/functions are used.</p>
+<p><code>argent</code> provides a unified interface to build AI agents with conversation history management, local function &amp; MCP tools, server-side (built-in) tools, multimodal inputs, and universal structured outputs.</p>
+<p>It supports most <strong>server-side tools</strong> (i.e. built-in tools like code execution, web search, file search, etc.), <strong>MCP servers’ tools</strong> (both http &amp; stdio), and allows to easily define <strong>client-side tools</strong> using plumber2-style annotations within R functions. It allows sending <strong>multimodal inputs</strong> (i.e. mixing text, images, PDFs, data files, URLs, remote files, and R objects) in a single request, and it supports <strong>structured outputs</strong> for <strong><em>any</em></strong> model supporting tool calling, whatever other tools/functions are used.</p>
 </div>
 <div class="section level2">
 <h2 id="supported-providers--features">Supported Providers &amp; Features<a class="anchor" aria-label="anchor" href="#supported-providers--features"></a>
@@ -438,6 +439,34 @@ Depends on the underlying provider being used
 </tr>
 <tr>
 <td>
+<strong>Embeddings</strong>
+</td>
+<td>
+✅
+</td>
+<td>
+❌
+</td>
+<td>
+✅
+</td>
+<td>
+✅
+</td>
+<td>
+✅
+</td>
+<td>
+✅
+</td>
+<td>
+⚠️<a class="footnote-ref" role="doc-noteref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;
+Depends on model capabilities
+&lt;/p&gt;"><sup>19</sup></a>
+</td>
+</tr>
+<tr>
+<td>
 <strong>Status</strong>
 </td>
 <td>
@@ -455,7 +484,7 @@ Active
 <td>
 <strong>Deprecated</strong><a class="footnote-ref" role="doc-noteref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;
 Shuts down August 26, 2026. Use Responses API instead.
-&lt;/p&gt;"><sup>19</sup></a>
+&lt;/p&gt;"><sup>20</sup></a>
 </td>
 <td>
 Active
@@ -489,60 +518,66 @@ Active
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gemini</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/Google.html">Google</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GEMINI_API_KEY"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>You can customize the rate limit when initializing with the <code>rate_limit</code> parameter, and the default model with the <code>default_model</code> parameter (‘gemini-2.5-flash’ for Google).</p>
+<blockquote>
+<p><strong>Tip</strong></p>
+<p>Parallel tool calling is available in <code>argent</code>, using <code>mirai</code> &amp; <code><a href="https://purrr.tidyverse.org/reference/in_parallel.html" class="external-link">purrr::in_parallel()</a></code>. However, we need to set up the daemons before using it:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">mirai</span><span class="fu">::</span><span class="fu"><a href="https://mirai.r-lib.org/reference/daemons.html" class="external-link">daemons</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+</blockquote>
 <div class="section level3">
 <h3 id="basic-completion">Basic Completion<a class="anchor" aria-label="anchor" href="#basic-completion"></a>
 </h3>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"What is the R programming language? Answer in two sentences."</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span> <span class="co"># Not necessary, it's the default model for Google</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><code>argent</code> will maintain a conversation history in the provider object, meaning that when using <code>$chat()</code> a second time, the model will have access to the previous exchanges:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="st">"Tell me more about its statistical modeling capabilities."</span><span class="op">)</span></span></code></pre></div>
 <p>The chat history can be visualized by printing the provider object:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">gemini</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>── [ &lt;Google&gt; turns: 4 | Current context: 419 | Cumulated tokens: 676 ] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>── user [159 / 257] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>What is the R programming language? Answer in two sentences.</span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>── System ──</span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-15</span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a></span>
-<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>── assistant [257 / 257] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>R is a programming language and free software environment primarily used for statistical computing and graphics. It provides a wide variety of statistical (linear and nonlinear modeling, classical statistical tests, time-series analysis, classification, clustering, etc.) and graphical techniques, and is highly extensible.</span>
-<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a></span>
-<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a></span>
-<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>── user [224 / 676] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a></span>
-<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a>Tell me more about its statistical modeling capabilities.</span>
-<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a></span>
-<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a>── System ──</span>
-<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a></span>
-<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a>You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-15</span>
-<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a></span>
-<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a>── assistant [419 / 676] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a></span>
-<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a>R offers extensive statistical modeling capabilities, encompassing a broad range of techniques. It supports linear and generalized linear models (GLMs) for various response types, as well as nonlinear regression. Users can perform classical statistical tests like t-tests, ANOVA, and chi-squared tests. Furthermore, R is widely used for time-series analysis, including ARIMA models and state-space models, classification algorithms such as logistic regression, decision trees, and support vector machines, and clustering methods like k-means and hierarchical clustering. Its package ecosystem continuously expands these capabilities with cutting-edge statistical methodologies.</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>── [ &lt;Google&gt; turns: 4 | Current context: 419 | Cumulated tokens: 676 ] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>── user [159 / 257] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>What is the R programming language? Answer in two sentences.</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>── System ──</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-15</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>── assistant [257 / 257] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>R is a programming language and free software environment primarily used for statistical computing and graphics. It provides a wide variety of statistical (linear and nonlinear modeling, classical statistical tests, time-series analysis, classification, clustering, etc.) and graphical techniques, and is highly extensible.</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>── user [224 / 676] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>Tell me more about its statistical modeling capabilities.</span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a>── System ──</span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a></span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a>You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-15</span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a>── assistant [419 / 676] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a></span>
+<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a>R offers extensive statistical modeling capabilities, encompassing a broad range of techniques. It supports linear and generalized linear models (GLMs) for various response types, as well as nonlinear regression. Users can perform classical statistical tests like t-tests, ANOVA, and chi-squared tests. Furthermore, R is widely used for time-series analysis, including ARIMA models and state-space models, classification algorithms such as logistic regression, decision trees, and support vector machines, and clustering methods like k-means and hierarchical clustering. Its package ecosystem continuously expands these capabilities with cutting-edge statistical methodologies.</span></code></pre></div>
 <blockquote>
 <p><strong>Note</strong></p>
 <p>You can also check the JSON files containing the chat history that are created automatically in the <code>data/history/{provider}/</code> directory (default).</p>
 </blockquote>
 <p>The chat history can be reset with <code>reset_history()</code>:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gemini</span><span class="op">$</span><span class="fu">reset_history</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="tool-calling--structured-output">Tool Calling + Structured Output<a class="anchor" aria-label="anchor" href="#tool-calling--structured-output"></a>
 </h3>
 <p>First, let’s define a mock function for the LLM, that returns some information about the user for a given name:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">get_user_info</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">user_name</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="co">#' @description Provides information about the user, like their favorite programming language</span></span>
 <span>    <span class="co">#' @param user_name:string* The name of the user</span></span>
@@ -555,21 +590,21 @@ Active
 <span>    <span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>We can then call <code><a href="reference/tool_definitions.html">as_tool()</a></code> on the function to convert it to a tool using the annotations added inside the function’s body (plumber2-style annotations):</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">get_user_info</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> get_user_info</span></span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Provides information about the user, like their favorite programming</span></span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="at">  language</span></span>
-<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="fu">args_schema</span><span class="kw">:</span></span>
-<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="at">  </span><span class="fu">type</span><span class="kw">:</span><span class="at"> object</span></span>
-<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="at">  </span><span class="fu">properties</span><span class="kw">:</span></span>
-<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="at">    </span><span class="fu">user_name</span><span class="kw">:</span></span>
-<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a><span class="at">      </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string</span></span>
-<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="at">      </span><span class="fu">description</span><span class="kw">:</span><span class="at"> The name of the user</span></span>
-<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a><span class="at">  </span><span class="fu">required</span><span class="kw">:</span></span>
-<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> user_name</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> get_user_info</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Provides information about the user, like their favorite programming</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="at">  language</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="fu">args_schema</span><span class="kw">:</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="at">  </span><span class="fu">type</span><span class="kw">:</span><span class="at"> object</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="at">  </span><span class="fu">properties</span><span class="kw">:</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="at">    </span><span class="fu">user_name</span><span class="kw">:</span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="at">      </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string</span></span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="at">      </span><span class="fu">description</span><span class="kw">:</span><span class="at"> The name of the user</span></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="at">  </span><span class="fu">required</span><span class="kw">:</span></span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> user_name</span></span></code></pre></div>
 <p>Then, let’s define the schema for the structured output using <code><a href="reference/tool_definitions.html">schema()</a></code>:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">user_info_schema</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tool_definitions.html">schema</a></span><span class="op">(</span></span>
 <span>    name <span class="op">=</span> <span class="st">"user_info"</span>,</span>
 <span>    description <span class="op">=</span> <span class="st">"Information about the user"</span>,</span>
@@ -577,28 +612,28 @@ Active
 <span>    favorite_language <span class="op">=</span> <span class="st">"string* The user's favorite programming language"</span>,</span>
 <span>    favorite_framework <span class="op">=</span> <span class="st">"string* The user's favorite framework"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> user_info</span></span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Information about the user</span></span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="fu">strict</span><span class="kw">:</span><span class="at"> </span><span class="ch">yes</span></span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="fu">args_schema</span><span class="kw">:</span></span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="at">  </span><span class="fu">type</span><span class="kw">:</span><span class="at"> object</span></span>
-<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="at">  </span><span class="fu">properties</span><span class="kw">:</span></span>
-<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="at">    </span><span class="fu">user_name</span><span class="kw">:</span></span>
-<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="at">      </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string</span></span>
-<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="at">      </span><span class="fu">description</span><span class="kw">:</span><span class="at"> The name of the user</span></span>
-<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="at">    </span><span class="fu">favorite_language</span><span class="kw">:</span></span>
-<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="at">      </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string</span></span>
-<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a><span class="at">      </span><span class="fu">description</span><span class="kw">:</span><span class="at"> The user's favorite programming language</span></span>
-<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="at">    </span><span class="fu">favorite_framework</span><span class="kw">:</span></span>
-<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a><span class="at">      </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string</span></span>
-<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a><span class="at">      </span><span class="fu">description</span><span class="kw">:</span><span class="at"> The user's favorite framework</span></span>
-<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a><span class="at">  </span><span class="fu">required</span><span class="kw">:</span></span>
-<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> user_name</span></span>
-<span id="cb13-18"><a href="#cb13-18" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> favorite_language</span></span>
-<span id="cb13-19"><a href="#cb13-19" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> favorite_framework</span></span>
-<span id="cb13-20"><a href="#cb13-20" tabindex="-1"></a><span class="at">  </span><span class="fu">additionalProperties</span><span class="kw">:</span><span class="at"> </span><span class="ch">no</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> user_info</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Information about the user</span></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="fu">strict</span><span class="kw">:</span><span class="at"> </span><span class="ch">yes</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a><span class="fu">args_schema</span><span class="kw">:</span></span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="at">  </span><span class="fu">type</span><span class="kw">:</span><span class="at"> object</span></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="at">  </span><span class="fu">properties</span><span class="kw">:</span></span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="at">    </span><span class="fu">user_name</span><span class="kw">:</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="at">      </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string</span></span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="at">      </span><span class="fu">description</span><span class="kw">:</span><span class="at"> The name of the user</span></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="at">    </span><span class="fu">favorite_language</span><span class="kw">:</span></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="at">      </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string</span></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a><span class="at">      </span><span class="fu">description</span><span class="kw">:</span><span class="at"> The user's favorite programming language</span></span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a><span class="at">    </span><span class="fu">favorite_framework</span><span class="kw">:</span></span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a><span class="at">      </span><span class="fu">type</span><span class="kw">:</span><span class="at"> string</span></span>
+<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a><span class="at">      </span><span class="fu">description</span><span class="kw">:</span><span class="at"> The user's favorite framework</span></span>
+<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a><span class="at">  </span><span class="fu">required</span><span class="kw">:</span></span>
+<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> user_name</span></span>
+<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> favorite_language</span></span>
+<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> favorite_framework</span></span>
+<span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a><span class="at">  </span><span class="fu">additionalProperties</span><span class="kw">:</span><span class="at"> </span><span class="ch">no</span></span></code></pre></div>
 <p>Run the agent:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"The user's name is Marc. Give me the information about the user."</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
@@ -607,104 +642,121 @@ Active
 <span>    tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">get_user_info</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    output_schema <span class="op">=</span> <span class="va">user_info_schema</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>$user_name</span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>[1] "Marc"</span>
-<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>$favorite_language</span>
-<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>[1] "R"</span>
-<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a></span>
-<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>$favorite_framework</span>
-<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>[1] "Shiny"</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>$user_name</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>[1] "Marc"</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>$favorite_language</span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>[1] "R"</span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>$favorite_framework</span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>[1] "Shiny"</span></code></pre></div>
 <p>The model will use the tools provided repeatedly until it has enough information to answer the question, and return structured JSON output.</p>
 <blockquote>
 <p><strong>Tip</strong></p>
 <p>By default, <code>argent</code> will print the tool calls the model makes in the console:</p>
 <p>ℹ [Google] Calling: get_user_info(user_name = “Marc”)</p>
 </blockquote>
+<blockquote>
+<p><strong>Parallel Tool Calls</strong></p>
+<p>When a model makes multiple tool calls in a single response, <code>argent</code> can execute them in parallel for better performance.</p>
+<p>To enable parallel execution:</p>
+<ul>
+<li>Set up mirai daemons: <code>mirai::daemons(4)</code> (using 4 workers as an example)</li>
+<li>argent will automatically parallelize tool calls when daemons are active</li>
+<li>Without daemons, tool calls execute sequentially (default fallback)</li>
+</ul>
+<p>Performance considerations:</p>
+<ul>
+<li>Most beneficial when tools take 100+ microseconds per call</li>
+<li>May not improve performance for very fast tools due to parallelization overhead</li>
+<li>Use at most one fewer daemon than available CPU cores for optimal performance</li>
+</ul>
+<p>To disable: <code>mirai::daemons(0)</code></p>
+</blockquote>
 <p>To see more, we can print the provider object with <code>show_tools = TRUE</code> to show to tool definitions, calls, and results:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">gemini</span>, show_tools <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>── [ &lt;Google&gt; turns: 6 | Current context: 677 | Cumulated tokens: 1449 ] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>── user [216 / 289] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a></span>
-<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>The user's name is Marc. Give me the information about the user.</span>
-<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a></span>
-<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>── System ──</span>
-<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a></span>
-<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a>You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-19</span>
-<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a></span>
-<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a>── Tool Definitions ──</span>
-<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a></span>
-<span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a>• get_user_info(user_name): Provides information about the user, like their favorite programming language</span>
-<span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a></span>
-<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a>── assistant [289 / 289] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a></span>
-<span id="cb17-18"><a href="#cb17-18" tabindex="-1"></a>── Thinking ──</span>
-<span id="cb17-19"><a href="#cb17-19" tabindex="-1"></a></span>
-<span id="cb17-20"><a href="#cb17-20" tabindex="-1"></a>**Processing a User Query**</span>
-<span id="cb17-21"><a href="#cb17-21" tabindex="-1"></a></span>
-<span id="cb17-22"><a href="#cb17-22" tabindex="-1"></a>Okay, so someone's asking about a user named Marc.  My gut says the `get_user_info` tool is the way to go. It's purpose-built for retrieving user data, and the `user_name` parameter is exactly what I need.  It's pretty straightforward, actually.  I'll just call the tool and pass 'Marc' as the `user_name` value. Should be a quick and efficient way to get the information.  Let's see what comes back.</span>
-<span id="cb17-23"><a href="#cb17-23" tabindex="-1"></a></span>
-<span id="cb17-24"><a href="#cb17-24" tabindex="-1"></a></span>
-<span id="cb17-25"><a href="#cb17-25" tabindex="-1"></a>── Tool Calls ──</span>
-<span id="cb17-26"><a href="#cb17-26" tabindex="-1"></a></span>
-<span id="cb17-27"><a href="#cb17-27" tabindex="-1"></a>• get_user_info(user_name = "Marc")</span>
-<span id="cb17-28"><a href="#cb17-28" tabindex="-1"></a></span>
-<span id="cb17-29"><a href="#cb17-29" tabindex="-1"></a>── tool [417 / 772] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb17-30"><a href="#cb17-30" tabindex="-1"></a></span>
-<span id="cb17-31"><a href="#cb17-31" tabindex="-1"></a>• Result from get_user_info:</span>
-<span id="cb17-32"><a href="#cb17-32" tabindex="-1"></a></span>
-<span id="cb17-33"><a href="#cb17-33" tabindex="-1"></a>name: get_user_info</span>
-<span id="cb17-34"><a href="#cb17-34" tabindex="-1"></a>arguments:</span>
-<span id="cb17-35"><a href="#cb17-35" tabindex="-1"></a>  user_name: Marc</span>
-<span id="cb17-36"><a href="#cb17-36" tabindex="-1"></a>result:</span>
-<span id="cb17-37"><a href="#cb17-37" tabindex="-1"></a>  favorite_language: R</span>
-<span id="cb17-38"><a href="#cb17-38" tabindex="-1"></a>  favorite_framework: Shiny</span>
-<span id="cb17-39"><a href="#cb17-39" tabindex="-1"></a></span>
-<span id="cb17-40"><a href="#cb17-40" tabindex="-1"></a></span>
-<span id="cb17-41"><a href="#cb17-41" tabindex="-1"></a>── assistant [483 / 772] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb17-42"><a href="#cb17-42" tabindex="-1"></a></span>
-<span id="cb17-43"><a href="#cb17-43" tabindex="-1"></a>── Thinking ──</span>
-<span id="cb17-44"><a href="#cb17-44" tabindex="-1"></a></span>
-<span id="cb17-45"><a href="#cb17-45" tabindex="-1"></a>**Analyzing the Marc Inquiry**</span>
-<span id="cb17-46"><a href="#cb17-46" tabindex="-1"></a></span>
-<span id="cb17-47"><a href="#cb17-47" tabindex="-1"></a>Okay, so the user needed some quick background on "Marc." That's easy enough.  I leveraged the `get_user_info` tool, feeding it `user_name='Marc'`, and the results are pretty straightforward.  It seems Marc's a bit of an R aficionado, which isn't entirely surprising - there's a strong R community out there.  The Shiny framework mention is interesting, though. It suggests he's not just into statistical computing, but also interested in building interactive web applications or dashboards.  I can already start to picture the types of projects he might be involved in.  This information is pretty valuable context.</span>
-<span id="cb17-48"><a href="#cb17-48" tabindex="-1"></a></span>
-<span id="cb17-49"><a href="#cb17-49" tabindex="-1"></a></span>
-<span id="cb17-50"><a href="#cb17-50" tabindex="-1"></a></span>
-<span id="cb17-51"><a href="#cb17-51" tabindex="-1"></a>Marc's favorite programming language is R, and his favorite framework is Shiny.</span>
-<span id="cb17-52"><a href="#cb17-52" tabindex="-1"></a></span>
-<span id="cb17-53"><a href="#cb17-53" tabindex="-1"></a>── user [537 / 1449] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb17-54"><a href="#cb17-54" tabindex="-1"></a></span>
-<span id="cb17-55"><a href="#cb17-55" tabindex="-1"></a>Please format your previous response according to the requested schema.</span>
-<span id="cb17-56"><a href="#cb17-56" tabindex="-1"></a></span>
-<span id="cb17-57"><a href="#cb17-57" tabindex="-1"></a>── System ──</span>
-<span id="cb17-58"><a href="#cb17-58" tabindex="-1"></a></span>
-<span id="cb17-59"><a href="#cb17-59" tabindex="-1"></a>You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-19</span>
-<span id="cb17-60"><a href="#cb17-60" tabindex="-1"></a></span>
-<span id="cb17-61"><a href="#cb17-61" tabindex="-1"></a>── Output Schema ──</span>
-<span id="cb17-62"><a href="#cb17-62" tabindex="-1"></a></span>
-<span id="cb17-63"><a href="#cb17-63" tabindex="-1"></a>type: object</span>
-<span id="cb17-64"><a href="#cb17-64" tabindex="-1"></a>properties:</span>
-<span id="cb17-65"><a href="#cb17-65" tabindex="-1"></a>  user_name:</span>
-<span id="cb17-66"><a href="#cb17-66" tabindex="-1"></a>    type: string</span>
-<span id="cb17-67"><a href="#cb17-67" tabindex="-1"></a>    description: The name of the user</span>
-<span id="cb17-68"><a href="#cb17-68" tabindex="-1"></a>  favorite_language:</span>
-<span id="cb17-69"><a href="#cb17-69" tabindex="-1"></a>    type: string</span>
-<span id="cb17-70"><a href="#cb17-70" tabindex="-1"></a>    description: The user's favorite programming language</span>
-<span id="cb17-71"><a href="#cb17-71" tabindex="-1"></a>  favorite_framework:</span>
-<span id="cb17-72"><a href="#cb17-72" tabindex="-1"></a>    type: string</span>
-<span id="cb17-73"><a href="#cb17-73" tabindex="-1"></a>    description: The user's favorite framework</span>
-<span id="cb17-74"><a href="#cb17-74" tabindex="-1"></a>required:</span>
-<span id="cb17-75"><a href="#cb17-75" tabindex="-1"></a>- user_name</span>
-<span id="cb17-76"><a href="#cb17-76" tabindex="-1"></a>- favorite_language</span>
-<span id="cb17-77"><a href="#cb17-77" tabindex="-1"></a>- favorite_framework</span>
-<span id="cb17-78"><a href="#cb17-78" tabindex="-1"></a></span>
-<span id="cb17-79"><a href="#cb17-79" tabindex="-1"></a>── assistant [677 / 1449] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb17-80"><a href="#cb17-80" tabindex="-1"></a></span>
-<span id="cb17-81"><a href="#cb17-81" tabindex="-1"></a>{"user_name": "Marc", "favorite_language": "R", "favorite_framework": "Shiny"}</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>── [ &lt;Google&gt; turns: 6 | Current context: 677 | Cumulated tokens: 1449 ] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>── user [216 / 289] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>The user's name is Marc. Give me the information about the user.</span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a>── System ──</span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-19</span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a>── Tool Definitions ──</span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a></span>
+<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a>• get_user_info(user_name): Provides information about the user, like their favorite programming language</span>
+<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a></span>
+<span id="cb18-16"><a href="#cb18-16" tabindex="-1"></a>── assistant [289 / 289] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb18-17"><a href="#cb18-17" tabindex="-1"></a></span>
+<span id="cb18-18"><a href="#cb18-18" tabindex="-1"></a>── Thinking ──</span>
+<span id="cb18-19"><a href="#cb18-19" tabindex="-1"></a></span>
+<span id="cb18-20"><a href="#cb18-20" tabindex="-1"></a>**Processing a User Query**</span>
+<span id="cb18-21"><a href="#cb18-21" tabindex="-1"></a></span>
+<span id="cb18-22"><a href="#cb18-22" tabindex="-1"></a>Okay, so someone's asking about a user named Marc.  My gut says the `get_user_info` tool is the way to go. It's purpose-built for retrieving user data, and the `user_name` parameter is exactly what I need.  It's pretty straightforward, actually.  I'll just call the tool and pass 'Marc' as the `user_name` value. Should be a quick and efficient way to get the information.  Let's see what comes back.</span>
+<span id="cb18-23"><a href="#cb18-23" tabindex="-1"></a></span>
+<span id="cb18-24"><a href="#cb18-24" tabindex="-1"></a></span>
+<span id="cb18-25"><a href="#cb18-25" tabindex="-1"></a>── Tool Calls ──</span>
+<span id="cb18-26"><a href="#cb18-26" tabindex="-1"></a></span>
+<span id="cb18-27"><a href="#cb18-27" tabindex="-1"></a>• get_user_info(user_name = "Marc")</span>
+<span id="cb18-28"><a href="#cb18-28" tabindex="-1"></a></span>
+<span id="cb18-29"><a href="#cb18-29" tabindex="-1"></a>── tool [417 / 772] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb18-30"><a href="#cb18-30" tabindex="-1"></a></span>
+<span id="cb18-31"><a href="#cb18-31" tabindex="-1"></a>• Result from get_user_info:</span>
+<span id="cb18-32"><a href="#cb18-32" tabindex="-1"></a></span>
+<span id="cb18-33"><a href="#cb18-33" tabindex="-1"></a>name: get_user_info</span>
+<span id="cb18-34"><a href="#cb18-34" tabindex="-1"></a>arguments:</span>
+<span id="cb18-35"><a href="#cb18-35" tabindex="-1"></a>  user_name: Marc</span>
+<span id="cb18-36"><a href="#cb18-36" tabindex="-1"></a>result:</span>
+<span id="cb18-37"><a href="#cb18-37" tabindex="-1"></a>  favorite_language: R</span>
+<span id="cb18-38"><a href="#cb18-38" tabindex="-1"></a>  favorite_framework: Shiny</span>
+<span id="cb18-39"><a href="#cb18-39" tabindex="-1"></a></span>
+<span id="cb18-40"><a href="#cb18-40" tabindex="-1"></a></span>
+<span id="cb18-41"><a href="#cb18-41" tabindex="-1"></a>── assistant [483 / 772] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb18-42"><a href="#cb18-42" tabindex="-1"></a></span>
+<span id="cb18-43"><a href="#cb18-43" tabindex="-1"></a>── Thinking ──</span>
+<span id="cb18-44"><a href="#cb18-44" tabindex="-1"></a></span>
+<span id="cb18-45"><a href="#cb18-45" tabindex="-1"></a>**Analyzing the Marc Inquiry**</span>
+<span id="cb18-46"><a href="#cb18-46" tabindex="-1"></a></span>
+<span id="cb18-47"><a href="#cb18-47" tabindex="-1"></a>Okay, so the user needed some quick background on "Marc." That's easy enough.  I leveraged the `get_user_info` tool, feeding it `user_name='Marc'`, and the results are pretty straightforward.  It seems Marc's a bit of an R aficionado, which isn't entirely surprising - there's a strong R community out there.  The Shiny framework mention is interesting, though. It suggests he's not just into statistical computing, but also interested in building interactive web applications or dashboards.  I can already start to picture the types of projects he might be involved in.  This information is pretty valuable context.</span>
+<span id="cb18-48"><a href="#cb18-48" tabindex="-1"></a></span>
+<span id="cb18-49"><a href="#cb18-49" tabindex="-1"></a></span>
+<span id="cb18-50"><a href="#cb18-50" tabindex="-1"></a></span>
+<span id="cb18-51"><a href="#cb18-51" tabindex="-1"></a>Marc's favorite programming language is R, and his favorite framework is Shiny.</span>
+<span id="cb18-52"><a href="#cb18-52" tabindex="-1"></a></span>
+<span id="cb18-53"><a href="#cb18-53" tabindex="-1"></a>── user [537 / 1449] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb18-54"><a href="#cb18-54" tabindex="-1"></a></span>
+<span id="cb18-55"><a href="#cb18-55" tabindex="-1"></a>Please format your previous response according to the requested schema.</span>
+<span id="cb18-56"><a href="#cb18-56" tabindex="-1"></a></span>
+<span id="cb18-57"><a href="#cb18-57" tabindex="-1"></a>── System ──</span>
+<span id="cb18-58"><a href="#cb18-58" tabindex="-1"></a></span>
+<span id="cb18-59"><a href="#cb18-59" tabindex="-1"></a>You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-19</span>
+<span id="cb18-60"><a href="#cb18-60" tabindex="-1"></a></span>
+<span id="cb18-61"><a href="#cb18-61" tabindex="-1"></a>── Output Schema ──</span>
+<span id="cb18-62"><a href="#cb18-62" tabindex="-1"></a></span>
+<span id="cb18-63"><a href="#cb18-63" tabindex="-1"></a>type: object</span>
+<span id="cb18-64"><a href="#cb18-64" tabindex="-1"></a>properties:</span>
+<span id="cb18-65"><a href="#cb18-65" tabindex="-1"></a>  user_name:</span>
+<span id="cb18-66"><a href="#cb18-66" tabindex="-1"></a>    type: string</span>
+<span id="cb18-67"><a href="#cb18-67" tabindex="-1"></a>    description: The name of the user</span>
+<span id="cb18-68"><a href="#cb18-68" tabindex="-1"></a>  favorite_language:</span>
+<span id="cb18-69"><a href="#cb18-69" tabindex="-1"></a>    type: string</span>
+<span id="cb18-70"><a href="#cb18-70" tabindex="-1"></a>    description: The user's favorite programming language</span>
+<span id="cb18-71"><a href="#cb18-71" tabindex="-1"></a>  favorite_framework:</span>
+<span id="cb18-72"><a href="#cb18-72" tabindex="-1"></a>    type: string</span>
+<span id="cb18-73"><a href="#cb18-73" tabindex="-1"></a>    description: The user's favorite framework</span>
+<span id="cb18-74"><a href="#cb18-74" tabindex="-1"></a>required:</span>
+<span id="cb18-75"><a href="#cb18-75" tabindex="-1"></a>- user_name</span>
+<span id="cb18-76"><a href="#cb18-76" tabindex="-1"></a>- favorite_language</span>
+<span id="cb18-77"><a href="#cb18-77" tabindex="-1"></a>- favorite_framework</span>
+<span id="cb18-78"><a href="#cb18-78" tabindex="-1"></a></span>
+<span id="cb18-79"><a href="#cb18-79" tabindex="-1"></a>── assistant [677 / 1449] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb18-80"><a href="#cb18-80" tabindex="-1"></a></span>
+<span id="cb18-81"><a href="#cb18-81" tabindex="-1"></a>{"user_name": "Marc", "favorite_language": "R", "favorite_framework": "Shiny"}</span></code></pre></div>
 <blockquote>
 <p><strong>Note</strong></p>
 <p>You may have noticed an extra user input at the end of the conversation history. This is because Google does not support structured outputs when tools are used, so, behind the scenes, <code>argent</code> makes a final call to the model to format the previous response according to the requested schema, without any tools.</p>
@@ -716,7 +768,7 @@ Active
 </h3>
 <p>Providers like Google, Anthropic, and OpenAI have server-side tools. Those are tools you can call without having to define them yourself. They will be run on the provider’s server.</p>
 <p>For example, Google Gemini has a server-side <code>google_search</code> which combines searching &amp; fetching web pages:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"When was the first release of the R 'ellmer' package on GitHub?"</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-pro"</span>,</span>
@@ -730,11 +782,11 @@ Active
 <span>        release_date <span class="op">=</span> <span class="st">"string* The release date of the `release_version`"</span></span>
 <span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>$release_version</span>
-<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>[1] "0.1.1"</span>
-<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a></span>
-<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>$release_date</span>
-<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>[1] "2025-02-25"</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>$release_version</span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>[1] "0.1.1"</span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a>$release_date</span>
+<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a>[1] "2025-02-25"</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="multimodal-input">Multimodal Input<a class="anchor" aria-label="anchor" href="#multimodal-input"></a>
@@ -744,7 +796,7 @@ Active
 <h4 id="passing-files-or-urls">Passing Files or URLs<a class="anchor" aria-label="anchor" href="#passing-files-or-urls"></a>
 </h4>
 <p>Example with an URL to a PDF file:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bsg04_cast_image_url</span> <span class="op">&lt;-</span> <span class="st">"https://upload.wikimedia.org/wikipedia/en/1/1a/Battlestar_Galactica_%282004%29_cast.jpg"</span></span>
 <span></span>
 <span><span class="va">gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
@@ -752,16 +804,16 @@ Active
 <span>    <span class="va">bsg04_cast_image_url</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb21"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>This image features the cast of **Battlestar Galactica (2004 TV series)**.</span>
-<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a></span>
-<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>The characters shown are:</span>
-<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a>*   **Edward James Olmos** as Admiral William Adama</span>
-<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a>*   **Mary McDonnell** as President Laura Roslin</span>
-<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a>*   **Jamie Bamber** as Captain Lee "Apollo" Adama</span>
-<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a>*   **Katee Sackhoff** as Captain Kara "Starbuck" Thrace</span>
-<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a>*   **Tricia Helfer** as Number Six</span>
-<span id="cb21-9"><a href="#cb21-9" tabindex="-1"></a>*   **James Callis** as Dr. Gaius Baltar</span>
-<span id="cb21-10"><a href="#cb21-10" tabindex="-1"></a>*   **Grace Park** as Lieutenant Sharon "Boomer" Valerii / Number Eight</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>This image features the cast of **Battlestar Galactica (2004 TV series)**.</span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>The characters shown are:</span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a>*   **Edward James Olmos** as Admiral William Adama</span>
+<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a>*   **Mary McDonnell** as President Laura Roslin</span>
+<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a>*   **Jamie Bamber** as Captain Lee "Apollo" Adama</span>
+<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a>*   **Katee Sackhoff** as Captain Kara "Starbuck" Thrace</span>
+<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a>*   **Tricia Helfer** as Number Six</span>
+<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a>*   **James Callis** as Dr. Gaius Baltar</span>
+<span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a>*   **Grace Park** as Lieutenant Sharon "Boomer" Valerii / Number Eight</span></code></pre></div>
 <p><em>So say we all!</em></p>
 <blockquote>
 <p><strong>Note</strong></p>
@@ -778,19 +830,19 @@ Active
 <h4 id="passing-uploaded-files">Passing Uploaded Files<a class="anchor" aria-label="anchor" href="#passing-uploaded-files"></a>
 </h4>
 <p>Finally, major providers support uploading files to their servers, and passing them as references to the model, to use them in the conversation, either on their own, or as part of a vector store / RAG system (see <a href="./articles/google-gemini.html#server-side-rag">server-side RAG</a>).</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">file_metadata</span> <span class="op">&lt;-</span> <span class="va">gemini</span><span class="op">$</span><span class="fu">upload_file</span><span class="op">(</span><span class="st">"https://ma-riviere.com/res/cv.pdf"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ✔ [Google] File uploaded: files/7xulp36j9jq1</span></span></code></pre></div>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">multipart_prompt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="st">"What is my favorite programming language?"</span>,</span>
 <span>    <span class="fu"><a href="reference/content_converters.html">as_file_content</a></span><span class="op">(</span><span class="va">file_metadata</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="op">!</span><span class="op">!</span><span class="op">!</span><span class="va">multipart_prompt</span>, model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb24"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>Based on your resume, your favorite programming language appears to be **R**.</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>Based on your resume, your favorite programming language appears to be **R**.</span></code></pre></div>
 <p><em>Damn right!</em></p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gemini</span><span class="op">$</span><span class="fu">delete_file</span><span class="op">(</span><span class="va">file_metadata</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ✔ [Google] File deleted: files/7xulp36j9jq1</span></span></code></pre></div>
 <blockquote>

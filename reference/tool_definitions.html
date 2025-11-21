@@ -99,6 +99,7 @@ A list: For nested objects with type field and nested properties
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-advanced-use" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Advanced Use</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-advanced-use"><li><a class="dropdown-item" href="../articles/advanced-rag.html">RAG with `ragnar`</a></li>
     <li><a class="dropdown-item" href="../articles/advanced-mcp.html">Using MCP Servers</a></li>
+    <li><a class="dropdown-item" href="../articles/advanced-argentic-workflow.html">Advanced Argentic Workflow</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -154,7 +155,7 @@ by some LLM providers for structured outputs.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">as_tool</span><span class="op">(</span><span class="va">fn</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">tool</span><span class="op">(</span><span class="va">name</span>, <span class="va">description</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">tool</span><span class="op">(</span><span class="va">name</span>, <span class="va">description</span>, <span class="va">...</span>, fn <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">schema</span><span class="op">(</span><span class="va">name</span>, <span class="va">description</span>, <span class="va">...</span>, strict <span class="op">=</span> <span class="cn">TRUE</span>, additional_properties <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -164,15 +165,10 @@ by some LLM providers for structured outputs.</p>
 
 
 <dl><dt id="arg-fn">fn<a class="anchor" aria-label="anchor" href="#arg-fn"></a></dt>
-<dd><p>A function with annotations in its body comments using <code>#'</code> prefix.
-Supported tags:</p><ul><li><p><code>@description</code>: Function description</p></li>
-<li><p><code>@param name:type* description</code>: Parameter specification</p></li>
-</ul><p>Supported types: <code>string</code>, <code>integer</code>, <code>number</code>, <code>boolean</code>, <code>date</code>,
-<code>date-time</code>, and arrays using <code>[type]</code> syntax (e.g., <code>[integer]</code>).</p>
-<p>The <code>*</code> suffix marks a parameter as required. If a parameter has a
-default value in the function signature and no <code>*</code> suffix, it is
-optional. If it has a <code>*</code> suffix, it overrides the default and becomes
-required.</p></dd>
+<dd><p>Function. For <code>tool()</code> only. Optional function implementation to store with the
+tool definition. When provided, this function (with its closure) will be called when the
+LLM invokes the tool, supporting locally-defined functions with access to local variables.
+If NULL (default), the function is looked up by name in the global environment.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
@@ -199,10 +195,18 @@ properties in the schema (defaults to FALSE). Added to <code>args_schema</code>.
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>For <code>tool()</code>: A list with:</p><ul><li><p><code>name</code>: Tool name (character)</p></li>
+    <p>For <code>as_tool()</code>: A list with:</p><ul><li><p><code>name</code>: Tool name (character)</p></li>
 <li><p><code>description</code>: Tool description (character)</p></li>
 <li><p><code>args_schema</code>: JSON Schema object with <code>type</code>, <code>properties</code>, and <code>required</code> fields</p></li>
-</ul><p>For <code>schema()</code>: Same as <code>tool()</code> but with additional fields:</p><ul><li><p><code>strict</code>: Logical (at root level)</p></li>
+<li><p><code>.fn</code>: The original function (with closure) for execution</p></li>
+</ul><p>For <code>tool()</code>: A list with:</p><ul><li><p><code>name</code>: Tool name (character)</p></li>
+<li><p><code>description</code>: Tool description (character)</p></li>
+<li><p><code>args_schema</code>: JSON Schema object with <code>type</code>, <code>properties</code>, and <code>required</code> fields</p></li>
+<li><p><code>.fn</code>: Optional function implementation (if <code>fn</code> parameter provided)</p></li>
+</ul><p>For <code>schema()</code>: A list with:</p><ul><li><p><code>name</code>: Schema name (character)</p></li>
+<li><p><code>description</code>: Schema description (character)</p></li>
+<li><p><code>args_schema</code>: JSON Schema object with <code>type</code>, <code>properties</code>, and <code>required</code> fields</p></li>
+<li><p><code>strict</code>: Logical (at root level)</p></li>
 <li><p><code>args_schema$additionalProperties</code>: Logical (inside args_schema)</p></li>
 </ul></div>
     <div class="section level2">
@@ -282,6 +286,21 @@ properties in the schema (defaults to FALSE). Added to <code>args_schema</code>.
 <span class="r-in"><span>    zip <span class="op">=</span> <span class="st">"string Postal code"</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Using closures with local state</span></span></span>
+<span class="r-in"><span><span class="va">create_counter_tool</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">count</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="va">increment</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">count</span> <span class="op">&lt;&lt;-</span> <span class="va">count</span> <span class="op">+</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span>    <span class="va">count</span></span></span>
+<span class="r-in"><span>  <span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="fu">as_tool</span><span class="op">(</span><span class="va">increment</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">counter_tool</span> <span class="op">&lt;-</span> <span class="fu">create_counter_tool</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># The LLM can now call this tool and it maintains state via closure</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Using MCP tools alongside custom tools</span></span></span>
 <span class="r-in"><span><span class="va">github_server</span> <span class="op">&lt;-</span> <span class="fu"><a href="mcp_integration.html">mcp_server</a></span><span class="op">(</span></span></span>

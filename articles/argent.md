@@ -5,13 +5,19 @@
 Here is a quick showcase of the various features of `argent` using the
 Google (Gemini) provider.
 
-> **Note**
->
-> The examples shown would be mostly identical with any other provider.
-
 ``` r
 gemini <- Google$new(api_key = Sys.getenv("GEMINI_API_KEY"))
 ```
+
+> **Tip**
+>
+> Parallel tool calling is available in `argent`, using `mirai` &
+> [`purrr::in_parallel()`](https://purrr.tidyverse.org/reference/in_parallel.html).
+> However, we need to set up the daemons before using it:
+>
+> ``` r
+> mirai::daemons(4)
+> ```
 
 You can customize the rate limit when initializing with the `rate_limit`
 parameter, and the default model with the `default_model` parameter
@@ -77,19 +83,32 @@ web_fetch <- function(url) {
     #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.
     #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
     
-    res <- web_fetch_trafilatura(url)
+    trafilatura_installed <- tryCatch({
+        system("which trafilatura", intern = TRUE, ignore.stderr = TRUE)
+        return(TRUE)
+    },
+    warning = function(e) {
+        cli::cli_alert_warning("trafilatura is not installed. Install with: {.code pip install trafilatura}")
+        return(FALSE)
+    })
 
-    could_not_fetch <- c(
-        "Impossible to fetch the contents of this web page",
-        "Please reload this page",
-        "There was an error while loading",
-        "404"
-    )
-    if (is.null(res) || is.na(res) || nchar(res) == 0 ||
-        any(stringr::str_detect(res, stringr::fixed(could_not_fetch, ignore_case = TRUE)))) {
-        res <- web_fetch_rvest(url)
+    if (trafilatura_installed) {
+        res <- web_fetch_trafilatura(url)
+
+        could_not_fetch <- c(
+            "Impossible to fetch the contents of this web page",
+            "Please reload this page",
+            "There was an error while loading",
+            "404"
+        )
+        if (is.null(res) || is.na(res) || nchar(res) == 0 ||
+            any(stringr::str_detect(res, stringr::fixed(could_not_fetch, ignore_case = TRUE)))) {
+            return(web_fetch_rvest(url))
+        }
+        return(res)
     }
-    return(res)
+
+    return(web_fetch_rvest(url))
 }
 
 web_fetch_trafilatura <- function(url) {
@@ -518,12 +537,28 @@ my_function <- function(arg1) {
 }
 
 my_tool <- tool(
-    name = "my_function", # Has to match the actual R function to be called
+    name = "my_function",
     description = "What the function does",
-    arg1 = "string* Required string argument description"
+    arg1 = "string* Required string argument description",
+    fn = my_function  # Store the function with the tool definition
 )
 my_tool
 ```
+
+> **Note**
+>
+> The `fn` parameter stores the function implementation with the tool
+> definition. This is important for:
+>
+> - **Closures**: Functions that capture local variables (e.g., within
+>   another function)
+> - **Consistency**: Ensures the exact function is called, not a
+>   different one with the same name
+> - **Portability**: The tool carries its implementation, not just a
+>   reference to a global name
+>
+> If `fn` is not provided, argent will look up the function by name in
+> the global environment when the LLM calls it.
 
 **Option 2:** 2-in-1: Define the function and tool definition in one go
 by adding plumber-style annotations:
@@ -535,7 +570,7 @@ my_function <- function(arg1) {
 
     return(arg1)
 }
-my_tool <- as_tool(my_function)
+my_tool <- as_tool(my_function)  # Automatically stores the function in .fn
 ```
 
 And then, use the tool within a chat:

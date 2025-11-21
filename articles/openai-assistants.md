@@ -32,11 +32,16 @@ code_interpreter.
 openai_assistant <- OpenAI_Assistant$new(api_key = Sys.getenv("OPENAI_API_KEY"))
 ```
 
+``` r
+mirai::daemons(4) # To enable parallel tool calling
+```
+
 > **Note**
 >
 > This does not create an assistant, it only creates an instance of the
 > `OpenAI_Assistant` class. For OpenAI Assistants, you need to
-> specifically create an assistant with `create_assistant()`.
+> specifically create an assistant with `create_assistant()` before
+> being able to call the `chat()` method.
 
 ``` r
 openai_assistant$create_assistant(name = "My Assistant", model = "gpt-4o-mini")
@@ -64,19 +69,19 @@ during creation and applies to all subsequent `chat()` calls.
 > existing_assistant <- OpenAI_Assistant$new()$load_assistant(id = assistant_id)
 > ```
 
-**Available Models**
-
-> **Note**
->
-> The Assistants API does not support GPT-5 models. Use GPT-4 or
-> earlier.
+## Discovering Models
 
 ``` r
 openai_assistant$list_models() |>
     dplyr::filter(stringr::str_detect(id, "-4o-|-4.1-"))
 ```
 
-## Basic Chat
+> **Note**
+>
+> The Assistants API does not support GPT-5 models. Use GPT-4 or
+> earlier.
+
+## Basic Completion
 
 The Assistants API manages conversation state through threads:
 
@@ -170,19 +175,32 @@ web_fetch <- function(url) {
     #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.
     #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
     
-    res <- web_fetch_trafilatura(url)
+    trafilatura_installed <- tryCatch({
+        system("which trafilatura", intern = TRUE, ignore.stderr = TRUE)
+        return(TRUE)
+    },
+    warning = function(e) {
+        cli::cli_alert_warning("trafilatura is not installed. Install with: {.code pip install trafilatura}")
+        return(FALSE)
+    })
 
-    could_not_fetch <- c(
-        "Impossible to fetch the contents of this web page",
-        "Please reload this page",
-        "There was an error while loading",
-        "404"
-    )
-    if (is.null(res) || is.na(res) || nchar(res) == 0 ||
-        any(stringr::str_detect(res, stringr::fixed(could_not_fetch, ignore_case = TRUE)))) {
-        res <- web_fetch_rvest(url)
+    if (trafilatura_installed) {
+        res <- web_fetch_trafilatura(url)
+
+        could_not_fetch <- c(
+            "Impossible to fetch the contents of this web page",
+            "Please reload this page",
+            "There was an error while loading",
+            "404"
+        )
+        if (is.null(res) || is.na(res) || nchar(res) == 0 ||
+            any(stringr::str_detect(res, stringr::fixed(could_not_fetch, ignore_case = TRUE)))) {
+            return(web_fetch_rvest(url))
+        }
+        return(res)
     }
-    return(res)
+
+    return(web_fetch_rvest(url))
 }
 
 web_fetch_trafilatura <- function(url) {
