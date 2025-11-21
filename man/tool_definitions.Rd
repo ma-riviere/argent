@@ -9,25 +9,15 @@
 \usage{
 as_tool(fn)
 
-tool(name, description, ...)
+tool(name, description, ..., fn = NULL)
 
 schema(name, description, ..., strict = TRUE, additional_properties = FALSE)
 }
 \arguments{
-\item{fn}{A function with annotations in its body comments using \verb{#'} prefix.
-Supported tags:
-\itemize{
-\item \verb{@description}: Function description
-\item \verb{@param name:type* description}: Parameter specification
-}
-
-Supported types: \code{string}, \code{integer}, \code{number}, \code{boolean}, \code{date},
-\code{date-time}, and arrays using \verb{[type]} syntax (e.g., \verb{[integer]}).
-
-The \code{*} suffix marks a parameter as required. If a parameter has a
-default value in the function signature and no \code{*} suffix, it is
-optional. If it has a \code{*} suffix, it overrides the default and becomes
-required.}
+\item{fn}{Function. For \code{tool()} only. Optional function implementation to store with the
+tool definition. When provided, this function (with its closure) will be called when the
+LLM invokes the tool, supporting locally-defined functions with access to local variables.
+If NULL (default), the function is looked up by name in the global environment.}
 
 \item{name}{Character. The tool or schema name}
 
@@ -42,15 +32,27 @@ Added at root level of the schema definition.}
 properties in the schema (defaults to FALSE). Added to \code{args_schema}.}
 }
 \value{
+For \code{as_tool()}: A list with:
+\itemize{
+\item \code{name}: Tool name (character)
+\item \code{description}: Tool description (character)
+\item \code{args_schema}: JSON Schema object with \code{type}, \code{properties}, and \code{required} fields
+\item \code{.fn}: The original function (with closure) for execution
+}
+
 For \code{tool()}: A list with:
 \itemize{
 \item \code{name}: Tool name (character)
 \item \code{description}: Tool description (character)
 \item \code{args_schema}: JSON Schema object with \code{type}, \code{properties}, and \code{required} fields
+\item \code{.fn}: Optional function implementation (if \code{fn} parameter provided)
 }
 
-For \code{schema()}: Same as \code{tool()} but with additional fields:
+For \code{schema()}: A list with:
 \itemize{
+\item \code{name}: Schema name (character)
+\item \code{description}: Schema description (character)
+\item \code{args_schema}: JSON Schema object with \code{type}, \code{properties}, and \code{required} fields
 \item \code{strict}: Logical (at root level)
 \item \code{args_schema$additionalProperties}: Logical (inside args_schema)
 }
@@ -168,6 +170,21 @@ create_user_tool <- tool(
     zip = "string Postal code"
   )
 )
+
+# Using closures with local state
+create_counter_tool <- function() {
+  count <- 0
+
+  increment <- function() {
+    count <<- count + 1
+    count
+  }
+
+  as_tool(increment)
+}
+
+counter_tool <- create_counter_tool()
+# The LLM can now call this tool and it maintains state via closure
 
 # Using MCP tools alongside custom tools
 github_server <- mcp_server(

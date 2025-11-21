@@ -37,8 +37,13 @@ file_search and code_interpreter.
 openai_assistant <- OpenAI_Assistant$new(api_key = Sys.getenv("OPENAI_API_KEY"))
 ```
 
+```{r}
+mirai::daemons(4) # To enable parallel tool calling
+```
+
 ::: {.callout-note appearance="simple"}
-This does not create an assistant, it only creates an instance of the `OpenAI_Assistant` class. For OpenAI Assistants, you need to specifically create an assistant with `create_assistant()`.
+This does not create an assistant, it only creates an instance of the `OpenAI_Assistant` class. 
+For OpenAI Assistants, you need to specifically create an assistant with `create_assistant()` before being able to call the `chat()` method.
 :::
 
 ```{r}
@@ -69,19 +74,18 @@ existing_assistant <- OpenAI_Assistant$new()$load_assistant(id = assistant_id)
 :::
 
 
-**Available Models**
-
-::: {.callout-note appearance="simple"}
-The Assistants API does not support GPT-5 models. Use GPT-4 or earlier.
-:::
+# Discovering Models
 
 ```{r}
 openai_assistant$list_models() |>
     dplyr::filter(stringr::str_detect(id, "-4o-|-4.1-"))
 ```
 
+::: {.callout-note appearance="simple"}
+The Assistants API does not support GPT-5 models. Use GPT-4 or earlier.
+:::
 
-# Basic Chat
+# Basic Completion
 
 The Assistants API manages conversation state through threads:
 

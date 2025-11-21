@@ -16,6 +16,10 @@ This article covers using the OpenRouter provider with argent. OpenRouter aggreg
 openrouter <- OpenRouter$new(api_key = Sys.getenv("OPENROUTER_API_KEY"))
 ```
 
+```{r}
+mirai::daemons(4) # To enable parallel tool calling
+```
+
 # Discovering Models and Providers
 
 **Available Models**

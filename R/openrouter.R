@@ -850,24 +850,7 @@ OpenRouter <- R6::R6Class( # nolint
 
             reasoning <- purrr::pluck(root, "reasoning")
 
-            # Use reasoning_details as fallback if reasoning is empty
-            has_no_reasoning <- purrr::is_empty(reasoning) || reasoning %in% c("\n", "")
-
-            if (has_no_reasoning) {
-                reasoning_details <- private$extract_reasoning_details(root)
-
-                if (!is.null(reasoning_details)) {
-                    reasoning_text_items <- purrr::keep(reasoning_details, \(x) {
-                        purrr::pluck(x, "type", .default = "") == "reasoning.text"
-                    })
-
-                    if (length(reasoning_text_items) > 0) {
-                        reasoning <- purrr::pluck(reasoning_text_items, 1, "text")
-                    }
-                }
-            }
-
-            if (purrr::is_empty(reasoning) || reasoning %in% c("\n", "")) {
+            if (purrr::is_empty(reasoning) || nzchar(reasoning) || reasoning %in% c("\n", "\n\n")) {
                 return(NULL)
             }
 
@@ -931,7 +914,7 @@ OpenRouter <- R6::R6Class( # nolint
             }
 
             # Try to parse JSON, fallback to raw string
-            purrr::possibly(jsonlite::fromJSON, otherwise = args)(args)
+            purrr::possibly(jsonlite::fromJSON, otherwise = args)(args, simplifyDataFrame = FALSE)
         },
 
         extract_tool_results = function(root) {

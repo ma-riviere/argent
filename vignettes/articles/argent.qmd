@@ -8,15 +8,21 @@ execute:
 
 # Getting Started
 
-Here is a quick showcase of the various features of `argent` using the Google (Gemini) provider. 
-
-::: {.callout-note appearance="simple"}
-The examples shown would be mostly identical with any other provider.
-:::
+Here is a quick showcase of the various features of `argent` using the Google (Gemini) provider.
 
 ```{r}
 gemini <- Google$new(api_key = Sys.getenv("GEMINI_API_KEY"))
 ```
+
+::: {.callout-tip appearance="simple"}
+
+Parallel tool calling is available in `argent`, using `mirai` & `purrr::in_parallel()`. However, we need to set up the daemons before using it:
+
+```{r}
+mirai::daemons(4)
+```
+
+:::
 
 You can customize the rate limit when initializing with the `rate_limit` parameter, and the default model with the `default_model` parameter ('gemini-2.5-flash' for Google).
 
@@ -416,12 +422,23 @@ my_function <- function(arg1) {
 }
 
 my_tool <- tool(
-    name = "my_function", # Has to match the actual R function to be called
+    name = "my_function",
     description = "What the function does",
-    arg1 = "string* Required string argument description"
+    arg1 = "string* Required string argument description",
+    fn = my_function  # Store the function with the tool definition
 )
 my_tool
 ```
+
+::: {.callout-note}
+The `fn` parameter stores the function implementation with the tool definition. This is important for:
+
+- **Closures**: Functions that capture local variables (e.g., within another function)
+- **Consistency**: Ensures the exact function is called, not a different one with the same name
+- **Portability**: The tool carries its implementation, not just a reference to a global name
+
+If `fn` is not provided, argent will look up the function by name in the global environment when the LLM calls it.
+:::
 
 **Option 2:** 2-in-1: Define the function and tool definition in one go by adding plumber-style annotations:
 
@@ -434,7 +451,7 @@ my_function <- function(arg1) {
 
     return(arg1)
 }
-my_tool <- as_tool(my_function)
+my_tool <- as_tool(my_function)  # Automatically stores the function in .fn
 ```
 
 And then, use the tool within a chat:

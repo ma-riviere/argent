@@ -1272,7 +1272,7 @@ Google <- R6::R6Class( # nolint
             if (is.null(args) || purrr::is_empty(args)) {
                 return(NULL)
             }
-            purrr::possibly(jsonlite::fromJSON, otherwise = args)(args)
+            purrr::possibly(jsonlite::fromJSON, otherwise = args)(args, simplifyDataFrame = FALSE)
         },
 
         extract_tool_results = function(root) {

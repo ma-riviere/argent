@@ -15,7 +15,7 @@
 #' @importFrom jsonlite fromJSON toJSON
 #' @importFrom lubridate as_datetime today ymd_hms
 #' @importFrom mime guess_type mimemap
-#' @importFrom purrr compact detect discard discard_at imap imap_chr is_empty iwalk keep list_c
+#' @importFrom purrr compact detect discard discard_at imap imap_chr in_parallel is_empty iwalk keep list_c
 #' @importFrom purrr list_flatten list_modify list_rbind map map_chr map_dfr map_if map_int map_lgl modify_at
 #' @importFrom purrr modify_tree pluck possibly quietly reduce some walk
 #' @importFrom rlang as_label enquos eval_tidy exec is_quosure is_symbol list2 new_quosure quo_get_env
@@ -39,22 +39,25 @@ NULL
 #' argent: An R Agent-based Interface
 #'
 #' @description
-#' The argent package provides a unified interface for creating AI agents that can interact with multiple Large Language Model
-#' (LLM) providers through R6 classes. It supports Google, Anthropic, OpenAI,
-#' OpenRouter, and local LLM servers (e.g., llama.cpp, Ollama).
+#' The argent package provides a unified interface for creating AI agents that can interact with
+#' multiple Large Language Model (LLM) providers through R6 classes. It supports Google, Anthropic,
+#' OpenAI, OpenRouter, and local LLM servers (e.g., llama.cpp, Ollama).
+#'
+#' argent is specialized for building AI agents with conversation history management, local function
+#' and MCP tools, server-side tools, multimodal inputs, and universal structured outputs.
 #'
 #' @section Main Classes:
 #' The package provides the following R6 classes:
 #'
 #' \describe{
 #'   \item{\code{\link{Google}}}{Client for Google's API with support for chat completions,
-#'     function calling, and thinking mode}
-#'   \item{\code{\link{Anthropic}}}{Client for Anthropic's API with prompt caching and
-#'     tool calling capabilities}
-#'   \item{\code{\link{OpenAI}}}{Client for OpenAI's API with comprehensive file management,
-#'     vector stores, and chat completions}
-#'   \item{\code{\link{OpenAIAssistant}}}{Client for OpenAI's Assistants API with thread management
-#'     and persistent conversations}
+#'     function calling, thinking mode, code execution, and web search}
+#'   \item{\code{\link{Anthropic}}}{Client for Anthropic's API with prompt caching, tool calling,
+#'     and extended thinking capabilities}
+#'   \item{\code{\link{OpenAI_Chat}}}{Client for OpenAI's Chat Completions API}
+#'   \item{\code{\link{OpenAI_Responses}}}{Client for OpenAI's Responses API with comprehensive file
+#'     management, vector stores, code execution, and web search}
+#'   \item{\code{\link{OpenAI_Assistant}}}{Client for OpenAI's Assistants API (Deprecated)}
 #'   \item{\code{\link{OpenRouter}}}{Client for OpenRouter API providing access to multiple LLM
 #'     providers through a unified interface}
 #'   \item{\code{\link{LocalLLM}}}{Client for local LLM servers implementing OpenAI-compatible APIs}
@@ -63,12 +66,35 @@ NULL
 #' @section Features:
 #' \itemize{
 #'   \item Unified interface across multiple LLM providers
-#'   \item Support for function/tool calling
-#'   \item Structured JSON outputs
-#'   \item Conversation history management
-#'   \item Prompt caching (Anthropic)
-#'   \item File and vector store management (OpenAI)
-#'   \item Local LLM support
+#'   \item Function and MCP tool calling with parallel execution support
+#'   \item Universal structured JSON outputs (works with any model supporting tool calling)
+#'   \item Multimodal inputs (text, images, PDFs, data files, URLs, R objects)
+#'   \item Server-side tools (code execution, web search, file search, RAG)
+#'   \item Conversation history management with automatic persistence
+#'   \item Prompt caching (Anthropic, OpenAI)
+#'   \item File upload and vector store management (Google, Anthropic, OpenAI)
+#'   \item Reasoning and thinking modes (Google, Anthropic, OpenAI)
+#' }
+#'
+#' @section Parallel Tool Calls:
+#' Tool calls can be executed in parallel using \code{mirai::daemons()}. This can significantly
+#' speed up responses when multiple tools are called simultaneously.
+#'
+#' To enable parallel execution:
+#' \itemize{
+#'   \item Set up mirai daemons before making requests: \code{mirai::daemons(6)}
+#'   \item argent will automatically parallelize multiple tool calls in the same response
+#'   \item Without daemons, tool calls execute sequentially (default fallback behavior)
+#' }
+#'
+#' To ensure parallel execution is always used, add \code{mirai::require_daemons()} before
+#' making requests. To disable parallel processing, call \code{mirai::daemons(0)}.
+#'
+#' Performance considerations:
+#' \itemize{
+#'   \item Parallelization overhead can outweigh benefits for very fast tool calls
+#'   \item Most beneficial when tools take 100+ microseconds per call
+#'   \item As a rule of thumb, use at most one fewer daemon than available CPU cores
 #' }
 #'
 #' @section Getting Started:
@@ -94,8 +120,8 @@ NULL
 #'   model = "claude-sonnet-4-5-20250929"
 #' )
 #'
-#' # OpenAI
-#' openai <- OpenAI$new()
+#' # OpenAI Responses API
+#' openai <- OpenAI_Responses$new()
 #' response <- openai$chat(
 #'   prompt = "Write a haiku about R",
 #'   model = "gpt-5-chat-latest"
@@ -111,6 +137,25 @@ NULL
 #' # Local LLM
 #' llm <- LocalLLM$new(base_url = "http://localhost:5000")
 #' response <- llm$chat(prompt = "Hello!")
+#'
+#' # Parallel tool calling
+#' library(mirai)
+#' daemons(4)  # Set up 4 parallel workers
+#'
+#' get_weather <- function(location) {
+#'   #' @description Get weather information for a location
+#'   #' @param location:string* The location to get weather for
+#'   paste("Weather in", location, "is sunny")
+#' }
+#'
+#' google$chat(
+#'   "What's the weather in Paris, London, and Tokyo?",
+#'   tools = list(as_tool(get_weather)),
+#'   model = "gemini-2.5-flash"
+#' )
+#' # Tool calls will execute in parallel across the 4 workers
+#'
+#' daemons(0)  # Clean up when done
 #' }
 #'
 #' @name argent-package

@@ -22,6 +22,12 @@ There are two main types of MCP servers: *HTTP* and *stdio*. HTTP servers are ty
 We rely on the `mcptools` package for interacting with *stdio* MCP servers.
 :::
 
+# Setup
+
+```{r}
+mirai::daemons(4) # To enable parallel tool calling
+```
+
 # Basic Usage
 
 ## Using an 'HTTP' MCP Server

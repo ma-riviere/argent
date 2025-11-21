@@ -915,7 +915,7 @@ format_tool_call <- function(fn_name, args) {
 
     # Parse JSON string to list if needed (OpenAI/OpenRouter/LocalLLM return JSON strings)
     if (is.character(args)) {
-        args <- purrr::possibly(jsonlite::fromJSON, otherwise = list())(args)
+        args <- purrr::possibly(jsonlite::fromJSON, otherwise = list())(args, simplifyDataFrame = FALSE)
     }
 
     # Format arguments as name = value pairs

@@ -570,7 +570,7 @@ Provider <- R6::R6Class( # nolint
                 cli::cli_abort("File not found: {.path {file_path}}")
             }
 
-            data <- jsonlite::read_json(file_path, simplifyVector = FALSE)
+            data <- jsonlite::read_json(file_path, simplifyDataFrame = FALSE)
 
             return(list(
                 session_history = data$session_history %||% data$payload_history %||% list(),
@@ -774,17 +774,25 @@ Provider <- R6::R6Class( # nolint
         use_client_tool = function(tool_def, arguments) {
             fn_name <- tool_def$name
 
-            if (!exists(fn_name) || !is.function(get(fn_name))) {
-                cli::cli_abort(
-                    "Client tool {.val {fn_name}} is not a function in the global environment"
-                )
+            # Check if function is stored in tool definition (supports closures)
+            fn <- tool_def$.fn
+            if (!is.null(fn)) {
+                if (!is.function(fn)) {
+                    cli::cli_abort("Client tool {.val {fn_name}} has invalid .fn field (not a function)")
+                }
+            } else {
+                # Fall back to global environment lookup
+                if (!exists(fn_name) || !is.function(get(fn_name))) {
+                    cli::cli_abort("Client tool {.val {fn_name}} is not a function in the global environment")
+                }
+                fn <- get(fn_name)
             }
 
             cli::cli_alert_info(
                 "[{self$provider_name}] Calling: {.emph {cli::col_yellow(format_tool_call(fn_name, arguments))}}"
             )
 
-            output <- rlang::exec(fn_name, !!!arguments)
+            output <- rlang::exec(fn, !!!arguments)
 
             if (purrr::is_empty(output)) {
                 output <- "The tool returned nothing."
@@ -862,7 +870,10 @@ Provider <- R6::R6Class( # nolint
                 return(NULL)
             }
 
-            purrr::map(tool_calls, \(tool_call) private$use_tool(tool_call))
+            purrr::map(
+                tool_calls,
+                purrr::in_parallel(\(tool_call) private$use_tool(tool_call), private = private)
+            )
         },
 
         # ------🔺 REQUESTS ----------------------------------------------------

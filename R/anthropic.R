@@ -903,7 +903,7 @@ Anthropic <- R6::R6Class( # nolint
                 return(NULL)
             }
             # Anthropic already returns object format, not JSON string
-            purrr::possibly(jsonlite::fromJSON, otherwise = args)(args)
+            purrr::possibly(jsonlite::fromJSON, otherwise = args)(args, simplifyDataFrame = FALSE)
         },
 
         extract_tool_results = function(root) {

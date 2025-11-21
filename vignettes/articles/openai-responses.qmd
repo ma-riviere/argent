@@ -16,7 +16,11 @@ This article covers using OpenAI's Responses API with `argent`. This is OpenAI's
 openai_responses <- OpenAI_Responses$new(api_key = Sys.getenv("OPENAI_API_KEY"))
 ```
 
-**Available Models**
+```{r}
+mirai::daemons(4) # To enable parallel tool calling
+```
+
+# Discovering Models
 
 ```{r}
 openai_responses$list_models() |>

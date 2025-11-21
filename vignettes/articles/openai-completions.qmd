@@ -16,7 +16,11 @@ This article covers using OpenAI's Chat Completions API with argent. This is the
 openai_chat <- OpenAI_Chat$new(api_key = Sys.getenv("OPENAI_API_KEY"))
 ```
 
-**Available Models**
+```{r}
+mirai::daemons(4) # To enable parallel tool calling
+```
+
+# Discovering Models
 
 ```{r}
 openai_chat$list_models() |>

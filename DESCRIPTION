@@ -38,7 +38,9 @@ Imports:
     fs,
     uuid,
     yaml,
-    xml2
+    xml2,
+    carrier,
+    mirai
 Suggests:
     rvest,
     pdftools,

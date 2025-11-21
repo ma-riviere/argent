@@ -46,17 +46,31 @@
 #' @param name Character. The tool or schema name
 #' @param description Character. What the tool does or what the schema represents
 #' @param ... Named parameter specifications. See Details.
+#' @param fn Function. For `tool()` only. Optional function implementation to store with the
+#'   tool definition. When provided, this function (with its closure) will be called when the
+#'   LLM invokes the tool, supporting locally-defined functions with access to local variables.
+#'   If NULL (default), the function is looked up by name in the global environment.
 #' @param strict Logical. For `schema()` only. Whether to use strict mode (defaults to TRUE).
 #'   Added at root level of the schema definition.
 #' @param additional_properties Logical. For `schema()` only. Whether to allow additional
 #'   properties in the schema (defaults to FALSE). Added to `args_schema`.
 #'
-#' @return For `tool()`: A list with:
+#' @return For `as_tool()`: A list with:
 #'   - `name`: Tool name (character)
 #'   - `description`: Tool description (character)
 #'   - `args_schema`: JSON Schema object with `type`, `properties`, and `required` fields
+#'   - `.fn`: The original function (with closure) for execution
 #'
-#'   For `schema()`: Same as `tool()` but with additional fields:
+#'   For `tool()`: A list with:
+#'   - `name`: Tool name (character)
+#'   - `description`: Tool description (character)
+#'   - `args_schema`: JSON Schema object with `type`, `properties`, and `required` fields
+#'   - `.fn`: Optional function implementation (if `fn` parameter provided)
+#'
+#'   For `schema()`: A list with:
+#'   - `name`: Schema name (character)
+#'   - `description`: Schema description (character)
+#'   - `args_schema`: JSON Schema object with `type`, `properties`, and `required` fields
 #'   - `strict`: Logical (at root level)
 #'   - `args_schema$additionalProperties`: Logical (inside args_schema)
 #'
@@ -139,6 +153,21 @@
 #'     zip = "string Postal code"
 #'   )
 #' )
+#'
+#' # Using closures with local state
+#' create_counter_tool <- function() {
+#'   count <- 0
+#'
+#'   increment <- function() {
+#'     count <<- count + 1
+#'     count
+#'   }
+#'
+#'   as_tool(increment)
+#' }
+#'
+#' counter_tool <- create_counter_tool()
+#' # The LLM can now call this tool and it maintains state via closure
 #'
 #' # Using MCP tools alongside custom tools
 #' github_server <- mcp_server(
@@ -251,14 +280,15 @@ as_tool <- function(fn) {
     list3(
         name = fn_name,
         description = description,
-        args_schema = args_schema
+        args_schema = args_schema,
+        .fn = fn
     )
 }
 
 
 #' @rdname tool_definitions
 #' @export
-tool <- function(name, description, ...) {
+tool <- function(name, description, ..., fn = NULL) {
     if (!is.character(name) || length(name) != 1 || nchar(name) == 0) {
         cli::cli_abort("{.arg name} must be a non-empty string")
     }
@@ -267,13 +297,23 @@ tool <- function(name, description, ...) {
         cli::cli_abort("{.arg description} must be a non-empty string")
     }
 
+    if (!is.null(fn) && !is.function(fn)) {
+        cli::cli_abort("{.arg fn} must be a function or NULL")
+    }
+
     params <- list(...)
 
     if (length(params) == 0) {
         cli::cli_warn("No parameters specified for tool {.val {name}}")
     }
 
-    build_spec_from_params(name, description, params)
+    result <- build_spec_from_params(name, description, params)
+
+    if (!is.null(fn)) {
+        result$.fn <- fn
+    }
+
+    result
 }
 
 #' @rdname tool_definitions
@@ -293,7 +333,13 @@ schema <- function(name, description, ..., strict = TRUE, additional_properties 
         cli::cli_warn("No parameters specified for schema {.val {name}}")
     }
 
-    build_spec_from_params(name, description, params, strict = strict, additional_properties = additional_properties)
+    build_spec_from_params(
+        name,
+        description,
+        params,
+        strict = strict,
+        additional_properties = additional_properties
+    )
 }
 
 # -----🔺 INTERNAL -------------------------------------------------------------
@@ -736,8 +782,12 @@ is_client_tool <- function(obj) {
     }
 
     # MCP tools are not client tools
-    if (!is.null(purrr::pluck(obj, ".mcp"))) {
+    if (!is.null(obj$.mcp)) {
         return(FALSE)
+    }
+
+    if (!is.null(obj$.fn)) {
+        return(TRUE)
     }
 
     has_name <- !is.null(obj$name) && is.character(obj$name) && length(obj$name) == 1

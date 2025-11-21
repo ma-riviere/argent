@@ -1,0 +1,460 @@
+---
+title: "Advanced Agentic Workflows"
+format: html
+execute:
+  echo: true
+  eval: false
+---
+
+# Introduction
+
+This article demonstrates how to build agentic workflows, with sub-agents. 
+
+Instead of giving one agent all the tools and all the tasks, we create specialized sub-agents that excel at specific responsibilities while a main orchestrator coordinates their work.
+This avoids clogging the main agent's context window, and to reduce cost by delegating specific sub-tasks to less expensive models.
+
+# Setup
+
+```{r}
+mirai::daemons(4) # Enable parallel tool calling
+```
+
+# Building our Tools
+
+First, let's build a few tools that our agents will need:
+
+## Web Tools
+
+{{< include _web.qmd >}}
+
+## TODO-list Tools
+
+Let's build a TODO-list tool that provides agents with a way to track multi-step work.
+
+```{r}
+# Create a TODO-list
+create_todo_list <- function() {
+    env <- new.env(parent = emptyenv())
+    env$todos <- list()
+    return(env)
+}
+
+# Get the current TODOs from a given TODO-list
+get_todos <- function(todo_mgr) {
+    todo_mgr$todos
+}
+
+# Set the TODOs of a given TODO-list
+set_todos <- function(todo_mgr, todos) {
+    # Validate input structure
+    if (!is.list(todos)) {
+        return("Error: todos must be a list")
+    }
+
+    errors <- character()
+    for (i in seq_along(todos)) {
+        todo <- todos[[i]]
+
+        # Check required fields
+        if (!all(c("content", "status") %in% names(todo))) {
+            errors <- c(errors, sprintf("Todo %d missing required fields (content, status)", i))
+        }
+
+        # Validate status
+        valid_statuses <- c("pending", "in_progress", "completed")
+        if (!todo$status %in% valid_statuses) {
+            errors <- c(errors, sprintf(
+                "Todo %d has invalid status '%s'. Must be one of: %s",
+                i, todo$status, paste(valid_statuses, collapse = ", ")
+            ))
+        }
+    }
+
+    if (length(errors) > 0) {
+        return(paste(c("Errors found:", errors), collapse = "\\n- "))
+    }
+
+    todo_mgr$todos <- todos
+    return(sprintf("Successfully updated %d TODO(s)", length(todos)))
+}
+```
+
+## GitHub MCP Tools
+
+```{r}
+github_mcp_server <- mcp_server(
+    name = "github",
+    type = "http",
+    url = "https://api.githubcopilot.com/mcp",
+    headers = list(Authorization = paste("Bearer", Sys.getenv("GITHUB_PAT")))
+)
+
+github_mcp_tools <- mcp_tools(github_mcp_server, tools = c("search_code", "get_file_contents"))
+```
+
+::: {.callout-note appearance="simple"}
+See the [Using MCP Servers with `argent`](/articles/advanced-mcp.qmd) article for more details on how to use MCP servers with `argent`.
+:::
+
+# Creating our Agents
+
+For this example, we will have one main/orchestrator agent, and two sub-agents: a planning sub-agent and a (web/github) research sub-agent.
+
+## Planning Sub-Agent
+
+The planning sub-agent's role us to analyze complex requests and breaks them into a set of actionable tasks.
+It uses a web search tool to understand the domain and creates a structured plan using a TODO-list tool.
+
+```{r}
+planning_subagent <- function(task) {
+    #' @description Creates a planning sub-agent that analyzes a complex task and breaks it down
+    #'   into structured sub-tasks. Use this tool FIRST to create a roadmap for complex requests.
+    #' @param task:string* The complex research task to plan. The tool will return a list of sub-tasks to enact.
+
+    # Create a fresh TODO-list for this planning subagent
+    todo_list <- create_todo_list()
+
+    planner <- argent::OpenRouter$new(default_model = "x-ai/grok-4.1-fast", auto_save_history = FALSE)
+
+    planning_system <- stringr::str_glue(
+        "You are a Lead Architect and Planning Specialist.
+        Your goal is to analyze complex requests and break them down into clear, actionable
+        sub-tasks.
+
+        <process>
+        1. ANALYZE: Use `web_search` to understand the domain and identify key components.
+        2. THINK: Reflect on the necessary steps to achieve the user's goal.
+        3. PLAN: Use `set_todos` to create a comprehensive plan.
+        4. SUMMARIZE: Return a concise 'Handoff Summary' explaining the strategy.
+        </process>
+
+        <guidelines>
+        - Create independent sub-tasks that can be delegated to a research specialist
+           with access to web pages & GitHub code repositories.
+        - Be specific about what needs to be researched or implemented in each step.
+        - Do not attempt to execute the research yourself, only plan it.
+        </guidelines>
+
+        The current date is {lubridate::today()}."
+    )
+
+    planning_prompt <- stringr::str_glue(
+        "Analyze this task and create a detailed plan:\\n\\n<task>\\n{task}\\n</task>"
+    )
+
+    # Create closure-based tools that bind to this todo_manager instance
+    get_todos_planner <- function() {
+        #' @description Get the current TODO list
+        get_todos(todo_list)
+    }
+    get_todos_planner_tool <- as_tool(get_todos_planner)
+
+    set_todos_planner <- function(todos) {
+        set_todos(todo_list, todos)
+    }
+    # We define the tool manually since there is no way to specify nested lists as function annotations.
+    set_todos_planner_tool <- tool(
+        name = "set_todos_planner",
+        description = "Update your task list for planning and tracking multi-step work. This
+            replaces the entire TODO list. Always include all TODOs (completed, in_progress, and
+            pending) as a list of objects.",
+        todos = list(
+            type = "[object]*",
+            description = "List of TODO items, each with 'content' (string) and 'status'
+                (pending, in_progress, or completed)",
+            content = "string* Task description",
+            status = "string* One of: 'pending', 'in_progress', or 'completed'"
+        ),
+        fn = set_todos_planner
+    )
+
+    web_search_tool <- argent::as_tool(web_search)
+
+    # We create a flat list of tools that the planner can use
+    tools <- argent::flat_list(web_search_tool, get_todos_planner_tool, set_todos_planner_tool)
+
+    planner$chat(planning_prompt, system = planning_system, tools = tools)
+
+    list(
+        plan = get_todos_planner(),
+        handoff_summary = planner$get_content_text()
+    )
+}
+```
+
+::: {.callout-warning appearance="simple"}
+Don't forget to add the namespaces for ALL the functions you use when defining tools, otherwise, parallel tool calling will fail.
+:::
+
+## Research Sub-Agent
+
+The research sub-agent executes specific research tasks using web search, web fetch, and GitHub MCP tools.
+
+```{r}
+research_subagent <- function(subtask) {
+    #' @description Creates a research sub-agent that executes a specific research task using
+    #'   web search, web fetch, and GitHub tools. Use this for deep-dive information gathering.
+    #' @param subtask:string* The specific research sub-task to execute. It must be a specific
+    #'   task/topic with a limited scope.
+
+    researcher <- argent::OpenRouter$new(default_model = "x-ai/grok-4.1-fast", auto_save_history = FALSE)
+
+    system <- stringr::str_glue(
+        "You are a Senior Research Specialist.
+        You will be given a specific research task to execute thoroughly.
+
+        <responsibilities>
+        - Use `web_search` to find diverse and authoritative sources.
+        - Use `web_fetch` to read full content of promising pages.
+        - Use GitHub MCP tools to explore code examples where relevant.
+        - Cross-reference information to ensure accuracy.
+        </responsibilities>
+
+        <output_format>
+        Return your findings in a structured Markdown format:
+        # Executive Summary
+        (Brief overview of findings)
+
+        # Key Findings
+        (Detailed analysis, grouped by concepts)
+
+        # Source/Code Analysis
+        (Specific details from code or technical docs)
+
+        # References
+        (List of all URLs and repos visited)
+        </output_format>
+
+        The current date is {lubridate::today()}."
+    )
+
+    prompt <- stringr::str_glue("Here is the task to research:\\n\\n<subtask>\\n{subtask}\\n</subtask>")
+
+    web_search_tool <- argent::as_tool(web_search)
+    web_fetch_tool <- argent::as_tool(web_fetch)
+
+    tools <- argent::flat_list(web_search_tool, web_fetch_tool, github_mcp_tools)
+
+    researcher$chat(prompt, system = system, tools = tools)
+
+    return(researcher$get_content_text())
+}
+```
+
+## Main Agent
+
+The main agent coordinates the workflow: it calls the planner, delegates tasks to researchers, and synthesizes results.
+
+Let's define the main agent's system prompt and prompt:
+
+```{r}
+main_agent <- OpenRouter$new(default_model = "x-ai/grok-4.1-fast")
+
+main_system <- "You are the Project Lead and Orchestrator.
+Your goal is to deliver high-quality results by effectively delegating work to specialized sub-agents.
+
+<workflow>
+1. PLAN: Call `planning_subagent` to create a roadmap for the user's request.
+2. DELEGATE: Iterate through the plan and delegate tasks to `research_subagent`.
+3. REVIEW: Analyze the findings returned by the researchers.
+4. SYNTHESIZE: Compile the final answer for the user based on all research, using the provided output schema.
+</workflow>
+
+<tools>
+- `planning_subagent`: Use this ONCE at the start to get a list of tasks.
+- `research_subagent`: Use this for EACH task in the plan to get detailed information.
+    A task must be a specific task/topic with a limited scope.
+</tools>
+"
+
+main_prompt <- "
+Research all LLM-adjacent packages in R, such as:
+LLM APIs, prompt engineering, embeddings, vector databases, RAG, AI agents, MCPs, and LLM tooling.
+
+For each package, identify:
+1. The package name
+2. Its GitHub repository URL
+3. Its main purpose and functionality
+4. Which other LLM-adjacent packages from your findings it is depended on or imports
+
+Stop once you've found 20 packages.
+"
+```
+
+Then, let's define the main agent's output schema and tools:
+
+```{r}
+main_output_schema <- schema(
+    name = "r_llm_packages",
+    description = "A comprehensive list of LLM-adjacent R packages",
+    packages = list(
+        type = "[object]*",
+        description = "Array of package objects",
+        package_name = "string* Package name",
+        package_repo = "string* GitHub repository URL",
+        package_description = "string* Brief description of the package's main purpose",
+        package_dependencies = "[string]* List of other LLM-adjacent packages this package depends on/imports"
+    )
+)
+
+main_tools <- list(as_tool(planning_subagent), as_tool(research_subagent))
+```
+
+Now, let's run the main agent:
+
+```{r}
+main_agent$chat(
+    main_prompt,
+    system = main_system,
+    tools = main_tools,
+    output_schema = main_output_schema
+)
+```
+
+Finally, we can print the main agent's output:
+
+```{r}
+print(main_agent, show_tools = TRUE) # Entirety of the chat history of the main agent
+```
+
+```{r}
+cat(main_agent$get_content_text()) # Just the final answer of the main agent
+```
+
+```{json}
+#| code-fold: true
+
+{
+  "packages": [
+    {
+      "package_name": "ellmer",
+      "package_repo": "https://github.com/tidyverse/ellmer",
+      "package_description": "Unified tidy chat interface for LLM APIs (OpenAI, Anthropic,
+        Gemini, Ollama, etc.); streaming, tools, structured output, auto-creds.",
+      "package_dependencies": []
+    },
+    {
+      "package_name": "tidyllm",
+      "package_repo": "https://github.com/edubruell/tidyllm",
+      "package_description": "Tidy verbs/pipelines for LLMs (Claude, OpenAI, Gemini, Ollama);
+        embeddings, chaining, rate limits.",
+      "package_dependencies": []
+    },
+    {
+      "package_name": "LLMR",
+      "package_repo": "https://github.com/asanaei/LLMR",
+      "package_description": "Unified API with batching, retries, embeddings, structured output
+        (OpenAI/Azure/Mistral/Ollama).",
+      "package_dependencies": []
+    },
+    {
+      "package_name": "ollamar",
+      "package_repo": "https://github.com/hauselin/ollama-r",
+      "package_description": "Local Ollama API client for chat/completions/embeddings; parallel
+        via httr2.",
+      "package_dependencies": []
+    },
+    {
+      "package_name": "localLLM",
+      "package_repo": "https://github.com/EddieYang211/localLLM",
+      "package_description": "Lightweight llama.cpp bindings for local GGUF LLMs in R
+        (no server).",
+      "package_dependencies": []
+    },
+    {
+      "package_name": "btw",
+      "package_repo": "https://github.com/posit-dev/btw",
+      "package_description": "R env/object/package inspector for LLM prompts; tools for ellmer
+        chats/agents.",
+      "package_dependencies": "ellmer"
+    },
+    {
+      "package_name": "tidyprompt",
+      "package_repo": "https://github.com/KennispuntTwente/tidyprompt",
+      "package_description": "Prompt 'wraps' for engineering/chaining (JSON/reasoning/tools);
+        provider-agnostic.",
+      "package_dependencies": []
+    },
+    {
+      "package_name": "ragnar",
+      "package_repo": "https://github.com/tidyverse/ragnar",
+      "package_description": "End-to-end RAG: chunking, embeddings, hybrid retrieval, LLM
+        integration.",
+      "package_dependencies": ["ellmer", "btw"]
+    },
+    {
+      "package_name": "LLMAgentR",
+      "package_repo": "https://github.com/knowusuboaky/LLMAgentR",
+      "package_description": "Graph-based agents for R tasks (data wrangling/viz/forecasting
+        via tidymodels).",
+      "package_dependencies": "ellmer"
+    },
+    {
+      "package_name": "chattr",
+      "package_repo": "https://github.com/mlverse/chattr",
+      "package_description": "Interactive Shiny/console LLM chats; ellmer backend.",
+      "package_dependencies": "ellmer"
+    },
+    {
+      "package_name": "gptstudio",
+      "package_repo": "https://github.com/MichelNivard/gptstudio",
+      "package_description": "RStudio addins for LLM code/doc tasks (OpenAI/Anthropic/Cohere).",
+      "package_dependencies": []
+    },
+    {
+      "package_name": "ragent",
+      "package_repo": "https://github.com/cynkra/ragent",
+      "package_description": "Simple Ollama-based agents with tools (calc/RAG).",
+      "package_dependencies": "ollamar"
+    },
+    {
+      "package_name": "mini007",
+      "package_repo": "https://github.com/feddelegrand7/mini007",
+      "package_description": "Lightweight multi-agent orchestration (R6 classes, delegation).",
+      "package_dependencies": "ellmer"
+    },
+    {
+      "package_name": "mcptools",
+      "package_repo": "https://github.com/posit-dev/mcptools",
+      "package_description": "MCP server/client for R-LLM integration (Claude Desktop/Copilot).",
+      "package_dependencies": ["ellmer", "btw"]
+    },
+    {
+      "package_name": "rchroma",
+      "package_repo": "https://github.com/cynkra/rchroma",
+      "package_description": "ChromaDB client for vector storage/query (RAG enabler).",
+      "package_dependencies": []
+    },
+    {
+      "package_name": "RAGFlowChainR",
+      "package_repo": "https://github.com/knowusuboaky/RAGFlowChainR",
+      "package_description": "LangChain-like RAG chains w/ DuckDB vectors/web search.",
+      "package_dependencies": "LLMAgentR"
+    },
+    {
+      "package_name": "tidychatmodels",
+      "package_repo": "https://github.com/AlbertRapp/tidychatmodels",
+      "package_description": "Tidymodels-inspired modular chatbots (OpenAI/Claude/Ollama).",
+      "package_dependencies": []
+    },
+    {
+      "package_name": "mall",
+      "package_repo": "https://github.com/mlverse/mall",
+      "package_description": "Row-wise LLM NLP on data frames (summ/classify via ellmer).",
+      "package_dependencies": "ellmer"
+    },
+    {
+      "package_name": "mcpr",
+      "package_repo": "https://github.com/chi2labs/mcpr",
+      "package_description": "MCP framework for R servers/clients (w/ llmr).",
+      "package_dependencies": []
+    },
+    {
+      "package_name": "rmcp",
+      "package_repo": "https://github.com/finite-sample/rmcp",
+      "package_description": "Stats-focused MCP server (52 tools from CRAN).",
+      "package_dependencies": []
+    }
+  ]
+}
+```

@@ -802,7 +802,7 @@ OpenAI_Responses <- R6::R6Class( # nolint
             args <- purrr::pluck(tool_call, "arguments")
             if (is.null(args) || purrr::is_empty(args)) return(NULL)
 
-            jsonlite::fromJSON(args, simplifyVector = FALSE)
+            jsonlite::fromJSON(args, simplifyDataFrame = FALSE)
         },
 
         extract_tool_results = function(root) {

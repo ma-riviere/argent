@@ -39,10 +39,11 @@ AI agents with tool calling, multimodal inputs, and structured outputs.
 
 `argent` provides a unified interface to build AI agents with
 conversation history management, local function & MCP tools, server-side
-tools, multimodal inputs, and universal structured outputs.
+(built-in) tools, multimodal inputs, and universal structured outputs.
 
-It supports most **server-side tools** (code execution, web search, file
-search, etc.) and allows to easily define **client-side tools** using
+It supports most **server-side tools** (i.e. built-in tools like code
+execution, web search, file search, etc.), **MCP servers’ tools** (both
+http & stdio), and allows to easily define **client-side tools** using
 plumber2-style annotations within R functions. It allows sending
 **multimodal inputs** (i.e. mixing text, images, PDFs, data files, URLs,
 remote files, and R objects) in a single request, and it supports
@@ -63,7 +64,8 @@ whatever other tools/functions are used.
 | **Reasoning / thinking** | ✅ | ✅ | ⚠️ | ✅ | ❌ | ⚠️[^12] | ⚠️[^13] |
 | **Server-side state** | ❌ | ❌ | ❌ | ✅[^14] | ✅ | ❌ | ❌ |
 | **Prompt caching** | ✅ | ✅ | ✅[^15] | ✅[^16] | ✅[^17] | ⚠️[^18] | ❌ |
-| **Status** | Active | Active | Active | Active | **Deprecated**[^19] | Active | Active |
+| **Embeddings** | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ⚠️[^19] |
+| **Status** | Active | Active | Active | Active | **Deprecated**[^20] | Active | Active |
 
 ## Installation
 
@@ -92,6 +94,16 @@ gemini <- Google$new(api_key = Sys.getenv("GEMINI_API_KEY"))
 You can customize the rate limit when initializing with the `rate_limit`
 parameter, and the default model with the `default_model` parameter
 (‘gemini-2.5-flash’ for Google).
+
+> [!TIP]
+>
+> Parallel tool calling is available in `argent`, using `mirai` &
+> `purrr::in_parallel()`. However, we need to set up the daemons before
+> using it:
+>
+> ``` r
+> mirai::daemons(4)
+> ```
 
 ### Basic Completion
 
@@ -268,6 +280,31 @@ information to answer the question, and return structured JSON output.
 > console:
 >
 > ℹ \[Google\] Calling: get_user_info(user_name = “Marc”)
+
+> [!NOTE]
+>
+> ### Parallel Tool Calls
+>
+> When a model makes multiple tool calls in a single response, `argent`
+> can execute them in parallel for better performance.
+>
+> To enable parallel execution:
+>
+> - Set up mirai daemons: `mirai::daemons(4)` (using 4 workers as an
+>   example)
+> - argent will automatically parallelize tool calls when daemons are
+>   active
+> - Without daemons, tool calls execute sequentially (default fallback)
+>
+> Performance considerations:
+>
+> - Most beneficial when tools take 100+ microseconds per call
+> - May not improve performance for very fast tools due to
+>   parallelization overhead
+> - Use at most one fewer daemon than available CPU cores for optimal
+>   performance
+>
+> To disable: `mirai::daemons(0)`
 
 To see more, we can print the provider object with `show_tools = TRUE`
 to show to tool definitions, calls, and results:
@@ -602,4 +639,6 @@ MIT License
 
 [^18]: Depends on the underlying provider being used
 
-[^19]: Shuts down August 26, 2026. Use Responses API instead.
+[^19]: Depends on model capabilities
+
+[^20]: Shuts down August 26, 2026. Use Responses API instead.

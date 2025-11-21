@@ -592,7 +592,7 @@ OpenAI_Chat <- R6::R6Class( # nolint
             }
 
             # Try to parse JSON, fallback to raw string
-            purrr::possibly(jsonlite::fromJSON, otherwise = args)(args)
+            purrr::possibly(jsonlite::fromJSON, otherwise = args)(args, simplifyDataFrame = FALSE)
         },
 
         extract_tool_results = function(root) {
