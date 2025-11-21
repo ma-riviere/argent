@@ -12,12 +12,14 @@ This article covers using OpenAI's Responses API with `argent`. This is OpenAI's
 
 # Setup
 
-```{r responses-init}
-openai_responses <- OpenAI_Responses$new(api_key = Sys.getenv("OPENAI_API_KEY"))
+```{r}
+library(argent)
+
+mirai::daemons(4) # To enable parallel tool calling
 ```
 
-```{r}
-mirai::daemons(4) # To enable parallel tool calling
+```{r responses-init}
+openai_responses <- OpenAI_Responses$new(api_key = Sys.getenv("OPENAI_API_KEY"))
 ```
 
 # Discovering Models

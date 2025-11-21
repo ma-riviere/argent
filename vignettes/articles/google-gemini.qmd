@@ -12,12 +12,14 @@ This article covers using the Google Gemini provider with argent. Google Gemini 
 
 # Setup
 
-```{r gemini-init}
-google_gemini <- Google$new(api_key = Sys.getenv("GEMINI_API_KEY"))
+```{r}
+library(argent)
+
+mirai::daemons(4) # To enable parallel tool calling
 ```
 
-```{r}
-mirai::daemons(4) # To enable parallel tool calling
+```{r gemini-init}
+google_gemini <- Google$new(api_key = Sys.getenv("GEMINI_API_KEY"))
 ```
 
 # Discovering Models

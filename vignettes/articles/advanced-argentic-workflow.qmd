@@ -16,6 +16,8 @@ This avoids clogging the main agent's context window, and to reduce cost by dele
 # Setup
 
 ```{r}
+library(argent)
+
 mirai::daemons(4) # Enable parallel tool calling
 ```
 

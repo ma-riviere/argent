@@ -65,15 +65,15 @@ NULL
 #'
 #' @section Features:
 #' \itemize{
-#'   \item Unified interface across multiple LLM providers
-#'   \item Function and MCP tool calling with parallel execution support
+#'   \item Unified interface across multiple LLM providers: OpenAI, Anthropic, Google, OpenRouter, and Local LLM
+#'   \item Support for all 3 of OpenAI's APIs: Chat Completions, Responses, and Assistants
+#'   \item Function and MCP tool calling (http & stdio), with parallel execution support
 #'   \item Universal structured JSON outputs (works with any model supporting tool calling)
-#'   \item Multimodal inputs (text, images, PDFs, data files, URLs, R objects)
-#'   \item Server-side tools (code execution, web search, file search, RAG)
-#'   \item Conversation history management with automatic persistence
-#'   \item Prompt caching (Anthropic, OpenAI)
-#'   \item File upload and vector store management (Google, Anthropic, OpenAI)
-#'   \item Reasoning and thinking modes (Google, Anthropic, OpenAI)
+#'   \item Multimodal inputs (text, images, PDFs, data files, URLs, R objects), customizable and extensible
+#'   \item Server-side (built-in) tools, like code execution, web search/fetch, file search, etc.
+#'   \item Client-side conversation history management with automatic on-disk persistence
+#'   \item Prompt caching (for providers supporting it)
+#'   \item File upload and vector/file store management for server-side RAG
 #' }
 #'
 #' @section Parallel Tool Calls:
@@ -87,15 +87,7 @@ NULL
 #'   \item Without daemons, tool calls execute sequentially (default fallback behavior)
 #' }
 #'
-#' To ensure parallel execution is always used, add \code{mirai::require_daemons()} before
-#' making requests. To disable parallel processing, call \code{mirai::daemons(0)}.
-#'
-#' Performance considerations:
-#' \itemize{
-#'   \item Parallelization overhead can outweigh benefits for very fast tool calls
-#'   \item Most beneficial when tools take 100+ microseconds per call
-#'   \item As a rule of thumb, use at most one fewer daemon than available CPU cores
-#' }
+#' To disable parallel processing, call \code{mirai::daemons(0)}.
 #'
 #' @section Getting Started:
 #' Set up API keys as environment variables:

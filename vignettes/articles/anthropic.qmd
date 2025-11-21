@@ -12,12 +12,14 @@ This article covers using the Anthropic (Claude) provider with `argent`. Anthrop
 
 # Setup
 
-```{r claude-init}
-anthropic <- Anthropic$new(api_key = Sys.getenv("ANTHROPIC_API_KEY"))
+```{r}
+library(argent)
+
+mirai::daemons(4) # To enable parallel tool calling
 ```
 
-```{r}
-mirai::daemons(4) # To enable parallel tool calling
+```{r claude-init}
+anthropic <- Anthropic$new(api_key = Sys.getenv("ANTHROPIC_API_KEY"))
 ```
 
 # Discovering Models

@@ -34,11 +34,13 @@ file_search and code_interpreter.
 # Setup
 
 ```{r}
-openai_assistant <- OpenAI_Assistant$new(api_key = Sys.getenv("OPENAI_API_KEY"))
+library(argent)
+
+mirai::daemons(4) # To enable parallel tool calling
 ```
 
 ```{r}
-mirai::daemons(4) # To enable parallel tool calling
+openai_assistant <- OpenAI_Assistant$new(api_key = Sys.getenv("OPENAI_API_KEY"))
 ```
 
 ::: {.callout-note appearance="simple"}

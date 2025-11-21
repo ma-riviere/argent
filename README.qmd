@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/ma-riviere/argent/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ma-riviere/argent/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-**argent** provides a unified interface for interacting with Large Language Models (LLMs) from multiple providers, specialized for creating AI agents with tool calling, multimodal inputs, and structured outputs.
+**argent** provides a unified interface for interacting with Large Language Models (LLMs) from multiple providers, specialized for creating AI agents with tool calling, multimodal inputs, and universal structured outputs.
 
 ::: {.callout-important appearance="simple"}
 

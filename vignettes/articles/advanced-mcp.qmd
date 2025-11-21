@@ -25,6 +25,8 @@ We rely on the `mcptools` package for interacting with *stdio* MCP servers.
 # Setup
 
 ```{r}
+library(argent)
+
 mirai::daemons(4) # To enable parallel tool calling
 ```
 
@@ -299,7 +301,14 @@ result:
 
 </details>
 
-## Further Reading
+# Advanced Usage
+
+Let's create our own MCP server.
+
+> TODO: mcpr for Zotero (local)
+
+
+# Further Reading
 
 - [MCP Specification](https://spec.modelcontextprotocol.io/)
 - [MCP Servers](https://github.com/modelcontextprotocol/servers)

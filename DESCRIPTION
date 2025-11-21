@@ -9,7 +9,7 @@ Authors@R:
         role = c("aut", "cre"),
         comment = c(ORCID = "0000-0002-5108-3382")
     )
-Description: Provides a unified interface for interacting with Large Language Models (LLMs) from multiple providers, specialized for creating AI agents with tool calling, multimodal inputs, and structured outputs.
+Description: Provides a unified interface for interacting with Large Language Models (LLMs) from multiple providers, specialized for creating AI agents with tool calling, multimodal inputs, and universal structured outputs.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
