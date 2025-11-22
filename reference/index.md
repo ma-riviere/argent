@@ -57,17 +57,24 @@ using annotations or direct specification
   : Generate tools and schemas definitions from functions annotations,
   or direct specification
 
-### MCP
+### MCP Integration
 
-Helper functions for MCP integration
+Functions for working with Model Context Protocol servers
 
-- [`mcp_server()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)
+- [`mcp_connect()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)
   [`mcp_tools()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)
   [`mcp_resources()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)
   [`mcp_prompts()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)
   : MCP (Model Context Protocol) Integration
 - [`execute_mcp_tool()`](https://ma-riviere.github.io/argent/reference/execute_mcp_tool.md)
   : Execute an MCP tool
+- [`get_mcp_tool()`](https://ma-riviere.github.io/argent/reference/get_mcp_tool.md)
+  : Get an MCP tool from a list of tool definitions (convenience
+  function)
+- [`read_mcp_resource()`](https://ma-riviere.github.io/argent/reference/read_mcp_resource.md)
+  : Read an MCP resource
+- [`get_mcp_prompt()`](https://ma-riviere.github.io/argent/reference/get_mcp_prompt.md)
+  : Get an MCP prompt
 
 ### Helpers
 

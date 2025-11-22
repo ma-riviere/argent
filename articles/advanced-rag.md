@@ -17,12 +17,10 @@ documentation](https://ragnar.tidyverse.org/).
 ## Setup
 
 ``` r
+library(argent)
 library(ragnar)
 library(cachem)
 library(stringr)
-library(purrr)
-
-mirai::daemons(4) # To enable parallel tool calling
 ```
 
 ## Basic RAG System
@@ -93,7 +91,7 @@ insert_chunk_into_store <- function(path) {
         ragnar::ragnar_store_insert(store, chunks = _)
 }
 
-walk(paths, insert_chunk_into_store, .progress = TRUE)
+purrr::walk(paths, insert_chunk_into_store, .progress = TRUE)
 
 ragnar::ragnar_store_build_index(store)
 ```

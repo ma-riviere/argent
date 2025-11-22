@@ -9,11 +9,11 @@ capabilities, fallback options, and access to a wide variety of models.
 ## Setup
 
 ``` r
-openrouter <- OpenRouter$new(api_key = Sys.getenv("OPENROUTER_API_KEY"))
+library(argent)
 ```
 
 ``` r
-mirai::daemons(4) # To enable parallel tool calling
+openrouter <- OpenRouter$new(api_key = Sys.getenv("OPENROUTER_API_KEY"))
 ```
 
 ## Discovering Models and Providers

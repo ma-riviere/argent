@@ -10,11 +10,11 @@ for building agentic applications.
 ## Setup
 
 ``` r
-openai_responses <- OpenAI_Responses$new(api_key = Sys.getenv("OPENAI_API_KEY"))
+library(argent)
 ```
 
 ``` r
-mirai::daemons(4) # To enable parallel tool calling
+openai_responses <- OpenAI_Responses$new(api_key = Sys.getenv("OPENAI_API_KEY"))
 ```
 
 ## Discovering Models

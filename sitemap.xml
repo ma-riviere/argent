@@ -20,6 +20,10 @@
 <url><loc>https://ma-riviere.github.io/argent/reference/Anthropic.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/reference/Google.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/reference/LocalLLM.html</loc></url>
+<url><loc>https://ma-riviere.github.io/argent/reference/McpClient.html</loc></url>
+<url><loc>https://ma-riviere.github.io/argent/reference/McpClientHttp.html</loc></url>
+<url><loc>https://ma-riviere.github.io/argent/reference/McpClientStdio.html</loc></url>
+<url><loc>https://ma-riviere.github.io/argent/reference/McpServer.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/reference/OpenAI.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/reference/OpenAI_Assistant.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/reference/OpenAI_Chat.html</loc></url>
@@ -30,8 +34,11 @@
 <url><loc>https://ma-riviere.github.io/argent/reference/content_converters.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/reference/execute_mcp_tool.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/reference/flat_list.html</loc></url>
+<url><loc>https://ma-riviere.github.io/argent/reference/get_mcp_prompt.html</loc></url>
+<url><loc>https://ma-riviere.github.io/argent/reference/get_mcp_tool.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/reference/index.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/reference/mcp_integration.html</loc></url>
+<url><loc>https://ma-riviere.github.io/argent/reference/read_mcp_resource.html</loc></url>
 <url><loc>https://ma-riviere.github.io/argent/reference/tool_definitions.html</loc></url>
 </urlset>
 

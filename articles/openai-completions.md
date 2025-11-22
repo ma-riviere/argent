@@ -9,11 +9,11 @@ outputs, and reasoning with o1/GPT-5 models.
 ## Setup
 
 ``` r
-openai_chat <- OpenAI_Chat$new(api_key = Sys.getenv("OPENAI_API_KEY"))
+library(argent)
 ```
 
 ``` r
-mirai::daemons(4) # To enable parallel tool calling
+openai_chat <- OpenAI_Chat$new(api_key = Sys.getenv("OPENAI_API_KEY"))
 ```
 
 ## Discovering Models

@@ -14,7 +14,7 @@ sub-tasks to less expensive models.
 ## Setup
 
 ``` r
-mirai::daemons(4) # Enable parallel tool calling
+library(argent)
 ```
 
 ## Building our Tools
@@ -224,7 +224,10 @@ planning_subagent <- function(task) {
     # Create a fresh TODO-list for this planning subagent
     todo_list <- create_todo_list()
 
-    planner <- argent::OpenRouter$new(default_model = "x-ai/grok-4.1-fast", auto_save_history = FALSE)
+    planner <- argent::OpenRouter$new(
+        default_model = "google/gemini-2.5-flash-lite-preview-09-2025",
+        auto_save_history = FALSE
+    )
 
     planning_system <- stringr::str_glue(
         "You are a Lead Architect and Planning Specialist.
@@ -292,11 +295,6 @@ planning_subagent <- function(task) {
 }
 ```
 
-> **Warning**
->
-> Don’t forget to add the namespaces for ALL the functions you use when
-> defining tools, otherwise, parallel tool calling will fail.
-
 ### Research Sub-Agent
 
 The research sub-agent executes specific research tasks using web
@@ -309,7 +307,10 @@ research_subagent <- function(subtask) {
     #' @param subtask:string* The specific research sub-task to execute. It must be a specific
     #'   task/topic with a limited scope.
 
-    researcher <- argent::OpenRouter$new(default_model = "x-ai/grok-4.1-fast", auto_save_history = FALSE)
+    researcher <- argent::OpenRouter$new(
+        default_model = "google/gemini-2.5-flash-lite-preview-09-2025",
+        auto_save_history = FALSE
+    )
 
     system <- stringr::str_glue(
         "You are a Senior Research Specialist.
@@ -361,7 +362,7 @@ tasks to researchers, and synthesizes results.
 Let’s define the main agent’s system prompt and prompt:
 
 ``` r
-main_agent <- OpenRouter$new(default_model = "x-ai/grok-4.1-fast")
+main_agent <- OpenRouter$new(default_model = "google/gemini-2.5-flash-preview-09-2025")
 
 main_system <- "You are the Project Lead and Orchestrator.
 Your goal is to deliver high-quality results by effectively delegating work to specialized sub-agents.

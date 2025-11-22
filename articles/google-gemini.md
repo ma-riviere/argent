@@ -9,11 +9,11 @@ extended thinking features.
 ## Setup
 
 ``` r
-google_gemini <- Google$new(api_key = Sys.getenv("GEMINI_API_KEY"))
+library(argent)
 ```
 
 ``` r
-mirai::daemons(4) # To enable parallel tool calling
+google_gemini <- Google$new(api_key = Sys.getenv("GEMINI_API_KEY"))
 ```
 
 ## Discovering Models

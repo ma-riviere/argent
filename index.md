@@ -2,7 +2,8 @@
 
 **argent** provides a unified interface for interacting with Large
 Language Models (LLMs) from multiple providers, specialized for creating
-AI agents with tool calling, multimodal inputs, and structured outputs.
+AI agents with tool calling, multimodal inputs, and universal structured
+outputs.
 
 > **Important**
 >
@@ -79,16 +80,6 @@ gemini <- Google$new(api_key = Sys.getenv("GEMINI_API_KEY"))
 You can customize the rate limit when initializing with the `rate_limit`
 parameter, and the default model with the `default_model` parameter
 (‘gemini-2.5-flash’ for Google).
-
-> **Tip**
->
-> Parallel tool calling is available in `argent`, using `mirai` &
-> [`purrr::in_parallel()`](https://purrr.tidyverse.org/reference/in_parallel.html).
-> However, we need to set up the daemons before using it:
->
-> ``` r
-> mirai::daemons(4)
-> ```
 
 ### Basic Completion
 
@@ -267,29 +258,6 @@ information to answer the question, and return structured JSON output.
 >
 > ℹ \[Google\] Calling: get_user_info(user_name = “Marc”)
 
-> **Parallel Tool Calls**
->
-> When a model makes multiple tool calls in a single response, `argent`
-> can execute them in parallel for better performance.
->
-> To enable parallel execution:
->
-> - Set up mirai daemons: `mirai::daemons(4)` (using 4 workers as an
->   example)
-> - argent will automatically parallelize tool calls when daemons are
->   active
-> - Without daemons, tool calls execute sequentially (default fallback)
->
-> Performance considerations:
->
-> - Most beneficial when tools take 100+ microseconds per call
-> - May not improve performance for very fast tools due to
->   parallelization overhead
-> - Use at most one fewer daemon than available CPU cores for optimal
->   performance
->
-> To disable: `mirai::daemons(0)`
-
 To see more, we can print the provider object with `show_tools = TRUE`
 to show to tool definitions, calls, and results:
 
@@ -422,10 +390,10 @@ gemini$chat(
 
 ``` default
 $release_version
-[1] "0.1.1"
+[1] "0.1.0"
 
 $release_date
-[1] "2025-02-25"
+[1] "2025-01-09"
 ```
 
 ### Multimodal Input

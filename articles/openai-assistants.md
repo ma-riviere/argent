@@ -29,11 +29,11 @@ code_interpreter.
 ## Setup
 
 ``` r
-openai_assistant <- OpenAI_Assistant$new(api_key = Sys.getenv("OPENAI_API_KEY"))
+library(argent)
 ```
 
 ``` r
-mirai::daemons(4) # To enable parallel tool calling
+openai_assistant <- OpenAI_Assistant$new(api_key = Sys.getenv("OPENAI_API_KEY"))
 ```
 
 > **Note**

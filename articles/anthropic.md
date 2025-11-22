@@ -9,11 +9,11 @@ tools, and prompt caching for cost optimization.
 ## Setup
 
 ``` r
-anthropic <- Anthropic$new(api_key = Sys.getenv("ANTHROPIC_API_KEY"))
+library(argent)
 ```
 
 ``` r
-mirai::daemons(4) # To enable parallel tool calling
+anthropic <- Anthropic$new(api_key = Sys.getenv("ANTHROPIC_API_KEY"))
 ```
 
 ## Discovering Models

@@ -17,7 +17,11 @@ llama.cpp, Ollama, vLLM, and others.
 
 ## Setup
 
-### Starting a Local Server
+``` r
+library(argent)
+```
+
+### Starting a llama.cpp server
 
 ``` bash
 llama.cpp/build/bin/llama-server \
@@ -49,10 +53,6 @@ On initialization, `argent` will automatically detect the available
 model from the server and set it as the default model for all future
 `chat()` calls. You can check the current default model with
 `get_default_model_id()`.
-
-``` r
-mirai::daemons(4) # To enable parallel tool calling
-```
 
 ## Basic Completion
 

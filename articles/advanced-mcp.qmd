@@ -18,14 +18,10 @@ MCP (Model Context Protocol) is an open protocol that standardizes how applicati
 
 There are two main types of MCP servers: *HTTP* and *stdio*. HTTP servers are typically used for cloud-based services like GitHub, while stdio servers are typically used for local services like Docker or npx. Both types of MCP servers can be used with `argent`.
 
-::: {.callout-note appearance="simple"}
-We rely on the `mcptools` package for interacting with *stdio* MCP servers.
-:::
-
 # Setup
 
 ```{r}
-mirai::daemons(4) # To enable parallel tool calling
+library(argent)
 ```
 
 # Basic Usage
@@ -35,7 +31,7 @@ mirai::daemons(4) # To enable parallel tool calling
 Let's look at the GitHub MCP server as an example. It is a HTTP server that can be used to interact with the GitHub API.
 
 ```{r}
-github_mcp_server <- mcp_server(
+github_mcp_client <- mcp_connect(
     name = "github",
     type = "http",
     url = "https://api.githubcopilot.com/mcp",
@@ -48,13 +44,13 @@ github_mcp_server <- mcp_server(
 Then, we can get the tools we want from the GitHub MCP server:
 
 ```{r}
-github_mcp_tools <- mcp_tools(github_mcp_server, tools = c("get_file_contents", "search_code"))
+github_mcp_tools <- mcp_tools(github_mcp_client, tools = c("get_file_contents", "search_code"))
 ```
 
 Finally, we can call the `get_file_contents` tool manually to see if it works:
 
 ```{r}
-get_file_contents_mcp_tool <- purrr::keep(github_mcp_tools, \(tool) tool$name == "get_file_contents")[[1]]
+get_file_contents_mcp_tool <- get_mcp_tool(github_mcp_tools, "get_file_contents")
 
 execute_mcp_tool(
     tool_def = get_file_contents_mcp_tool,
@@ -67,22 +63,20 @@ execute_mcp_tool(
 )
 ```
 
-
 ## Using a 'stdio' MCP Server
 
 Let's look at the BTW MCP server as an example (which requires the [`btw`](https://github.com/posit-dev/btw) package to be installed). 
 It is a stdio server that can be used to interact with the `btw` package.
 
 ```{r}
-btw_mcp_server <- mcp_server(
+btw_mcp_client <- mcp_connect(
     name = "btw",
     type = "stdio",
     command = "Rscript",
     args = c(
         "-e",
         "btw::btw_mcp_server(tools = btw::btw_tools(c('docs', 'env', 'ide', 'search', 'session')))"
-    ),
-    env = list()
+    )
 )
 ```
 
@@ -90,7 +84,7 @@ Then, we can get the tools we want from the `btw` MCP server:
 
 ```{r}
 btw_mcp_tools <- mcp_tools(
-    btw_mcp_server,
+    btw_mcp_client,
     tools = c(
         "btw_tool_session_check_package_installed",
         "btw_tool_docs_available_vignettes",
@@ -106,7 +100,7 @@ btw_mcp_tools <- mcp_tools(
 Finally, we can call the `help_topics` tool manually to see if it works:
 
 ```{r}
-help_topics_tool <- purrr::keep(btw_mcp_tools, \(tool) tool$name == "btw_tool_docs_package_help_topics")[[1]]
+help_topics_tool <- get_mcp_tool(btw_mcp_tools, "btw_tool_docs_package_help_topics")
 
 execute_mcp_tool(
     tool_def = help_topics_tool,
@@ -117,7 +111,6 @@ execute_mcp_tool(
 )
 ```
 
-
 # Argent + MCP Servers
 
 Let's use the GitHub MCP server and the BTW MCP server to ask a complex question about the `mcptools` and `ellmer` packages.
@@ -127,7 +120,7 @@ google <- Google$new()
 
 tools <- flat_list(github_mcp_tools, btw_mcp_tools, as_tool(web_search), as_tool(web_fetch))
 
-res <- google$chat(
+google$chat(
     "Has 'posit-dev/mcptools' implemented the ability to use HTTP MCP servers with 'ellmer' ?",
     "Use the `get_file_contents` tool to list the contents of GitHub subdirectories, e.g. with path = '/' or 'dir/'.",
     "Use the `btw` tools to explore the help pages and vignettes of the local installation of the `mcptools` package.",
@@ -299,10 +292,77 @@ result:
 
 </details>
 
-## Further Reading
+# Advanced Usage
 
-- [MCP Specification](https://spec.modelcontextprotocol.io/)
-- [MCP Servers](https://github.com/modelcontextprotocol/servers)
-- [mcptools Documentation](https://posit-dev.github.io/mcptools/)
-- [GitHub MCP Server](https://github.com/github/github-mcp-server)
-- [Claude Desktop MCP Guide](https://docs.claude.com/en/docs/agents-and-tools/mcp-connector)
+## Creating a Custom MCP Server
+
+Let's create our own stdio MCP server for interacting with Zotero's local API. This server will be
+usable both from argent and from other MCP clients, like Claude Code.
+
+### Prerequisites
+
+- Zotero 7+ must be running
+- Enable "Allow other applications on this computer to communicate with Zotero" in Preferences > Advanced
+
+### Server Implementation
+
+```{r, code = readLines(here::here("inst/examples/zotero_mcp_server.R"))}
+#| code-fold: true
+#| code-summary: Zotero MCP Server Implementation (long)
+```
+
+::: {.callout-note appearance="simple"}
+The complete Zotero MCP server code is available in the package at `inst/examples/zotero_mcp_server.R`.
+:::
+
+## Using the Server
+
+### Use with argent
+
+```{r}
+zotero_client <- mcp_connect(
+    name = "zotero",
+    type = "stdio",
+    command = "Rscript",
+    args = system.file("examples/zotero_mcp_server.R", package = "argent")
+)
+
+zotero_tools <- mcp_tools(zotero_client)
+```
+
+```{r}
+zotero_get_collections_tool <- get_mcp_tool(zotero_tools, "zotero_get_collections")
+
+execute_mcp_tool(zotero_get_collections_tool, arguments = list())
+```
+
+```{r}
+openrouter <- OpenRouter$new()
+
+openrouter$chat(
+    "Can you summarize Noe's view on sensory substitution and how the brain differentiates sensory inputs ?",
+    model = "google/gemini-2.5-flash-lite-preview-09-2025",
+    tools = zotero_tools
+)
+```
+
+::: {.callout-tip appearance="simple"}
+We can use our new Zotero MCP server with other MCP clients (like Claude Code, Claude Desktop, Gemini CLI, etc):
+
+```{json}
+{
+  "mcpServers": {
+    "zotero": {
+      "type": "stdio",
+      "command": "Rscript",
+      "args": [
+        "--quiet",
+        "--vanilla",
+        "/path/to/argent/inst/examples/zotero_mcp_server.R"
+      ]
+    }
+  }
+}
+```
+
+:::

@@ -2,7 +2,7 @@
 
 Provides a unified interface for interacting with Large Language Models
 (LLMs) from multiple providers, specialized for creating AI agents with
-tool calling, multimodal inputs, and structured outputs.
+tool calling, multimodal inputs, and universal structured outputs.
 
 The argent package provides a unified interface for creating AI agents
 that can interact with multiple Large Language Model (LLM) providers
@@ -51,56 +51,29 @@ The package provides the following R6 classes:
 
 ## Features
 
-- Unified interface across multiple LLM providers
+- Unified interface across multiple LLM providers: OpenAI, Anthropic,
+  Google, OpenRouter, and Local LLM
 
-- Function and MCP tool calling with parallel execution support
+- Support for all 3 of OpenAI's APIs: Chat Completions, Responses, and
+  Assistants
+
+- Function and MCP tool calling (http & stdio)
 
 - Universal structured JSON outputs (works with any model supporting
   tool calling)
 
-- Multimodal inputs (text, images, PDFs, data files, URLs, R objects)
+- Multimodal inputs (text, images, PDFs, data files, URLs, R objects),
+  customizable and extensible
 
-- Server-side tools (code execution, web search, file search, RAG)
+- Server-side (built-in) tools, like code execution, web search/fetch,
+  file search, etc.
 
-- Conversation history management with automatic persistence
+- Client-side conversation history management with automatic on-disk
+  persistence
 
-- Prompt caching (Anthropic, OpenAI)
+- Prompt caching (for providers supporting it)
 
-- File upload and vector store management (Google, Anthropic, OpenAI)
-
-- Reasoning and thinking modes (Google, Anthropic, OpenAI)
-
-## Parallel Tool Calls
-
-Tool calls can be executed in parallel using
-[`mirai::daemons()`](https://mirai.r-lib.org/reference/daemons.html).
-This can significantly speed up responses when multiple tools are called
-simultaneously.
-
-To enable parallel execution:
-
-- Set up mirai daemons before making requests: `mirai::daemons(6)`
-
-- argent will automatically parallelize multiple tool calls in the same
-  response
-
-- Without daemons, tool calls execute sequentially (default fallback
-  behavior)
-
-To ensure parallel execution is always used, add
-[`mirai::require_daemons()`](https://mirai.r-lib.org/reference/require_daemons.html)
-before making requests. To disable parallel processing, call
-`mirai::daemons(0)`.
-
-Performance considerations:
-
-- Parallelization overhead can outweigh benefits for very fast tool
-  calls
-
-- Most beneficial when tools take 100+ microseconds per call
-
-- As a rule of thumb, use at most one fewer daemon than available CPU
-  cores
+- File upload and vector/file store management for server-side RAG
 
 ## Getting Started
 
@@ -162,10 +135,6 @@ response <- openrouter$chat(
 llm <- LocalLLM$new(base_url = "http://localhost:5000")
 response <- llm$chat(prompt = "Hello!")
 
-# Parallel tool calling
-library(mirai)
-daemons(4)  # Set up 4 parallel workers
-
 get_weather <- function(location) {
   #' @description Get weather information for a location
   #' @param location:string* The location to get weather for
@@ -177,8 +146,5 @@ google$chat(
   tools = list(as_tool(get_weather)),
   model = "gemini-2.5-flash"
 )
-# Tool calls will execute in parallel across the 4 workers
-
-daemons(0)  # Clean up when done
 } # }
 ```

@@ -4,54 +4,50 @@ resources, and prompts that LLMs can use during conversations.
 MCP Server Connection
 
 
-mcp_server() creates a connection to an MCP server using programmatic
-configuration. For stdio servers, the server is spawned as a subprocess and
-communicates via JSON-RPC over stdin/stdout. For HTTP servers, communication
-happens via HTTP requests to the specified endpoint.
+mcp_connect() creates a client connection to an MCP server.
+For stdio servers (command-line tools), it spawns a subprocess.
+For HTTP servers (remote APIs), it configures the endpoint.
 
 
 
-Tool Discovery
 
 
-mcp_tools() retrieves tool definitions from an MCP server and converts them
-to argent's tool format. Tools can then be passed to chat() alongside
-client-defined and provider server tools.
+Capability Discovery
 
 
+mcp_tools() retrieves tool definitions from a connected MCP client and
+converts them to argent's tool format.
+mcp_resources() retrieves resource definitions from a connected MCP client.
+Resources expose data/content via URIs (files, datasets, documentation, etc.).
+mcp_prompts() retrieves prompt definitions from a connected MCP client.
+Prompts are pre-defined message templates with optional arguments.
 
-Resources and Prompts
 
-
-mcp_resources() retrieves file-like structured data that LLMs can access.
-mcp_prompts() retrieves predefined templates for interactions.
 
 "><meta property="og:description" content="Functions for integrating MCP servers with argent. MCP servers provide tools,
 resources, and prompts that LLMs can use during conversations.
 MCP Server Connection
 
 
-mcp_server() creates a connection to an MCP server using programmatic
-configuration. For stdio servers, the server is spawned as a subprocess and
-communicates via JSON-RPC over stdin/stdout. For HTTP servers, communication
-happens via HTTP requests to the specified endpoint.
+mcp_connect() creates a client connection to an MCP server.
+For stdio servers (command-line tools), it spawns a subprocess.
+For HTTP servers (remote APIs), it configures the endpoint.
 
 
 
-Tool Discovery
 
 
-mcp_tools() retrieves tool definitions from an MCP server and converts them
-to argent's tool format. Tools can then be passed to chat() alongside
-client-defined and provider server tools.
+Capability Discovery
 
 
+mcp_tools() retrieves tool definitions from a connected MCP client and
+converts them to argent's tool format.
+mcp_resources() retrieves resource definitions from a connected MCP client.
+Resources expose data/content via URIs (files, datasets, documentation, etc.).
+mcp_prompts() retrieves prompt definitions from a connected MCP client.
+Prompts are pre-defined message templates with optional arguments.
 
-Resources and Prompts
 
-
-mcp_resources() retrieves file-like structured data that LLMs can access.
-mcp_prompts() retrieves predefined templates for interactions.
 
 "><meta property="og:image" content="https://ma-riviere.github.io/argent/reference/figures/logo.png"><meta property="og:image:alt" content="Creating AI Agents in R"><meta name="twitter:card" content="summary"><meta name="twitter:creator" content="@mariviere1"><meta name="twitter:site" content="@mariviere1"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -111,34 +107,26 @@ resources, and prompts that LLMs can use during conversations.</p><div class="se
 <h3 id="mcp-server-connection">MCP Server Connection<a class="anchor" aria-label="anchor" href="#mcp-server-connection"></a></h3>
 
 
-<p><code>mcp_server()</code> creates a connection to an MCP server using programmatic
-configuration. For stdio servers, the server is spawned as a subprocess and
-communicates via JSON-RPC over stdin/stdout. For HTTP servers, communication
-happens via HTTP requests to the specified endpoint.</p>
-</div>
+<p><code>mcp_connect()</code> creates a client connection to an MCP server.</p><ul><li><p>For <strong>stdio</strong> servers (command-line tools), it spawns a subprocess.</p></li>
+<li><p>For <strong>HTTP</strong> servers (remote APIs), it configures the endpoint.</p></li>
+</ul></div>
 
 <div class="section">
-<h3 id="tool-discovery">Tool Discovery<a class="anchor" aria-label="anchor" href="#tool-discovery"></a></h3>
+<h3 id="capability-discovery">Capability Discovery<a class="anchor" aria-label="anchor" href="#capability-discovery"></a></h3>
 
-
-<p><code>mcp_tools()</code> retrieves tool definitions from an MCP server and converts them
-to argent's tool format. Tools can then be passed to <code>chat()</code> alongside
-client-defined and provider server tools.</p>
-</div>
-
-<div class="section">
-<h3 id="resources-and-prompts">Resources and Prompts<a class="anchor" aria-label="anchor" href="#resources-and-prompts"></a></h3>
-
-
-<p><code>mcp_resources()</code> retrieves file-like structured data that LLMs can access.
-<code>mcp_prompts()</code> retrieves predefined templates for interactions.</p>
-</div>
+<ul><li><p><code>mcp_tools()</code> retrieves tool definitions from a connected MCP client and
+converts them to argent's tool format.</p></li>
+<li><p><code>mcp_resources()</code> retrieves resource definitions from a connected MCP client.
+Resources expose data/content via URIs (files, datasets, documentation, etc.).</p></li>
+<li><p><code>mcp_prompts()</code> retrieves prompt definitions from a connected MCP client.
+Prompts are pre-defined message templates with optional arguments.</p></li>
+</ul></div>
 
     </div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">mcp_server</span><span class="op">(</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">mcp_connect</span><span class="op">(</span></span>
 <span>  <span class="va">name</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"stdio"</span>,</span>
 <span>  command <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -148,11 +136,11 @@ client-defined and provider server tools.</p>
 <span>  headers <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">mcp_tools</span><span class="op">(</span><span class="va">server</span>, tools <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu">mcp_tools</span><span class="op">(</span><span class="va">client</span>, tools <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">mcp_resources</span><span class="op">(</span><span class="va">server</span>, resources <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu">mcp_resources</span><span class="op">(</span><span class="va">client</span>, resources <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">mcp_prompts</span><span class="op">(</span><span class="va">server</span>, prompts <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">mcp_prompts</span><span class="op">(</span><span class="va">client</span>, prompts <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -180,15 +168,15 @@ client-defined and provider server tools.</p>
 
 
 <dt id="arg-url">url<a class="anchor" aria-label="anchor" href="#arg-url"></a></dt>
-<dd><p>Character. HTTP endpoint URL (for http servers, e.g., "https://api.githubcopilot.com/mcp")</p></dd>
+<dd><p>Character. HTTP endpoint URL (for http servers)</p></dd>
 
 
 <dt id="arg-headers">headers<a class="anchor" aria-label="anchor" href="#arg-headers"></a></dt>
-<dd><p>Named list. HTTP headers (for http servers, e.g., list(Authorization = "Bearer token"))</p></dd>
+<dd><p>Named list. HTTP headers (for http servers)</p></dd>
 
 
-<dt id="arg-server">server<a class="anchor" aria-label="anchor" href="#arg-server"></a></dt>
-<dd><p>An MCP server object created by <code>mcp_server()</code></p></dd>
+<dt id="arg-client">client<a class="anchor" aria-label="anchor" href="#arg-client"></a></dt>
+<dd><p>An MCP client object returned by <code>mcp_connect()</code></p></dd>
 
 
 <dt id="arg-tools">tools<a class="anchor" aria-label="anchor" href="#arg-tools"></a></dt>
@@ -206,56 +194,12 @@ client-defined and provider server tools.</p>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
 
-<ul><li><p><code>mcp_server()</code>: An MCP server connection object (list with class "mcp_server")</p></li>
+<ul><li><p><code>mcp_connect()</code>: An <code>McpClient</code> object (R6)</p></li>
 <li><p><code>mcp_tools()</code>: List of tool definitions in argent format</p></li>
-<li><p><code>mcp_resources()</code>: List of resource definitions</p></li>
-<li><p><code>mcp_prompts()</code>: List of prompt definitions</p></li>
+<li><p><code>mcp_resources()</code>: List of resource definitions in argent format</p></li>
+<li><p><code>mcp_prompts()</code>: List of prompt definitions in argent format</p></li>
 </ul></div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># HTTP server configuration (GitHub Copilot MCP)</span></span></span>
-<span class="r-in"><span><span class="va">github</span> <span class="op">&lt;-</span> <span class="fu">mcp_server</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  name <span class="op">=</span> <span class="st">"github"</span>,</span></span>
-<span class="r-in"><span>  type <span class="op">=</span> <span class="st">"http"</span>,</span></span>
-<span class="r-in"><span>  url <span class="op">=</span> <span class="st">"https://api.githubcopilot.com/mcp"</span>,</span></span>
-<span class="r-in"><span>  headers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    Authorization <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Bearer"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_PAT"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Stdio server configuration (Docker)</span></span></span>
-<span class="r-in"><span><span class="va">filesystem</span> <span class="op">&lt;-</span> <span class="fu">mcp_server</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  name <span class="op">=</span> <span class="st">"filesystem"</span>,</span></span>
-<span class="r-in"><span>  type <span class="op">=</span> <span class="st">"stdio"</span>,</span></span>
-<span class="r-in"><span>  command <span class="op">=</span> <span class="st">"docker"</span>,</span></span>
-<span class="r-in"><span>  args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"run"</span>, <span class="st">"-i"</span>, <span class="st">"--rm"</span>, <span class="st">"mcp/filesystem"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Get all tools from server</span></span></span>
-<span class="r-in"><span><span class="va">github_tools</span> <span class="op">&lt;-</span> <span class="fu">mcp_tools</span><span class="op">(</span><span class="va">github</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Get specific tools only</span></span></span>
-<span class="r-in"><span><span class="va">issue_tools</span> <span class="op">&lt;-</span> <span class="fu">mcp_tools</span><span class="op">(</span><span class="va">github</span>, tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"search_issues"</span>, <span class="st">"create_issue"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Use in chat with other tools</span></span></span>
-<span class="r-in"><span><span class="va">google</span> <span class="op">&lt;-</span> <span class="va"><a href="Google.html">Google</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">google</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="st">"Create an issue for the bug I found"</span>,</span></span>
-<span class="r-in"><span>  tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">github_tools</span>,</span></span>
-<span class="r-in"><span>    <span class="fu"><a href="tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">my_custom_function</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Get resources</span></span></span>
-<span class="r-in"><span><span class="va">github_resources</span> <span class="op">&lt;-</span> <span class="fu">mcp_resources</span><span class="op">(</span><span class="va">github</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

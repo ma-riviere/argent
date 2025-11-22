@@ -9,16 +9,6 @@ Google (Gemini) provider.
 gemini <- Google$new(api_key = Sys.getenv("GEMINI_API_KEY"))
 ```
 
-> **Tip**
->
-> Parallel tool calling is available in `argent`, using `mirai` &
-> [`purrr::in_parallel()`](https://purrr.tidyverse.org/reference/in_parallel.html).
-> However, we need to set up the daemons before using it:
->
-> ``` r
-> mirai::daemons(4)
-> ```
-
 You can customize the rate limit when initializing with the `rate_limit`
 parameter, and the default model with the `default_model` parameter
 (‘gemini-2.5-flash’ for Google).

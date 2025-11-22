@@ -108,17 +108,11 @@
 <strong>Prompts</strong>: Predefined templates for interactions (not supported yet)</li>
 </ul>
 <p>There are two main types of MCP servers: <em>HTTP</em> and <em>stdio</em>. HTTP servers are typically used for cloud-based services like GitHub, while stdio servers are typically used for local services like Docker or npx. Both types of MCP servers can be used with <code>argent</code>.</p>
-<div>
-<blockquote>
-<p><strong>Note</strong></p>
-<p>We rely on the <code>mcptools</code> package for interacting with <em>stdio</em> MCP servers.</p>
-</blockquote>
-</div>
 </section><section class="section level2"><h2 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
 </h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">mirai</span><span class="fu">::</span><span class="fu"><a href="https://mirai.r-lib.org/reference/daemons.html" class="external-link">daemons</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span> <span class="co"># To enable parallel tool calling</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ma-riviere.github.io/argent">argent</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 </section><section class="section level2"><h2 id="basic-usage">Basic Usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
 </h2>
@@ -127,7 +121,7 @@
 <p>Let’s look at the GitHub MCP server as an example. It is a HTTP server that can be used to interact with the GitHub API.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">github_mcp_server</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_server</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">github_mcp_client</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_connect</a></span><span class="op">(</span></span>
 <span>    name <span class="op">=</span> <span class="st">"github"</span>,</span>
 <span>    type <span class="op">=</span> <span class="st">"http"</span>,</span>
 <span>    url <span class="op">=</span> <span class="st">"https://api.githubcopilot.com/mcp"</span>,</span>
@@ -139,12 +133,12 @@
 <p>Then, we can get the tools we want from the GitHub MCP server:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">github_mcp_tools</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_tools</a></span><span class="op">(</span><span class="va">github_mcp_server</span>, tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"get_file_contents"</span>, <span class="st">"search_code"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">github_mcp_tools</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_tools</a></span><span class="op">(</span><span class="va">github_mcp_client</span>, tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"get_file_contents"</span>, <span class="st">"search_code"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>Finally, we can call the <code>get_file_contents</code> tool manually to see if it works:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">get_file_contents_mcp_tool</span> <span class="op">&lt;-</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/keep.html" class="external-link">keep</a></span><span class="op">(</span><span class="va">github_mcp_tools</span>, \<span class="op">(</span><span class="va">tool</span><span class="op">)</span> <span class="va">tool</span><span class="op">$</span><span class="va">name</span> <span class="op">==</span> <span class="st">"get_file_contents"</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">get_file_contents_mcp_tool</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_mcp_tool.html">get_mcp_tool</a></span><span class="op">(</span><span class="va">github_mcp_tools</span>, <span class="st">"get_file_contents"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/execute_mcp_tool.html">execute_mcp_tool</a></span><span class="op">(</span></span>
 <span>    tool_def <span class="op">=</span> <span class="va">get_file_contents_mcp_tool</span>,</span>
@@ -161,22 +155,21 @@
 <p>Let’s look at the BTW MCP server as an example (which requires the <a href="https://github.com/posit-dev/btw" class="external-link"><code>btw</code></a> package to be installed). It is a stdio server that can be used to interact with the <code>btw</code> package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">btw_mcp_server</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_server</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">btw_mcp_client</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_connect</a></span><span class="op">(</span></span>
 <span>    name <span class="op">=</span> <span class="st">"btw"</span>,</span>
 <span>    type <span class="op">=</span> <span class="st">"stdio"</span>,</span>
 <span>    command <span class="op">=</span> <span class="st">"Rscript"</span>,</span>
 <span>    args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>        <span class="st">"-e"</span>,</span>
 <span>        <span class="st">"btw::btw_mcp_server(tools = btw::btw_tools(c('docs', 'env', 'ide', 'search', 'session')))"</span></span>
-<span>    <span class="op">)</span>,</span>
-<span>    env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>Then, we can get the tools we want from the <code>btw</code> MCP server:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">btw_mcp_tools</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_tools</a></span><span class="op">(</span></span>
-<span>    <span class="va">btw_mcp_server</span>,</span>
+<span>    <span class="va">btw_mcp_client</span>,</span>
 <span>    tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>        <span class="st">"btw_tool_session_check_package_installed"</span>,</span>
 <span>        <span class="st">"btw_tool_docs_available_vignettes"</span>,</span>
@@ -191,7 +184,7 @@
 <p>Finally, we can call the <code>help_topics</code> tool manually to see if it works:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">help_topics_tool</span> <span class="op">&lt;-</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/keep.html" class="external-link">keep</a></span><span class="op">(</span><span class="va">btw_mcp_tools</span>, \<span class="op">(</span><span class="va">tool</span><span class="op">)</span> <span class="va">tool</span><span class="op">$</span><span class="va">name</span> <span class="op">==</span> <span class="st">"btw_tool_docs_package_help_topics"</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">help_topics_tool</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_mcp_tool.html">get_mcp_tool</a></span><span class="op">(</span><span class="va">btw_mcp_tools</span>, <span class="st">"btw_tool_docs_package_help_topics"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/execute_mcp_tool.html">execute_mcp_tool</a></span><span class="op">(</span></span>
 <span>    tool_def <span class="op">=</span> <span class="va">help_topics_tool</span>,</span>
@@ -210,7 +203,7 @@
 <span></span>
 <span><span class="va">tools</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/flat_list.html">flat_list</a></span><span class="op">(</span><span class="va">github_mcp_tools</span>, <span class="va">btw_mcp_tools</span>, <span class="fu"><a href="../reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">web_search</span><span class="op">)</span>, <span class="fu"><a href="../reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">web_fetch</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">google</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
+<span><span class="va">google</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"Has 'posit-dev/mcptools' implemented the ability to use HTTP MCP servers with 'ellmer' ?"</span>,</span>
 <span>    <span class="st">"Use the `get_file_contents` tool to list the contents of GitHub subdirectories, e.g. with path = '/' or 'dir/'."</span>,</span>
 <span>    <span class="st">"Use the `btw` tools to explore the help pages and vignettes of the local installation of the `mcptools` package."</span>,</span>
@@ -368,15 +361,641 @@
 <span id="cb10-145"><a href="#cb10-145" aria-hidden="true" tabindex="-1"></a>── assistant [62853 / 196436] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
 <span id="cb10-146"><a href="#cb10-146" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-147"><a href="#cb10-147" aria-hidden="true" tabindex="-1"></a>`posit-dev/mcptools` does not directly implement the ability to use HTTP MCP servers with `ellmer`. When `mcptools` acts as an MCP *client* via `ellmer`, it only supports the local (stdio) protocol. To connect to remote (HTTP) MCP servers, the `mcptools` documentation recommends using `mcp-remote`, an external tool (a local stdio MCP server) that converts remote HTTP servers to `mcptools`-compatible local ones. This allows `ellmer` (using the stdio protocol) to interact with remote HTTP MCP servers through `mcp-remote`.</span></code></pre></div>
-</details><section class="level2"><h3 id="further-reading">Further Reading<a class="anchor" aria-label="anchor" href="#further-reading"></a>
+</details></section><section class="section level2"><h2 id="advanced-usage">Advanced Usage<a class="anchor" aria-label="anchor" href="#advanced-usage"></a>
+</h2>
+<section class="level2"><h3 id="creating-a-custom-mcp-server">Creating a Custom MCP Server<a class="anchor" aria-label="anchor" href="#creating-a-custom-mcp-server"></a>
 </h3>
+<p>Let’s create our own stdio MCP server for interacting with Zotero’s local API. This server will be usable both from argent and from other MCP clients, like Claude Code.</p>
+<section class="level3"><h4 id="prerequisites">Prerequisites<a class="anchor" aria-label="anchor" href="#prerequisites"></a>
+</h4>
 <ul>
-<li><a href="https://spec.modelcontextprotocol.io/" class="external-link">MCP Specification</a></li>
-<li><a href="https://github.com/modelcontextprotocol/servers" class="external-link">MCP Servers</a></li>
-<li><a href="https://posit-dev.github.io/mcptools/" class="external-link">mcptools Documentation</a></li>
-<li><a href="https://github.com/github/github-mcp-server" class="external-link">GitHub MCP Server</a></li>
-<li><a href="https://docs.claude.com/en/docs/agents-and-tools/mcp-connector" class="external-link">Claude Desktop MCP Guide</a></li>
-</ul></section></section><script id="quarto-html-after-body" type="application/javascript">
+<li>Zotero 7+ must be running</li>
+<li>Enable “Allow other applications on this computer to communicate with Zotero” in Preferences &gt; Advanced</li>
+</ul></section><section class="level3"><h4 id="server-implementation">Server Implementation<a class="anchor" aria-label="anchor" href="#server-implementation"></a>
+</h4>
+<div class="cell">
+<details class="code-fold"><summary>Zotero MCP Server Implementation (long)</summary><div class="sourceCode cell-code" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Zotero MCP Server</span></span>
+<span><span class="co">#</span></span>
+<span><span class="co"># A stdio MCP server for interacting with Zotero's local API.</span></span>
+<span><span class="co"># This server can be used with argent or other MCP clients like Claude Code.</span></span>
+<span></span>
+<span><span class="co"># ------🔺 SETUP ---------------------------------------------------------------</span></span>
+<span></span>
+<span><span class="co"># Check and install required packages</span></span>
+<span><span class="va">required_packages</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"httr2"</span>, <span class="st">"cli"</span>, <span class="st">"jsonlite"</span>, <span class="st">"argent"</span><span class="op">)</span></span>
+<span><span class="va">missing_packages</span> <span class="op">&lt;-</span> <span class="va">required_packages</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">required_packages</span>, <span class="va">requireNamespace</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">missing_packages</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Installing missing packages: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">missing_packages</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="va">missing_packages</span>, repos <span class="op">=</span> <span class="st">"https://cloud.r-project.org"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://httr2.r-lib.org" class="external-link">httr2</a></span><span class="op">)</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://cli.r-lib.org" class="external-link">cli</a></span><span class="op">)</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jeroen.r-universe.dev/jsonlite" class="external-link">jsonlite</a></span><span class="op">)</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ma-riviere.github.io/argent">argent</a></span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Disable httr2 progress bars to avoid stderr noise</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>httr2_progress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># ------🔺 TOOLS ---------------------------------------------------------------</span></span>
+<span></span>
+<span><span class="co"># Base request function to Zotero local API</span></span>
+<span><span class="va">zotero_request</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">endpoint</span>, <span class="va">query</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">user_id</span> <span class="op">=</span> <span class="st">"0"</span>, <span class="va">valid_statuses</span> <span class="op">=</span> <span class="fl">200</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">base_url</span> <span class="op">&lt;-</span> <span class="st">"http://localhost:23119/api"</span></span>
+<span>    <span class="va">url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">base_url</span>, <span class="st">"/users/"</span>, <span class="va">user_id</span>, <span class="va">endpoint</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu">httr2</span><span class="fu">::</span><span class="fu"><a href="https://httr2.r-lib.org/reference/request.html" class="external-link">request</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">httr2</span><span class="fu">::</span><span class="fu"><a href="https://httr2.r-lib.org/reference/req_headers.html" class="external-link">req_headers</a></span><span class="op">(</span><span class="st">"Zotero-API-Version"</span> <span class="op">=</span> <span class="st">"3"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">httr2</span><span class="fu">::</span><span class="fu"><a href="https://httr2.r-lib.org/reference/req_url.html" class="external-link">req_url_query</a></span><span class="op">(</span><span class="op">!</span><span class="op">!</span><span class="op">!</span><span class="va">query</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">httr2</span><span class="fu">::</span><span class="fu"><a href="https://httr2.r-lib.org/reference/req_error.html" class="external-link">req_error</a></span><span class="op">(</span>is_error <span class="op">=</span> \<span class="op">(</span><span class="va">resp</span><span class="op">)</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">httr2</span><span class="fu">::</span><span class="fu"><a href="https://httr2.r-lib.org/reference/req_perform.html" class="external-link">req_perform</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">status</span> <span class="op">&lt;-</span> <span class="fu">httr2</span><span class="fu">::</span><span class="fu"><a href="https://httr2.r-lib.org/reference/resp_status.html" class="external-link">resp_status</a></span><span class="op">(</span><span class="va">resp</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="va">status</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">valid_statuses</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="va">status</span> <span class="op">==</span> <span class="fl">501</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="fu">cli</span><span class="fu">::</span><span class="fu"><a href="https://cli.r-lib.org/reference/cli_abort.html" class="external-link">cli_abort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>                <span class="st">"Zotero local API request failed (501 Not Implemented)"</span>,</span>
+<span>                <span class="st">"x"</span> <span class="op">=</span> <span class="st">"API version mismatch or local API not enabled"</span>,</span>
+<span>                <span class="st">"i"</span> <span class="op">=</span> <span class="st">"Check Preferences &gt; Advanced &gt; 'Allow other applications on this computer to communicate with Zotero'"</span></span>
+<span>            <span class="op">)</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span>        <span class="fu">cli</span><span class="fu">::</span><span class="fu"><a href="https://cli.r-lib.org/reference/cli_abort.html" class="external-link">cli_abort</a></span><span class="op">(</span><span class="st">"Zotero API request failed with status {status}"</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">status</span> <span class="op">==</span> <span class="fl">404</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="fu">httr2</span><span class="fu">::</span><span class="fu"><a href="https://httr2.r-lib.org/reference/resp_body_raw.html" class="external-link">resp_body_json</a></span><span class="op">(</span><span class="va">resp</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">zotero_search_items</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">query</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">qmode</span> <span class="op">=</span> <span class="st">"titleCreatorYear"</span>, <span class="va">tag</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">item_type</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">limit</span> <span class="op">=</span> <span class="fl">25</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        q <span class="op">=</span> <span class="va">query</span>,</span>
+<span>        qmode <span class="op">=</span> <span class="va">qmode</span>,</span>
+<span>        tag <span class="op">=</span> <span class="va">tag</span>,</span>
+<span>        itemType <span class="op">=</span> <span class="va">item_type</span>,</span>
+<span>        limit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">limit</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>    <span class="va">params</span> <span class="op">&lt;-</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/keep.html" class="external-link">compact</a></span><span class="op">(</span><span class="va">params</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">items</span> <span class="op">&lt;-</span> <span class="fu">zotero_request</span><span class="op">(</span><span class="st">"/items"</span>, query <span class="op">=</span> <span class="va">params</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">items</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"No items found matching the search criteria."</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">items</span>, <span class="kw">function</span><span class="op">(</span><span class="va">item</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">data</span> <span class="op">&lt;-</span> <span class="va">item</span><span class="op">$</span><span class="va">data</span></span>
+<span></span>
+<span>        <span class="va">creators</span> <span class="op">&lt;-</span> <span class="st">"No authors"</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">creators</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="va">names_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">creators</span>, \<span class="op">(</span><span class="va">c</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">c</span><span class="op">$</span><span class="va">firstName</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">""</span>, <span class="va">c</span><span class="op">$</span><span class="va">lastName</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
+<span>            <span class="va">creators</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">names_list</span>, collapse <span class="op">=</span> <span class="st">"; "</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>            key <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">key</span>,</span>
+<span>            title <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">title</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Untitled"</span>,</span>
+<span>            creators <span class="op">=</span> <span class="va">creators</span>,</span>
+<span>            year <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">date</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"No date"</span>,</span>
+<span>            type <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">itemType</span></span>
+<span>        <span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">result</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span>, pretty <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">zotero_get_item</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">item_key</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">item</span> <span class="op">&lt;-</span> <span class="fu">zotero_request</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"/items/"</span>, <span class="va">item_key</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">data</span> <span class="op">&lt;-</span> <span class="va">item</span><span class="op">$</span><span class="va">data</span></span>
+<span></span>
+<span>    <span class="va">tags</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">tags</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">tags</span> <span class="op">&lt;-</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_chr</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">tags</span>, \<span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="va">t</span><span class="op">$</span><span class="va">tag</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        key <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">key</span>,</span>
+<span>        title <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">title</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Untitled"</span>,</span>
+<span>        creators <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">creators</span>,</span>
+<span>        abstract <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">abstractNote</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"No abstract"</span>,</span>
+<span>        date <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">date</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"No date"</span>,</span>
+<span>        itemType <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">itemType</span>,</span>
+<span>        tags <span class="op">=</span> <span class="va">tags</span>,</span>
+<span>        url <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">url</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">result</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span>, pretty <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">zotero_get_collections</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">collections</span> <span class="op">&lt;-</span> <span class="fu">zotero_request</span><span class="op">(</span><span class="st">"/collections"</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">collections</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"No collections found."</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">collections</span>, <span class="kw">function</span><span class="op">(</span><span class="va">col</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">data</span> <span class="op">&lt;-</span> <span class="va">col</span><span class="op">$</span><span class="va">data</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>            key <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">key</span>,</span>
+<span>            name <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">name</span>,</span>
+<span>            parentCollection <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">parentCollection</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="cn">NA</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">result</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span>, pretty <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">zotero_get_fulltext</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">item_key</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>        <span class="va">item</span> <span class="op">&lt;-</span> <span class="fu">zotero_request</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"/items/"</span>, <span class="va">item_key</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span>        <span class="va">attachment_key</span> <span class="op">&lt;-</span> <span class="va">item_key</span></span>
+<span>        <span class="va">link_mode</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="va">item</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">itemType</span> <span class="op">!=</span> <span class="st">"attachment"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="va">children</span> <span class="op">&lt;-</span> <span class="fu">zotero_request</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"/items/"</span>, <span class="va">item_key</span>, <span class="st">"/children"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span>            <span class="va">pdf_attachments</span> <span class="op">&lt;-</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/keep.html" class="external-link">keep</a></span><span class="op">(</span></span>
+<span>                <span class="va">children</span>,</span>
+<span>                <span class="kw">function</span><span class="op">(</span><span class="va">child</span><span class="op">)</span> <span class="op">{</span></span>
+<span>                    <span class="va">child</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">itemType</span> <span class="op">==</span> <span class="st">"attachment"</span> <span class="op">&amp;&amp;</span></span>
+<span>                        <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"pdf"</span>, <span class="va">child</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">contentType</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">""</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>                <span class="op">}</span></span>
+<span>            <span class="op">)</span></span>
+<span></span>
+<span>            <span class="kw">if</span> <span class="op">(</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">pdf_attachments</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>                <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"No PDF attachments found for this item."</span><span class="op">)</span></span>
+<span>            <span class="op">}</span></span>
+<span></span>
+<span>            <span class="va">attachment_key</span> <span class="op">&lt;-</span> <span class="va">pdf_attachments</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">key</span></span>
+<span>            <span class="va">link_mode</span> <span class="op">&lt;-</span> <span class="va">pdf_attachments</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">linkMode</span></span>
+<span>        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>            <span class="va">link_mode</span> <span class="op">&lt;-</span> <span class="va">item</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">linkMode</span></span>
+<span>        <span class="op">}</span></span>
+<span></span>
+<span>        <span class="va">fulltext</span> <span class="op">&lt;-</span> <span class="fu">zotero_request</span><span class="op">(</span></span>
+<span>            <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"/items/"</span>, <span class="va">attachment_key</span>, <span class="st">"/fulltext"</span><span class="op">)</span>,</span>
+<span>            valid_statuses <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">404</span><span class="op">)</span></span>
+<span>        <span class="op">)</span></span>
+<span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">fulltext</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="va">linked_msg</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">link_mode</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="va">link_mode</span> <span class="op">==</span> <span class="st">"linked_file"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>                <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>                    <span class="st">"\n"</span>,</span>
+<span>                    <span class="st">"Note: This is a linked file. Zotero stores fulltext cache in a separate "</span>,</span>
+<span>                    <span class="st">"storage directory, not alongside the original PDF."</span></span>
+<span>                <span class="op">)</span></span>
+<span>            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>                <span class="st">""</span></span>
+<span>            <span class="op">}</span></span>
+<span></span>
+<span>            <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>                <span class="st">"PDF attachment exists but fulltext has not been indexed yet.\n"</span>,</span>
+<span>                <span class="st">"\n"</span>,</span>
+<span>                <span class="st">"Indexing happens automatically:\n"</span>,</span>
+<span>                <span class="st">"- After 30+ seconds of computer idle time (background processor)\n"</span>,</span>
+<span>                <span class="st">"- Or manually: Right-click attachment in Zotero &gt; Reindex Item\n"</span>,</span>
+<span>                <span class="st">"\n"</span>,</span>
+<span>                <span class="st">"Once indexed, fulltext will be cached and available via this endpoint."</span>,</span>
+<span>                <span class="va">linked_msg</span></span>
+<span>            <span class="op">)</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">fulltext</span><span class="op">$</span><span class="va">content</span><span class="op">)</span> <span class="op">||</span> <span class="va">fulltext</span><span class="op">$</span><span class="va">content</span> <span class="op">==</span> <span class="st">""</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"Full-text cache exists but is empty. The PDF may be image-based without searchable text."</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">fulltext</span><span class="op">$</span><span class="va">content</span><span class="op">)</span></span>
+<span>    <span class="op">}</span>,</span>
+<span>    error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"Full-text extraction failed with error:"</span>,</span>
+<span>            <span class="fu"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">conditionMessage</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span>,</span>
+<span>            <span class="st">"\nPossible reasons:"</span>,</span>
+<span>            <span class="st">"- Item key not found"</span>,</span>
+<span>            <span class="st">"- PDF is image-based without searchable text"</span>,</span>
+<span>            <span class="st">"- File is corrupted or inaccessible"</span>,</span>
+<span>            sep <span class="op">=</span> <span class="st">"\n"</span></span>
+<span>        <span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">zotero_list_fulltext_items</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">since</span> <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">zotero_request</span><span class="op">(</span><span class="st">"/fulltext"</span>, query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>since <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">since</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"No items with fulltext found."</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="va">items</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">key</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>key <span class="op">=</span> <span class="va">key</span>, version <span class="op">=</span> <span class="va">result</span><span class="op">[[</span><span class="va">key</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">items</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span>, pretty <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">zotero_get_collection_items</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">collection_key</span>, <span class="va">limit</span> <span class="op">=</span> <span class="fl">100</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">endpoint</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"/collections/"</span>, <span class="va">collection_key</span>, <span class="st">"/items"</span><span class="op">)</span></span>
+<span>    <span class="va">params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>limit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">limit</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">items</span> <span class="op">&lt;-</span> <span class="fu">zotero_request</span><span class="op">(</span><span class="va">endpoint</span>, query <span class="op">=</span> <span class="va">params</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">items</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"No items found in this collection."</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">items</span>, <span class="kw">function</span><span class="op">(</span><span class="va">item</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">data</span> <span class="op">&lt;-</span> <span class="va">item</span><span class="op">$</span><span class="va">data</span></span>
+<span></span>
+<span>        <span class="va">creators</span> <span class="op">&lt;-</span> <span class="st">"No authors"</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">creators</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="va">names_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">creators</span>, \<span class="op">(</span><span class="va">c</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">c</span><span class="op">$</span><span class="va">firstName</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">""</span>, <span class="va">c</span><span class="op">$</span><span class="va">lastName</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
+<span>            <span class="va">creators</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">names_list</span>, collapse <span class="op">=</span> <span class="st">"; "</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>            key <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">key</span>,</span>
+<span>            title <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">title</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Untitled"</span>,</span>
+<span>            creators <span class="op">=</span> <span class="va">creators</span>,</span>
+<span>            year <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">date</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"No date"</span>,</span>
+<span>            type <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">itemType</span></span>
+<span>        <span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">result</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span>, pretty <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">zotero_get_top_items</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">limit</span> <span class="op">=</span> <span class="fl">100</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>limit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">limit</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">items</span> <span class="op">&lt;-</span> <span class="fu">zotero_request</span><span class="op">(</span><span class="st">"/items/top"</span>, query <span class="op">=</span> <span class="va">params</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">items</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"No top-level items found."</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">items</span>, <span class="kw">function</span><span class="op">(</span><span class="va">item</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">data</span> <span class="op">&lt;-</span> <span class="va">item</span><span class="op">$</span><span class="va">data</span></span>
+<span></span>
+<span>        <span class="va">creators</span> <span class="op">&lt;-</span> <span class="st">"No authors"</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">creators</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="va">names_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">creators</span>, \<span class="op">(</span><span class="va">c</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">c</span><span class="op">$</span><span class="va">firstName</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">""</span>, <span class="va">c</span><span class="op">$</span><span class="va">lastName</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
+<span>            <span class="va">creators</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">names_list</span>, collapse <span class="op">=</span> <span class="st">"; "</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>            key <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">key</span>,</span>
+<span>            title <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">title</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Untitled"</span>,</span>
+<span>            creators <span class="op">=</span> <span class="va">creators</span>,</span>
+<span>            year <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">date</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"No date"</span>,</span>
+<span>            type <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">itemType</span></span>
+<span>        <span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">result</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span>, pretty <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">zotero_list_searches</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">searches</span> <span class="op">&lt;-</span> <span class="fu">zotero_request</span><span class="op">(</span><span class="st">"/searches"</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">searches</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"No saved searches found."</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">searches</span>, <span class="kw">function</span><span class="op">(</span><span class="va">search</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">data</span> <span class="op">&lt;-</span> <span class="va">search</span><span class="op">$</span><span class="va">data</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>            key <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">key</span>,</span>
+<span>            name <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">name</span>,</span>
+<span>            conditions <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">conditions</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">result</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span>, pretty <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">zotero_execute_search</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">search_key</span>, <span class="va">limit</span> <span class="op">=</span> <span class="fl">100</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">endpoint</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"/searches/"</span>, <span class="va">search_key</span>, <span class="st">"/items"</span><span class="op">)</span></span>
+<span>    <span class="va">params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>limit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">limit</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">items</span> <span class="op">&lt;-</span> <span class="fu">zotero_request</span><span class="op">(</span><span class="va">endpoint</span>, query <span class="op">=</span> <span class="va">params</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">items</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"No items found matching this saved search."</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">items</span>, <span class="kw">function</span><span class="op">(</span><span class="va">item</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">data</span> <span class="op">&lt;-</span> <span class="va">item</span><span class="op">$</span><span class="va">data</span></span>
+<span></span>
+<span>        <span class="va">creators</span> <span class="op">&lt;-</span> <span class="st">"No authors"</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">creators</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="va">names_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">creators</span>, \<span class="op">(</span><span class="va">c</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">c</span><span class="op">$</span><span class="va">firstName</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">""</span>, <span class="va">c</span><span class="op">$</span><span class="va">lastName</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
+<span>            <span class="va">creators</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">names_list</span>, collapse <span class="op">=</span> <span class="st">"; "</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>            key <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">key</span>,</span>
+<span>            title <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">title</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Untitled"</span>,</span>
+<span>            creators <span class="op">=</span> <span class="va">creators</span>,</span>
+<span>            year <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">date</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"No date"</span>,</span>
+<span>            type <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">itemType</span></span>
+<span>        <span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">result</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span>, pretty <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">zotero_get_item_types</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">item_types</span> <span class="op">&lt;-</span> <span class="fu">zotero_request</span><span class="op">(</span><span class="st">"/itemTypes"</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">item_types</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"No item types found."</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">item_types</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span>, pretty <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">zotero_get_trashed_items</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">limit</span> <span class="op">=</span> <span class="fl">100</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>limit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">limit</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">items</span> <span class="op">&lt;-</span> <span class="fu">zotero_request</span><span class="op">(</span><span class="st">"/items/trash"</span>, query <span class="op">=</span> <span class="va">params</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">items</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"No items in trash."</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">items</span>, <span class="kw">function</span><span class="op">(</span><span class="va">item</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">data</span> <span class="op">&lt;-</span> <span class="va">item</span><span class="op">$</span><span class="va">data</span></span>
+<span></span>
+<span>        <span class="va">creators</span> <span class="op">&lt;-</span> <span class="st">"No authors"</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">creators</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="va">names_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">creators</span>, \<span class="op">(</span><span class="va">c</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">c</span><span class="op">$</span><span class="va">firstName</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">""</span>, <span class="va">c</span><span class="op">$</span><span class="va">lastName</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
+<span>            <span class="va">creators</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">names_list</span>, collapse <span class="op">=</span> <span class="st">"; "</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>            key <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">key</span>,</span>
+<span>            title <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">title</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Untitled"</span>,</span>
+<span>            creators <span class="op">=</span> <span class="va">creators</span>,</span>
+<span>            year <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">date</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"No date"</span>,</span>
+<span>            type <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">itemType</span>,</span>
+<span>            deleted <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">deleted</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="cn">FALSE</span></span>
+<span>        <span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">result</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span>, pretty <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span></span>
+<span><span class="co"># MCP server function</span></span>
+<span><span class="va">zotero_mcp_server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">server</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">:::</span><span class="va"><a href="../reference/McpServer.html">McpServer</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"Zotero"</span>,</span>
+<span>        version <span class="op">=</span> <span class="st">"1.0.0"</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="co"># Define tool definitions using argent::tool()</span></span>
+<span>    <span class="va">search_items_tool</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">::</span><span class="fu"><a href="../reference/tool_definitions.html">tool</a></span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"zotero_search_items"</span>,</span>
+<span>        description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"Search for items in your Zotero library using phrase-based matching."</span>,</span>
+<span>            <span class="st">"Returns a list of items with their metadata (title, authors, year, type)."</span>,</span>
+<span>            <span class="st">"IMPORTANT SEARCH TIPS:"</span>,</span>
+<span>            <span class="st">"- The 'query' parameter performs phrase matching in titles and creator fields"</span>,</span>
+<span>            <span class="st">"- Use broad, generic terms first (e.g., 'climate' before 'climate change mitigation')"</span>,</span>
+<span>            <span class="st">"- Try synonyms if initial search yields no results"</span>,</span>
+<span>            <span class="st">"- Break complex searches into multiple queries with different keywords"</span>,</span>
+<span>            <span class="st">"- Use 'qmode=everything' to include full-text content in search"</span>,</span>
+<span>            <span class="st">"- Search is case-insensitive but matches must be complete phrases"</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"string Quick search query for phrase matching in titles and creator fields."</span>,</span>
+<span>            <span class="st">"Searches are case-insensitive phrase matches."</span>,</span>
+<span>            <span class="st">"Start with generic terms and narrow down or try synonyms if no results."</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        qmode <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"string Search mode: 'titleCreatorYear' (default, searches title/creator/year)"</span>,</span>
+<span>            <span class="st">"or 'everything' (includes full-text content from indexed PDFs)."</span>,</span>
+<span>            <span class="st">"Use 'everything' only when searching PDF content is needed."</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        tag <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"string Filter by exact tag name (case-sensitive)."</span>,</span>
+<span>            <span class="st">"Supports Boolean syntax: 'tag1' (single), 'tag1 tag2' (tag with spaces),"</span>,</span>
+<span>            <span class="st">"'tag=tag1&amp;tag=tag2' (AND), 'tag1 || tag2' (OR), '-tag1' (NOT)."</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        item_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"string Filter by item type."</span>,</span>
+<span>            <span class="st">"Common types: 'book', 'journalArticle', 'conferencePaper', 'thesis', 'report',"</span>,</span>
+<span>            <span class="st">"'webpage', 'document', 'attachment'."</span>,</span>
+<span>            <span class="st">"Supports Boolean: 'book || journalArticle' (OR), '-attachment' (NOT)."</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        limit <span class="op">=</span> <span class="st">"integer Maximum number of items to return (1-100, default: 25)"</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">get_item_tool</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">::</span><span class="fu"><a href="../reference/tool_definitions.html">tool</a></span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"zotero_get_item"</span>,</span>
+<span>        description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"Get detailed metadata for a specific Zotero item by its key."</span>,</span>
+<span>            <span class="st">"Returns comprehensive information including title, creators, abstract, date, type, tags, and URL."</span>,</span>
+<span>            <span class="st">"Use this after zotero_search_items to get full details for specific items."</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        item_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"string* The unique item key returned from search results."</span>,</span>
+<span>            <span class="st">"Example: 'X42A7DEE' (alphanumeric, case-sensitive)."</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">get_collections_tool</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">::</span><span class="fu"><a href="../reference/tool_definitions.html">tool</a></span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"zotero_get_collections"</span>,</span>
+<span>        description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"List all collections (folders) in your Zotero library."</span>,</span>
+<span>            <span class="st">"Collections organize items hierarchically."</span>,</span>
+<span>            <span class="st">"Returns collection keys, names, and parent-child relationships."</span>,</span>
+<span>            <span class="st">"Use collection keys with other endpoints to filter items by collection."</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">get_fulltext_tool</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">::</span><span class="fu"><a href="../reference/tool_definitions.html">tool</a></span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"zotero_get_fulltext"</span>,</span>
+<span>        description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"Extract full-text content from a Zotero item's attached PDF."</span>,</span>
+<span>            <span class="st">"Automatically finds PDF attachments if given a parent item key."</span>,</span>
+<span>            <span class="st">"REQUIREMENTS:"</span>,</span>
+<span>            <span class="st">"- Item must have an attached PDF file (stored or linked)"</span>,</span>
+<span>            <span class="st">"- PDF must be indexed by Zotero (automatic when idle, or manual reindex)"</span>,</span>
+<span>            <span class="st">"- PDF must have searchable text (not image-only scans)"</span>,</span>
+<span>            <span class="st">"NOTES:"</span>,</span>
+<span>            <span class="st">"- Accepts both parent item keys (will find first PDF) or direct attachment keys"</span>,</span>
+<span>            <span class="st">"- Returns helpful error messages if PDF is not indexed or not found"</span>,</span>
+<span>            <span class="st">"- Warns if only partial content indexed (due to page/character limits)"</span>,</span>
+<span>            <span class="st">"Use this to access the actual text content of papers for detailed analysis."</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        item_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"string* The item key - can be either:"</span>,</span>
+<span>            <span class="st">"(1) Parent item key from search results (will auto-find PDF attachment), or"</span>,</span>
+<span>            <span class="st">"(2) Direct attachment key for a specific PDF."</span>,</span>
+<span>            <span class="st">"Obtain from zotero_search_items or zotero_get_item results."</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">list_fulltext_items_tool</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">::</span><span class="fu"><a href="../reference/tool_definitions.html">tool</a></span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"zotero_list_fulltext_items"</span>,</span>
+<span>        description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"List all items in the library that have indexed fulltext content."</span>,</span>
+<span>            <span class="st">"Returns item keys and their fulltext version numbers."</span>,</span>
+<span>            <span class="st">"Useful for discovering which items have searchable PDF content before retrieving it."</span>,</span>
+<span>            <span class="st">"Combine with zotero_get_fulltext to access the actual content."</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        since <span class="op">=</span> <span class="st">"integer Library version to filter from (default: 0 for all items)"</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">get_collection_items_tool</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">::</span><span class="fu"><a href="../reference/tool_definitions.html">tool</a></span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"zotero_get_collection_items"</span>,</span>
+<span>        description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"Get all items within a specific collection (folder)."</span>,</span>
+<span>            <span class="st">"Returns metadata for items including title, authors, year, and type."</span>,</span>
+<span>            <span class="st">"Use zotero_get_collections to get collection keys first."</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        collection_key <span class="op">=</span> <span class="st">"string* The collection key obtained from zotero_get_collections"</span>,</span>
+<span>        limit <span class="op">=</span> <span class="st">"integer Maximum number of items to return (1-100, default: 100)"</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">get_top_items_tool</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">::</span><span class="fu"><a href="../reference/tool_definitions.html">tool</a></span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"zotero_get_top_items"</span>,</span>
+<span>        description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"Get only top-level items in the library."</span>,</span>
+<span>            <span class="st">"Excludes child items like attachments and notes."</span>,</span>
+<span>            <span class="st">"Returns metadata including title, authors, year, and type."</span>,</span>
+<span>            <span class="st">"Useful for getting a clean list of main references without clutter."</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        limit <span class="op">=</span> <span class="st">"integer Maximum number of items to return (1-100, default: 100)"</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">list_searches_tool</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">::</span><span class="fu"><a href="../reference/tool_definitions.html">tool</a></span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"zotero_list_searches"</span>,</span>
+<span>        description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"List all saved searches in the library."</span>,</span>
+<span>            <span class="st">"Saved searches are pre-configured queries that can be executed."</span>,</span>
+<span>            <span class="st">"Returns search keys, names, and their conditions."</span>,</span>
+<span>            <span class="st">"Use the search key with zotero_execute_search to run the search."</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">execute_search_tool</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">::</span><span class="fu"><a href="../reference/tool_definitions.html">tool</a></span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"zotero_execute_search"</span>,</span>
+<span>        description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"Execute a saved search and return matching items."</span>,</span>
+<span>            <span class="st">"Saved searches are pre-configured queries created in Zotero."</span>,</span>
+<span>            <span class="st">"Returns item metadata including title, authors, year, and type."</span>,</span>
+<span>            <span class="st">"Use zotero_list_searches to discover available saved searches."</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        search_key <span class="op">=</span> <span class="st">"string* The search key obtained from zotero_list_searches"</span>,</span>
+<span>        limit <span class="op">=</span> <span class="st">"integer Maximum number of items to return (1-100, default: 100)"</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">get_item_types_tool</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">::</span><span class="fu"><a href="../reference/tool_definitions.html">tool</a></span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"zotero_get_item_types"</span>,</span>
+<span>        description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"Get a list of all valid item types supported by Zotero."</span>,</span>
+<span>            <span class="st">"Item types include: book, journalArticle, conferencePaper, thesis, etc."</span>,</span>
+<span>            <span class="st">"Useful for understanding what types can be used with the item_type filter"</span>,</span>
+<span>            <span class="st">"in zotero_search_items and other endpoints."</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">get_trashed_items_tool</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">::</span><span class="fu"><a href="../reference/tool_definitions.html">tool</a></span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"zotero_get_trashed_items"</span>,</span>
+<span>        description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"Get items that are in the trash."</span>,</span>
+<span>            <span class="st">"Returns metadata including title, authors, year, type, and deletion status."</span>,</span>
+<span>            <span class="st">"Useful for recovering or reviewing deleted items."</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        limit <span class="op">=</span> <span class="st">"integer Maximum number of items to return (1-100, default: 100)"</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="co"># Add tools to server</span></span>
+<span>    <span class="va">server</span><span class="op">$</span><span class="fu">add_tool</span><span class="op">(</span>tool_def <span class="op">=</span> <span class="va">search_items_tool</span>, handler <span class="op">=</span> <span class="va">zotero_search_items</span><span class="op">)</span></span>
+<span>    <span class="va">server</span><span class="op">$</span><span class="fu">add_tool</span><span class="op">(</span>tool_def <span class="op">=</span> <span class="va">get_item_tool</span>, handler <span class="op">=</span> <span class="va">zotero_get_item</span><span class="op">)</span></span>
+<span>    <span class="va">server</span><span class="op">$</span><span class="fu">add_tool</span><span class="op">(</span>tool_def <span class="op">=</span> <span class="va">get_collections_tool</span>, handler <span class="op">=</span> <span class="va">zotero_get_collections</span><span class="op">)</span></span>
+<span>    <span class="va">server</span><span class="op">$</span><span class="fu">add_tool</span><span class="op">(</span>tool_def <span class="op">=</span> <span class="va">get_fulltext_tool</span>, handler <span class="op">=</span> <span class="va">zotero_get_fulltext</span><span class="op">)</span></span>
+<span>    <span class="va">server</span><span class="op">$</span><span class="fu">add_tool</span><span class="op">(</span>tool_def <span class="op">=</span> <span class="va">list_fulltext_items_tool</span>, handler <span class="op">=</span> <span class="va">zotero_list_fulltext_items</span><span class="op">)</span></span>
+<span>    <span class="va">server</span><span class="op">$</span><span class="fu">add_tool</span><span class="op">(</span>tool_def <span class="op">=</span> <span class="va">get_collection_items_tool</span>, handler <span class="op">=</span> <span class="va">zotero_get_collection_items</span><span class="op">)</span></span>
+<span>    <span class="va">server</span><span class="op">$</span><span class="fu">add_tool</span><span class="op">(</span>tool_def <span class="op">=</span> <span class="va">get_top_items_tool</span>, handler <span class="op">=</span> <span class="va">zotero_get_top_items</span><span class="op">)</span></span>
+<span>    <span class="va">server</span><span class="op">$</span><span class="fu">add_tool</span><span class="op">(</span>tool_def <span class="op">=</span> <span class="va">list_searches_tool</span>, handler <span class="op">=</span> <span class="va">zotero_list_searches</span><span class="op">)</span></span>
+<span>    <span class="va">server</span><span class="op">$</span><span class="fu">add_tool</span><span class="op">(</span>tool_def <span class="op">=</span> <span class="va">execute_search_tool</span>, handler <span class="op">=</span> <span class="va">zotero_execute_search</span><span class="op">)</span></span>
+<span>    <span class="va">server</span><span class="op">$</span><span class="fu">add_tool</span><span class="op">(</span>tool_def <span class="op">=</span> <span class="va">get_item_types_tool</span>, handler <span class="op">=</span> <span class="va">zotero_get_item_types</span><span class="op">)</span></span>
+<span>    <span class="va">server</span><span class="op">$</span><span class="fu">add_tool</span><span class="op">(</span>tool_def <span class="op">=</span> <span class="va">get_trashed_items_tool</span>, handler <span class="op">=</span> <span class="va">zotero_get_trashed_items</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">server</span><span class="op">$</span><span class="fu">serve_stdio</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">zotero_mcp_server</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</details>
+</div>
+<div>
+<blockquote>
+<p><strong>Note</strong></p>
+<p>The complete Zotero MCP server code is available in the package at <code>inst/examples/zotero_mcp_server.R</code>.</p>
+</blockquote>
+</div>
+</section></section><section class="level2"><h3 id="using-the-server">Using the Server<a class="anchor" aria-label="anchor" href="#using-the-server"></a>
+</h3>
+<section class="level3"><h4 id="use-with-argent">Use with argent<a class="anchor" aria-label="anchor" href="#use-with-argent"></a>
+</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">zotero_client</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_connect</a></span><span class="op">(</span></span>
+<span>    name <span class="op">=</span> <span class="st">"zotero"</span>,</span>
+<span>    type <span class="op">=</span> <span class="st">"stdio"</span>,</span>
+<span>    command <span class="op">=</span> <span class="st">"Rscript"</span>,</span>
+<span>    args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples/zotero_mcp_server.R"</span>, package <span class="op">=</span> <span class="st">"argent"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">zotero_tools</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_tools</a></span><span class="op">(</span><span class="va">zotero_client</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">zotero_get_collections_tool</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_mcp_tool.html">get_mcp_tool</a></span><span class="op">(</span><span class="va">zotero_tools</span>, <span class="st">"zotero_get_collections"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/execute_mcp_tool.html">execute_mcp_tool</a></span><span class="op">(</span><span class="va">zotero_get_collections_tool</span>, arguments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">openrouter</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/OpenRouter.html">OpenRouter</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">openrouter</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
+<span>    <span class="st">"Can you summarize Noe's view on sensory substitution and how the brain differentiates sensory inputs ?"</span>,</span>
+<span>    model <span class="op">=</span> <span class="st">"google/gemini-2.5-flash-lite-preview-09-2025"</span>,</span>
+<span>    tools <span class="op">=</span> <span class="va">zotero_tools</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div>
+<blockquote>
+<p><strong>Tip</strong></p>
+<p>We can use our new Zotero MCP server with other MCP clients (like Claude Code, Claude Desktop, Gemini CLI, etc):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"mcpServers"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"zotero"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"stdio"</span><span class="fu">,</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"Rscript"</span><span class="fu">,</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"args"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"--quiet"</span><span class="ot">,</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"--vanilla"</span><span class="ot">,</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"/path/to/argent/inst/examples/zotero_mcp_server.R"</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+</div>
+</blockquote>
+</div>
+</section></section></section><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
