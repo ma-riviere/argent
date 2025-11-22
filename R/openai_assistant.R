@@ -989,14 +989,22 @@ OpenAI_Assistant <- R6::R6Class( # nolint
         },
 
         extract_tool_result_content = function(tool_result) {
-            # The output field contains the tool execution result
-            return(purrr::pluck(tool_result, "output", .default = NULL))
+            content <- purrr::pluck(tool_result, "output", .default = NULL)
+
+            if (purrr::is_empty(content)) {
+                return(NULL)
+            }
+
+            return(purrr::possibly(jsonlite::fromJSON, otherwise = content)(content))
         },
 
         extract_tool_result_name = function(tool_result) {
-            # Assistants API uses tool_call_id as the identifier
-            # There's no separate name field
-            return(purrr::pluck(tool_result, "tool_call_id", .default = NULL))
+            content <- private$extract_tool_result_content(tool_result)
+            tool_name <- purrr::pluck(content, "name")
+            if (is.null(tool_name)) {
+                return(purrr::pluck(tool_result, "tool_call_id", .default = NULL))
+            }
+            return(tool_name)
         },
 
         # Execute a single tool call

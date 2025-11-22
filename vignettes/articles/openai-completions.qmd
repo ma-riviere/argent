@@ -14,8 +14,6 @@ This article covers using OpenAI's Chat Completions API with argent. This is the
 
 ```{r}
 library(argent)
-
-mirai::daemons(4) # To enable parallel tool calling
 ```
 
 ```{r}

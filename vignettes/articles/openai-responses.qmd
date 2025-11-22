@@ -14,8 +14,6 @@ This article covers using OpenAI's Responses API with `argent`. This is OpenAI's
 
 ```{r}
 library(argent)
-
-mirai::daemons(4) # To enable parallel tool calling
 ```
 
 ```{r responses-init}

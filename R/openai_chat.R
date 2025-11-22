@@ -617,7 +617,7 @@ OpenAI_Chat <- R6::R6Class( # nolint
         extract_tool_result_content = function(tool_result) {
             content <- purrr::pluck(tool_result, "content")
 
-            if (is.null(content) || purrr::is_empty(content)) {
+            if (purrr::is_empty(content)) {
                 return(NULL)
             }
 
@@ -626,7 +626,12 @@ OpenAI_Chat <- R6::R6Class( # nolint
         },
 
         extract_tool_result_name = function(tool_result) {
-            return(purrr::pluck(tool_result, "name"))
+            name <- purrr::pluck(tool_result, "name")
+            if (purrr::is_empty(name)) {
+                content <- private$extract_tool_result_content(tool_result)
+                return(purrr::pluck(content, "name", .default = "unknown"))
+            }
+            return(name)
         },
 
         extract_generated_code = function(root) {

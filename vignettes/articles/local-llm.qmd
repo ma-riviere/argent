@@ -23,8 +23,6 @@ This article covers using local LLM servers with argent. The `LocalLLM` provider
 
 ```{r}
 library(argent)
-
-mirai::daemons(4) # To enable parallel tool calling
 ```
 
 ## Starting a llama.cpp server

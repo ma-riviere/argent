@@ -1173,7 +1173,9 @@ OpenRouter <- R6::R6Class( # nolint
 #' @noRd
 as_tool_openrouter <- function(tool_schema) {
     # OpenRouter requires a non-empty parameters even if it has no properties
-    tool_args <- tool_schema$args_schema %||% tool_schema$parameters %||% tool_schema$input_schema %||% 
+    tool_args <- tool_schema$args_schema %||%
+        tool_schema$parameters %||%
+        tool_schema$input_schema %||% 
         list(type = "object")
     list3(
         name = tool_schema$name,

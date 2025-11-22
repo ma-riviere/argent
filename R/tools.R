@@ -266,16 +266,12 @@ as_tool <- function(fn) {
         }
     }
 
-    # If no parameters, don't include args_schema
-    args_schema <- if (length(params) > 0) {
-        list(
-            type = "object",
-            properties = properties,
-            required = if (length(required) > 0) as.list(required) else list()
-        )
-    } else {
-        NULL
-    }
+    # Build args_schema even for no parameters
+    args_schema <- list(
+        type = "object",
+        properties = if (length(params) > 0) properties else named_list(),
+        required = if (length(required) > 0) as.list(required) else list()
+    )
 
     list3(
         name = fn_name,
@@ -302,10 +298,6 @@ tool <- function(name, description, ..., fn = NULL) {
     }
 
     params <- list(...)
-
-    if (length(params) == 0) {
-        cli::cli_warn("No parameters specified for tool {.val {name}}")
-    }
 
     result <- build_spec_from_params(name, description, params)
 
@@ -544,17 +536,14 @@ build_spec_from_params <- function(name, description, params, strict = NULL, add
         }
     }
 
-    # If no parameters, don't include args_schema
-    args_schema <- NULL
-    if (length(params) > 0) {
-        args_schema <- list(
-            type = "object",
-            properties = properties,
-            required = if (length(required) > 0) as.list(required) else list()
-        )
-        if (!is.null(additional_properties)) {
-            args_schema$additionalProperties <- additional_properties
-        }
+    # Build args_schema even for no parameters
+    args_schema <- list(
+        type = "object",
+        properties = if (length(params) > 0) properties else named_list(),
+        required = if (length(required) > 0) as.list(required) else list()
+    )
+    if (!is.null(additional_properties)) {
+        args_schema$additionalProperties <- additional_properties
     }
 
     list3(
@@ -764,6 +753,22 @@ get_server_tool_name <- function(tool) {
     return(NULL)
 }
 
+#' Check if an object is an MCP tool
+#'
+#' MCP tools are tools provided by Model Context Protocol servers and contain
+#' metadata in the `.mcp` field that includes the client reference and server name.
+#'
+#' @param obj Object to check
+#' @return Logical. TRUE if obj is an MCP tool, FALSE otherwise
+#' @keywords internal
+#' @noRd
+is_mcp_tool <- function(obj) {
+    if (!is.list(obj)) {
+        return(FALSE)
+    }
+
+    return(!is.null(obj[[".mcp"]]))
+}
 
 #' Check if an object is a valid custom tool definition
 #'

@@ -14,8 +14,6 @@ This article covers using the Anthropic (Claude) provider with `argent`. Anthrop
 
 ```{r}
 library(argent)
-
-mirai::daemons(4) # To enable parallel tool calling
 ```
 
 ```{r claude-init}

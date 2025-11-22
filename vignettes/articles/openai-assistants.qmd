@@ -35,8 +35,6 @@ file_search and code_interpreter.
 
 ```{r}
 library(argent)
-
-mirai::daemons(4) # To enable parallel tool calling
 ```
 
 ```{r}

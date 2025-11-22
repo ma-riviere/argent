@@ -15,12 +15,11 @@
 #' @importFrom jsonlite fromJSON toJSON
 #' @importFrom lubridate as_datetime today ymd_hms
 #' @importFrom mime guess_type mimemap
-#' @importFrom purrr compact detect discard discard_at imap imap_chr in_parallel is_empty iwalk keep list_c
+#' @importFrom purrr compact detect discard discard_at imap imap_chr is_empty iwalk keep list_c
 #' @importFrom purrr list_flatten list_modify list_rbind map map_chr map_dfr map_if map_int map_lgl modify_at
 #' @importFrom purrr modify_tree pluck possibly quietly reduce some walk
 #' @importFrom rlang as_label enquos eval_tidy exec is_quosure is_symbol list2 new_quosure quo_get_env
 #' @importFrom rlang quo_get_expr
-#' @importFrom stats setNames
 #' @importFrom stringr fixed str_c str_detect str_ends str_extract str_glue str_match str_remove
 #' @importFrom stringr str_replace_all str_split_1 str_starts str_trim
 #' @importFrom tibble as_tibble
@@ -67,7 +66,7 @@ NULL
 #' \itemize{
 #'   \item Unified interface across multiple LLM providers: OpenAI, Anthropic, Google, OpenRouter, and Local LLM
 #'   \item Support for all 3 of OpenAI's APIs: Chat Completions, Responses, and Assistants
-#'   \item Function and MCP tool calling (http & stdio), with parallel execution support
+#'   \item Function and MCP tool calling (http & stdio)
 #'   \item Universal structured JSON outputs (works with any model supporting tool calling)
 #'   \item Multimodal inputs (text, images, PDFs, data files, URLs, R objects), customizable and extensible
 #'   \item Server-side (built-in) tools, like code execution, web search/fetch, file search, etc.
@@ -75,19 +74,6 @@ NULL
 #'   \item Prompt caching (for providers supporting it)
 #'   \item File upload and vector/file store management for server-side RAG
 #' }
-#'
-#' @section Parallel Tool Calls:
-#' Tool calls can be executed in parallel using \code{mirai::daemons()}. This can significantly
-#' speed up responses when multiple tools are called simultaneously.
-#'
-#' To enable parallel execution:
-#' \itemize{
-#'   \item Set up mirai daemons before making requests: \code{mirai::daemons(6)}
-#'   \item argent will automatically parallelize multiple tool calls in the same response
-#'   \item Without daemons, tool calls execute sequentially (default fallback behavior)
-#' }
-#'
-#' To disable parallel processing, call \code{mirai::daemons(0)}.
 #'
 #' @section Getting Started:
 #' Set up API keys as environment variables:
@@ -130,10 +116,6 @@ NULL
 #' llm <- LocalLLM$new(base_url = "http://localhost:5000")
 #' response <- llm$chat(prompt = "Hello!")
 #'
-#' # Parallel tool calling
-#' library(mirai)
-#' daemons(4)  # Set up 4 parallel workers
-#'
 #' get_weather <- function(location) {
 #'   #' @description Get weather information for a location
 #'   #' @param location:string* The location to get weather for
@@ -145,9 +127,6 @@ NULL
 #'   tools = list(as_tool(get_weather)),
 #'   model = "gemini-2.5-flash"
 #' )
-#' # Tool calls will execute in parallel across the 4 workers
-#'
-#' daemons(0)  # Clean up when done
 #' }
 #'
 #' @name argent-package

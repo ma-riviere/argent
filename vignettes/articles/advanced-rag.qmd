@@ -19,8 +19,6 @@ library(argent)
 library(ragnar)
 library(cachem)
 library(stringr)
-
-mirai::daemons(4) # To enable parallel tool calling
 ```
 
 # Basic RAG System

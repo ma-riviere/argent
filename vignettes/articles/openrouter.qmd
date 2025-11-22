@@ -14,8 +14,6 @@ This article covers using the OpenRouter provider with argent. OpenRouter aggreg
 
 ```{r}
 library(argent)
-
-mirai::daemons(4) # To enable parallel tool calling
 ```
 
 ```{r openrouter-init}

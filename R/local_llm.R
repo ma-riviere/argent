@@ -87,10 +87,7 @@ LocalLLM <- R6::R6Class( # nolint
 
             # Auto-detect model if not provided
             if (is.null(self$default_model)) {
-                models <- tryCatch(
-                    self$list_models(),
-                    error = function(e) NULL
-                )
+                models <- purrr::possibly(self$list_models, otherwise = NULL)()
 
                 if (!is.null(models) && nrow(models) > 0) {
                     self$default_model <- models$id[1]

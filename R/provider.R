@@ -770,6 +770,40 @@ Provider <- R6::R6Class( # nolint
             return(!purrr::is_empty(tool_res))
         },
 
+        use_tools = function(api_resp) {
+            tool_calls <- private$extract_root(api_resp) |>
+                private$extract_tool_calls()
+
+            if (is.null(tool_calls) || purrr::is_empty(tool_calls)) {
+                return(NULL)
+            }
+
+            purrr::map(tool_calls, \(tool_call) private$use_tool(tool_call))
+        },
+
+        # Execute a tool call (dispatcher)
+        use_tool = function(fn_name, args) {
+            if (is.null(fn_name)) {
+                cli::cli_abort("Tool call has no function name")
+            }
+
+            mcp_tool_def <- purrr::pluck(private$active_tools, "mcp", fn_name)
+            client_tool_def <- purrr::pluck(private$active_tools, "client", fn_name)
+
+            if (is.null(mcp_tool_def) && is.null(client_tool_def)) {
+                cli::cli_abort(c(
+                    "Tool {.val {fn_name}} not found in active tools",
+                    "i" = "Available tools: {.val {names(c(private$active_tools$mcp, private$active_tools$client))}}"
+                ))
+            }
+
+            if (!is.null(mcp_tool_def)) {
+                return(private$use_mcp_tool(mcp_tool_def, args))
+            } else {
+                return(private$use_client_tool(client_tool_def, args))
+            }
+        },
+
         # Execute a client tool (R function)
         use_client_tool = function(tool_def, arguments) {
             fn_name <- tool_def$name
@@ -807,29 +841,6 @@ Provider <- R6::R6Class( # nolint
             return(output_tagged)
         },
 
-        # Execute a tool call (dispatcher)
-        use_tool = function(fn_name, args) {
-            if (is.null(fn_name)) {
-                cli::cli_abort("Tool call has no function name")
-            }
-
-            mcp_tool_def <- purrr::pluck(private$active_tools, "mcp", fn_name)
-            client_tool_def <- purrr::pluck(private$active_tools, "client", fn_name)
-
-            if (is.null(mcp_tool_def) && is.null(client_tool_def)) {
-                cli::cli_abort(c(
-                    "Tool {.val {fn_name}} not found in active tools",
-                    "i" = "Available tools: {.val {names(c(private$active_tools$mcp, private$active_tools$client))}}"
-                ))
-            }
-
-            if (!is.null(mcp_tool_def)) {
-                return(private$use_mcp_tool(mcp_tool_def, args))
-            } else {
-                return(private$use_client_tool(client_tool_def, args))
-            }
-        },
-
         # Execute an MCP tool call
         use_mcp_tool = function(tool_def, arguments) {
             fn_name <- tool_def$name
@@ -839,14 +850,23 @@ Provider <- R6::R6Class( # nolint
             )
 
             # Execute MCP tool via the helper function in R/tools-mcp.R
-            output <- tryCatch(
-                execute_mcp_tool(tool_def, arguments),
-                error = function(e) {
-                    cli::cli_alert_danger(
-                        "[{self$provider_name}] Calling MCP tool {.val {fn_name}} failed:\n {e$message}"
-                    )
-                }
-            )
+            # Note: execute_mcp_tool returns errors as results (isError = TRUE) instead of throwing
+            output <- execute_mcp_tool(tool_def, arguments)
+
+            # Check if MCP tool returned an error
+            if (is.list(output) && isTRUE(output$isError)) {
+                error_msg <- output$error$message %||% "Unknown MCP error"
+                error_code <- output$error$code %||% "Unknown"
+
+                cli::cli_alert_danger(
+                    "[{self$provider_name}] MCP tool {.val {fn_name}} returned error {error_code}: {error_msg}"
+                )
+
+                # Format error as a result that the LLM can read and respond to
+                output <- paste0(
+                    "Error calling ", fn_name, " (code ", error_code, "): ", error_msg
+                )
+            }
 
             if (purrr::is_empty(output)) {
                 output <- "The tool returned nothing."
@@ -860,20 +880,6 @@ Provider <- R6::R6Class( # nolint
             )
 
             return(output_tagged)
-        },
-
-        use_tools = function(api_resp) {
-            tool_calls <- private$extract_root(api_resp) |>
-                private$extract_tool_calls()
-
-            if (is.null(tool_calls) || purrr::is_empty(tool_calls)) {
-                return(NULL)
-            }
-
-            purrr::map(
-                tool_calls,
-                purrr::in_parallel(\(tool_call) private$use_tool(tool_call), private = private)
-            )
         },
 
         # ------🔺 REQUESTS ----------------------------------------------------

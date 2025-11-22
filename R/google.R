@@ -1734,6 +1734,8 @@ Google <- R6::R6Class( # nolint
 #' @noRd
 as_tool_google <- function(tool_schema) {
     tool_args <- tool_schema$args_schema %||% tool_schema$parameters %||% tool_schema$input_schema %||% NULL
+    tool_args$additionalProperties <- NULL
+    
     list3(
         name = tool_schema$name,
         description = tool_schema$description,

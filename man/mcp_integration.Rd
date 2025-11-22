@@ -2,13 +2,13 @@
 % Please edit documentation in R/tools-mcp.R
 \name{mcp_integration}
 \alias{mcp_integration}
-\alias{mcp_server}
+\alias{mcp_connect}
 \alias{mcp_tools}
 \alias{mcp_resources}
 \alias{mcp_prompts}
 \title{MCP (Model Context Protocol) Integration}
 \usage{
-mcp_server(
+mcp_connect(
   name,
   type = "stdio",
   command = NULL,
@@ -18,11 +18,11 @@ mcp_server(
   headers = NULL
 )
 
-mcp_tools(server, tools = NULL)
+mcp_tools(client, tools = NULL)
 
-mcp_resources(server, resources = NULL)
+mcp_resources(client, resources = NULL)
 
-mcp_prompts(server, prompts = NULL)
+mcp_prompts(client, prompts = NULL)
 }
 \arguments{
 \item{name}{Character. Name identifier for the MCP server}
@@ -35,11 +35,11 @@ mcp_prompts(server, prompts = NULL)
 
 \item{env}{Named list. Environment variables for the server process (for stdio servers)}
 
-\item{url}{Character. HTTP endpoint URL (for http servers, e.g., "https://api.githubcopilot.com/mcp")}
+\item{url}{Character. HTTP endpoint URL (for http servers)}
 
-\item{headers}{Named list. HTTP headers (for http servers, e.g., list(Authorization = "Bearer token"))}
+\item{headers}{Named list. HTTP headers (for http servers)}
 
-\item{server}{An MCP server object created by \code{mcp_server()}}
+\item{client}{An MCP client object returned by \code{mcp_connect()}}
 
 \item{tools}{Character vector. Specific tool names to retrieve. If NULL, retrieves all tools}
 
@@ -49,10 +49,10 @@ mcp_prompts(server, prompts = NULL)
 }
 \value{
 \itemize{
-\item \code{mcp_server()}: An MCP server connection object (list with class "mcp_server")
+\item \code{mcp_connect()}: An \code{McpClient} object (R6)
 \item \code{mcp_tools()}: List of tool definitions in argent format
-\item \code{mcp_resources()}: List of resource definitions
-\item \code{mcp_prompts()}: List of prompt definitions
+\item \code{mcp_resources()}: List of resource definitions in argent format
+\item \code{mcp_prompts()}: List of prompt definitions in argent format
 }
 }
 \description{
@@ -60,64 +60,21 @@ Functions for integrating MCP servers with argent. MCP servers provide tools,
 resources, and prompts that LLMs can use during conversations.
 \subsection{MCP Server Connection}{
 
-\code{mcp_server()} creates a connection to an MCP server using programmatic
-configuration. For stdio servers, the server is spawned as a subprocess and
-communicates via JSON-RPC over stdin/stdout. For HTTP servers, communication
-happens via HTTP requests to the specified endpoint.
-}
-
-\subsection{Tool Discovery}{
-
-\code{mcp_tools()} retrieves tool definitions from an MCP server and converts them
-to argent's tool format. Tools can then be passed to \code{chat()} alongside
-client-defined and provider server tools.
-}
-
-\subsection{Resources and Prompts}{
-
-\code{mcp_resources()} retrieves file-like structured data that LLMs can access.
-\code{mcp_prompts()} retrieves predefined templates for interactions.
+\code{mcp_connect()} creates a client connection to an MCP server.
+\itemize{
+\item For \strong{stdio} servers (command-line tools), it spawns a subprocess.
+\item For \strong{HTTP} servers (remote APIs), it configures the endpoint.
 }
 }
-\examples{
-\dontrun{
-# HTTP server configuration (GitHub Copilot MCP)
-github <- mcp_server(
-  name = "github",
-  type = "http",
-  url = "https://api.githubcopilot.com/mcp",
-  headers = list(
-    Authorization = paste("Bearer", Sys.getenv("GITHUB_PAT"))
-  )
-)
 
-# Stdio server configuration (Docker)
-filesystem <- mcp_server(
-  name = "filesystem",
-  type = "stdio",
-  command = "docker",
-  args = c("run", "-i", "--rm", "mcp/filesystem"),
-  env = list()
-)
-
-# Get all tools from server
-github_tools <- mcp_tools(github)
-
-# Get specific tools only
-issue_tools <- mcp_tools(github, tools = c("search_issues", "create_issue"))
-
-# Use in chat with other tools
-google <- Google$new()
-google$chat(
-  "Create an issue for the bug I found",
-  tools = list(
-    github_tools,
-    as_tool(my_custom_function)
-  )
-)
-
-# Get resources
-github_resources <- mcp_resources(github)
+\subsection{Capability Discovery}{
+\itemize{
+\item \code{mcp_tools()} retrieves tool definitions from a connected MCP client and
+converts them to argent's tool format.
+\item \code{mcp_resources()} retrieves resource definitions from a connected MCP client.
+Resources expose data/content via URIs (files, datasets, documentation, etc.).
+\item \code{mcp_prompts()} retrieves prompt definitions from a connected MCP client.
+Prompts are pre-defined message templates with optional arguments.
 }
-
+}
 }
