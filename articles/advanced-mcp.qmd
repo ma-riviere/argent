@@ -55,10 +55,10 @@ get_file_contents_mcp_tool <- get_mcp_tool(github_mcp_tools, "get_file_contents"
 execute_mcp_tool(
     tool_def = get_file_contents_mcp_tool,
     arguments = list(
-        owner = "ma-riviere",
-        repo = "argent",
-        path = "R/aaa-utils.R",
-        ref = "main"
+        owner = "tidyverse",
+        repo = "ellmer"
+        # path = "/"
+        # ref = "main"
     )
 )
 ```
@@ -330,23 +330,63 @@ zotero_client <- mcp_connect(
 zotero_tools <- mcp_tools(zotero_client)
 ```
 
-```{r}
-zotero_get_collections_tool <- get_mcp_tool(zotero_tools, "zotero_get_collections")
+We could test if the MCP server is working by querying it 'manually':
 
-execute_mcp_tool(zotero_get_collections_tool, arguments = list())
+```{r}
+#| code-fold: true
+#| code-summary: Testing the Zotero MCP Server manually
+
+# Getting details on all my collections
+my_collections <- execute_mcp_tool(
+    get_mcp_tool(zotero_tools, "zotero_get_collections")
+)
+
+# Getting the key of the Neuroscience collection
+neuroscience_collection_key <- jsonlite::fromJSON(my_collections)  |> 
+    dplyr::filter(stringr::str_detect(name, "Neuroscience")) |>
+    dplyr::pull(key)
+
+# Getting details on all the items/papers in the Neuroscience collection
+neuroscience_items <- execute_mcp_tool(
+    get_mcp_tool(zotero_tools, "zotero_get_collection_items"),
+    arguments = list(collection_key = neuroscience_collection_key)
+)
+
+# Getting the details on the paper
+neuroscience_paper_details <- execute_mcp_tool(
+    get_mcp_tool(zotero_tools, "zotero_get_item"),
+    arguments = list(item_key = neuroscience_paper_key)
+)
+
+# Getting a specific paper's key with a keyword from its title
+neuroscience_paper_key <- jsonlite::fromJSON(neuroscience_items) |> 
+    dplyr::filter(stringr::str_detect(title, "cross-modal plasticity")) |>
+    dplyr::pull(key)
+
+# Getting the fulltext of the paper (as a string)
+neuroscience_paper_fulltext <- execute_mcp_tool(
+    get_mcp_tool(zotero_tools, "zotero_get_fulltext"),
+    arguments = list(item_key = neuroscience_paper_key)
+)
+
+cat(neuroscience_paper_fulltext)
 ```
 
-```{r}
-openrouter <- OpenRouter$new()
+Now, let's give the tools to an LLM Agent instead:
 
-openrouter$chat(
-    "Can you summarize Noe's view on sensory substitution and how the brain differentiates sensory inputs ?",
-    model = "google/gemini-2.5-flash-lite-preview-09-2025",
+```{r}
+google <- Google$new()
+
+google$chat(
+    "Can you summarize O'Regan's view on sensory substitution and on how the brain differentiates sensory inputs ?",
+    "Find at least 2 papers in my library",
+    model = "gemini-2.5-flash",
     tools = zotero_tools
 )
 ```
 
 ::: {.callout-tip appearance="simple"}
+
 We can use our new Zotero MCP server with other MCP clients (like Claude Code, Claude Desktop, Gemini CLI, etc):
 
 ```{json}

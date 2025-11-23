@@ -120,7 +120,7 @@ Use this to expose R functions as tools to LLMs via the MCP protocol.</p>
 <h3 id="method-add-tool-">Method <code>add_tool()</code><a class="anchor" aria-label="anchor" href="#method-add-tool-"></a></h3>
 <p>Add a tool to the server</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">McpServer</span><span class="op">$</span><span class="fu">add_tool</span><span class="op">(</span><span class="va">tool_def</span>, <span class="va">handler</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">McpServer</span><span class="op">$</span><span class="fu">add_tool</span><span class="op">(</span><span class="va">tool_def</span>, handler <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -132,7 +132,8 @@ Use this to expose R functions as tools to LLMs via the MCP protocol.</p>
 <dt><code>handler</code></dt>
 <dd><p>Function to execute when the tool is called. Should have named
 parameters matching the tool's arguments, with defaults for optional parameters.
-Returns a result (character, list, or other).</p></dd>
+Returns a result (character, list, or other). If NULL (default), uses the
+<code>.fn</code> field from <code>tool_def</code> if available.</p></dd>
 
 
 </dl><p></p></div>

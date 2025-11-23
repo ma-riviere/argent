@@ -71,7 +71,7 @@ Add a tool to the server
 
 #### Usage
 
-    McpServer$add_tool(tool_def, handler)
+    McpServer$add_tool(tool_def, handler = NULL)
 
 #### Arguments
 
@@ -83,7 +83,8 @@ Add a tool to the server
 
   Function to execute when the tool is called. Should have named
   parameters matching the tool's arguments, with defaults for optional
-  parameters. Returns a result (character, list, or other).
+  parameters. Returns a result (character, list, or other). If NULL
+  (default), uses the `.fn` field from `tool_def` if available.
 
 ------------------------------------------------------------------------
 

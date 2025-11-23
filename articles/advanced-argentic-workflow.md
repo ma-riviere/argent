@@ -23,171 +23,38 @@ First, let’s build a few tools that our agents will need:
 
 ### Web Tools
 
-**Search:**
-
-``` r
-web_search <- function(query) {
-    #' @description Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or any data not in your training data.
-    #' @param query:string* The search query string. Be specific and use keywords that will yield the most relevant results.
-    
-    return(web_search_tavily(query))
-}
-
-web_search_tavily <- function(query) {
-    res <- httr2::request("https://api.tavily.com/search") |> 
-        httr2::req_body_json(list(
-            query = query,
-            search_depth = "basic",
-            include_answer = FALSE,
-            max_results = 10,
-            api_key = Sys.getenv("TAVILY_API_KEY")
-        )) |> 
-        httr2::req_error(is_error = \(resp) FALSE) |> 
-        httr2::req_throttle(rate = 20/60, realm = "tavily") |> 
-        httr2::req_perform() |> 
-        httr2::resp_body_json() |> 
-        purrr::discard_at(c("response_time", "follow_up_questions", "images"))
-
-    results <- purrr::map(res$results, \(x) purrr::discard_at(x, "raw_content"))
-
-    return(jsonlite::toJSON(results, pretty = FALSE, auto_unbox = TRUE))
-}
-```
-
-**Fetch:**
-
-``` r
-web_fetch <- function(url) {
-    #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.
-    #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
-    
-    trafilatura_installed <- tryCatch({
-        system("which trafilatura", intern = TRUE, ignore.stderr = TRUE)
-        return(TRUE)
-    },
-    warning = function(e) {
-        cli::cli_alert_warning("trafilatura is not installed. Install with: {.code pip install trafilatura}")
-        return(FALSE)
-    })
-
-    if (trafilatura_installed) {
-        res <- web_fetch_trafilatura(url)
-
-        could_not_fetch <- c(
-            "Impossible to fetch the contents of this web page",
-            "Please reload this page",
-            "There was an error while loading",
-            "404"
-        )
-        if (is.null(res) || is.na(res) || nchar(res) == 0 ||
-            any(stringr::str_detect(res, stringr::fixed(could_not_fetch, ignore_case = TRUE)))) {
-            return(web_fetch_rvest(url))
-        }
-        return(res)
-    }
-
-    return(web_fetch_rvest(url))
-}
-
-web_fetch_trafilatura <- function(url) {
-    # pip install trafilatura
-    tryCatch({
-        res <- paste0("trafilatura -u ", url, " --markdown --no-comments --links ") |> 
-            system(intern = TRUE) |> 
-            purrr::keep(nzchar) |>
-            paste0(collapse = "\n")
-        
-        return(res)
-    },
-    error = function(e) {
-        return("Impossible to fetch the contents of this web page. It might not allow scraping")
-    })
-}
-
-web_fetch_rvest <- function(url) {
-    tags_to_ignore <- c(
-        "a", "script", "code", "img", "svg", "footer", "g", "path", "polygon", "label", "button", "form", "input", "select", 
-        "style", "link", "meta", "noscript", "iframe", "embed", "object", "param", "video", "audio", "track", "source", 
-        "canvas", "map", "area", "math", "col", "colgroup", "dl", "dt", "dd", "hr", "pre", "address", "figure", "figcaption",
-        "dfn", "em", "kbd", "samp", "var", "del", "ins", "mark", "circle"
-    )
-
-    remove_tags <- function(xml, tags) {
-        purrr::walk(tags, \(tag) purrr::walk(xml2::xml_find_all(xml, paste0(".//", tag)), \(node) xml2::xml_remove(node)))
-        return(xml)
-    }
-
-    cleaned_contents <- tryCatch(
-        rvest::read_html(url)
-        |> rvest::html_element("body")
-        |> remove_tags(tags_to_ignore)
-        |> rvest::html_children()
-        |> rvest::html_text2()
-        |> purrr::discard(\(x) x == "")
-        |> paste0(collapse = "\n\n"),
-        error = \(e) return("")
-    )
-    return(cleaned_contents)
-}
-```
+First, define some web-related tools (search & fetch):
 
 ### TODO-list Tools
 
 Let’s build a TODO-list tool that provides agents with a way to track
 multi-step work.
 
-``` r
-# Create a TODO-list
-create_todo_list <- function() {
-    env <- new.env(parent = emptyenv())
-    env$todos <- list()
-    return(env)
-}
-
-# Get the current TODOs from a given TODO-list
-get_todos <- function(todo_mgr) {
-    todo_mgr$todos
-}
-
-# Set the TODOs of a given TODO-list
-set_todos <- function(todo_mgr, todos) {
-    # Validate input structure
-    if (!is.list(todos)) {
-        return("Error: todos must be a list")
-    }
-
-    errors <- character()
-    for (i in seq_along(todos)) {
-        todo <- todos[[i]]
-
-        # Check required fields
-        if (!all(c("content", "status") %in% names(todo))) {
-            errors <- c(errors, sprintf("Todo %d missing required fields (content, status)", i))
-        }
-
-        # Validate status
-        valid_statuses <- c("pending", "in_progress", "completed")
-        if (!todo$status %in% valid_statuses) {
-            errors <- c(errors, sprintf(
-                "Todo %d has invalid status '%s'. Must be one of: %s",
-                i, todo$status, paste(valid_statuses, collapse = ", ")
-            ))
-        }
-    }
-
-    if (length(errors) > 0) {
-        return(paste(c("Errors found:", errors), collapse = "\\n- "))
-    }
-
-    todo_mgr$todos <- todos
-    return(sprintf("Successfully updated %d TODO(s)", length(todos)))
-}
-```
+> **Note**
+>
+> Here’s what the output looks like:
+>
+> ``` r
+> todo_test <- create_todo_list("Researching LLM-adjacent packages in R")
+>
+> set_todos(todo_test, list(
+>     list(content = "Research all LLM-adjacent packages in R", status = "completed"),
+>     list(content = "Identify the package name, repository URL, description, and dependencies", status = "in_progress"),
+>     list(content = "Make a structured output of the results", status = "pending")
+> ))
+>
+> todo_test
+> ```
+>
+> Researching LLM-adjacent packages in R: - \[x\] Research all
+> LLM-adjacent packages in R - \[-\] Identify the package name,
+> repository URL, description, and dependencies - \[ \] Make a
+> structured output of the results
 
 ### GitHub MCP Tools
 
 ``` r
-github_mcp_server <- mcp_server(
+github_mcp_server <- mcp_connect(
     name = "github",
     type = "http",
     url = "https://api.githubcopilot.com/mcp",
@@ -221,24 +88,21 @@ planning_subagent <- function(task) {
     #'   into structured sub-tasks. Use this tool FIRST to create a roadmap for complex requests.
     #' @param task:string* The complex research task to plan. The tool will return a list of sub-tasks to enact.
 
-    # Create a fresh TODO-list for this planning subagent
-    todo_list <- create_todo_list()
-
-    planner <- argent::OpenRouter$new(
-        default_model = "google/gemini-2.5-flash-lite-preview-09-2025",
+    planner <- OpenRouter$new(
+        default_model = "x-ai/grok-4.1-fast",
         auto_save_history = FALSE
     )
 
     planning_system <- stringr::str_glue(
         "You are a Lead Architect and Planning Specialist.
-        Your goal is to analyze complex requests and break them down into clear, actionable
-        sub-tasks.
+        Your goal is to analyze complex requests and break them down into clear, actionable sub-tasks.
 
         <process>
         1. ANALYZE: Use `web_search` to understand the domain and identify key components.
         2. THINK: Reflect on the necessary steps to achieve the user's goal.
-        3. PLAN: Use `set_todos` to create a comprehensive plan.
-        4. SUMMARIZE: Return a concise 'Handoff Summary' explaining the strategy.
+        3. PLAN: Use `set_todos_llmr` to create a comprehensive plan.
+        4. SUMMARIZE: Return a concise 'Handoff Summary' explaining the strategy, 
+            that the main will use to interpret the generated TODO list.
         </process>
 
         <guidelines>
@@ -255,41 +119,12 @@ planning_subagent <- function(task) {
         "Analyze this task and create a detailed plan:\\n\\n<task>\\n{task}\\n</task>"
     )
 
-    # Create closure-based tools that bind to this todo_manager instance
-    get_todos_planner <- function() {
-        #' @description Get the current TODO list
-        get_todos(todo_list)
-    }
-    get_todos_planner_tool <- as_tool(get_todos_planner)
-
-    set_todos_planner <- function(todos) {
-        set_todos(todo_list, todos)
-    }
-    # We define the tool manually since there is no way to specify nested lists as function annotations.
-    set_todos_planner_tool <- tool(
-        name = "set_todos_planner",
-        description = "Update your task list for planning and tracking multi-step work. This
-            replaces the entire TODO list. Always include all TODOs (completed, in_progress, and
-            pending) as a list of objects.",
-        todos = list(
-            type = "[object]*",
-            description = "List of TODO items, each with 'content' (string) and 'status'
-                (pending, in_progress, or completed)",
-            content = "string* Task description",
-            status = "string* One of: 'pending', 'in_progress', or 'completed'"
-        ),
-        fn = set_todos_planner
-    )
-
-    web_search_tool <- argent::as_tool(web_search)
-
-    # We create a flat list of tools that the planner can use
-    tools <- argent::flat_list(web_search_tool, get_todos_planner_tool, set_todos_planner_tool)
+    tools <- flat_list(as_tool(web_search), get_todos_llmr_tool, set_todos_llmr_tool)
 
     planner$chat(planning_prompt, system = planning_system, tools = tools)
 
     list(
-        plan = get_todos_planner(),
+        plan = get_todos_llmr(),
         handoff_summary = planner$get_content_text()
     )
 }
@@ -307,8 +142,8 @@ research_subagent <- function(subtask) {
     #' @param subtask:string* The specific research sub-task to execute. It must be a specific
     #'   task/topic with a limited scope.
 
-    researcher <- argent::OpenRouter$new(
-        default_model = "google/gemini-2.5-flash-lite-preview-09-2025",
+    researcher <- OpenRouter$new(
+        default_model = "x-ai/grok-4.1-fast",
         auto_save_history = FALSE
     )
 
@@ -316,12 +151,18 @@ research_subagent <- function(subtask) {
         "You are a Senior Research Specialist.
         You will be given a specific research task to execute thoroughly.
 
-        <responsibilities>
-        - Use `web_search` to find diverse and authoritative sources.
+        <tools>
+        Some tools required parameters descriptions may be wrong. Adjust how you call them if you get an error.
+        - Use `web_search` to get an overview of the topic.
         - Use `web_fetch` to read full content of promising pages.
         - Use GitHub MCP tools to explore code examples where relevant.
+            - You can use the `get_file_contents` tool to list the contents of subdirs, 
+              using the 'path' argument (e.g. path = '/' or 'dir/'). The method needs a path parameter.
+        </tools>
+
+        <guidelines>
         - Cross-reference information to ensure accuracy.
-        </responsibilities>
+        </guidelines>
 
         <output_format>
         Return your findings in a structured Markdown format:
@@ -343,10 +184,7 @@ research_subagent <- function(subtask) {
 
     prompt <- stringr::str_glue("Here is the task to research:\\n\\n<subtask>\\n{subtask}\\n</subtask>")
 
-    web_search_tool <- argent::as_tool(web_search)
-    web_fetch_tool <- argent::as_tool(web_fetch)
-
-    tools <- argent::flat_list(web_search_tool, web_fetch_tool, github_mcp_tools)
+    tools <- flat_list(as_tool(web_search), as_tool(web_fetch), github_mcp_tools)
 
     researcher$chat(prompt, system = system, tools = tools)
 
@@ -362,7 +200,7 @@ tasks to researchers, and synthesizes results.
 Let’s define the main agent’s system prompt and prompt:
 
 ``` r
-main_agent <- OpenRouter$new(default_model = "google/gemini-2.5-flash-preview-09-2025")
+main_agent <- OpenRouter$new(default_model = "x-ai/grok-4.1-fast")
 
 main_system <- "You are the Project Lead and Orchestrator.
 Your goal is to deliver high-quality results by effectively delegating work to specialized sub-agents.
@@ -378,6 +216,9 @@ Your goal is to deliver high-quality results by effectively delegating work to s
 - `planning_subagent`: Use this ONCE at the start to get a list of tasks.
 - `research_subagent`: Use this for EACH task in the plan to get detailed information.
     A task must be a specific task/topic with a limited scope.
+- `get_todos_llmr`: Use this to get the current TODO list, containing a list of tasks with their status.
+- `set_todos_llmr`: Use this to update the TODO list, by replacing the entire list of tasks with a new list.
+    You can use this to simply update the tasks' status, without changing the list of tasks.
 </tools>
 "
 
@@ -411,7 +252,32 @@ main_output_schema <- schema(
     )
 )
 
-main_tools <- list(as_tool(planning_subagent), as_tool(research_subagent))
+todo_list_llmr <- create_todo_list("LLM-adjacent packages in R")
+
+get_todos_llmr <- function(...) {
+    #' @description Get the current TODO list. This method requires no arguments.
+    get_todos(todo_list_llmr)
+}
+get_todos_llmr_tool <- as_tool(get_todos_llmr)
+
+set_todos_llmr <- function(todos) {
+    set_todos(todo_list_llmr, todos)
+}
+set_todos_llmr_tool <- tool(
+    name = "set_todos_llmr",
+    description = "Update your task list for planning and tracking multi-step work. This
+        replaces the entire TODO list. Always include all TODOs (completed, in_progress, and
+        pending) as a list of objects.",
+    todos = list(
+        type = "[object]*",
+        description = "List of TODO items, each with 'content' and 'status' sub-elements",
+        content = "string* Task description",
+        status = "string* One of: 'pending', 'in_progress', or 'completed'"
+    ),
+    fn = set_todos_llmr
+)
+
+main_tools <- flat_list(as_tool(planning_subagent), as_tool(research_subagent), get_todos_llmr_tool, set_todos_llmr_tool)
 ```
 
 Now, let’s run the main agent:

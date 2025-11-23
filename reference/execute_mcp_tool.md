@@ -5,7 +5,7 @@ Execute an MCP tool
 ## Usage
 
 ``` r
-execute_mcp_tool(tool_def, arguments)
+execute_mcp_tool(tool_def, arguments = list())
 ```
 
 ## Arguments
