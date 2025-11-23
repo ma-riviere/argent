@@ -743,7 +743,8 @@
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">item_types</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="co"># MCP server function</span></span>
+<span><span class="co"># ------🔺 MCP SERVER ----------------------------------------------------------</span></span>
+<span></span>
 <span><span class="va">zotero_mcp_server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">server</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">:::</span><span class="va"><a href="../reference/McpServer.html">McpServer</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
 <span>        name <span class="op">=</span> <span class="st">"Zotero"</span>,</span>

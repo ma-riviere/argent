@@ -12,7 +12,8 @@ get_mcp_prompt(prompt_def, arguments = NULL)
 
 - prompt_def:
 
-  List. The prompt definition with .mcp metadata
+  List. The prompt definition (e.g. one of the items returned by
+  [`mcp_prompts()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)).
 
 - arguments:
 

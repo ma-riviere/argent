@@ -681,7 +681,8 @@ zotero_get_item_types <- function() {
     return(jsonlite::toJSON(item_types %||% list(), auto_unbox = TRUE))
 }
 
-# MCP server function
+# ------🔺 MCP SERVER ----------------------------------------------------------
+
 zotero_mcp_server <- function() {
     server <- argent:::McpServer$new(
         name = "Zotero",

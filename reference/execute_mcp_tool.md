@@ -12,7 +12,8 @@ execute_mcp_tool(tool_def, arguments = list())
 
 - tool_def:
 
-  List. The tool definition with .mcp metadata
+  List. The tool definition (e.g. one of the items returned by
+  [`mcp_tools()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)).
 
 - arguments:
 
