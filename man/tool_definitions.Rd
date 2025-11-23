@@ -187,7 +187,7 @@ counter_tool <- create_counter_tool()
 # The LLM can now call this tool and it maintains state via closure
 
 # Using MCP tools alongside custom tools
-github_server <- mcp_server(
+github_server <- mcp_connect(
   name = "github",
   type = "http",
   url = "https://api.githubcopilot.com/mcp",

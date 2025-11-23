@@ -1,3 +1,52 @@
+#' Create a structured error response for MCP tools
+#'
+#' @description
+#' Returns a structured error object that MCP servers can format appropriately
+#' for LLM agents. This provides actionable feedback instead of generic errors.
+#'
+#' @param message Character. Primary error message
+#' @param type Character. Error category: "not_found", "validation", "api_error",
+#'   "not_ready", or "unsupported"
+#' @param details Character. Additional context about the error
+#' @param suggestion Character. Actionable suggestion for fixing the error
+#'
+#' @return A list with class "mcp_error" containing structured error information
+#' @keywords internal
+mcp_error <- function(message, type = "error", details = NULL, suggestion = NULL) {
+    structure(
+        list(
+            .error = TRUE,
+            type = type,
+            message = message,
+            details = details,
+            suggestion = suggestion
+        ),
+        class = "mcp_error"
+    )
+}
+
+#' Create a structured success response for MCP tools
+#'
+#' @description
+#' Returns a structured success object that can include warnings or additional
+#' context for LLM agents.
+#'
+#' @param data The result data (character, list, or other R object)
+#' @param warning Character. Optional warning message to include with success
+#'
+#' @return A list with class "mcp_success" containing the data and optional warning
+#' @keywords internal
+mcp_success <- function(data, warning = NULL) {
+    structure(
+        list(
+            .success = TRUE,
+            data = data,
+            warning = warning
+        ),
+        class = "mcp_success"
+    )
+}
+
 #' MCP Server Implementation
 #'
 #' @description
@@ -36,8 +85,20 @@ McpServer <- R6::R6Class(
         #' @param tool_def List definition of the tool (name, description, args_schema)
         #' @param handler Function to execute when the tool is called. Should have named
         #'   parameters matching the tool's arguments, with defaults for optional parameters.
-        #'   Returns a result (character, list, or other).
-        add_tool = function(tool_def, handler) {
+        #'   Returns a result (character, list, or other). If NULL (default), uses the
+        #'   `.fn` field from `tool_def` if available.
+        add_tool = function(tool_def, handler = NULL) {
+            # Use .fn from tool_def if handler not provided
+            if (is.null(handler)) {
+                if (!is.null(tool_def$.fn)) {
+                    handler <- tool_def$.fn
+                } else {
+                    cli::cli_abort(
+                        "{.arg handler} must be provided or {.arg tool_def} must contain a {.field .fn} field"
+                    )
+                }
+            }
+
             if (!is.function(handler)) {
                 cli::cli_abort("{.arg handler} must be a function")
             }
@@ -166,11 +227,52 @@ McpServer <- R6::R6Class(
                     handler <- self$tools[[tool_name]]$handler
                     result <- rlang::exec(handler, !!!args)
 
-                    # Format result as MCP expects
-                    content_text <- if (is.character(result) && length(result) == 1) {
-                        result
+                    # Check if result is a structured mcp_error
+                    if (inherits(result, "mcp_error")) {
+                        # Format error response with structured information
+                        error_parts <- paste0("Error (", result$type, "): ", result$message)
+
+                        if (!is.null(result$details)) {
+                            error_parts <- c(error_parts, paste0("Details: ", result$details))
+                        }
+
+                        if (!is.null(result$suggestion)) {
+                            error_parts <- c(error_parts, paste0("Suggestion: ", result$suggestion))
+                        }
+
+                        content_text <- paste(error_parts, collapse = "\n")
+
+                        return(list(
+                            content = list(list(type = "text", text = content_text)),
+                            isError = TRUE
+                        ))
+                    }
+
+                    # Check if result is a structured mcp_success
+                    if (inherits(result, "mcp_success")) {
+                        if (is.character(result$data) && length(result$data) == 1) {
+                            data_text <- result$data
+                        } else {
+                            data_text <- jsonlite::toJSON(result$data, auto_unbox = TRUE, pretty = TRUE)
+                        }
+
+                        if (!is.null(result$warning)) {
+                            content_text <- paste0("Warning: ", result$warning, "\n\n", data_text)
+                        } else {
+                            content_text <- data_text
+                        }
+
+                        return(list(
+                            content = list(list(type = "text", text = content_text)),
+                            isError = FALSE
+                        ))
+                    }
+
+                    # Format regular result as MCP expects (including JSON strings)
+                    if (is.character(result) && length(result) == 1) {
+                        content_text <- result
                     } else {
-                        jsonlite::toJSON(result, auto_unbox = TRUE, pretty = TRUE)
+                        content_text <- jsonlite::toJSON(result, auto_unbox = TRUE, pretty = TRUE)
                     }
 
                     list(

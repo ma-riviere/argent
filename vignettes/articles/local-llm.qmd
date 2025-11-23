@@ -64,16 +64,12 @@ local_llama$chat("What's the R programming language? Answer in three sentences."
 
 # Tool Calling + Structured Output
 
-First, define some web-related tools (search, crawl, fetch, and a general-use tool) bundled in a `web_tools` list:
+First, define some web-related tools (search & fetch):
 
-```{=html}
-<details>
-<summary>Web Tools Implementation</summary>
+```{r, child = here::here("inst/examples/web_tools.R")}
+#| code-fold: true
+#| code-summary: Web Tools
 ```
-
-{{< include "_web.qmd" >}}
-
-</details>
 
 Then, let's define a JSON schema for the structured output using `schema()`:
 

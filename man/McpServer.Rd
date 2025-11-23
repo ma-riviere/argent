@@ -60,7 +60,7 @@ Initialize a new MCP server
 \subsection{Method \code{add_tool()}}{
 Add a tool to the server
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpServer$add_tool(tool_def, handler)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{McpServer$add_tool(tool_def, handler = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -70,7 +70,8 @@ Add a tool to the server
 
 \item{\code{handler}}{Function to execute when the tool is called. Should have named
 parameters matching the tool's arguments, with defaults for optional parameters.
-Returns a result (character, list, or other).}
+Returns a result (character, list, or other). If NULL (default), uses the
+\code{.fn} field from \code{tool_def} if available.}
 }
 \if{html}{\out{</div>}}
 }

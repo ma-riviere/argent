@@ -145,7 +145,7 @@ mcp_tools <- function(client, tools = NULL) {
 #'
 #' @return The result of the tool execution
 #' @export
-execute_mcp_tool <- function(tool_def, arguments) {
+execute_mcp_tool <- function(tool_def, arguments = list()) {
     tool_name <- tool_def$name
     if (purrr::is_empty(tool_name)) {
         cli::cli_abort("Tool definition has no name")

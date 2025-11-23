@@ -4,7 +4,7 @@
 \alias{execute_mcp_tool}
 \title{Execute an MCP tool}
 \usage{
-execute_mcp_tool(tool_def, arguments)
+execute_mcp_tool(tool_def, arguments = list())
 }
 \arguments{
 \item{tool_def}{List. The tool definition with .mcp metadata}

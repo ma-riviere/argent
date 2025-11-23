@@ -170,7 +170,7 @@
 #' # The LLM can now call this tool and it maintains state via closure
 #'
 #' # Using MCP tools alongside custom tools
-#' github_server <- mcp_server(
+#' github_server <- mcp_connect(
 #'   name = "github",
 #'   type = "http",
 #'   url = "https://api.githubcopilot.com/mcp",
@@ -367,6 +367,9 @@ extract_annotations <- function(fn) {
             if (!is.null(srcfile) && !is.null(srcfile$lines)) {
                 if (length(srcfile$lines) == 1) {
                     all_lines <- strsplit(srcfile$lines, "\n")[[1]]
+                    start_line <- fn_src[1]
+                    end_line <- fn_src[3]
+                    all_lines <- all_lines[start_line:end_line]
                 } else {
                     start_line <- fn_src[1]
                     end_line <- fn_src[3]

@@ -18,7 +18,8 @@ suppressPackageStartupMessages({
     library(httr2)
     library(cli)
     library(jsonlite)
-    library(argent)
+    # library(argent)
+    devtools::load_all()
 })
 
 # Disable httr2 progress bars to avoid stderr noise
@@ -41,13 +42,21 @@ zotero_request <- function(endpoint, query = list(), user_id = "0", valid_status
 
     if (!status %in% valid_statuses) {
         if (status == 501) {
-            cli::cli_abort(c(
-                "Zotero local API request failed (501 Not Implemented)",
-                "x" = "API version mismatch or local API not enabled",
-                "i" = "Check Preferences > Advanced > 'Allow other applications on this computer to communicate with Zotero'"
+            return(argent:::mcp_error(
+                message = "Zotero local API is not accessible",
+                type = "api_error",
+                details = "HTTP 501 - API version mismatch or local API not enabled",
+                suggestion = paste(
+                    "Enable local API in Zotero:",
+                    "Preferences > Advanced > 'Allow other applications on this computer to communicate with Zotero'"
+                )
             ))
         }
-        cli::cli_abort("Zotero API request failed with status {status}")
+        return(argent:::mcp_error(
+            message = paste0("Zotero API request failed with status ", status),
+            type = "api_error",
+            details = paste0("Unexpected HTTP status code from endpoint: ", endpoint)
+        ))
     }
 
     if (status == 404) {
@@ -69,8 +78,12 @@ zotero_search_items <- function(query = NULL, qmode = "titleCreatorYear", tag = 
 
     items <- zotero_request("/items", query = params)
 
-    if (length(items) == 0) {
-        return("No items found matching the search criteria.")
+    if (isTRUE(items$.error)) {
+        return(items)
+    }
+
+    if (purrr::is_empty(items)) {
+        return(jsonlite::toJSON(list(), auto_unbox = TRUE))
     }
 
     result <- lapply(items, function(item) {
@@ -91,11 +104,26 @@ zotero_search_items <- function(query = NULL, qmode = "titleCreatorYear", tag = 
         ))
     })
 
-    return(jsonlite::toJSON(result, auto_unbox = TRUE, pretty = TRUE))
+    return(jsonlite::toJSON(result, auto_unbox = TRUE))
 }
 
 zotero_get_item <- function(item_key) {
     item <- zotero_request(paste0("/items/", item_key))
+
+    if (isTRUE(item$.error)) {
+        return(item)
+    }
+
+    # Handle NULL (404 not found)
+    if (is.null(item)) {
+        return(argent:::mcp_error(
+            message = "Item not found",
+            type = "not_found",
+            details = paste0("No item with key '", item_key, "' exists in the library"),
+            suggestion = "Verify the item key using zotero_search_items first"
+        ))
+    }
+
     data <- item$data
 
     tags <- character(0)
@@ -114,14 +142,18 @@ zotero_get_item <- function(item_key) {
         url = data$url
     )
 
-    jsonlite::toJSON(result, auto_unbox = TRUE, pretty = TRUE)
+    jsonlite::toJSON(result, auto_unbox = TRUE)
 }
 
 zotero_get_collections <- function() {
     collections <- zotero_request("/collections")
 
+    if (isTRUE(collections$.error)) {
+        return(collections)
+    }
+
     if (purrr::is_empty(collections)) {
-        return("No collections found.")
+        return(jsonlite::toJSON(list(), auto_unbox = TRUE))
     }
 
     result <- lapply(collections, function(col) {
@@ -133,17 +165,39 @@ zotero_get_collections <- function() {
         )
     })
 
-    jsonlite::toJSON(result, auto_unbox = TRUE, pretty = TRUE)
+    jsonlite::toJSON(result, auto_unbox = TRUE)
 }
 
 zotero_get_fulltext <- function(item_key) {
     tryCatch({
         item <- zotero_request(paste0("/items/", item_key))
 
+        if (isTRUE(item$.error)) {
+            return(item)
+        }
+
+        # Handle NULL (404 not found)
+        if (is.null(item)) {
+            return(argent:::mcp_error(
+                message = "Item not found",
+                type = "not_found",
+                details = paste0("No item with key '", item_key, "' exists in the library"),
+                suggestion = "Verify the item key using zotero_search_items first"
+            ))
+        }
+
         attachment_key <- item_key
         link_mode <- NULL
         if (item$data$itemType != "attachment") {
             children <- zotero_request(paste0("/items/", item_key, "/children"))
+
+            if (isTRUE(children$.error)) {
+                return(children)
+            }
+
+            if (is.null(children)) {
+                children <- list()
+            }
 
             pdf_attachments <- purrr::keep(
                 children,
@@ -154,7 +208,12 @@ zotero_get_fulltext <- function(item_key) {
             )
 
             if (purrr::is_empty(pdf_attachments)) {
-                return("No PDF attachments found for this item.")
+                return(argent:::mcp_error(
+                    message = "No PDF attachments found for this item",
+                    type = "not_found",
+                    details = paste0("Item '", item_key, "' has no PDF attachments"),
+                    suggestion = "Verify the item has PDF files attached in Zotero, or try a different item key"
+                ))
             }
 
             attachment_key <- pdf_attachments[[1]]$data$key
@@ -168,44 +227,47 @@ zotero_get_fulltext <- function(item_key) {
             valid_statuses = c(200, 404)
         )
 
+        if (isTRUE(fulltext$.error)) {
+            return(fulltext)
+        }
+
         if (is.null(fulltext)) {
-            linked_msg <- if (!is.null(link_mode) && link_mode == "linked_file") {
-                paste0(
-                    "\n",
-                    "Note: This is a linked file. Zotero stores fulltext cache in a separate ",
-                    "storage directory, not alongside the original PDF."
+            details <- "PDF exists but fulltext index is not yet available"
+            if (!is.null(link_mode) && link_mode == "linked_file") {
+                details <- paste0(
+                    details,
+                    ". Note: This is a linked file. Zotero stores fulltext cache in a separate storage directory."
                 )
-            } else {
-                ""
             }
 
-            return(paste0(
-                "PDF attachment exists but fulltext has not been indexed yet.\n",
-                "\n",
-                "Indexing happens automatically:\n",
-                "- After 30+ seconds of computer idle time (background processor)\n",
-                "- Or manually: Right-click attachment in Zotero > Reindex Item\n",
-                "\n",
-                "Once indexed, fulltext will be cached and available via this endpoint.",
-                linked_msg
+            return(argent:::mcp_error(
+                message = "Fulltext has not been indexed yet",
+                type = "not_ready",
+                details = details,
+                suggestion = paste(
+                    "Wait for automatic indexing (after 30+ seconds of idle time)",
+                    "or manually reindex: Right-click attachment in Zotero > Reindex Item"
+                )
             ))
         }
 
         if (is.null(fulltext$content) || fulltext$content == "") {
-            return("Full-text cache exists but is empty. The PDF may be image-based without searchable text.")
+            return(argent:::mcp_error(
+                message = "Fulltext cache is empty",
+                type = "unsupported",
+                details = "The PDF may be image-based without searchable text layer",
+                suggestion = "Use OCR software to add a text layer, or try a different PDF"
+            ))
         }
 
         return(fulltext$content)
     },
     error = function(e) {
-        return(paste(
-            "Full-text extraction failed with error:",
-            conditionMessage(e),
-            "\nPossible reasons:",
-            "- Item key not found",
-            "- PDF is image-based without searchable text",
-            "- File is corrupted or inaccessible",
-            sep = "\n"
+        return(argent:::mcp_error(
+            message = "Fulltext extraction failed",
+            type = "error",
+            details = conditionMessage(e),
+            suggestion = "Verify the item key exists using zotero_search_items or zotero_get_item first"
         ))
     })
 }
@@ -213,15 +275,17 @@ zotero_get_fulltext <- function(item_key) {
 zotero_list_fulltext_items <- function(since = 0) {
     result <- zotero_request("/fulltext", query = list(since = as.integer(since)))
 
-    if (purrr::is_empty(result)) {
-        return("No items with fulltext found.")
+    if (isTRUE(result$.error)) {
+        return(result)
     }
 
-    items <- lapply(names(result), function(key) {
-        list(key = key, version = result[[key]])
-    })
+    if (purrr::is_empty(result)) {
+        return(jsonlite::toJSON(list(), auto_unbox = TRUE))
+    }
 
-    return(jsonlite::toJSON(items, auto_unbox = TRUE, pretty = TRUE))
+    items <- purrr::imap(result, \(version, key) list(key = key, version = version))
+
+    return(jsonlite::toJSON(items, auto_unbox = TRUE))
 }
 
 zotero_get_collection_items <- function(collection_key, limit = 100) {
@@ -230,8 +294,12 @@ zotero_get_collection_items <- function(collection_key, limit = 100) {
 
     items <- zotero_request(endpoint, query = params)
 
+    if (isTRUE(items$.error)) {
+        return(items)
+    }
+
     if (purrr::is_empty(items)) {
-        return("No items found in this collection.")
+        return(jsonlite::toJSON(list(), auto_unbox = TRUE))
     }
 
     result <- lapply(items, function(item) {
@@ -252,15 +320,19 @@ zotero_get_collection_items <- function(collection_key, limit = 100) {
         ))
     })
 
-    return(jsonlite::toJSON(result, auto_unbox = TRUE, pretty = TRUE))
+    return(jsonlite::toJSON(result, auto_unbox = TRUE))
 }
 
 zotero_get_top_items <- function(limit = 100) {
     params <- list(limit = as.integer(limit))
     items <- zotero_request("/items/top", query = params)
 
+    if (isTRUE(items$.error)) {
+        return(items)
+    }
+
     if (purrr::is_empty(items)) {
-        return("No top-level items found.")
+        return(jsonlite::toJSON(list(), auto_unbox = TRUE))
     }
 
     result <- lapply(items, function(item) {
@@ -281,99 +353,18 @@ zotero_get_top_items <- function(limit = 100) {
         ))
     })
 
-    return(jsonlite::toJSON(result, auto_unbox = TRUE, pretty = TRUE))
-}
-
-zotero_list_searches <- function() {
-    searches <- zotero_request("/searches")
-
-    if (purrr::is_empty(searches)) {
-        return("No saved searches found.")
-    }
-
-    result <- lapply(searches, function(search) {
-        data <- search$data
-        list(
-            key = data$key,
-            name = data$name,
-            conditions = data$conditions
-        )
-    })
-
-    return(jsonlite::toJSON(result, auto_unbox = TRUE, pretty = TRUE))
-}
-
-zotero_execute_search <- function(search_key, limit = 100) {
-    endpoint <- paste0("/searches/", search_key, "/items")
-    params <- list(limit = as.integer(limit))
-
-    items <- zotero_request(endpoint, query = params)
-
-    if (purrr::is_empty(items)) {
-        return("No items found matching this saved search.")
-    }
-
-    result <- lapply(items, function(item) {
-        data <- item$data
-
-        creators <- "No authors"
-        if (!purrr::is_empty(data$creators)) {
-            names_list <- sapply(data$creators, \(c) paste(c$firstName %||% "", c$lastName %||% ""))
-            creators <- paste(names_list, collapse = "; ")
-        }
-
-        return(list(
-            key = data$key,
-            title = data$title %||% "Untitled",
-            creators = creators,
-            year = data$date %||% "No date",
-            type = data$itemType
-        ))
-    })
-
-    return(jsonlite::toJSON(result, auto_unbox = TRUE, pretty = TRUE))
+    return(jsonlite::toJSON(result, auto_unbox = TRUE))
 }
 
 zotero_get_item_types <- function() {
     item_types <- zotero_request("/itemTypes")
 
-    if (purrr::is_empty(item_types)) {
-        return("No item types found.")
+    if (isTRUE(item_types$.error)) {
+        return(item_types)
     }
 
-    return(jsonlite::toJSON(item_types, auto_unbox = TRUE, pretty = TRUE))
+    return(jsonlite::toJSON(item_types %||% list(), auto_unbox = TRUE))
 }
-
-zotero_get_trashed_items <- function(limit = 100) {
-    params <- list(limit = as.integer(limit))
-    items <- zotero_request("/items/trash", query = params)
-
-    if (purrr::is_empty(items)) {
-        return("No items in trash.")
-    }
-
-    result <- lapply(items, function(item) {
-        data <- item$data
-
-        creators <- "No authors"
-        if (!purrr::is_empty(data$creators)) {
-            names_list <- sapply(data$creators, \(c) paste(c$firstName %||% "", c$lastName %||% ""))
-            creators <- paste(names_list, collapse = "; ")
-        }
-
-        return(list(
-            key = data$key,
-            title = data$title %||% "Untitled",
-            creators = creators,
-            year = data$date %||% "No date",
-            type = data$itemType,
-            deleted = data$deleted %||% FALSE
-        ))
-    })
-
-    return(jsonlite::toJSON(result, auto_unbox = TRUE, pretty = TRUE))
-}
-
 
 # MCP server function
 zotero_mcp_server <- function() {
@@ -382,7 +373,7 @@ zotero_mcp_server <- function() {
         version = "1.0.0"
     )
 
-    # Define tool definitions using argent::tool()
+    # Define tool definitions using argent::tool() with fn parameter
     search_items_tool <- argent::tool(
         name = "zotero_search_items",
         description = paste(
@@ -417,7 +408,8 @@ zotero_mcp_server <- function() {
             "'webpage', 'document', 'attachment'.",
             "Supports Boolean: 'book || journalArticle' (OR), '-attachment' (NOT)."
         ),
-        limit = "integer Maximum number of items to return (1-100, default: 25)"
+        limit = "integer Maximum number of items to return (1-100, default: 25)",
+        fn = zotero_search_items
     )
 
     get_item_tool <- argent::tool(
@@ -430,7 +422,8 @@ zotero_mcp_server <- function() {
         item_key = paste(
             "string* The unique item key returned from search results.",
             "Example: 'X42A7DEE' (alphanumeric, case-sensitive)."
-        )
+        ),
+        fn = zotero_get_item
     )
 
     get_collections_tool <- argent::tool(
@@ -440,7 +433,8 @@ zotero_mcp_server <- function() {
             "Collections organize items hierarchically.",
             "Returns collection keys, names, and parent-child relationships.",
             "Use collection keys with other endpoints to filter items by collection."
-        )
+        ),
+        fn = zotero_get_collections
     )
 
     get_fulltext_tool <- argent::tool(
@@ -463,7 +457,8 @@ zotero_mcp_server <- function() {
             "(1) Parent item key from search results (will auto-find PDF attachment), or",
             "(2) Direct attachment key for a specific PDF.",
             "Obtain from zotero_search_items or zotero_get_item results."
-        )
+        ),
+        fn = zotero_get_fulltext
     )
 
     list_fulltext_items_tool <- argent::tool(
@@ -474,7 +469,8 @@ zotero_mcp_server <- function() {
             "Useful for discovering which items have searchable PDF content before retrieving it.",
             "Combine with zotero_get_fulltext to access the actual content."
         ),
-        since = "integer Library version to filter from (default: 0 for all items)"
+        since = "integer Library version to filter from (default: 0 for all items)",
+        fn = zotero_list_fulltext_items
     )
 
     get_collection_items_tool <- argent::tool(
@@ -485,7 +481,8 @@ zotero_mcp_server <- function() {
             "Use zotero_get_collections to get collection keys first."
         ),
         collection_key = "string* The collection key obtained from zotero_get_collections",
-        limit = "integer Maximum number of items to return (1-100, default: 100)"
+        limit = "integer Maximum number of items to return (1-100, default: 100)",
+        fn = zotero_get_collection_items
     )
 
     get_top_items_tool <- argent::tool(
@@ -496,29 +493,8 @@ zotero_mcp_server <- function() {
             "Returns metadata including title, authors, year, and type.",
             "Useful for getting a clean list of main references without clutter."
         ),
-        limit = "integer Maximum number of items to return (1-100, default: 100)"
-    )
-
-    list_searches_tool <- argent::tool(
-        name = "zotero_list_searches",
-        description = paste(
-            "List all saved searches in the library.",
-            "Saved searches are pre-configured queries that can be executed.",
-            "Returns search keys, names, and their conditions.",
-            "Use the search key with zotero_execute_search to run the search."
-        )
-    )
-
-    execute_search_tool <- argent::tool(
-        name = "zotero_execute_search",
-        description = paste(
-            "Execute a saved search and return matching items.",
-            "Saved searches are pre-configured queries created in Zotero.",
-            "Returns item metadata including title, authors, year, and type.",
-            "Use zotero_list_searches to discover available saved searches."
-        ),
-        search_key = "string* The search key obtained from zotero_list_searches",
-        limit = "integer Maximum number of items to return (1-100, default: 100)"
+        limit = "integer Maximum number of items to return (1-100, default: 100)",
+        fn = zotero_get_top_items
     )
 
     get_item_types_tool <- argent::tool(
@@ -528,31 +504,19 @@ zotero_mcp_server <- function() {
             "Item types include: book, journalArticle, conferencePaper, thesis, etc.",
             "Useful for understanding what types can be used with the item_type filter",
             "in zotero_search_items and other endpoints."
-        )
-    )
-
-    get_trashed_items_tool <- argent::tool(
-        name = "zotero_get_trashed_items",
-        description = paste(
-            "Get items that are in the trash.",
-            "Returns metadata including title, authors, year, type, and deletion status.",
-            "Useful for recovering or reviewing deleted items."
         ),
-        limit = "integer Maximum number of items to return (1-100, default: 100)"
+        fn = zotero_get_item_types
     )
 
-    # Add tools to server
-    server$add_tool(tool_def = search_items_tool, handler = zotero_search_items)
-    server$add_tool(tool_def = get_item_tool, handler = zotero_get_item)
-    server$add_tool(tool_def = get_collections_tool, handler = zotero_get_collections)
-    server$add_tool(tool_def = get_fulltext_tool, handler = zotero_get_fulltext)
-    server$add_tool(tool_def = list_fulltext_items_tool, handler = zotero_list_fulltext_items)
-    server$add_tool(tool_def = get_collection_items_tool, handler = zotero_get_collection_items)
-    server$add_tool(tool_def = get_top_items_tool, handler = zotero_get_top_items)
-    server$add_tool(tool_def = list_searches_tool, handler = zotero_list_searches)
-    server$add_tool(tool_def = execute_search_tool, handler = zotero_execute_search)
-    server$add_tool(tool_def = get_item_types_tool, handler = zotero_get_item_types)
-    server$add_tool(tool_def = get_trashed_items_tool, handler = zotero_get_trashed_items)
+    # Add tools to server (handler extracted from .fn field)
+    server$add_tool(search_items_tool)
+    server$add_tool(get_item_tool)
+    server$add_tool(get_collections_tool)
+    server$add_tool(get_fulltext_tool)
+    server$add_tool(list_fulltext_items_tool)
+    server$add_tool(get_collection_items_tool)
+    server$add_tool(get_top_items_tool)
+    server$add_tool(get_item_types_tool)
 
     server$serve_stdio()
 }

@@ -855,8 +855,24 @@ Provider <- R6::R6Class( # nolint
 
             # Check if MCP tool returned an error
             if (is.list(output) && isTRUE(output$isError)) {
-                error_msg <- output$error$message %||% "Unknown MCP error"
-                error_code <- output$error$code %||% "Unknown"
+                # Try standard JSON-RPC error format first
+                error_msg <- output$error$message
+                error_code <- output$error$code
+
+                # Fallback to content-based error format (e.g., GitHub MCP server)
+                if (is.null(error_msg) && !is.null(output$content) && is.list(output$content)) {
+                    # Extract text from content items
+                    for (item in output$content) {
+                        if (!is.null(item$type) && item$type == "text" && !is.null(item$text)) {
+                            error_msg <- item$text
+                            break
+                        }
+                    }
+                }
+
+                # Final fallbacks
+                error_msg <- error_msg %||% "Unknown MCP error"
+                error_code <- error_code %||% "Unknown"
 
                 cli::cli_alert_danger(
                     "[{self$provider_name}] MCP tool {.val {fn_name}} returned error {error_code}: {error_msg}"

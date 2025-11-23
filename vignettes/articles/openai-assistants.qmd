@@ -132,16 +132,12 @@ print(openai_assistant, show_tools = TRUE)
 
 # Tool Calling + Structured Output
 
-First, define web-related tools bundled in a `web_tools` list:
+First, define web-related tools (search & fetch):
 
-```{=html}
-<details>
-<summary>Web Tools Implementation</summary>
+```{r, child = here::here("inst/examples/web_tools.R")}
+#| code-fold: true
+#| code-summary: Web Tools
 ```
-
-{{< include "_web.qmd" >}}
-
-</details>
 
 Then, define a JSON schema for structured output using `schema()`:
 
