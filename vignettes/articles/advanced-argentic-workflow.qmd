@@ -27,22 +27,31 @@ First, let's build a few tools that our agents will need:
 
 First, define some web-related tools (search & fetch):
 
-```{r, child = here::here("inst/examples/web_tools.R")}
-#| code-fold: true
-#| code-summary: Web Tools
+```{=html}
+<details>
+<summary>Web Tools Implementation</summary>
 ```
+
+`r knitr::spin_child(here::here("inst", "examples", "web_tools.R"))`
+
+</details>
 
 ## TODO-list Tools
 
 Let's build a TODO-list tool that provides agents with a way to track multi-step work.
 
-```{r, child = here::here("inst/examples/todo_tool.R")}
-#| code-fold: true
-#| code-summary: TODO-list Tools
+```{=html}
+<details>
+<summary>TODO-list Tools Implementation</summary>
 ```
 
+`r knitr::spin_child(here::here("inst", "examples", "todo_tools.R"))`
+
+</details>
+
 :::{.callout-note appearance="simple"}
-Here's what the output looks like:
+
+Here's how those tools work:
 
 ```{r}
 todo_test <- create_todo_list("Researching LLM-adjacent packages in R")
@@ -57,6 +66,7 @@ todo_test
 ```
 
 Researching LLM-adjacent packages in R:
+
 - [x] Research all LLM-adjacent packages in R
 - [-] Identify the package name, repository URL, description, and dependencies
 - [ ] Make a structured output of the results

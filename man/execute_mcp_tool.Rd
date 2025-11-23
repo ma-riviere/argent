@@ -7,7 +7,7 @@
 execute_mcp_tool(tool_def, arguments = list())
 }
 \arguments{
-\item{tool_def}{List. The tool definition with .mcp metadata}
+\item{tool_def}{List. The tool definition (e.g. one of the items returned by \code{mcp_tools()}).}
 
 \item{arguments}{List. The arguments to pass to the tool}
 }

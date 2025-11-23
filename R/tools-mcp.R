@@ -140,7 +140,7 @@ mcp_tools <- function(client, tools = NULL) {
 
 #' Execute an MCP tool
 #'
-#' @param tool_def List. The tool definition with .mcp metadata
+#' @param tool_def List. The tool definition (e.g. one of the items returned by `mcp_tools()`).
 #' @param arguments List. The arguments to pass to the tool
 #'
 #' @return The result of the tool execution
@@ -206,7 +206,7 @@ get_mcp_tool <- function(tool_defs, tool_name) {
 
 #' Read an MCP resource
 #'
-#' @param resource_def List. The resource definition with .mcp metadata
+#' @param resource_def List. The resource definition (e.g. one of the items returned by `mcp_resources()`).
 #'
 #' @return The content of the resource
 #' @export
@@ -247,7 +247,7 @@ read_mcp_resource <- function(resource_def) {
 
 #' Get an MCP prompt
 #'
-#' @param prompt_def List. The prompt definition with .mcp metadata
+#' @param prompt_def List. The prompt definition (e.g. one of the items returned by `mcp_prompts()`).
 #' @param arguments List. The arguments to pass to the prompt
 #'
 #' @return The prompt result with messages

@@ -7,7 +7,7 @@
 get_mcp_prompt(prompt_def, arguments = NULL)
 }
 \arguments{
-\item{prompt_def}{List. The prompt definition with .mcp metadata}
+\item{prompt_def}{List. The prompt definition (e.g. one of the items returned by \code{mcp_prompts()}).}
 
 \item{arguments}{List. The arguments to pass to the prompt}
 }

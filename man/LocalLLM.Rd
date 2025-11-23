@@ -68,7 +68,7 @@ response <- llm$chat(
 }
 }
 \section{Super class}{
-\code{\link[argent:Provider]{argent::Provider}} -> \code{LocalLLM}
+\code{argent::Provider} -> \code{LocalLLM}
 }
 \section{Methods}{
 \subsection{Public methods}{

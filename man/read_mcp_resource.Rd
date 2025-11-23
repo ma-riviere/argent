@@ -7,7 +7,7 @@
 read_mcp_resource(resource_def)
 }
 \arguments{
-\item{resource_def}{List. The resource definition with .mcp metadata}
+\item{resource_def}{List. The resource definition (e.g. one of the items returned by \code{mcp_resources()}).}
 }
 \value{
 The content of the resource

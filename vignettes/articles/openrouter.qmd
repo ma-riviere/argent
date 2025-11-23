@@ -55,10 +55,14 @@ openrouter$chat(
 
 First, define some web-related tools (search & fetch):
 
-```{r, child = here::here("inst/examples/web_tools.R")}
-#| code-fold: true
-#| code-summary: Web Tools
+```{=html}
+<details>
+<summary>Web Tools Implementation</summary>
 ```
+
+`r knitr::spin_child(here::here("inst", "examples", "web_tools.R"))`
+
+</details>
 
 Then, let's define a JSON schema for the structured output using `schema()`:
 

@@ -46,7 +46,8 @@ set_todos <- function(todo_mgr, todos) {
     return(sprintf("Successfully updated %d TODO(s)", length(todos)))
 }
 
-# Print method for TODO lists
+# ------🔺 PRINT METHOD --------------------------------------------------------
+
 print.todo_list <- function(x, ...) {
     name <- x$name
     todos <- x$todos
@@ -56,7 +57,7 @@ print.todo_list <- function(x, ...) {
         return(invisible(x))
     }
     
-    cat(sprintf("%s:\n", name))
+    cat(sprintf("%s:\n", name), "\n")
     for (i in seq_along(todos)) {
         todo <- todos[[i]]
         

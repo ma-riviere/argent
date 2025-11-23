@@ -106,7 +106,7 @@ raw_content <- anthropic$download_file(file_id = "file-abc123", dest_path = NULL
 }
 }
 \section{Super class}{
-\code{\link[argent:Provider]{argent::Provider}} -> \code{Anthropic}
+\code{argent::Provider} -> \code{Anthropic}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}

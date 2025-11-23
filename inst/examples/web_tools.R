@@ -21,7 +21,7 @@ web_search_tavily <- function(query) {
             api_key = Sys.getenv("TAVILY_API_KEY")
         )) |>
         httr2::req_error(is_error = \(resp) FALSE) |>
-        httr2::req_throttle(rate = 20/60, realm = "tavily") |>
+        httr2::req_throttle(rate = 20 / 60, realm = "tavily") |>
         httr2::req_perform() |>
         httr2::resp_body_json() |>
         purrr::discard_at(c("response_time", "follow_up_questions", "images"))
