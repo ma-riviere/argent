@@ -4,7 +4,6 @@ linters: linters_with_defaults(
     trailing_whitespace_linter = NULL,
     object_name_linter = NULL,
     commented_code_linter = NULL,
-    cyclocomp_linter = NULL,
     object_length_linter = NULL,
     object_usage_linter = NULL,
     return_linter = NULL,
