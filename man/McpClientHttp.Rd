@@ -8,7 +8,7 @@ A client for interacting with remote MCP servers via HTTP.
 }
 \keyword{internal}
 \section{Super class}{
-\code{argent::McpClient} -> \code{McpClientHttp}
+\code{\link[argent:McpClient]{argent::McpClient}} -> \code{McpClientHttp}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}

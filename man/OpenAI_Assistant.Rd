@@ -133,7 +133,7 @@ assistant$register_tools(list(my_tool_function))
 }
 }
 \section{Super classes}{
-\code{argent::Provider} -> \code{argent::OpenAI} -> \code{OpenAIAssistant}
+\code{\link[argent:Provider]{argent::Provider}} -> \code{\link[argent:OpenAI]{argent::OpenAI}} -> \code{OpenAIAssistant}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
