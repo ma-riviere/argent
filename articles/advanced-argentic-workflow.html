@@ -120,7 +120,7 @@
 <span></span>
 <span><span class="va">web_search_tavily</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">query</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"TAVILY_API_KEY"</span><span class="op">)</span> <span class="op">==</span> <span class="st">""</span><span class="op">)</span> <span class="op">{</span></span>
-<span>        <span class="fu">cli</span><span class="fu">::</span><span class="fu"><a href="https://cli.r-lib.org/reference/cli_abort.html" class="external-link">cli_abort</a></span><span class="op">(</span><span class="st">"TAVILY_API_KEY environment variable is not set"</span><span class="op">)</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"Error: TAVILY_API_KEY environment variable could not be found. Tell the user to set it."</span><span class="op">)</span></span>
 <span>    <span class="op">}</span></span>
 <span></span>
 <span>    <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">httr2</span><span class="fu">::</span><span class="fu"><a href="https://httr2.r-lib.org/reference/request.html" class="external-link">request</a></span><span class="op">(</span><span class="st">"https://api.tavily.com/search"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -215,11 +215,40 @@
 <span>    <span class="op">)</span></span>
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">cleaned_contents</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre>
+<pre class="{r🔺 WEB CRAWL}"><code><span></span>
+<span><span class="va">web_crawl</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">url</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co">#' @description Crawl a website/page to discover all available pages and their URLs. Returns a list of URLs found on the website by following sitemaps and internal links. Use this to explore the structure of a website or find specific pages before fetching their content. This method will only return internal links (matching the domain name of the base URL).</span></span>
+<span>    <span class="co">#' @param url:string* The base URL of the website to crawl (e.g., "https://example.com"). Must be a valid HTTP/HTTPS URL. Clean it first if it's not a proper URL (e.g. 'https://github.com/tidyverse/ellmer/releases"}' -&gt; https://github.com/tidyverse/ellmer/releases)</span></span>
+<span></span>
+<span>    <span class="va">trafilatura_installed</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"which trafilatura"</span>, intern <span class="op">=</span> <span class="cn">TRUE</span>, ignore.stderr <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span>    <span class="op">}</span>,</span>
+<span>    warning <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="fu">cli</span><span class="fu">::</span><span class="fu"><a href="https://cli.r-lib.org/reference/cli_alert.html" class="external-link">cli_alert_warning</a></span><span class="op">(</span><span class="st">"trafilatura is not installed. Install with: {.code pip install trafilatura}"</span><span class="op">)</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="va">trafilatura_installed</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"Impossible to crawl the website. trafilatura is not installed. Install with: {.code pip install trafilatura}"</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="va">get_domain_name</span> <span class="op">&lt;-</span> \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^(?:https?://)?(?:www\\.)?([^/]+).*$"</span>, <span class="st">"\\1"</span>, <span class="va">x</span>, perl <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>        <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"trafilatura --sitemap '"</span>, <span class="va">url</span>, <span class="st">"' --url-filter '"</span>, <span class="fu">get_domain_name</span><span class="op">(</span><span class="va">url</span><span class="op">)</span>, <span class="st">"' --list"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>            <span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span>intern <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>            <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span>pretty <span class="op">=</span> <span class="cn">FALSE</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+<span>    <span class="op">}</span>, error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"Impossible to fetch the contents of this web page. It might not allow scraping"</span><span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre>
 </details></section><section class="level2"><h3 id="todo-list-tools">TODO-list Tools<a class="anchor" aria-label="anchor" href="#todo-list-tools"></a>
 </h3>
 <p>Let’s build a TODO-list tool that provides agents with a way to track multi-step work.</p>
 <details><summary>TODO-list Tools Implementation</summary><div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a TODO-list</span></span>
 <span><span class="va">create_todo_list</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">name</span> <span class="op">=</span> <span class="st">"todos"</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">env</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">new.env</a></span><span class="op">(</span>parent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">emptyenv</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
@@ -301,7 +330,7 @@
 <p><strong>Note</strong></p>
 <p>Here’s how those tools work:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">todo_test</span> <span class="op">&lt;-</span> <span class="fu">create_todo_list</span><span class="op">(</span><span class="st">"Researching LLM-adjacent packages in R"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">set_todos</span><span class="op">(</span><span class="va">todo_test</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -323,7 +352,7 @@
 </section><section class="level2"><h3 id="github-mcp-tools">GitHub MCP Tools<a class="anchor" aria-label="anchor" href="#github-mcp-tools"></a>
 </h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">github_mcp_server</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_connect</a></span><span class="op">(</span></span>
 <span>    name <span class="op">=</span> <span class="st">"github"</span>,</span>
 <span>    type <span class="op">=</span> <span class="st">"http"</span>,</span>
@@ -346,7 +375,7 @@
 </h3>
 <p>The planning sub-agent’s role us to analyze complex requests and breaks them into a set of actionable tasks. It uses a web search tool to understand the domain and creates a structured plan using a TODO-list tool.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">planning_subagent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">task</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="co">#' @description Creates a planning sub-agent that analyzes a complex task and breaks it down</span></span>
 <span>    <span class="co">#'   into structured sub-tasks. Use this tool FIRST to create a roadmap for complex requests.</span></span>
@@ -397,7 +426,7 @@
 </h3>
 <p>The research sub-agent executes specific research tasks using web search, web fetch, and GitHub MCP tools.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">research_subagent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">subtask</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="co">#' @description Creates a research sub-agent that executes a specific research task using</span></span>
 <span>    <span class="co">#'   web search, web fetch, and GitHub tools. Use this for deep-dive information gathering.</span></span>
@@ -458,7 +487,7 @@
 <p>The main agent coordinates the workflow: it calls the planner, delegates tasks to researchers, and synthesizes results.</p>
 <p>Let’s define the main agent’s system prompt and prompt:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">main_agent</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/OpenRouter.html">OpenRouter</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>default_model <span class="op">=</span> <span class="st">"x-ai/grok-4.1-fast"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">main_system</span> <span class="op">&lt;-</span> <span class="st">"You are the Project Lead and Orchestrator.</span></span>
@@ -496,7 +525,7 @@
 </div>
 <p>Then, let’s define the main agent’s output schema and tools:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">main_output_schema</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tool_definitions.html">schema</a></span><span class="op">(</span></span>
 <span>    name <span class="op">=</span> <span class="st">"r_llm_packages"</span>,</span>
 <span>    description <span class="op">=</span> <span class="st">"A comprehensive list of LLM-adjacent R packages"</span>,</span>
@@ -539,7 +568,7 @@
 </div>
 <p>Now, let’s run the main agent:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">main_agent</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="va">main_prompt</span>,</span>
 <span>    system <span class="op">=</span> <span class="va">main_system</span>,</span>
@@ -549,147 +578,147 @@
 </div>
 <p>Finally, we can print the main agent’s output:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">main_agent</span>, show_tools <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># Entirety of the chat history of the main agent</span></span></code></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">main_agent</span><span class="op">$</span><span class="fu">get_content_text</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="co"># Just the final answer of the main agent</span></span></code></pre></div>
 </div>
 <div class="cell">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"packages"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"ellmer"</span><span class="fu">,</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/tidyverse/ellmer"</span><span class="fu">,</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Unified tidy chat interface for LLM APIs (OpenAI, Anthropic,</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="st">        Gemini, Ollama, etc.); streaming, tools, structured output, auto-creds."</span><span class="fu">,</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"tidyllm"</span><span class="fu">,</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/edubruell/tidyllm"</span><span class="fu">,</span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Tidy verbs/pipelines for LLMs (Claude, OpenAI, Gemini, Ollama);</span></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="st">        embeddings, chaining, rate limits."</span><span class="fu">,</span></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"LLMR"</span><span class="fu">,</span></span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/asanaei/LLMR"</span><span class="fu">,</span></span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Unified API with batching, retries, embeddings, structured output</span></span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="st">        (OpenAI/Azure/Mistral/Ollama)."</span><span class="fu">,</span></span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"ollamar"</span><span class="fu">,</span></span>
-<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/hauselin/ollama-r"</span><span class="fu">,</span></span>
-<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Local Ollama API client for chat/completions/embeddings; parallel</span></span>
-<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a><span class="st">        via httr2."</span><span class="fu">,</span></span>
-<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
-<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"localLLM"</span><span class="fu">,</span></span>
-<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/EddieYang211/localLLM"</span><span class="fu">,</span></span>
-<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Lightweight llama.cpp bindings for local GGUF LLMs in R</span></span>
-<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a><span class="st">        (no server)."</span><span class="fu">,</span></span>
-<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
-<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"btw"</span><span class="fu">,</span></span>
-<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/posit-dev/btw"</span><span class="fu">,</span></span>
-<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"R env/object/package inspector for LLM prompts; tools for ellmer</span></span>
-<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a><span class="st">        chats/agents."</span><span class="fu">,</span></span>
-<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="st">"ellmer"</span></span>
-<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"tidyprompt"</span><span class="fu">,</span></span>
-<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/KennispuntTwente/tidyprompt"</span><span class="fu">,</span></span>
-<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Prompt 'wraps' for engineering/chaining (JSON/reasoning/tools);</span></span>
-<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a><span class="st">        provider-agnostic."</span><span class="fu">,</span></span>
-<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
-<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"ragnar"</span><span class="fu">,</span></span>
-<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/tidyverse/ragnar"</span><span class="fu">,</span></span>
-<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"End-to-end RAG: chunking, embeddings, hybrid retrieval, LLM</span></span>
-<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a><span class="st">        integration."</span><span class="fu">,</span></span>
-<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"ellmer"</span><span class="ot">,</span> <span class="st">"btw"</span><span class="ot">]</span></span>
-<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"LLMAgentR"</span><span class="fu">,</span></span>
-<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/knowusuboaky/LLMAgentR"</span><span class="fu">,</span></span>
-<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Graph-based agents for R tasks (data wrangling/viz/forecasting</span></span>
-<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a><span class="st">        via tidymodels)."</span><span class="fu">,</span></span>
-<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="st">"ellmer"</span></span>
-<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"chattr"</span><span class="fu">,</span></span>
-<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/mlverse/chattr"</span><span class="fu">,</span></span>
-<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Interactive Shiny/console LLM chats; ellmer backend."</span><span class="fu">,</span></span>
-<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="st">"ellmer"</span></span>
-<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"gptstudio"</span><span class="fu">,</span></span>
-<span id="cb15-74"><a href="#cb15-74" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/MichelNivard/gptstudio"</span><span class="fu">,</span></span>
-<span id="cb15-75"><a href="#cb15-75" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"RStudio addins for LLM code/doc tasks (OpenAI/Anthropic/Cohere)."</span><span class="fu">,</span></span>
-<span id="cb15-76"><a href="#cb15-76" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
-<span id="cb15-77"><a href="#cb15-77" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-78"><a href="#cb15-78" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-79"><a href="#cb15-79" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"ragent"</span><span class="fu">,</span></span>
-<span id="cb15-80"><a href="#cb15-80" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/cynkra/ragent"</span><span class="fu">,</span></span>
-<span id="cb15-81"><a href="#cb15-81" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Simple Ollama-based agents with tools (calc/RAG)."</span><span class="fu">,</span></span>
-<span id="cb15-82"><a href="#cb15-82" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="st">"ollamar"</span></span>
-<span id="cb15-83"><a href="#cb15-83" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-84"><a href="#cb15-84" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-85"><a href="#cb15-85" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"mini007"</span><span class="fu">,</span></span>
-<span id="cb15-86"><a href="#cb15-86" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/feddelegrand7/mini007"</span><span class="fu">,</span></span>
-<span id="cb15-87"><a href="#cb15-87" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Lightweight multi-agent orchestration (R6 classes, delegation)."</span><span class="fu">,</span></span>
-<span id="cb15-88"><a href="#cb15-88" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="st">"ellmer"</span></span>
-<span id="cb15-89"><a href="#cb15-89" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-90"><a href="#cb15-90" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-91"><a href="#cb15-91" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"mcptools"</span><span class="fu">,</span></span>
-<span id="cb15-92"><a href="#cb15-92" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/posit-dev/mcptools"</span><span class="fu">,</span></span>
-<span id="cb15-93"><a href="#cb15-93" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"MCP server/client for R-LLM integration (Claude Desktop/Copilot)."</span><span class="fu">,</span></span>
-<span id="cb15-94"><a href="#cb15-94" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"ellmer"</span><span class="ot">,</span> <span class="st">"btw"</span><span class="ot">]</span></span>
-<span id="cb15-95"><a href="#cb15-95" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-96"><a href="#cb15-96" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-97"><a href="#cb15-97" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"rchroma"</span><span class="fu">,</span></span>
-<span id="cb15-98"><a href="#cb15-98" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/cynkra/rchroma"</span><span class="fu">,</span></span>
-<span id="cb15-99"><a href="#cb15-99" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"ChromaDB client for vector storage/query (RAG enabler)."</span><span class="fu">,</span></span>
-<span id="cb15-100"><a href="#cb15-100" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
-<span id="cb15-101"><a href="#cb15-101" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-102"><a href="#cb15-102" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-103"><a href="#cb15-103" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"RAGFlowChainR"</span><span class="fu">,</span></span>
-<span id="cb15-104"><a href="#cb15-104" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/knowusuboaky/RAGFlowChainR"</span><span class="fu">,</span></span>
-<span id="cb15-105"><a href="#cb15-105" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"LangChain-like RAG chains w/ DuckDB vectors/web search."</span><span class="fu">,</span></span>
-<span id="cb15-106"><a href="#cb15-106" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="st">"LLMAgentR"</span></span>
-<span id="cb15-107"><a href="#cb15-107" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-108"><a href="#cb15-108" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-109"><a href="#cb15-109" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"tidychatmodels"</span><span class="fu">,</span></span>
-<span id="cb15-110"><a href="#cb15-110" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/AlbertRapp/tidychatmodels"</span><span class="fu">,</span></span>
-<span id="cb15-111"><a href="#cb15-111" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Tidymodels-inspired modular chatbots (OpenAI/Claude/Ollama)."</span><span class="fu">,</span></span>
-<span id="cb15-112"><a href="#cb15-112" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
-<span id="cb15-113"><a href="#cb15-113" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-114"><a href="#cb15-114" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-115"><a href="#cb15-115" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"mall"</span><span class="fu">,</span></span>
-<span id="cb15-116"><a href="#cb15-116" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/mlverse/mall"</span><span class="fu">,</span></span>
-<span id="cb15-117"><a href="#cb15-117" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Row-wise LLM NLP on data frames (summ/classify via ellmer)."</span><span class="fu">,</span></span>
-<span id="cb15-118"><a href="#cb15-118" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="st">"ellmer"</span></span>
-<span id="cb15-119"><a href="#cb15-119" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-120"><a href="#cb15-120" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-121"><a href="#cb15-121" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"mcpr"</span><span class="fu">,</span></span>
-<span id="cb15-122"><a href="#cb15-122" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/chi2labs/mcpr"</span><span class="fu">,</span></span>
-<span id="cb15-123"><a href="#cb15-123" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"MCP framework for R servers/clients (w/ llmr)."</span><span class="fu">,</span></span>
-<span id="cb15-124"><a href="#cb15-124" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
-<span id="cb15-125"><a href="#cb15-125" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb15-126"><a href="#cb15-126" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb15-127"><a href="#cb15-127" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"rmcp"</span><span class="fu">,</span></span>
-<span id="cb15-128"><a href="#cb15-128" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/finite-sample/rmcp"</span><span class="fu">,</span></span>
-<span id="cb15-129"><a href="#cb15-129" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Stats-focused MCP server (52 tools from CRAN)."</span><span class="fu">,</span></span>
-<span id="cb15-130"><a href="#cb15-130" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
-<span id="cb15-131"><a href="#cb15-131" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb15-132"><a href="#cb15-132" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
-<span id="cb15-133"><a href="#cb15-133" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"packages"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"ellmer"</span><span class="fu">,</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/tidyverse/ellmer"</span><span class="fu">,</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Unified tidy chat interface for LLM APIs (OpenAI, Anthropic,</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="st">        Gemini, Ollama, etc.); streaming, tools, structured output, auto-creds."</span><span class="fu">,</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"tidyllm"</span><span class="fu">,</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/edubruell/tidyllm"</span><span class="fu">,</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Tidy verbs/pipelines for LLMs (Claude, OpenAI, Gemini, Ollama);</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="st">        embeddings, chaining, rate limits."</span><span class="fu">,</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"LLMR"</span><span class="fu">,</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/asanaei/LLMR"</span><span class="fu">,</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Unified API with batching, retries, embeddings, structured output</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="st">        (OpenAI/Azure/Mistral/Ollama)."</span><span class="fu">,</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"ollamar"</span><span class="fu">,</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/hauselin/ollama-r"</span><span class="fu">,</span></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Local Ollama API client for chat/completions/embeddings; parallel</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="st">        via httr2."</span><span class="fu">,</span></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"localLLM"</span><span class="fu">,</span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/EddieYang211/localLLM"</span><span class="fu">,</span></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Lightweight llama.cpp bindings for local GGUF LLMs in R</span></span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a><span class="st">        (no server)."</span><span class="fu">,</span></span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"btw"</span><span class="fu">,</span></span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/posit-dev/btw"</span><span class="fu">,</span></span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"R env/object/package inspector for LLM prompts; tools for ellmer</span></span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a><span class="st">        chats/agents."</span><span class="fu">,</span></span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="st">"ellmer"</span></span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"tidyprompt"</span><span class="fu">,</span></span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/KennispuntTwente/tidyprompt"</span><span class="fu">,</span></span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Prompt 'wraps' for engineering/chaining (JSON/reasoning/tools);</span></span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a><span class="st">        provider-agnostic."</span><span class="fu">,</span></span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"ragnar"</span><span class="fu">,</span></span>
+<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/tidyverse/ragnar"</span><span class="fu">,</span></span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"End-to-end RAG: chunking, embeddings, hybrid retrieval, LLM</span></span>
+<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a><span class="st">        integration."</span><span class="fu">,</span></span>
+<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"ellmer"</span><span class="ot">,</span> <span class="st">"btw"</span><span class="ot">]</span></span>
+<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"LLMAgentR"</span><span class="fu">,</span></span>
+<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/knowusuboaky/LLMAgentR"</span><span class="fu">,</span></span>
+<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Graph-based agents for R tasks (data wrangling/viz/forecasting</span></span>
+<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a><span class="st">        via tidymodels)."</span><span class="fu">,</span></span>
+<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="st">"ellmer"</span></span>
+<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"chattr"</span><span class="fu">,</span></span>
+<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/mlverse/chattr"</span><span class="fu">,</span></span>
+<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Interactive Shiny/console LLM chats; ellmer backend."</span><span class="fu">,</span></span>
+<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="st">"ellmer"</span></span>
+<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"gptstudio"</span><span class="fu">,</span></span>
+<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/MichelNivard/gptstudio"</span><span class="fu">,</span></span>
+<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"RStudio addins for LLM code/doc tasks (OpenAI/Anthropic/Cohere)."</span><span class="fu">,</span></span>
+<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"ragent"</span><span class="fu">,</span></span>
+<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/cynkra/ragent"</span><span class="fu">,</span></span>
+<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Simple Ollama-based agents with tools (calc/RAG)."</span><span class="fu">,</span></span>
+<span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="st">"ollamar"</span></span>
+<span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"mini007"</span><span class="fu">,</span></span>
+<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/feddelegrand7/mini007"</span><span class="fu">,</span></span>
+<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Lightweight multi-agent orchestration (R6 classes, delegation)."</span><span class="fu">,</span></span>
+<span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="st">"ellmer"</span></span>
+<span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"mcptools"</span><span class="fu">,</span></span>
+<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/posit-dev/mcptools"</span><span class="fu">,</span></span>
+<span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"MCP server/client for R-LLM integration (Claude Desktop/Copilot)."</span><span class="fu">,</span></span>
+<span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"ellmer"</span><span class="ot">,</span> <span class="st">"btw"</span><span class="ot">]</span></span>
+<span id="cb16-95"><a href="#cb16-95" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-96"><a href="#cb16-96" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-97"><a href="#cb16-97" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"rchroma"</span><span class="fu">,</span></span>
+<span id="cb16-98"><a href="#cb16-98" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/cynkra/rchroma"</span><span class="fu">,</span></span>
+<span id="cb16-99"><a href="#cb16-99" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"ChromaDB client for vector storage/query (RAG enabler)."</span><span class="fu">,</span></span>
+<span id="cb16-100"><a href="#cb16-100" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb16-101"><a href="#cb16-101" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-102"><a href="#cb16-102" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-103"><a href="#cb16-103" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"RAGFlowChainR"</span><span class="fu">,</span></span>
+<span id="cb16-104"><a href="#cb16-104" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/knowusuboaky/RAGFlowChainR"</span><span class="fu">,</span></span>
+<span id="cb16-105"><a href="#cb16-105" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"LangChain-like RAG chains w/ DuckDB vectors/web search."</span><span class="fu">,</span></span>
+<span id="cb16-106"><a href="#cb16-106" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="st">"LLMAgentR"</span></span>
+<span id="cb16-107"><a href="#cb16-107" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-108"><a href="#cb16-108" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-109"><a href="#cb16-109" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"tidychatmodels"</span><span class="fu">,</span></span>
+<span id="cb16-110"><a href="#cb16-110" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/AlbertRapp/tidychatmodels"</span><span class="fu">,</span></span>
+<span id="cb16-111"><a href="#cb16-111" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Tidymodels-inspired modular chatbots (OpenAI/Claude/Ollama)."</span><span class="fu">,</span></span>
+<span id="cb16-112"><a href="#cb16-112" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb16-113"><a href="#cb16-113" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-114"><a href="#cb16-114" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-115"><a href="#cb16-115" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"mall"</span><span class="fu">,</span></span>
+<span id="cb16-116"><a href="#cb16-116" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/mlverse/mall"</span><span class="fu">,</span></span>
+<span id="cb16-117"><a href="#cb16-117" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Row-wise LLM NLP on data frames (summ/classify via ellmer)."</span><span class="fu">,</span></span>
+<span id="cb16-118"><a href="#cb16-118" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="st">"ellmer"</span></span>
+<span id="cb16-119"><a href="#cb16-119" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-120"><a href="#cb16-120" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-121"><a href="#cb16-121" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"mcpr"</span><span class="fu">,</span></span>
+<span id="cb16-122"><a href="#cb16-122" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/chi2labs/mcpr"</span><span class="fu">,</span></span>
+<span id="cb16-123"><a href="#cb16-123" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"MCP framework for R servers/clients (w/ llmr)."</span><span class="fu">,</span></span>
+<span id="cb16-124"><a href="#cb16-124" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb16-125"><a href="#cb16-125" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb16-126"><a href="#cb16-126" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb16-127"><a href="#cb16-127" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_name"</span><span class="fu">:</span> <span class="st">"rmcp"</span><span class="fu">,</span></span>
+<span id="cb16-128"><a href="#cb16-128" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_repo"</span><span class="fu">:</span> <span class="st">"https://github.com/finite-sample/rmcp"</span><span class="fu">,</span></span>
+<span id="cb16-129"><a href="#cb16-129" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_description"</span><span class="fu">:</span> <span class="st">"Stats-focused MCP server (52 tools from CRAN)."</span><span class="fu">,</span></span>
+<span id="cb16-130"><a href="#cb16-130" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"package_dependencies"</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb16-131"><a href="#cb16-131" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb16-132"><a href="#cb16-132" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb16-133"><a href="#cb16-133" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 </details>
 </div>
 </section></section><script id="quarto-html-after-body" type="application/javascript">

@@ -51,7 +51,7 @@ web_search <- function(query) {
 
 web_search_tavily <- function(query) {
     if (Sys.getenv("TAVILY_API_KEY") == "") {
-        cli::cli_abort("TAVILY_API_KEY environment variable is not set")
+        return("Error: TAVILY_API_KEY environment variable could not be found. Tell the user to set it.")
     }
 
     res <- httr2::request("https://api.tavily.com/search") |>
@@ -147,6 +147,37 @@ web_fetch_rvest <- function(url) {
         error = \(e) return("")
     )
     return(cleaned_contents)
+}
+```
+
+``` {r🔺
+web_crawl <- function(url) {
+    #' @description Crawl a website/page to discover all available pages and their URLs. Returns a list of URLs found on the website by following sitemaps and internal links. Use this to explore the structure of a website or find specific pages before fetching their content. This method will only return internal links (matching the domain name of the base URL).
+    #' @param url:string* The base URL of the website to crawl (e.g., "https://example.com"). Must be a valid HTTP/HTTPS URL. Clean it first if it's not a proper URL (e.g. 'https://github.com/tidyverse/ellmer/releases"}' -> https://github.com/tidyverse/ellmer/releases)
+
+    trafilatura_installed <- tryCatch({
+        system("which trafilatura", intern = TRUE, ignore.stderr = TRUE)
+        return(TRUE)
+    },
+    warning = function(e) {
+        cli::cli_alert_warning("trafilatura is not installed. Install with: {.code pip install trafilatura}")
+        return(FALSE)
+    })
+
+    if (!trafilatura_installed) {
+        return("Impossible to crawl the website. trafilatura is not installed. Install with: {.code pip install trafilatura}")
+    }
+
+    get_domain_name <- \(x) sub("^(?:https?://)?(?:www\\.)?([^/]+).*$", "\\1", x, perl = TRUE)
+
+    tryCatch({
+        res <- paste0("trafilatura --sitemap '", url, "' --url-filter '", get_domain_name(url), "' --list") |>
+            system(intern = TRUE) |>
+            jsonlite::toJSON(pretty = FALSE, auto_unbox = TRUE)
+        return(res)
+    }, error = function(e) {
+        return("Impossible to fetch the contents of this web page. It might not allow scraping")
+    })
 }
 ```
 
