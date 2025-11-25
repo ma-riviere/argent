@@ -55,15 +55,13 @@ Finally, we can call the `get_file_contents` tool manually to see if it
 works:
 
 ``` r
-get_file_contents_mcp_tool <- get_mcp_tool(github_mcp_tools, "get_file_contents")
-
 execute_mcp_tool(
-    tool_def = get_file_contents_mcp_tool,
+    tool_def = get_mcp_tool(github_mcp_tools, "get_file_contents"),
     arguments = list(
         owner = "tidyverse",
-        repo = "ellmer"
-        # path = "/"
-        # ref = "main"
+        repo = "ellmer",
+        path = "/",
+        ref = "main"
     )
 )
 ```
@@ -106,10 +104,8 @@ btw_mcp_tools <- mcp_tools(
 Finally, we can call the `help_topics` tool manually to see if it works:
 
 ``` r
-help_topics_tool <- get_mcp_tool(btw_mcp_tools, "btw_tool_docs_package_help_topics")
-
 execute_mcp_tool(
-    tool_def = help_topics_tool,
+    tool_def = get_mcp_tool(btw_mcp_tools, "btw_tool_docs_package_help_topics"),
     arguments = list(
         package_name = "argent",
         `_intent` = "Vignettes explaining how to use MCP servers with argent"
@@ -125,178 +121,137 @@ question about the `mcptools` and `ellmer` packages.
 ``` r
 google <- Google$new()
 
-tools <- flat_list(github_mcp_tools, btw_mcp_tools, as_tool(web_search), as_tool(web_fetch))
-
 google$chat(
     "Has 'posit-dev/mcptools' implemented the ability to use HTTP MCP servers with 'ellmer' ?",
     "Use the `get_file_contents` tool to list the contents of GitHub subdirectories, e.g. with path = '/' or 'dir/'.",
     "Use the `btw` tools to explore the help pages and vignettes of the local installation of the `mcptools` package.",
     model = "gemini-2.5-flash",
-    tools = tools
+    tools = flat_list(github_mcp_tools, btw_mcp_tools)
 )
-
-print(google, show_tools = TRUE)
 ```
 
 ``` default
-`posit-dev/mcptools` does not directly implement the ability to use HTTP MCP servers with `ellmer`. When `mcptools` acts as an MCP *client* via `ellmer`, it only supports the local (stdio) protocol. To connect to remote (HTTP) MCP servers, the `mcptools` documentation recommends using `mcp-remote`, an external tool (a local stdio MCP server) that converts remote HTTP servers to `mcptools`-compatible local ones. This allows `ellmer` (using the stdio protocol) to interact with remote HTTP MCP servers through `mcp-remote`.
+`posit-dev/mcptools` does not directly implement the ability to use HTTP MCP servers with `ellmer`. When `mcptools` acts as an MCP *client* via `ellmer`, it only supports the local (stdio) protocol. 
+To connect to remote (HTTP) MCP servers, the `mcptools` documentation recommends using `mcp-remote`, an external tool (a local stdio MCP server) that converts remote HTTP servers to `mcptools`-compatible local ones. This allows `ellmer` (using the stdio protocol) to interact with remote HTTP MCP servers through `mcp-remote`.
 ```
 
 `print(google, show_tools = TRUE)`
 
 ``` default
-── [ <Google> turns: 10 | Current context: 62853 | Cumulated tokens: 196436 ] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── [ <Google> turns: 8 | Current context: 3786 | Cumulated tokens: 10034 ] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 
-── user [1789 / 2107] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── user [1611 / 2155] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-Has 'posit-dev/mcptools' implemented the ability to use HTTP MCP servers with ellmer ? Use the `get_file_contents` tool to list the contents of GitHub subdirectories, e.g. with path = '/' or 'dir/'. Use the `btw` tools to explore the help pages and vignettes of the local installation of the `mcptools` package.
+Has 'posit-dev/mcptools' implemented the ability to use HTTP MCP servers with 'ellmer' ? Use the `get_file_contents` tool to list the contents of GitHub subdirectories, e.g. with path = '/' or 'dir/'. Use the `btw` tools to explore the help pages and vignettes of the local installation of the `mcptools` package.
 
 ── System ──
 
-You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-19
+You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-24
 
 ── Tool Definitions ──
 
 • get_file_contents(owner, path, ref, repo, sha): Get the contents of a file or directory from a GitHub repository
-• search_code(order, page, perPage, query, sort): Fast and precise code search across ALL GitHub repositories using GitHub's native search engine. Best for finding exact symbols, functions, classes, or specific
-  code patterns.
+• search_code(order, page, perPage, query, sort): Fast and precise code search across ALL GitHub repositories using GitHub's native search engine. Best for finding exact symbols, functions,
+  classes, or specific code patterns.
 • btw_tool_docs_package_help_topics(package_name, _intent): Get available help topics for an R package.
 • btw_tool_docs_help_page(package_name, topic, _intent): Get help page from package.
-• btw_tool_docs_available_vignettes(package_name, _intent): List available vignettes for an R package. Vignettes are articles describing key concepts or features of an R package. Returns the listing as a JSON
-  array of `vignette` and `title`. To read a vignette, use `btw_tool_docs_vignette(package_name, vignette)`.
+• btw_tool_docs_available_vignettes(package_name, _intent): List available vignettes for an R package. Vignettes are articles describing key concepts or features of an R package. Returns the
+  listing as a JSON array of `vignette` and `title`. To read a vignette, use `btw_tool_docs_vignette(package_name, vignette)`.
 • btw_tool_docs_vignette(package_name, vignette, _intent): Get a package vignette in plain text.
 • btw_tool_session_check_package_installed(package_name, _intent): Check if a package is installed in the current session.
-• btw_tool_session_package_info(packages, dependencies, _intent): Verify that a specific package is installed, or find out which packages are in use in the current session. As a last resort, this function can
-  also list all installed packages.
-• web_search(query): Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or
-  any data not in your training data.
-• web_fetch(url): Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read
-  articles, documentation, blog posts, or any web page content.
+• btw_tool_session_package_info(packages, dependencies, _intent): Verify that a specific package is installed, or find out which packages are in use in the current session. As a last resort, this
+  function can also list all installed packages.
 
-── assistant [2107 / 2107] ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── assistant [2155 / 2155] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 ── Tool Calls ──
 
-• get_file_contents(repo = "mcptools", owner = "posit-dev", path = "/")
+• btw_tool_session_check_package_installed(package_name = "mcptools", _intent = "Check if mcptools is installed locally to access its documentation.")
 
-── tool [8379 / 10686] ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── tool [1757 / 4021] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-• Result from get_file_contents:
+• Result from btw_tool_session_check_package_installed:
 
-name: get_file_contents
+name: btw_tool_session_check_package_installed
 arguments:
-  repo: mcptools
-  owner: posit-dev
-  path: /
-result:
-  content:
-  - type: text
-    text: '[{"type":"file","size":210,"name":".Rbuildignore","path":".Rbuildignore","sha":"8fe0bfc60f1d4655aff00d34de75b22f1e6bb7c3","url":"https://api.github.com/repos/posit-dev/mcptools/contents/.Rbuildignore?ref=4f91a58684555e66fd46414f2dc63c46c3802d89","git_url":"https://api.github.com/repos/posit-dev/mcptools/git/blobs/8fe0bfc60f1d4655aff00d34de75b22f1e6bb7c3","html_url":"https://github.com/posit-dev/mcptools/blob/4f91a58684555e66fd46414f2dc63c46c3802d89/.Rbuildignore","download_url":"https://raw.githubusercontent.com/posit-dev/mcptools/4f91a58684555e66fd46414f2dc63c46c3802d89/.Rbuildignore"},{"type":"dir","size":0,"name":".github","path":".github","sha":"c1a387a5ec7f8bf8c6626c7d04d8d00551252def","url":"https://api.github.com/repos/posit-dev/mcptools/contents/.github?ref=4f91a58684555e66fd46414f2dc63c46c3802d89","git_url":"https://api.github.com/repos/posit-dev/mcpto...
+  package_name: mcptools
+  _intent: Check if mcptools is installed locally to access its documentation.
+result: Package `mcptools` version 0.2.0 is installed.
 
-── assistant [8579 / 10686] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+── assistant [1866 / 4021] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 ── Tool Calls ──
 
-• search_code(query = "ellmer repo:posit-dev/mcptools")
-• search_code(query = "http mcp server repo:posit-dev/mcptools")
+• btw_tool_docs_package_help_topics(_intent = "List all help topics for mcptools to find relevant documentation on HTTP MCP servers and ellmer.", package_name = "mcptools")
 
-── tool [60874 / 72190] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-
-• Result from search_code:
-
-name: search_code
-arguments:
-  query: ellmer repo:posit-dev/mcptools
-result:
-  content:
-  - type: text
-    text: '{"total_count":17,"incomplete_results":false,"items":[{"name":"example-ellmer-tools.R","path":"inst/example-ellmer-tools.R","sha":"bfde4b0d734301e24a4908ec1054a5e0c7997b4c","html_url":"https://github.com/posit-dev/mcptools/blob/4f91a58684555e66fd46414f2dc63c46c3802d89/inst/example-ellmer-tools.R","repository":{"id":955571244,"node_id":"R_kgDOOPTcLA","owner":{"login":"posit-dev","id":107264312,"node_id":"O_kgDOBmS5OA","avatar_url":"https://avatars.githubusercontent.com/u/107264312?v=4","html_url":"https://github.com/posit-dev","gravatar_id":"","type":"Organization","site_admin":false,"url":"https://api.github.com/users/posit-dev","events_url":"https://api.github.com/users/posit-dev/events{/privacy}","following_url":"https://api.github.com/users/posit-dev/following{/other_user}","followers_url":"https://api.github.com/users/posit-dev/followers","gists_url":"https://api.githu...
-
-• Result from search_code:
-
-name: search_code
-arguments:
-  query: http mcp server repo:posit-dev/mcptools
-result:
-  content:
-  - type: text
-    text: '{"total_count":16,"incomplete_results":false,"items":[{"name":"server.R","path":"R/server.R","sha":"c554b70c68889735629019c4b8d14d9a83f05a4b","html_url":"https://github.com/posit-dev/mcptools/blob/4f91a58684555e66fd46414f2dc63c46c3802d89/R/server.R","repository":{"id":955571244,"node_id":"R_kgDOOPTcLA","owner":{"login":"posit-dev","id":107264312,"node_id":"O_kgDOBmS5OA","avatar_url":"https://avatars.githubusercontent.com/u/107264312?v=4","html_url":"https://github.com/posit-dev","gravatar_id":"","type":"Organization","site_admin":false,"url":"https://api.github.com/users/posit-dev","events_url":"https://api.github.com/users/posit-dev/events{/privacy}","following_url":"https://api.github.com/users/posit-dev/following{/other_user}","followers_url":"https://api.github.com/users/posit-dev/followers","gists_url":"https://api.github.com/users/posit-dev/gists{/gist_id}",...
-
-── assistant [61504 / 72190] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-
-── Tool Calls ──
-
-• btw_tool_docs_package_help_topics(package_name = "mcptools", _intent = "Check for relevant help topics in mcptools documentation regarding ellmer and HTTP MCP servers")
-
-── tool [61172 / 133583] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── tool [2040 / 6248] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 • Result from btw_tool_docs_package_help_topics:
 
 name: btw_tool_docs_package_help_topics
 arguments:
+  _intent: List all help topics for mcptools to find relevant documentation on HTTP
+    MCP servers and ellmer.
   package_name: mcptools
-  _intent: Check for relevant help topics in mcptools documentation regarding ellmer
-    and HTTP MCP servers
-result:
-  content:
-  - type: text
-    text: |-
-      [
-        {"topic_id":"client","title":"R as a client: Define ellmer tools from MCP servers","aliases":["client","mcp_tools","mcp_client"]},
-        {"topic_id":"mcptools-package","title":"mcptools: Model Context Protocol Servers and Clients","aliases":["mcptools","mcptools-package"]},
-        {"topic_id":"server","title":"R as a server: Configure R-based tools with LLM-enabled apps","aliases":["server","mcp_server","mcp_session","server"]}
-      ]
-  isError: no
+result: |-
+  [
+    {"topic_id":"client","title":"R as a client: Define ellmer tools from MCP servers","aliases":["client","mcp_tools","mcp_client"]},
+    {"topic_id":"mcptools-package","title":"mcptools: Model Context Protocol Servers and Clients","aliases":["mcptools","mcptools-package"]},
+    {"topic_id":"server","title":"R as a server: Configure R-based tools with LLM-enabled apps","aliases":["server","mcp_server","mcp_session","server"]}
+  ]
 
 
-── assistant [61393 / 133583] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── assistant [2227 / 6248] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 ── Tool Calls ──
 
-• btw_tool_docs_help_page(package_name = "mcptools", topic = "client", _intent = "Get details on how ellmer tools are defined from MCP servers")
+• btw_tool_docs_help_page(package_name = "mcptools", _intent = "Get the help page for the 'client' topic in mcptools to understand its functionality with ellmer and MCP servers.", topic = "client")
 
-── tool [62486 / 196436] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── tool [3359 / 10034] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 • Result from btw_tool_docs_help_page:
 
 name: btw_tool_docs_help_page
 arguments:
   package_name: mcptools
+  _intent: Get the help page for the 'client' topic in mcptools to understand its
+    functionality with ellmer and MCP servers.
   topic: client
-  _intent: Get details on how ellmer tools are defined from MCP servers
-result:
-  content:
-  - type: text
-    text: |-
-      ## `help(package = "mcptools", "client")`
+result: |-
+  ## `help(package = "mcptools", "client")`
 
-      ### R as a client: Define ellmer tools from MCP servers
+  ### R as a client: Define ellmer tools from MCP servers
 
-      #### Description
+  #### Description
 
-      These functions implement R as an MCP *client*, so that ellmer chats can
-      register functionality from third-party MCP servers such as those listed
-      here: <https://github.com/modelcontextprotocol/servers>.
+  These functions implement R as an MCP *client*, so that ellmer chats can
+  register functionality from third-party MCP servers such as those listed
+  here: <https://github.com/modelcontextprotocol/servers>.
 
-      `mcp_tools()` fetches tools from MCP servers configured in the mcptools
-      server config file and converts them to a list of tools compatible with
-      the `⁠$set_tools()⁠` method of ellmer::Chat objects.
+  `mcp_tools()` fetches tools from MCP servers configured in the mcptools
+  server config file and converts them to a list of tools compatible with
+  the `⁠$set_tools()⁠` method of ellmer::Chat objects.
 
-      #### Arguments
+  #### Usage
 
-      |  |  |
-      |----|----|
-      | `config` | A single string indicating the path to the mcptools MCP servers configuration f...
+  mcp_tools(config = NULL)
 
-── assistant [62853 / 196436] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  #### Arguments
 
-`posit-dev/mcptools` does not directly implement the ability to use HTTP MCP servers with `ellmer`. When `mcptools` acts as an MCP *client* via `ellmer`, it only supports the local (stdio) protocol. To connect to remote (HTTP) MCP servers, the `mcptools` documentation recommends using `mcp-remote`, an external tool (a local stdio MCP server) that converts remote HTTP servers to `mcptools`-compatible local ones. This allows `ellmer` (using the stdio protocol) to interact with remote HTTP MCP servers through `mcp-remote`.
+  |  |  |
+  |----|----|
+  | `config` | A single string indicating the path to the mcptools MCP servers configuration file. If one is not supplied, mcptools will look...
+
+── assistant [3786 / 10034] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+No, `posit-dev/mcptools` itself does not directly implement the ability to use HTTP MCP servers with 'ellmer'. The `mcp_tools()` function within `mcptools`, which allows R to act as an MCP client via 'ellmer', only implements the local (stdio) protocol. However, `mcptools` recommends using `mcp-remote` (an external tool) as an intermediary. `mcp-remote` is a local (stdio) MCP server that can connect to remote (http) servers, converting them to an `mcptools`-compatible local protocol. This allows `mcptools` to indirectly utilize HTTP MCP servers through `mcp-remote`.
 ```
 
-## Advanced Usage
+## Advanced Usage: making our own MCP servers
 
-### Creating a Custom MCP Server
+### Building a STDIO MCP Server
 
 Let’s create our own stdio MCP server for interacting with Zotero’s
 local API. This server will be usable both from argent and from other
@@ -310,37 +265,31 @@ MCP clients, like Claude Code.
 
 #### Server Implementation
 
-Zotero MCP Server Implementation (long)
+Zotero MCP Server Implementation
 
 ``` r
 # Zotero MCP Server
 #
 # A stdio MCP server for interacting with Zotero's local API.
 # This server can be used with argent or other MCP clients like Claude Code.
+```
 
-# ------🔺 SETUP ---------------------------------------------------------------
+``` {r🔺
+# Setup for when the server is used as a standalone MCP server (e.g. from Claude Desktop)
 
-# Check and install required packages
-required_packages <- c("httr2", "cli", "jsonlite", "argent")
-missing_packages <- required_packages[!sapply(required_packages, requireNamespace, quietly = TRUE)]
-
-if (length(missing_packages) > 0) {
-    message("Installing missing packages: ", paste(missing_packages, collapse = ", "))
-    install.packages(missing_packages, repos = "https://cloud.r-project.org", quiet = TRUE)
-}
-
-suppressPackageStartupMessages({
-    library(httr2)
-    library(cli)
-    library(jsonlite)
-    # library(argent)
-    devtools::load_all()
-})
+# Since this file is part of the argent package, there should be no need to test is the package is installed or not.
+# `argent` imports httr2, jsonlite & purrr, so we don't need to check if those are installed either.
+suppressPackageStartupMessages(library(argent))
 
 # Disable httr2 progress bars to avoid stderr noise
-options(httr2_progress = FALSE)
+options(
+    httr2_progress = FALSE,
+    argent.debug = FALSE
+)
+```
 
-# ------🔺 TOOLS ---------------------------------------------------------------
+``` {r🔺
+# Defining the tools that the server will expose
 
 # Base request function to Zotero local API
 zotero_request <- function(endpoint, query = list(), user_id = "0", valid_statuses = 200) {
@@ -680,9 +629,9 @@ zotero_get_item_types <- function() {
 
     return(jsonlite::toJSON(item_types %||% list(), auto_unbox = TRUE))
 }
+```
 
-# ------🔺 MCP SERVER ----------------------------------------------------------
-
+``` {r🔺
 zotero_mcp_server <- function() {
     server <- argent:::McpServer$new(
         name = "Zotero",
@@ -842,12 +791,10 @@ zotero_mcp_server()
 
 > **Note**
 >
-> The complete Zotero MCP server code is available in the package at
+> The Zotero MCP server code is available in the package at
 > `inst/examples/zotero_mcp_server.R`.
 
-### Using the Server
-
-#### Use with argent
+#### Using the MCP Server
 
 ``` r
 zotero_client <- mcp_connect(
@@ -881,16 +828,16 @@ neuroscience_items <- execute_mcp_tool(
     arguments = list(collection_key = neuroscience_collection_key)
 )
 
+# Getting a specific paper's key with a keyword from its title
+neuroscience_paper_key <- jsonlite::fromJSON(neuroscience_items) |> 
+    dplyr::filter(stringr::str_detect(title, "cross-modal plasticity")) |>
+    dplyr::pull(key)
+
 # Getting the details on the paper
 neuroscience_paper_details <- execute_mcp_tool(
     get_mcp_tool(zotero_tools, "zotero_get_item"),
     arguments = list(item_key = neuroscience_paper_key)
 )
-
-# Getting a specific paper's key with a keyword from its title
-neuroscience_paper_key <- jsonlite::fromJSON(neuroscience_items) |> 
-    dplyr::filter(stringr::str_detect(title, "cross-modal plasticity")) |>
-    dplyr::pull(key)
 
 # Getting the fulltext of the paper (as a string)
 neuroscience_paper_fulltext <- execute_mcp_tool(
@@ -904,9 +851,9 @@ cat(neuroscience_paper_fulltext)
 Now, let’s give the tools to an LLM Agent instead:
 
 ``` r
-google <- Google$new()
+gemini <- Google$new()
 
-google$chat(
+gemini$chat(
     "Can you summarize O'Regan's view on sensory substitution and on how the brain differentiates sensory inputs ?",
     "Find at least 2 papers in my library",
     model = "gemini-2.5-flash",
@@ -934,3 +881,490 @@ google$chat(
 >   }
 > }
 > ```
+
+### Building an HTTP MCP Server
+
+Let’s create an HTTP MCP server for searching academic papers using the
+Semantic Scholar API. Unlike stdio servers that communicate via standard
+input/output, HTTP servers expose a REST endpoint that can be accessed
+over the network.
+
+> **Note**
+>
+> `argent` provides convenience functions to create HTTP MCP servers,
+> but you can also create your own with `plumber2` or other HTTP server
+> frameworks, independently from `argent`.
+
+#### Prerequisites
+
+- A Semantic Scholar API key (not required, but the rate limits are low
+  without one)
+
+#### Server Implementation
+
+Semantic Scholar MCP Server Implementation
+
+``` r
+# Semantic Scholar MCP Server
+#
+# An HTTP MCP server for searching academic papers using the Semantic Scholar API.
+# This server can be used with argent or other MCP clients.
+```
+
+``` {r🔺
+suppressPackageStartupMessages(library(argent))
+
+# Disable httr2 progress bars to avoid stderr noise
+options(
+    httr2_progress = FALSE,
+    argent.debug = FALSE
+)
+```
+
+``` {r🔺
+# Defining the tools that the server will expose
+
+# Base request function for Semantic Scholar API
+semantic_scholar_request <- function(endpoint, query = list()) {
+    base_url <- "https://api.semanticscholar.org/graph/v1"
+    url <- paste0(base_url, endpoint)
+
+    resp <- httr2::request(url) |>
+        httr2::req_url_query(!!!query) |>
+        httr2::req_error(is_error = \(resp) FALSE) |>
+        httr2::req_throttle(rate = 20 / 60, realm = "semantic-scholar") |>
+        httr2::req_perform()
+
+    status <- httr2::resp_status(resp)
+
+    if (status == 429) {
+        return(argent:::mcp_error(
+            message = "Rate limit exceeded",
+            type = "api_error",
+            details = "Too many requests to Semantic Scholar API",
+            suggestion = "Wait a few seconds before retrying"
+        ))
+    }
+
+    if (status == 404) {
+        return(NULL)
+    }
+
+    if (status != 200) {
+        return(argent:::mcp_error(
+            message = paste0("Semantic Scholar API request failed with status ", status),
+            type = "api_error",
+            details = paste0("Unexpected HTTP status code from endpoint: ", endpoint)
+        ))
+    }
+
+    httr2::resp_body_json(resp)
+}
+
+# Default fields to return for papers
+default_fields <- "title,authors,year,abstract,citationCount,url,venue,publicationDate"
+
+semantic_scholar_search_papers <- function(query, limit = 10L, fields = NULL) {
+    if (is.null(query) || nchar(query) == 0) {
+        return(argent:::mcp_error(
+            message = "Query parameter is required",
+            type = "validation",
+            details = "The 'query' parameter cannot be empty",
+            suggestion = "Provide keywords, author names, or paper titles to search for"
+        ))
+    }
+
+    # Use default fields if not specified
+    fields_param <- fields %||% default_fields
+
+    params <- list(
+        query = query,
+        limit = as.integer(min(limit, 100)),
+        fields = fields_param
+    )
+
+    result <- semantic_scholar_request("/paper/search", query = params)
+
+    if (isTRUE(result$.error)) {
+        return(result)
+    }
+
+    if (is.null(result) || purrr::is_empty(result$data)) {
+        return(jsonlite::toJSON(list(), auto_unbox = TRUE))
+    }
+
+    # Extract and format papers
+    papers <- lapply(result$data, function(paper) {
+        authors <- "No authors"
+        if (!purrr::is_empty(paper$authors)) {
+            authors <- paste(purrr::map_chr(paper$authors, \(a) a$name), collapse = "; ")
+        }
+
+        list(
+            paperId = paper$paperId,
+            title = paper$title %||% "Untitled",
+            authors = authors,
+            year = paper$year %||% "Unknown year",
+            abstract = paper$abstract %||% "No abstract available",
+            citationCount = paper$citationCount %||% 0,
+            url = paper$url,
+            venue = paper$venue %||% "Unknown venue",
+            publicationDate = paper$publicationDate %||% "Unknown date"
+        )
+    })
+
+    jsonlite::toJSON(papers, auto_unbox = TRUE)
+}
+
+semantic_scholar_get_paper <- function(paper_id, fields = NULL) {
+    if (is.null(paper_id) || nchar(paper_id) == 0) {
+        return(argent:::mcp_error(
+            message = "Paper ID is required",
+            type = "validation",
+            details = "The 'paper_id' parameter cannot be empty",
+            suggestion = "Provide a Semantic Scholar paper ID or DOI"
+        ))
+    }
+
+    # Use default fields if not specified
+    fields_param <- fields %||% default_fields
+
+    endpoint <- paste0("/paper/", paper_id)
+    params <- list(fields = fields_param)
+
+    result <- semantic_scholar_request(endpoint, query = params)
+
+    if (isTRUE(result$.error)) {
+        return(result)
+    }
+
+    if (is.null(result)) {
+        return(argent:::mcp_error(
+            message = "Paper not found",
+            type = "not_found",
+            details = paste0("No paper with ID '", paper_id, "' exists"),
+            suggestion = "Verify the paper ID using search_papers first, or try a different ID/DOI"
+        ))
+    }
+
+    # Format authors
+    authors <- "No authors"
+    if (!purrr::is_empty(result$authors)) {
+        authors <- paste(purrr::map_chr(result$authors, \(a) a$name), collapse = "; ")
+    }
+
+    paper <- list(
+        paperId = result$paperId,
+        title = result$title %||% "Untitled",
+        authors = authors,
+        year = result$year %||% "Unknown year",
+        abstract = result$abstract %||% "No abstract available",
+        citationCount = result$citationCount %||% 0,
+        url = result$url,
+        venue = result$venue %||% "Unknown venue",
+        publicationDate = result$publicationDate %||% "Unknown date"
+    )
+
+    jsonlite::toJSON(paper, auto_unbox = TRUE)
+}
+
+semantic_scholar_get_paper_citations <- function(paper_id, limit = 10, fields = NULL) {
+    if (is.null(paper_id) || nchar(paper_id) == 0) {
+        return(argent:::mcp_error(
+            message = "Paper ID is required",
+            type = "validation",
+            details = "The 'paper_id' parameter cannot be empty",
+            suggestion = "Provide a Semantic Scholar paper ID or DOI"
+        ))
+    }
+
+    # Use default fields if not specified
+    fields_param <- fields %||% default_fields
+
+    endpoint <- paste0("/paper/", paper_id, "/citations")
+    params <- list(
+        limit = as.integer(min(limit, 1000)),
+        fields = fields_param
+    )
+
+    result <- semantic_scholar_request(endpoint, query = params)
+
+    if (isTRUE(result$.error)) {
+        return(result)
+    }
+
+    if (is.null(result) || purrr::is_empty(result$data)) {
+        return(jsonlite::toJSON(list(), auto_unbox = TRUE))
+    }
+
+    # Extract citing papers
+    citations <- lapply(result$data, function(citation) {
+        paper <- citation$citingPaper
+
+        authors <- "No authors"
+        if (!purrr::is_empty(paper$authors)) {
+            authors <- paste(purrr::map_chr(paper$authors, \(a) a$name), collapse = "; ")
+        }
+
+        list(
+            paperId = paper$paperId,
+            title = paper$title %||% "Untitled",
+            authors = authors,
+            year = paper$year %||% "Unknown year",
+            abstract = paper$abstract %||% "No abstract available",
+            citationCount = paper$citationCount %||% 0,
+            url = paper$url,
+            venue = paper$venue %||% "Unknown venue",
+            publicationDate = paper$publicationDate %||% "Unknown date"
+        )
+    })
+
+    jsonlite::toJSON(citations, auto_unbox = TRUE)
+}
+
+semantic_scholar_get_paper_references <- function(paper_id, limit = 10, fields = NULL) {
+    if (is.null(paper_id) || nchar(paper_id) == 0) {
+        return(argent:::mcp_error(
+            message = "Paper ID is required",
+            type = "validation",
+            details = "The 'paper_id' parameter cannot be empty",
+            suggestion = "Provide a Semantic Scholar paper ID or DOI"
+        ))
+    }
+
+    # Use default fields if not specified
+    fields_param <- fields %||% default_fields
+
+    endpoint <- paste0("/paper/", paper_id, "/references")
+    params <- list(
+        limit = as.integer(min(limit, 1000)),
+        fields = fields_param
+    )
+
+    result <- semantic_scholar_request(endpoint, query = params)
+
+    if (isTRUE(result$.error)) {
+        return(result)
+    }
+
+    if (is.null(result) || purrr::is_empty(result$data)) {
+        return(jsonlite::toJSON(list(), auto_unbox = TRUE))
+    }
+
+    # Extract referenced papers
+    references <- lapply(result$data, function(reference) {
+        paper <- reference$citedPaper
+
+        authors <- "No authors"
+        if (!purrr::is_empty(paper$authors)) {
+            authors <- paste(purrr::map_chr(paper$authors, \(a) a$name), collapse = "; ")
+        }
+
+        list(
+            paperId = paper$paperId,
+            title = paper$title %||% "Untitled",
+            authors = authors,
+            year = paper$year %||% "Unknown year",
+            abstract = paper$abstract %||% "No abstract available",
+            citationCount = paper$citationCount %||% 0,
+            url = paper$url,
+            venue = paper$venue %||% "Unknown venue",
+            publicationDate = paper$publicationDate %||% "Unknown date"
+        )
+    })
+
+    jsonlite::toJSON(references, auto_unbox = TRUE)
+}
+```
+
+``` {r🔺
+semantic_scholar_mcp_server <- function(port = 8080, host = "127.0.0.1") {
+    server <- argent:::McpServer$new(
+        name = "semantic-scholar",
+        version = "1.0.0"
+    )
+
+    # Define tools
+    search_papers_tool <- argent::tool(
+        name = "search_papers",
+        description = paste(
+            "Search for academic papers by keywords, authors, or topics using the Semantic Scholar API.",
+            "Returns a list of papers with metadata including title, authors, year, abstract, citation count, and URL.",
+            "IMPORTANT:",
+            "- Use broad search terms for better results",
+            "- Search is case-insensitive",
+            "- Returns up to 100 results per query"
+        ),
+        query = paste(
+            "string* Search query (keywords, author names, paper titles, etc.).",
+            "Examples: 'neural networks', 'attention mechanisms', 'Geoffrey Hinton'"
+        ),
+        limit = "integer Maximum number of results to return (default: 10, max: 100)",
+        fields = paste(
+            "string Comma-separated list of fields to return.",
+            "Default: 'title,authors,year,abstract,citationCount,url,venue,publicationDate'.",
+            "Other available fields: 'referenceCount', 'influentialCitationCount', 'fieldsOfStudy'"
+        ),
+        fn = semantic_scholar_search_papers
+    )
+
+    get_paper_tool <- argent::tool(
+        name = "get_paper",
+        description = paste(
+            "Get detailed metadata for a specific paper by its Semantic Scholar ID or DOI.",
+            "Returns comprehensive information including title, authors, abstract, year, citation count, and more.",
+            "Use this after search_papers to get full details for specific papers."
+        ),
+        paper_id = paste(
+            "string* Paper ID (Semantic Scholar ID or DOI).",
+            "Examples: '649def34f8be52c8b66281af98ae884c09aef38b' (S2 ID), '10.1038/nature14539' (DOI)"
+        ),
+        fields = paste(
+            "string Comma-separated list of fields to return.",
+            "Default: 'title,authors,year,abstract,citationCount,url,venue,publicationDate'"
+        ),
+        fn = semantic_scholar_get_paper
+    )
+
+    get_paper_citations_tool <- argent::tool(
+        name = "get_paper_citations",
+        description = paste(
+            "Get papers that cite a given paper.",
+            "Returns a list of citing papers with their metadata.",
+            "Useful for finding related work and tracking research impact."
+        ),
+        paper_id = "string* Paper ID (Semantic Scholar ID or DOI)",
+        limit = "integer Maximum number of citations to return (default: 10, max: 1000)",
+        fields = paste(
+            "string Comma-separated list of fields to return for each citing paper.",
+            "Default: 'title,authors,year,abstract,citationCount,url,venue,publicationDate'"
+        ),
+        fn = semantic_scholar_get_paper_citations
+    )
+
+    get_paper_references_tool <- argent::tool(
+        name = "get_paper_references",
+        description = paste(
+            "Get papers referenced by a given paper (its bibliography).",
+            "Returns a list of referenced papers with their metadata.",
+            "Useful for finding foundational work and related research."
+        ),
+        paper_id = "string* Paper ID (Semantic Scholar ID or DOI)",
+        limit = "integer Maximum number of references to return (default: 10, max: 1000)",
+        fields = paste(
+            "string Comma-separated list of fields to return for each referenced paper.",
+            "Default: 'title,authors,year,abstract,citationCount,url,venue,publicationDate'"
+        ),
+        fn = semantic_scholar_get_paper_references
+    )
+
+    # Add tools to server
+    server$add_tool(search_papers_tool)
+    server$add_tool(get_paper_tool)
+    server$add_tool(get_paper_citations_tool)
+    server$add_tool(get_paper_references_tool)
+
+    # Start HTTP server
+    server$serve_http(host = host, port = port, block = TRUE)
+}
+
+# Run server with command line args or defaults
+args <- commandArgs(trailingOnly = TRUE)
+port <- if (length(args) > 0) as.integer(args[1]) else 8080
+semantic_scholar_mcp_server(port = port)
+```
+
+> **Note**
+>
+> The Semantic Scholar MCP server code is available at
+> `inst/examples/semantic_scholar_mcp_server.R`.
+
+#### Using the HTTP MCP Server
+
+First, start the server in a separate R session or terminal:
+
+``` r
+source(system.file("examples/semantic_scholar_mcp_server.R", package = "argent"))
+#> ✔ Starting semantic-scholar MCP server on <http://127.0.0.1:8080>
+```
+
+Then connect to it from your main session:
+
+``` r
+semantic_scholar_client <- mcp_connect(
+    name = "semantic-scholar",
+    type = "http",
+    url = "http://127.0.0.1:8080"
+)
+
+semantic_scholar_tools <- mcp_tools(semantic_scholar_client)
+```
+
+Test the server manually:
+
+``` r
+papers <- execute_mcp_tool(
+    get_mcp_tool(semantic_scholar_tools, "search_papers"),
+    arguments = list(
+        query = "Sensorimotor Contingencies",
+        limit = 2L,
+        fields = "title,authors,year,abstract,citationCount"
+    )
+)
+
+# Parse results
+papers_df <- jsonlite::fromJSON(papers) |> 
+    dplyr::select(paperId, title, year, citationCount)
+
+paper_id <- dplyr::slice_max(papers_df, order_by = citationCount)$paperId
+
+# Getting the details of the first paper
+execute_mcp_tool(
+    get_mcp_tool(semantic_scholar_tools, "get_paper"),
+    arguments = list(
+        paper_id = paper_id,
+        fields = "title,authors,year,abstract"
+    )
+)
+```
+
+Now use it with an LLM agent:
+
+``` r
+gemini <- Google$new()
+
+gemini$chat(
+    "Find recent papers (2020+) on Sensory Substitution and Cross-Modal Plasticity and summarize the key innovations",
+    "When using the `search_papers` tool, use a limit of 2 by search, to not exceed the rate limit.",
+    "Use the `get_paper` tool to get the details of the papers like its abstract.",
+    model = "gemini-2.5-flash",
+    tools = semantic_scholar_tools,
+    output_schema = schema(
+        name = "research_papers_summary",
+        description = "Information about research papers",
+        papers = list(
+            type = "[object]*",
+            description = "Array of paper objects",
+            paper_id = "string* The ID of the paper",
+            title = "string* The title of the paper",
+            year = "integer* The year of the paper",
+            main_findings = "string* The main findings of the paper"
+        )
+    )
+)
+```
+
+> **Tip**
+>
+> **HTTP vs stdio servers:**
+>
+> - **HTTP servers** can be accessed remotely, support multiple
+>   concurrent clients, and can be deployed as web services
+> - **stdio servers** are simpler, work locally only, and are typically
+>   one client per server instance
+> - Both types use the same MCP protocol and tool definitions
+
+> **Tip**
+>
+> You can use this server with other MCP clients by configuring them to
+> connect to `http://127.0.0.1:8080`.

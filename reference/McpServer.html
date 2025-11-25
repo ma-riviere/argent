@@ -94,7 +94,7 @@ Use this to expose R functions as tools to LLMs via the MCP protocol.</p>
 <li><p><a href="#method-McpServer-add_resource"><code>McpServer$add_resource()</code></a></p></li>
 <li><p><a href="#method-McpServer-add_prompt"><code>McpServer$add_prompt()</code></a></p></li>
 <li><p><a href="#method-McpServer-serve_stdio"><code>McpServer$serve_stdio()</code></a></p></li>
-<li><p><a href="#method-McpServer-handle_request"><code>McpServer$handle_request()</code></a></p></li>
+<li><p><a href="#method-McpServer-serve_http"><code>McpServer$serve_http()</code></a></p></li>
 <li><p><a href="#method-McpServer-clone"><code>McpServer$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-McpServer-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
@@ -190,17 +190,36 @@ This method blocks and listens for JSON-RPC requests on stdin.</p><div class="se
 </div>
 
 
-</div><p></p><hr><a id="method-McpServer-handle_request"></a><div class="section">
-<h3 id="method-handle-request-">Method <code>handle_request()</code><a class="anchor" aria-label="anchor" href="#method-handle-request-"></a></h3>
-<p>Handle a single JSON-RPC request line</p><div class="section">
+</div><p></p><hr><a id="method-McpServer-serve_http"></a><div class="section">
+<h3 id="method-serve-http-">Method <code>serve_http()</code><a class="anchor" aria-label="anchor" href="#method-serve-http-"></a></h3>
+<p>Serve the MCP protocol over HTTP
+This method starts an HTTP server and blocks, listening for JSON-RPC requests on POST /.</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">McpServer</span><span class="op">$</span><span class="fu">handle_request</span><span class="op">(</span><span class="va">line</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">McpServer</span><span class="op">$</span><span class="fu">serve_http</span><span class="op">(</span></span>
+<span>  host <span class="op">=</span> <span class="st">"127.0.0.1"</span>,</span>
+<span>  port <span class="op">=</span> <span class="fl">8080</span>,</span>
+<span>  block <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  silent <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>line</code></dt>
-<dd><p>JSON string</p></dd>
+<p></p><div class="arguments"><dl><dt><code>host</code></dt>
+<dd><p>Character. Host to bind to (default: "127.0.0.1")</p></dd>
+
+
+<dt><code>port</code></dt>
+<dd><p>Integer. Port to listen on (default: 8080)</p></dd>
+
+
+<dt><code>block</code></dt>
+<dd><p>Logical. Whether to block the console (default: TRUE)</p></dd>
+
+
+<dt><code>silent</code></dt>
+<dd><p>Logical. Whether to suppress startup messages (default: FALSE)
+Format a JSON-RPC response</p></dd>
 
 
 </dl><p></p></div>

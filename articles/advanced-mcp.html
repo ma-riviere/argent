@@ -138,15 +138,13 @@
 <p>Finally, we can call the <code>get_file_contents</code> tool manually to see if it works:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">get_file_contents_mcp_tool</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_mcp_tool.html">get_mcp_tool</a></span><span class="op">(</span><span class="va">github_mcp_tools</span>, <span class="st">"get_file_contents"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/execute_mcp_tool.html">execute_mcp_tool</a></span><span class="op">(</span></span>
-<span>    tool_def <span class="op">=</span> <span class="va">get_file_contents_mcp_tool</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/execute_mcp_tool.html">execute_mcp_tool</a></span><span class="op">(</span></span>
+<span>    tool_def <span class="op">=</span> <span class="fu"><a href="../reference/get_mcp_tool.html">get_mcp_tool</a></span><span class="op">(</span><span class="va">github_mcp_tools</span>, <span class="st">"get_file_contents"</span><span class="op">)</span>,</span>
 <span>    arguments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>        owner <span class="op">=</span> <span class="st">"tidyverse"</span>,</span>
-<span>        repo <span class="op">=</span> <span class="st">"ellmer"</span></span>
-<span>        <span class="co"># path = "/"</span></span>
-<span>        <span class="co"># ref = "main"</span></span>
+<span>        repo <span class="op">=</span> <span class="st">"ellmer"</span>,</span>
+<span>        path <span class="op">=</span> <span class="st">"/"</span>,</span>
+<span>        ref <span class="op">=</span> <span class="st">"main"</span></span>
 <span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -184,10 +182,8 @@
 <p>Finally, we can call the <code>help_topics</code> tool manually to see if it works:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">help_topics_tool</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_mcp_tool.html">get_mcp_tool</a></span><span class="op">(</span><span class="va">btw_mcp_tools</span>, <span class="st">"btw_tool_docs_package_help_topics"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/execute_mcp_tool.html">execute_mcp_tool</a></span><span class="op">(</span></span>
-<span>    tool_def <span class="op">=</span> <span class="va">help_topics_tool</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/execute_mcp_tool.html">execute_mcp_tool</a></span><span class="op">(</span></span>
+<span>    tool_def <span class="op">=</span> <span class="fu"><a href="../reference/get_mcp_tool.html">get_mcp_tool</a></span><span class="op">(</span><span class="va">btw_mcp_tools</span>, <span class="st">"btw_tool_docs_package_help_topics"</span><span class="op">)</span>,</span>
 <span>    arguments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>        package_name <span class="op">=</span> <span class="st">"argent"</span>,</span>
 <span>        `_intent` <span class="op">=</span> <span class="st">"Vignettes explaining how to use MCP servers with argent"</span></span>
@@ -201,169 +197,128 @@
 <div class="sourceCode cell-code" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">google</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Google.html">Google</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">tools</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/flat_list.html">flat_list</a></span><span class="op">(</span><span class="va">github_mcp_tools</span>, <span class="va">btw_mcp_tools</span>, <span class="fu"><a href="../reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">web_search</span><span class="op">)</span>, <span class="fu"><a href="../reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">web_fetch</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
 <span><span class="va">google</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"Has 'posit-dev/mcptools' implemented the ability to use HTTP MCP servers with 'ellmer' ?"</span>,</span>
 <span>    <span class="st">"Use the `get_file_contents` tool to list the contents of GitHub subdirectories, e.g. with path = '/' or 'dir/'."</span>,</span>
 <span>    <span class="st">"Use the `btw` tools to explore the help pages and vignettes of the local installation of the `mcptools` package."</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
-<span>    tools <span class="op">=</span> <span class="va">tools</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">google</span>, show_tools <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span>    tools <span class="op">=</span> <span class="fu"><a href="../reference/flat_list.html">flat_list</a></span><span class="op">(</span><span class="va">github_mcp_tools</span>, <span class="va">btw_mcp_tools</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>`posit-dev/mcptools` does not directly implement the ability to use HTTP MCP servers with `ellmer`. When `mcptools` acts as an MCP *client* via `ellmer`, it only supports the local (stdio) protocol. To connect to remote (HTTP) MCP servers, the `mcptools` documentation recommends using `mcp-remote`, an external tool (a local stdio MCP server) that converts remote HTTP servers to `mcptools`-compatible local ones. This allows `ellmer` (using the stdio protocol) to interact with remote HTTP MCP servers through `mcp-remote`.</span></code></pre></div>
-<details><summary><code>print(google, show_tools = TRUE)</code></summary><div class="sourceCode" id="cb10"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>── [ &lt;Google&gt; turns: 10 | Current context: 62853 | Cumulated tokens: 196436 ] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<div class="sourceCode" id="cb9"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>`posit-dev/mcptools` does not directly implement the ability to use HTTP MCP servers with `ellmer`. When `mcptools` acts as an MCP *client* via `ellmer`, it only supports the local (stdio) protocol. </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>To connect to remote (HTTP) MCP servers, the `mcptools` documentation recommends using `mcp-remote`, an external tool (a local stdio MCP server) that converts remote HTTP servers to `mcptools`-compatible local ones. This allows `ellmer` (using the stdio protocol) to interact with remote HTTP MCP servers through `mcp-remote`.</span></code></pre></div>
+<details><summary><code>print(google, show_tools = TRUE)</code></summary><div class="sourceCode" id="cb10"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>── [ &lt;Google&gt; turns: 8 | Current context: 3786 | Cumulated tokens: 10034 ] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>── user [1789 / 2107] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>── user [1611 / 2155] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>Has 'posit-dev/mcptools' implemented the ability to use HTTP MCP servers with ellmer ? Use the `get_file_contents` tool to list the contents of GitHub subdirectories, e.g. with path = '/' or 'dir/'. Use the `btw` tools to explore the help pages and vignettes of the local installation of the `mcptools` package.</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>Has 'posit-dev/mcptools' implemented the ability to use HTTP MCP servers with 'ellmer' ? Use the `get_file_contents` tool to list the contents of GitHub subdirectories, e.g. with path = '/' or 'dir/'. Use the `btw` tools to explore the help pages and vignettes of the local installation of the `mcptools` package.</span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>── System ──</span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-19</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-24</span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>── Tool Definitions ──</span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>• get_file_contents(owner, path, ref, repo, sha): Get the contents of a file or directory from a GitHub repository</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>• search_code(order, page, perPage, query, sort): Fast and precise code search across ALL GitHub repositories using GitHub's native search engine. Best for finding exact symbols, functions, classes, or specific</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  code patterns.</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>• search_code(order, page, perPage, query, sort): Fast and precise code search across ALL GitHub repositories using GitHub's native search engine. Best for finding exact symbols, functions,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  classes, or specific code patterns.</span>
 <span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>• btw_tool_docs_package_help_topics(package_name, _intent): Get available help topics for an R package.</span>
 <span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>• btw_tool_docs_help_page(package_name, topic, _intent): Get help page from package.</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>• btw_tool_docs_available_vignettes(package_name, _intent): List available vignettes for an R package. Vignettes are articles describing key concepts or features of an R package. Returns the listing as a JSON</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  array of `vignette` and `title`. To read a vignette, use `btw_tool_docs_vignette(package_name, vignette)`.</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>• btw_tool_docs_available_vignettes(package_name, _intent): List available vignettes for an R package. Vignettes are articles describing key concepts or features of an R package. Returns the</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  listing as a JSON array of `vignette` and `title`. To read a vignette, use `btw_tool_docs_vignette(package_name, vignette)`.</span>
 <span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>• btw_tool_docs_vignette(package_name, vignette, _intent): Get a package vignette in plain text.</span>
 <span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>• btw_tool_session_check_package_installed(package_name, _intent): Check if a package is installed in the current session.</span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>• btw_tool_session_package_info(packages, dependencies, _intent): Verify that a specific package is installed, or find out which packages are in use in the current session. As a last resort, this function can</span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  also list all installed packages.</span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>• web_search(query): Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or</span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>  any data not in your training data.</span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>• web_fetch(url): Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read</span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>  articles, documentation, blog posts, or any web page content.</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>• btw_tool_session_package_info(packages, dependencies, _intent): Verify that a specific package is installed, or find out which packages are in use in the current session. As a last resort, this</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  function can also list all installed packages.</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>── assistant [2155 / 2155] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>── Tool Calls ──</span>
 <span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>── assistant [2107 / 2107] ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>• btw_tool_session_check_package_installed(package_name = "mcptools", _intent = "Check if mcptools is installed locally to access its documentation.")</span>
 <span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>── Tool Calls ──</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>── tool [1757 / 4021] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
 <span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>• get_file_contents(repo = "mcptools", owner = "posit-dev", path = "/")</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>• Result from btw_tool_session_check_package_installed:</span>
 <span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>── tool [8379 / 10686] ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>• Result from get_file_contents:</span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>name: get_file_contents</span>
-<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>arguments:</span>
-<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>  repo: mcptools</span>
-<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>  owner: posit-dev</span>
-<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>  path: /</span>
-<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>result:</span>
-<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>  content:</span>
-<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>  - type: text</span>
-<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>    text: '[{"type":"file","size":210,"name":".Rbuildignore","path":".Rbuildignore","sha":"8fe0bfc60f1d4655aff00d34de75b22f1e6bb7c3","url":"https://api.github.com/repos/posit-dev/mcptools/contents/.Rbuildignore?ref=4f91a58684555e66fd46414f2dc63c46c3802d89","git_url":"https://api.github.com/repos/posit-dev/mcptools/git/blobs/8fe0bfc60f1d4655aff00d34de75b22f1e6bb7c3","html_url":"https://github.com/posit-dev/mcptools/blob/4f91a58684555e66fd46414f2dc63c46c3802d89/.Rbuildignore","download_url":"https://raw.githubusercontent.com/posit-dev/mcptools/4f91a58684555e66fd46414f2dc63c46c3802d89/.Rbuildignore"},{"type":"dir","size":0,"name":".github","path":".github","sha":"c1a387a5ec7f8bf8c6626c7d04d8d00551252def","url":"https://api.github.com/repos/posit-dev/mcptools/contents/.github?ref=4f91a58684555e66fd46414f2dc63c46c3802d89","git_url":"https://api.github.com/repos/posit-dev/mcpto...</span>
-<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>── assistant [8579 / 10686] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>── Tool Calls ──</span>
-<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>• search_code(query = "ellmer repo:posit-dev/mcptools")</span>
-<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>• search_code(query = "http mcp server repo:posit-dev/mcptools")</span>
-<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>── tool [60874 / 72190] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>• Result from search_code:</span>
-<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a>name: search_code</span>
-<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>arguments:</span>
-<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>  query: ellmer repo:posit-dev/mcptools</span>
-<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>result:</span>
-<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>  content:</span>
-<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>  - type: text</span>
-<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a>    text: '{"total_count":17,"incomplete_results":false,"items":[{"name":"example-ellmer-tools.R","path":"inst/example-ellmer-tools.R","sha":"bfde4b0d734301e24a4908ec1054a5e0c7997b4c","html_url":"https://github.com/posit-dev/mcptools/blob/4f91a58684555e66fd46414f2dc63c46c3802d89/inst/example-ellmer-tools.R","repository":{"id":955571244,"node_id":"R_kgDOOPTcLA","owner":{"login":"posit-dev","id":107264312,"node_id":"O_kgDOBmS5OA","avatar_url":"https://avatars.githubusercontent.com/u/107264312?v=4","html_url":"https://github.com/posit-dev","gravatar_id":"","type":"Organization","site_admin":false,"url":"https://api.github.com/users/posit-dev","events_url":"https://api.github.com/users/posit-dev/events{/privacy}","following_url":"https://api.github.com/users/posit-dev/following{/other_user}","followers_url":"https://api.github.com/users/posit-dev/followers","gists_url":"https://api.githu...</span>
-<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a>• Result from search_code:</span>
-<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a>name: search_code</span>
-<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a>arguments:</span>
-<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a>  query: http mcp server repo:posit-dev/mcptools</span>
-<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a>result:</span>
-<span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a>  content:</span>
-<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a>  - type: text</span>
-<span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a>    text: '{"total_count":16,"incomplete_results":false,"items":[{"name":"server.R","path":"R/server.R","sha":"c554b70c68889735629019c4b8d14d9a83f05a4b","html_url":"https://github.com/posit-dev/mcptools/blob/4f91a58684555e66fd46414f2dc63c46c3802d89/R/server.R","repository":{"id":955571244,"node_id":"R_kgDOOPTcLA","owner":{"login":"posit-dev","id":107264312,"node_id":"O_kgDOBmS5OA","avatar_url":"https://avatars.githubusercontent.com/u/107264312?v=4","html_url":"https://github.com/posit-dev","gravatar_id":"","type":"Organization","site_admin":false,"url":"https://api.github.com/users/posit-dev","events_url":"https://api.github.com/users/posit-dev/events{/privacy}","following_url":"https://api.github.com/users/posit-dev/following{/other_user}","followers_url":"https://api.github.com/users/posit-dev/followers","gists_url":"https://api.github.com/users/posit-dev/gists{/gist_id}",...</span>
-<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a>── assistant [61504 / 72190] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-81"><a href="#cb10-81" aria-hidden="true" tabindex="-1"></a>── Tool Calls ──</span>
-<span id="cb10-82"><a href="#cb10-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-83"><a href="#cb10-83" aria-hidden="true" tabindex="-1"></a>• btw_tool_docs_package_help_topics(package_name = "mcptools", _intent = "Check for relevant help topics in mcptools documentation regarding ellmer and HTTP MCP servers")</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>name: btw_tool_session_check_package_installed</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>arguments:</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>  package_name: mcptools</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>  _intent: Check if mcptools is installed locally to access its documentation.</span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>result: Package `mcptools` version 0.2.0 is installed.</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>── assistant [1866 / 4021] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>── Tool Calls ──</span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>• btw_tool_docs_package_help_topics(_intent = "List all help topics for mcptools to find relevant documentation on HTTP MCP servers and ellmer.", package_name = "mcptools")</span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>── tool [2040 / 6248] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>• Result from btw_tool_docs_package_help_topics:</span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>name: btw_tool_docs_package_help_topics</span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>arguments:</span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>  _intent: List all help topics for mcptools to find relevant documentation on HTTP</span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>    MCP servers and ellmer.</span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>  package_name: mcptools</span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>result: |-</span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>  [</span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>    {"topic_id":"client","title":"R as a client: Define ellmer tools from MCP servers","aliases":["client","mcp_tools","mcp_client"]},</span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a>    {"topic_id":"mcptools-package","title":"mcptools: Model Context Protocol Servers and Clients","aliases":["mcptools","mcptools-package"]},</span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>    {"topic_id":"server","title":"R as a server: Configure R-based tools with LLM-enabled apps","aliases":["server","mcp_server","mcp_session","server"]}</span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>── assistant [2227 / 6248] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a>── Tool Calls ──</span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a>• btw_tool_docs_help_page(package_name = "mcptools", _intent = "Get the help page for the 'client' topic in mcptools to understand its functionality with ellmer and MCP servers.", topic = "client")</span>
+<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a>── tool [3359 / 10034] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a>• Result from btw_tool_docs_help_page:</span>
+<span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a>name: btw_tool_docs_help_page</span>
+<span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a>arguments:</span>
+<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a>  package_name: mcptools</span>
+<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a>  _intent: Get the help page for the 'client' topic in mcptools to understand its</span>
+<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a>    functionality with ellmer and MCP servers.</span>
+<span id="cb10-81"><a href="#cb10-81" aria-hidden="true" tabindex="-1"></a>  topic: client</span>
+<span id="cb10-82"><a href="#cb10-82" aria-hidden="true" tabindex="-1"></a>result: |-</span>
+<span id="cb10-83"><a href="#cb10-83" aria-hidden="true" tabindex="-1"></a>  ## `help(package = "mcptools", "client")`</span>
 <span id="cb10-84"><a href="#cb10-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-85"><a href="#cb10-85" aria-hidden="true" tabindex="-1"></a>── tool [61172 / 133583] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb10-85"><a href="#cb10-85" aria-hidden="true" tabindex="-1"></a>  ### R as a client: Define ellmer tools from MCP servers</span>
 <span id="cb10-86"><a href="#cb10-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-87"><a href="#cb10-87" aria-hidden="true" tabindex="-1"></a>• Result from btw_tool_docs_package_help_topics:</span>
+<span id="cb10-87"><a href="#cb10-87" aria-hidden="true" tabindex="-1"></a>  #### Description</span>
 <span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-89"><a href="#cb10-89" aria-hidden="true" tabindex="-1"></a>name: btw_tool_docs_package_help_topics</span>
-<span id="cb10-90"><a href="#cb10-90" aria-hidden="true" tabindex="-1"></a>arguments:</span>
-<span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a>  package_name: mcptools</span>
-<span id="cb10-92"><a href="#cb10-92" aria-hidden="true" tabindex="-1"></a>  _intent: Check for relevant help topics in mcptools documentation regarding ellmer</span>
-<span id="cb10-93"><a href="#cb10-93" aria-hidden="true" tabindex="-1"></a>    and HTTP MCP servers</span>
-<span id="cb10-94"><a href="#cb10-94" aria-hidden="true" tabindex="-1"></a>result:</span>
-<span id="cb10-95"><a href="#cb10-95" aria-hidden="true" tabindex="-1"></a>  content:</span>
-<span id="cb10-96"><a href="#cb10-96" aria-hidden="true" tabindex="-1"></a>  - type: text</span>
-<span id="cb10-97"><a href="#cb10-97" aria-hidden="true" tabindex="-1"></a>    text: |-</span>
-<span id="cb10-98"><a href="#cb10-98" aria-hidden="true" tabindex="-1"></a>      [</span>
-<span id="cb10-99"><a href="#cb10-99" aria-hidden="true" tabindex="-1"></a>        {"topic_id":"client","title":"R as a client: Define ellmer tools from MCP servers","aliases":["client","mcp_tools","mcp_client"]},</span>
-<span id="cb10-100"><a href="#cb10-100" aria-hidden="true" tabindex="-1"></a>        {"topic_id":"mcptools-package","title":"mcptools: Model Context Protocol Servers and Clients","aliases":["mcptools","mcptools-package"]},</span>
-<span id="cb10-101"><a href="#cb10-101" aria-hidden="true" tabindex="-1"></a>        {"topic_id":"server","title":"R as a server: Configure R-based tools with LLM-enabled apps","aliases":["server","mcp_server","mcp_session","server"]}</span>
-<span id="cb10-102"><a href="#cb10-102" aria-hidden="true" tabindex="-1"></a>      ]</span>
-<span id="cb10-103"><a href="#cb10-103" aria-hidden="true" tabindex="-1"></a>  isError: no</span>
-<span id="cb10-104"><a href="#cb10-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-105"><a href="#cb10-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-106"><a href="#cb10-106" aria-hidden="true" tabindex="-1"></a>── assistant [61393 / 133583] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb10-107"><a href="#cb10-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-108"><a href="#cb10-108" aria-hidden="true" tabindex="-1"></a>── Tool Calls ──</span>
-<span id="cb10-109"><a href="#cb10-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-110"><a href="#cb10-110" aria-hidden="true" tabindex="-1"></a>• btw_tool_docs_help_page(package_name = "mcptools", topic = "client", _intent = "Get details on how ellmer tools are defined from MCP servers")</span>
-<span id="cb10-111"><a href="#cb10-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-112"><a href="#cb10-112" aria-hidden="true" tabindex="-1"></a>── tool [62486 / 196436] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb10-113"><a href="#cb10-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-114"><a href="#cb10-114" aria-hidden="true" tabindex="-1"></a>• Result from btw_tool_docs_help_page:</span>
-<span id="cb10-115"><a href="#cb10-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-116"><a href="#cb10-116" aria-hidden="true" tabindex="-1"></a>name: btw_tool_docs_help_page</span>
-<span id="cb10-117"><a href="#cb10-117" aria-hidden="true" tabindex="-1"></a>arguments:</span>
-<span id="cb10-118"><a href="#cb10-118" aria-hidden="true" tabindex="-1"></a>  package_name: mcptools</span>
-<span id="cb10-119"><a href="#cb10-119" aria-hidden="true" tabindex="-1"></a>  topic: client</span>
-<span id="cb10-120"><a href="#cb10-120" aria-hidden="true" tabindex="-1"></a>  _intent: Get details on how ellmer tools are defined from MCP servers</span>
-<span id="cb10-121"><a href="#cb10-121" aria-hidden="true" tabindex="-1"></a>result:</span>
-<span id="cb10-122"><a href="#cb10-122" aria-hidden="true" tabindex="-1"></a>  content:</span>
-<span id="cb10-123"><a href="#cb10-123" aria-hidden="true" tabindex="-1"></a>  - type: text</span>
-<span id="cb10-124"><a href="#cb10-124" aria-hidden="true" tabindex="-1"></a>    text: |-</span>
-<span id="cb10-125"><a href="#cb10-125" aria-hidden="true" tabindex="-1"></a>      ## `help(package = "mcptools", "client")`</span>
-<span id="cb10-126"><a href="#cb10-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-127"><a href="#cb10-127" aria-hidden="true" tabindex="-1"></a>      ### R as a client: Define ellmer tools from MCP servers</span>
-<span id="cb10-128"><a href="#cb10-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-129"><a href="#cb10-129" aria-hidden="true" tabindex="-1"></a>      #### Description</span>
-<span id="cb10-130"><a href="#cb10-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-131"><a href="#cb10-131" aria-hidden="true" tabindex="-1"></a>      These functions implement R as an MCP *client*, so that ellmer chats can</span>
-<span id="cb10-132"><a href="#cb10-132" aria-hidden="true" tabindex="-1"></a>      register functionality from third-party MCP servers such as those listed</span>
-<span id="cb10-133"><a href="#cb10-133" aria-hidden="true" tabindex="-1"></a>      here: &lt;https://github.com/modelcontextprotocol/servers&gt;.</span>
-<span id="cb10-134"><a href="#cb10-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-135"><a href="#cb10-135" aria-hidden="true" tabindex="-1"></a>      `mcp_tools()` fetches tools from MCP servers configured in the mcptools</span>
-<span id="cb10-136"><a href="#cb10-136" aria-hidden="true" tabindex="-1"></a>      server config file and converts them to a list of tools compatible with</span>
-<span id="cb10-137"><a href="#cb10-137" aria-hidden="true" tabindex="-1"></a>      the `⁠$set_tools()⁠` method of ellmer::Chat objects.</span>
-<span id="cb10-138"><a href="#cb10-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-139"><a href="#cb10-139" aria-hidden="true" tabindex="-1"></a>      #### Arguments</span>
-<span id="cb10-140"><a href="#cb10-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-141"><a href="#cb10-141" aria-hidden="true" tabindex="-1"></a>      |  |  |</span>
-<span id="cb10-142"><a href="#cb10-142" aria-hidden="true" tabindex="-1"></a>      |----|----|</span>
-<span id="cb10-143"><a href="#cb10-143" aria-hidden="true" tabindex="-1"></a>      | `config` | A single string indicating the path to the mcptools MCP servers configuration f...</span>
-<span id="cb10-144"><a href="#cb10-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-145"><a href="#cb10-145" aria-hidden="true" tabindex="-1"></a>── assistant [62853 / 196436] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-<span id="cb10-146"><a href="#cb10-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-147"><a href="#cb10-147" aria-hidden="true" tabindex="-1"></a>`posit-dev/mcptools` does not directly implement the ability to use HTTP MCP servers with `ellmer`. When `mcptools` acts as an MCP *client* via `ellmer`, it only supports the local (stdio) protocol. To connect to remote (HTTP) MCP servers, the `mcptools` documentation recommends using `mcp-remote`, an external tool (a local stdio MCP server) that converts remote HTTP servers to `mcptools`-compatible local ones. This allows `ellmer` (using the stdio protocol) to interact with remote HTTP MCP servers through `mcp-remote`.</span></code></pre></div>
-</details></section><section class="section level2"><h2 id="advanced-usage">Advanced Usage<a class="anchor" aria-label="anchor" href="#advanced-usage"></a>
+<span id="cb10-89"><a href="#cb10-89" aria-hidden="true" tabindex="-1"></a>  These functions implement R as an MCP *client*, so that ellmer chats can</span>
+<span id="cb10-90"><a href="#cb10-90" aria-hidden="true" tabindex="-1"></a>  register functionality from third-party MCP servers such as those listed</span>
+<span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a>  here: &lt;https://github.com/modelcontextprotocol/servers&gt;.</span>
+<span id="cb10-92"><a href="#cb10-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-93"><a href="#cb10-93" aria-hidden="true" tabindex="-1"></a>  `mcp_tools()` fetches tools from MCP servers configured in the mcptools</span>
+<span id="cb10-94"><a href="#cb10-94" aria-hidden="true" tabindex="-1"></a>  server config file and converts them to a list of tools compatible with</span>
+<span id="cb10-95"><a href="#cb10-95" aria-hidden="true" tabindex="-1"></a>  the `⁠$set_tools()⁠` method of ellmer::Chat objects.</span>
+<span id="cb10-96"><a href="#cb10-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-97"><a href="#cb10-97" aria-hidden="true" tabindex="-1"></a>  #### Usage</span>
+<span id="cb10-98"><a href="#cb10-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-99"><a href="#cb10-99" aria-hidden="true" tabindex="-1"></a>  mcp_tools(config = NULL)</span>
+<span id="cb10-100"><a href="#cb10-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-101"><a href="#cb10-101" aria-hidden="true" tabindex="-1"></a>  #### Arguments</span>
+<span id="cb10-102"><a href="#cb10-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-103"><a href="#cb10-103" aria-hidden="true" tabindex="-1"></a>  |  |  |</span>
+<span id="cb10-104"><a href="#cb10-104" aria-hidden="true" tabindex="-1"></a>  |----|----|</span>
+<span id="cb10-105"><a href="#cb10-105" aria-hidden="true" tabindex="-1"></a>  | `config` | A single string indicating the path to the mcptools MCP servers configuration file. If one is not supplied, mcptools will look...</span>
+<span id="cb10-106"><a href="#cb10-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-107"><a href="#cb10-107" aria-hidden="true" tabindex="-1"></a>── assistant [3786 / 10034] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span id="cb10-108"><a href="#cb10-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-109"><a href="#cb10-109" aria-hidden="true" tabindex="-1"></a>No, `posit-dev/mcptools` itself does not directly implement the ability to use HTTP MCP servers with 'ellmer'. The `mcp_tools()` function within `mcptools`, which allows R to act as an MCP client via 'ellmer', only implements the local (stdio) protocol. However, `mcptools` recommends using `mcp-remote` (an external tool) as an intermediary. `mcp-remote` is a local (stdio) MCP server that can connect to remote (http) servers, converting them to an `mcptools`-compatible local protocol. This allows `mcptools` to indirectly utilize HTTP MCP servers through `mcp-remote`.</span></code></pre></div>
+</details></section><section class="section level2"><h2 id="advanced-usage-making-our-own-mcp-servers">Advanced Usage: making our own MCP servers<a class="anchor" aria-label="anchor" href="#advanced-usage-making-our-own-mcp-servers"></a>
 </h2>
-<section class="level2"><h3 id="creating-a-custom-mcp-server">Creating a Custom MCP Server<a class="anchor" aria-label="anchor" href="#creating-a-custom-mcp-server"></a>
+<section class="level2"><h3 id="building-a-stdio-mcp-server">Building a STDIO MCP Server<a class="anchor" aria-label="anchor" href="#building-a-stdio-mcp-server"></a>
 </h3>
 <p>Let’s create our own stdio MCP server for interacting with Zotero’s local API. This server will be usable both from argent and from other MCP clients, like Claude Code.</p>
 <section class="level3"><h4 id="prerequisites">Prerequisites<a class="anchor" aria-label="anchor" href="#prerequisites"></a>
@@ -373,36 +328,25 @@
 <li>Enable “Allow other applications on this computer to communicate with Zotero” in Preferences &gt; Advanced</li>
 </ul></section><section class="level3"><h4 id="server-implementation">Server Implementation<a class="anchor" aria-label="anchor" href="#server-implementation"></a>
 </h4>
-<div class="cell">
-<details class="code-fold"><summary>Zotero MCP Server Implementation (long)</summary><div class="sourceCode cell-code" id="cb11"><pre class="downlit sourceCode r">
+<details><summary>Zotero MCP Server Implementation</summary><div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Zotero MCP Server</span></span>
 <span><span class="co">#</span></span>
 <span><span class="co"># A stdio MCP server for interacting with Zotero's local API.</span></span>
-<span><span class="co"># This server can be used with argent or other MCP clients like Claude Code.</span></span>
+<span><span class="co"># This server can be used with argent or other MCP clients like Claude Code.</span></span></code></pre></div>
+</div>
+<pre class="{r🔺 SETUP}"><code><span><span class="co"># Setup for when the server is used as a standalone MCP server (e.g. from Claude Desktop)</span></span>
 <span></span>
-<span><span class="co"># ------🔺 SETUP ---------------------------------------------------------------</span></span>
-<span></span>
-<span><span class="co"># Check and install required packages</span></span>
-<span><span class="va">required_packages</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"httr2"</span>, <span class="st">"cli"</span>, <span class="st">"jsonlite"</span>, <span class="st">"argent"</span><span class="op">)</span></span>
-<span><span class="va">missing_packages</span> <span class="op">&lt;-</span> <span class="va">required_packages</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">required_packages</span>, <span class="va">requireNamespace</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">]</span></span>
-<span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">missing_packages</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Installing missing packages: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">missing_packages</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span><span class="op">)</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="va">missing_packages</span>, repos <span class="op">=</span> <span class="st">"https://cloud.r-project.org"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span></span>
-<span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://httr2.r-lib.org" class="external-link">httr2</a></span><span class="op">)</span></span>
-<span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://cli.r-lib.org" class="external-link">cli</a></span><span class="op">)</span></span>
-<span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jeroen.r-universe.dev/jsonlite" class="external-link">jsonlite</a></span><span class="op">)</span></span>
-<span>    <span class="co"># library(argent)</span></span>
-<span>    <span class="fu">devtools</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="co"># Since this file is part of the argent package, there should be no need to test is the package is installed or not.</span></span>
+<span><span class="co"># `argent` imports httr2, jsonlite &amp; purrr, so we don't need to check if those are installed either.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ma-riviere.github.io/argent">argent</a></span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Disable httr2 progress bars to avoid stderr noise</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>httr2_progress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># ------🔺 TOOLS ---------------------------------------------------------------</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span></span>
+<span>    httr2_progress <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    argent.debug <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre>
+<pre class="{r🔺 TOOLS}"><code><span><span class="co"># Defining the tools that the server will expose</span></span>
 <span></span>
 <span><span class="co"># Base request function to Zotero local API</span></span>
 <span><span class="va">zotero_request</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">endpoint</span>, <span class="va">query</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">user_id</span> <span class="op">=</span> <span class="st">"0"</span>, <span class="va">valid_statuses</span> <span class="op">=</span> <span class="fl">200</span><span class="op">)</span> <span class="op">{</span></span>
@@ -741,10 +685,8 @@
 <span>    <span class="op">}</span></span>
 <span></span>
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">item_types</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># ------🔺 MCP SERVER ----------------------------------------------------------</span></span>
-<span></span>
+<span><span class="op">}</span></span></code></pre>
+<pre class="{r🔺 MCP SERVER}"><code><span></span>
 <span><span class="va">zotero_mcp_server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">server</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">:::</span><span class="va"><a href="../reference/McpServer.html">McpServer</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
 <span>        name <span class="op">=</span> <span class="st">"Zotero"</span>,</span>
@@ -899,21 +841,17 @@
 <span>    <span class="va">server</span><span class="op">$</span><span class="fu">serve_stdio</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="fu">zotero_mcp_server</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-</details>
-</div>
-<div>
+<span><span class="fu">zotero_mcp_server</span><span class="op">(</span><span class="op">)</span></span></code></pre>
+</details><div>
 <blockquote>
 <p><strong>Note</strong></p>
-<p>The complete Zotero MCP server code is available in the package at <code>inst/examples/zotero_mcp_server.R</code>.</p>
+<p>The Zotero MCP server code is available in the package at <code>inst/examples/zotero_mcp_server.R</code>.</p>
 </blockquote>
 </div>
-</section></section><section class="level2"><h3 id="using-the-server">Using the Server<a class="anchor" aria-label="anchor" href="#using-the-server"></a>
-</h3>
-<section class="level3"><h4 id="use-with-argent">Use with argent<a class="anchor" aria-label="anchor" href="#use-with-argent"></a>
+</section><section class="level3"><h4 id="using-the-mcp-server">Using the MCP Server<a class="anchor" aria-label="anchor" href="#using-the-mcp-server"></a>
 </h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">zotero_client</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_connect</a></span><span class="op">(</span></span>
 <span>    name <span class="op">=</span> <span class="st">"zotero"</span>,</span>
 <span>    type <span class="op">=</span> <span class="st">"stdio"</span>,</span>
@@ -925,7 +863,7 @@
 </div>
 <p>We could test if the MCP server is working by querying it ‘manually’:</p>
 <div class="cell">
-<details class="code-fold"><summary>Testing the Zotero MCP Server manually</summary><div class="sourceCode cell-code" id="cb13"><pre class="downlit sourceCode r">
+<details class="code-fold"><summary>Testing the Zotero MCP Server manually</summary><div class="sourceCode cell-code" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Getting details on all my collections</span></span>
 <span><span class="va">my_collections</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/execute_mcp_tool.html">execute_mcp_tool</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="../reference/get_mcp_tool.html">get_mcp_tool</a></span><span class="op">(</span><span class="va">zotero_tools</span>, <span class="st">"zotero_get_collections"</span><span class="op">)</span></span>
@@ -942,16 +880,16 @@
 <span>    arguments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>collection_key <span class="op">=</span> <span class="va">neuroscience_collection_key</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Getting a specific paper's key with a keyword from its title</span></span>
+<span><span class="va">neuroscience_paper_key</span> <span class="op">&lt;-</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">fromJSON</a></span><span class="op">(</span><span class="va">neuroscience_items</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">title</span>, <span class="st">"cross-modal plasticity"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">key</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Getting the details on the paper</span></span>
 <span><span class="va">neuroscience_paper_details</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/execute_mcp_tool.html">execute_mcp_tool</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="../reference/get_mcp_tool.html">get_mcp_tool</a></span><span class="op">(</span><span class="va">zotero_tools</span>, <span class="st">"zotero_get_item"</span><span class="op">)</span>,</span>
 <span>    arguments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>item_key <span class="op">=</span> <span class="va">neuroscience_paper_key</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Getting a specific paper's key with a keyword from its title</span></span>
-<span><span class="va">neuroscience_paper_key</span> <span class="op">&lt;-</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">fromJSON</a></span><span class="op">(</span><span class="va">neuroscience_items</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">title</span>, <span class="st">"cross-modal plasticity"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">key</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Getting the fulltext of the paper (as a string)</span></span>
 <span><span class="va">neuroscience_paper_fulltext</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/execute_mcp_tool.html">execute_mcp_tool</a></span><span class="op">(</span></span>
@@ -964,10 +902,10 @@
 </div>
 <p>Now, let’s give the tools to an LLM Agent instead:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">google</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Google.html">Google</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span>
+<div class="sourceCode cell-code" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gemini</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Google.html">Google</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">google</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
+<span><span class="va">gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"Can you summarize O'Regan's view on sensory substitution and on how the brain differentiates sensory inputs ?"</span>,</span>
 <span>    <span class="st">"Find at least 2 papers in my library"</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
@@ -979,20 +917,494 @@
 <p><strong>Tip</strong></p>
 <p>We can use our new Zotero MCP server with other MCP clients (like Claude Code, Claude Desktop, Gemini CLI, etc):</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"mcpServers"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"zotero"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"stdio"</span><span class="fu">,</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"Rscript"</span><span class="fu">,</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"args"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"--quiet"</span><span class="ot">,</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"--vanilla"</span><span class="ot">,</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"/path/to/argent/inst/examples/zotero_mcp_server.R"</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"mcpServers"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"zotero"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"stdio"</span><span class="fu">,</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"Rscript"</span><span class="fu">,</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"args"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"--quiet"</span><span class="ot">,</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"--vanilla"</span><span class="ot">,</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"/path/to/argent/inst/examples/zotero_mcp_server.R"</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 </div>
+</blockquote>
+</div>
+</section></section><section class="level2"><h3 id="building-an-http-mcp-server">Building an HTTP MCP Server<a class="anchor" aria-label="anchor" href="#building-an-http-mcp-server"></a>
+</h3>
+<p>Let’s create an HTTP MCP server for searching academic papers using the Semantic Scholar API. Unlike stdio servers that communicate via standard input/output, HTTP servers expose a REST endpoint that can be accessed over the network.</p>
+<div>
+<blockquote>
+<p><strong>Note</strong></p>
+<p><code>argent</code> provides convenience functions to create HTTP MCP servers, but you can also create your own with <code>plumber2</code> or other HTTP server frameworks, independently from <code>argent</code>.</p>
+</blockquote>
+</div>
+<section class="level3"><h4 id="prerequisites-1">Prerequisites<a class="anchor" aria-label="anchor" href="#prerequisites-1"></a>
+</h4>
+<ul>
+<li>A Semantic Scholar API key (not required, but the rate limits are low without one)</li>
+</ul></section><section class="level3"><h4 id="server-implementation-1">Server Implementation<a class="anchor" aria-label="anchor" href="#server-implementation-1"></a>
+</h4>
+<details><summary>Semantic Scholar MCP Server Implementation</summary><div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Semantic Scholar MCP Server</span></span>
+<span><span class="co">#</span></span>
+<span><span class="co"># An HTTP MCP server for searching academic papers using the Semantic Scholar API.</span></span>
+<span><span class="co"># This server can be used with argent or other MCP clients.</span></span></code></pre></div>
+</div>
+<pre class="{r🔺 SETUP}"><code><span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ma-riviere.github.io/argent">argent</a></span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Disable httr2 progress bars to avoid stderr noise</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span></span>
+<span>    httr2_progress <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    argent.debug <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre>
+<pre class="{r🔺 TOOLS}"><code><span><span class="co"># Defining the tools that the server will expose</span></span>
+<span></span>
+<span><span class="co"># Base request function for Semantic Scholar API</span></span>
+<span><span class="va">semantic_scholar_request</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">endpoint</span>, <span class="va">query</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">base_url</span> <span class="op">&lt;-</span> <span class="st">"https://api.semanticscholar.org/graph/v1"</span></span>
+<span>    <span class="va">url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">base_url</span>, <span class="va">endpoint</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu">httr2</span><span class="fu">::</span><span class="fu"><a href="https://httr2.r-lib.org/reference/request.html" class="external-link">request</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">httr2</span><span class="fu">::</span><span class="fu"><a href="https://httr2.r-lib.org/reference/req_url.html" class="external-link">req_url_query</a></span><span class="op">(</span><span class="op">!</span><span class="op">!</span><span class="op">!</span><span class="va">query</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">httr2</span><span class="fu">::</span><span class="fu"><a href="https://httr2.r-lib.org/reference/req_error.html" class="external-link">req_error</a></span><span class="op">(</span>is_error <span class="op">=</span> \<span class="op">(</span><span class="va">resp</span><span class="op">)</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">httr2</span><span class="fu">::</span><span class="fu"><a href="https://httr2.r-lib.org/reference/req_throttle.html" class="external-link">req_throttle</a></span><span class="op">(</span>rate <span class="op">=</span> <span class="fl">20</span> <span class="op">/</span> <span class="fl">60</span>, realm <span class="op">=</span> <span class="st">"semantic-scholar"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">httr2</span><span class="fu">::</span><span class="fu"><a href="https://httr2.r-lib.org/reference/req_perform.html" class="external-link">req_perform</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">status</span> <span class="op">&lt;-</span> <span class="fu">httr2</span><span class="fu">::</span><span class="fu"><a href="https://httr2.r-lib.org/reference/resp_status.html" class="external-link">resp_status</a></span><span class="op">(</span><span class="va">resp</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">status</span> <span class="op">==</span> <span class="fl">429</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">argent</span><span class="fu">:::</span><span class="fu"><a href="../reference/mcp_error.html">mcp_error</a></span><span class="op">(</span></span>
+<span>            message <span class="op">=</span> <span class="st">"Rate limit exceeded"</span>,</span>
+<span>            type <span class="op">=</span> <span class="st">"api_error"</span>,</span>
+<span>            details <span class="op">=</span> <span class="st">"Too many requests to Semantic Scholar API"</span>,</span>
+<span>            suggestion <span class="op">=</span> <span class="st">"Wait a few seconds before retrying"</span></span>
+<span>        <span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">status</span> <span class="op">==</span> <span class="fl">404</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">status</span> <span class="op">!=</span> <span class="fl">200</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">argent</span><span class="fu">:::</span><span class="fu"><a href="../reference/mcp_error.html">mcp_error</a></span><span class="op">(</span></span>
+<span>            message <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Semantic Scholar API request failed with status "</span>, <span class="va">status</span><span class="op">)</span>,</span>
+<span>            type <span class="op">=</span> <span class="st">"api_error"</span>,</span>
+<span>            details <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Unexpected HTTP status code from endpoint: "</span>, <span class="va">endpoint</span><span class="op">)</span></span>
+<span>        <span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="fu">httr2</span><span class="fu">::</span><span class="fu"><a href="https://httr2.r-lib.org/reference/resp_body_raw.html" class="external-link">resp_body_json</a></span><span class="op">(</span><span class="va">resp</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Default fields to return for papers</span></span>
+<span><span class="va">default_fields</span> <span class="op">&lt;-</span> <span class="st">"title,authors,year,abstract,citationCount,url,venue,publicationDate"</span></span>
+<span></span>
+<span><span class="va">semantic_scholar_search_papers</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">query</span>, <span class="va">limit</span> <span class="op">=</span> <span class="fl">10L</span>, <span class="va">fields</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">query</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">query</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">argent</span><span class="fu">:::</span><span class="fu"><a href="../reference/mcp_error.html">mcp_error</a></span><span class="op">(</span></span>
+<span>            message <span class="op">=</span> <span class="st">"Query parameter is required"</span>,</span>
+<span>            type <span class="op">=</span> <span class="st">"validation"</span>,</span>
+<span>            details <span class="op">=</span> <span class="st">"The 'query' parameter cannot be empty"</span>,</span>
+<span>            suggestion <span class="op">=</span> <span class="st">"Provide keywords, author names, or paper titles to search for"</span></span>
+<span>        <span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="co"># Use default fields if not specified</span></span>
+<span>    <span class="va">fields_param</span> <span class="op">&lt;-</span> <span class="va">fields</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="va">default_fields</span></span>
+<span></span>
+<span>    <span class="va">params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        query <span class="op">=</span> <span class="va">query</span>,</span>
+<span>        limit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">limit</span>, <span class="fl">100</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>        fields <span class="op">=</span> <span class="va">fields_param</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">semantic_scholar_request</span><span class="op">(</span><span class="st">"/paper/search"</span>, query <span class="op">=</span> <span class="va">params</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">.error</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span> <span class="op">||</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">data</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="co"># Extract and format papers</span></span>
+<span>    <span class="va">papers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">data</span>, <span class="kw">function</span><span class="op">(</span><span class="va">paper</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">authors</span> <span class="op">&lt;-</span> <span class="st">"No authors"</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">paper</span><span class="op">$</span><span class="va">authors</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="va">authors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_chr</a></span><span class="op">(</span><span class="va">paper</span><span class="op">$</span><span class="va">authors</span>, \<span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="va">a</span><span class="op">$</span><span class="va">name</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"; "</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>            paperId <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">paperId</span>,</span>
+<span>            title <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">title</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Untitled"</span>,</span>
+<span>            authors <span class="op">=</span> <span class="va">authors</span>,</span>
+<span>            year <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">year</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Unknown year"</span>,</span>
+<span>            abstract <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">abstract</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"No abstract available"</span>,</span>
+<span>            citationCount <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">citationCount</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="fl">0</span>,</span>
+<span>            url <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">url</span>,</span>
+<span>            venue <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">venue</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Unknown venue"</span>,</span>
+<span>            publicationDate <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">publicationDate</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Unknown date"</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">papers</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">semantic_scholar_get_paper</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">paper_id</span>, <span class="va">fields</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">paper_id</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">paper_id</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">argent</span><span class="fu">:::</span><span class="fu"><a href="../reference/mcp_error.html">mcp_error</a></span><span class="op">(</span></span>
+<span>            message <span class="op">=</span> <span class="st">"Paper ID is required"</span>,</span>
+<span>            type <span class="op">=</span> <span class="st">"validation"</span>,</span>
+<span>            details <span class="op">=</span> <span class="st">"The 'paper_id' parameter cannot be empty"</span>,</span>
+<span>            suggestion <span class="op">=</span> <span class="st">"Provide a Semantic Scholar paper ID or DOI"</span></span>
+<span>        <span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="co"># Use default fields if not specified</span></span>
+<span>    <span class="va">fields_param</span> <span class="op">&lt;-</span> <span class="va">fields</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="va">default_fields</span></span>
+<span></span>
+<span>    <span class="va">endpoint</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"/paper/"</span>, <span class="va">paper_id</span><span class="op">)</span></span>
+<span>    <span class="va">params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>fields <span class="op">=</span> <span class="va">fields_param</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">semantic_scholar_request</span><span class="op">(</span><span class="va">endpoint</span>, query <span class="op">=</span> <span class="va">params</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">.error</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">argent</span><span class="fu">:::</span><span class="fu"><a href="../reference/mcp_error.html">mcp_error</a></span><span class="op">(</span></span>
+<span>            message <span class="op">=</span> <span class="st">"Paper not found"</span>,</span>
+<span>            type <span class="op">=</span> <span class="st">"not_found"</span>,</span>
+<span>            details <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"No paper with ID '"</span>, <span class="va">paper_id</span>, <span class="st">"' exists"</span><span class="op">)</span>,</span>
+<span>            suggestion <span class="op">=</span> <span class="st">"Verify the paper ID using search_papers first, or try a different ID/DOI"</span></span>
+<span>        <span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="co"># Format authors</span></span>
+<span>    <span class="va">authors</span> <span class="op">&lt;-</span> <span class="st">"No authors"</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">authors</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">authors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_chr</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">authors</span>, \<span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="va">a</span><span class="op">$</span><span class="va">name</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"; "</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="va">paper</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        paperId <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">paperId</span>,</span>
+<span>        title <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">title</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Untitled"</span>,</span>
+<span>        authors <span class="op">=</span> <span class="va">authors</span>,</span>
+<span>        year <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">year</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Unknown year"</span>,</span>
+<span>        abstract <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">abstract</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"No abstract available"</span>,</span>
+<span>        citationCount <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">citationCount</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="fl">0</span>,</span>
+<span>        url <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">url</span>,</span>
+<span>        venue <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">venue</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Unknown venue"</span>,</span>
+<span>        publicationDate <span class="op">=</span> <span class="va">result</span><span class="op">$</span><span class="va">publicationDate</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Unknown date"</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">paper</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">semantic_scholar_get_paper_citations</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">paper_id</span>, <span class="va">limit</span> <span class="op">=</span> <span class="fl">10</span>, <span class="va">fields</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">paper_id</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">paper_id</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">argent</span><span class="fu">:::</span><span class="fu"><a href="../reference/mcp_error.html">mcp_error</a></span><span class="op">(</span></span>
+<span>            message <span class="op">=</span> <span class="st">"Paper ID is required"</span>,</span>
+<span>            type <span class="op">=</span> <span class="st">"validation"</span>,</span>
+<span>            details <span class="op">=</span> <span class="st">"The 'paper_id' parameter cannot be empty"</span>,</span>
+<span>            suggestion <span class="op">=</span> <span class="st">"Provide a Semantic Scholar paper ID or DOI"</span></span>
+<span>        <span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="co"># Use default fields if not specified</span></span>
+<span>    <span class="va">fields_param</span> <span class="op">&lt;-</span> <span class="va">fields</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="va">default_fields</span></span>
+<span></span>
+<span>    <span class="va">endpoint</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"/paper/"</span>, <span class="va">paper_id</span>, <span class="st">"/citations"</span><span class="op">)</span></span>
+<span>    <span class="va">params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        limit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">limit</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>        fields <span class="op">=</span> <span class="va">fields_param</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">semantic_scholar_request</span><span class="op">(</span><span class="va">endpoint</span>, query <span class="op">=</span> <span class="va">params</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">.error</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span> <span class="op">||</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">data</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="co"># Extract citing papers</span></span>
+<span>    <span class="va">citations</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">data</span>, <span class="kw">function</span><span class="op">(</span><span class="va">citation</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">paper</span> <span class="op">&lt;-</span> <span class="va">citation</span><span class="op">$</span><span class="va">citingPaper</span></span>
+<span></span>
+<span>        <span class="va">authors</span> <span class="op">&lt;-</span> <span class="st">"No authors"</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">paper</span><span class="op">$</span><span class="va">authors</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="va">authors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_chr</a></span><span class="op">(</span><span class="va">paper</span><span class="op">$</span><span class="va">authors</span>, \<span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="va">a</span><span class="op">$</span><span class="va">name</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"; "</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>            paperId <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">paperId</span>,</span>
+<span>            title <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">title</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Untitled"</span>,</span>
+<span>            authors <span class="op">=</span> <span class="va">authors</span>,</span>
+<span>            year <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">year</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Unknown year"</span>,</span>
+<span>            abstract <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">abstract</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"No abstract available"</span>,</span>
+<span>            citationCount <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">citationCount</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="fl">0</span>,</span>
+<span>            url <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">url</span>,</span>
+<span>            venue <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">venue</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Unknown venue"</span>,</span>
+<span>            publicationDate <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">publicationDate</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Unknown date"</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">citations</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">semantic_scholar_get_paper_references</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">paper_id</span>, <span class="va">limit</span> <span class="op">=</span> <span class="fl">10</span>, <span class="va">fields</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">paper_id</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">paper_id</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">argent</span><span class="fu">:::</span><span class="fu"><a href="../reference/mcp_error.html">mcp_error</a></span><span class="op">(</span></span>
+<span>            message <span class="op">=</span> <span class="st">"Paper ID is required"</span>,</span>
+<span>            type <span class="op">=</span> <span class="st">"validation"</span>,</span>
+<span>            details <span class="op">=</span> <span class="st">"The 'paper_id' parameter cannot be empty"</span>,</span>
+<span>            suggestion <span class="op">=</span> <span class="st">"Provide a Semantic Scholar paper ID or DOI"</span></span>
+<span>        <span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="co"># Use default fields if not specified</span></span>
+<span>    <span class="va">fields_param</span> <span class="op">&lt;-</span> <span class="va">fields</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="va">default_fields</span></span>
+<span></span>
+<span>    <span class="va">endpoint</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"/paper/"</span>, <span class="va">paper_id</span>, <span class="st">"/references"</span><span class="op">)</span></span>
+<span>    <span class="va">params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        limit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">limit</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>        fields <span class="op">=</span> <span class="va">fields_param</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">semantic_scholar_request</span><span class="op">(</span><span class="va">endpoint</span>, query <span class="op">=</span> <span class="va">params</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">.error</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span> <span class="op">||</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">data</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span></span>
+<span>    <span class="co"># Extract referenced papers</span></span>
+<span>    <span class="va">references</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">data</span>, <span class="kw">function</span><span class="op">(</span><span class="va">reference</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">paper</span> <span class="op">&lt;-</span> <span class="va">reference</span><span class="op">$</span><span class="va">citedPaper</span></span>
+<span></span>
+<span>        <span class="va">authors</span> <span class="op">&lt;-</span> <span class="st">"No authors"</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_empty.html" class="external-link">is_empty</a></span><span class="op">(</span><span class="va">paper</span><span class="op">$</span><span class="va">authors</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="va">authors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_chr</a></span><span class="op">(</span><span class="va">paper</span><span class="op">$</span><span class="va">authors</span>, \<span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="va">a</span><span class="op">$</span><span class="va">name</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"; "</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>            paperId <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">paperId</span>,</span>
+<span>            title <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">title</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Untitled"</span>,</span>
+<span>            authors <span class="op">=</span> <span class="va">authors</span>,</span>
+<span>            year <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">year</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Unknown year"</span>,</span>
+<span>            abstract <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">abstract</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"No abstract available"</span>,</span>
+<span>            citationCount <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">citationCount</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="fl">0</span>,</span>
+<span>            url <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">url</span>,</span>
+<span>            venue <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">venue</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Unknown venue"</span>,</span>
+<span>            publicationDate <span class="op">=</span> <span class="va">paper</span><span class="op">$</span><span class="va">publicationDate</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="st">"Unknown date"</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">references</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre>
+<pre class="{r🔺 MCP SERVER}"><code><span></span>
+<span><span class="va">semantic_scholar_mcp_server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">port</span> <span class="op">=</span> <span class="fl">8080</span>, <span class="va">host</span> <span class="op">=</span> <span class="st">"127.0.0.1"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">server</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">:::</span><span class="va"><a href="../reference/McpServer.html">McpServer</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"semantic-scholar"</span>,</span>
+<span>        version <span class="op">=</span> <span class="st">"1.0.0"</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="co"># Define tools</span></span>
+<span>    <span class="va">search_papers_tool</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">::</span><span class="fu"><a href="../reference/tool_definitions.html">tool</a></span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"search_papers"</span>,</span>
+<span>        description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"Search for academic papers by keywords, authors, or topics using the Semantic Scholar API."</span>,</span>
+<span>            <span class="st">"Returns a list of papers with metadata including title, authors, year, abstract, citation count, and URL."</span>,</span>
+<span>            <span class="st">"IMPORTANT:"</span>,</span>
+<span>            <span class="st">"- Use broad search terms for better results"</span>,</span>
+<span>            <span class="st">"- Search is case-insensitive"</span>,</span>
+<span>            <span class="st">"- Returns up to 100 results per query"</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"string* Search query (keywords, author names, paper titles, etc.)."</span>,</span>
+<span>            <span class="st">"Examples: 'neural networks', 'attention mechanisms', 'Geoffrey Hinton'"</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        limit <span class="op">=</span> <span class="st">"integer Maximum number of results to return (default: 10, max: 100)"</span>,</span>
+<span>        fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"string Comma-separated list of fields to return."</span>,</span>
+<span>            <span class="st">"Default: 'title,authors,year,abstract,citationCount,url,venue,publicationDate'."</span>,</span>
+<span>            <span class="st">"Other available fields: 'referenceCount', 'influentialCitationCount', 'fieldsOfStudy'"</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        fn <span class="op">=</span> <span class="va">semantic_scholar_search_papers</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">get_paper_tool</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">::</span><span class="fu"><a href="../reference/tool_definitions.html">tool</a></span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"get_paper"</span>,</span>
+<span>        description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"Get detailed metadata for a specific paper by its Semantic Scholar ID or DOI."</span>,</span>
+<span>            <span class="st">"Returns comprehensive information including title, authors, abstract, year, citation count, and more."</span>,</span>
+<span>            <span class="st">"Use this after search_papers to get full details for specific papers."</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        paper_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"string* Paper ID (Semantic Scholar ID or DOI)."</span>,</span>
+<span>            <span class="st">"Examples: '649def34f8be52c8b66281af98ae884c09aef38b' (S2 ID), '10.1038/nature14539' (DOI)"</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"string Comma-separated list of fields to return."</span>,</span>
+<span>            <span class="st">"Default: 'title,authors,year,abstract,citationCount,url,venue,publicationDate'"</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        fn <span class="op">=</span> <span class="va">semantic_scholar_get_paper</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">get_paper_citations_tool</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">::</span><span class="fu"><a href="../reference/tool_definitions.html">tool</a></span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"get_paper_citations"</span>,</span>
+<span>        description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"Get papers that cite a given paper."</span>,</span>
+<span>            <span class="st">"Returns a list of citing papers with their metadata."</span>,</span>
+<span>            <span class="st">"Useful for finding related work and tracking research impact."</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        paper_id <span class="op">=</span> <span class="st">"string* Paper ID (Semantic Scholar ID or DOI)"</span>,</span>
+<span>        limit <span class="op">=</span> <span class="st">"integer Maximum number of citations to return (default: 10, max: 1000)"</span>,</span>
+<span>        fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"string Comma-separated list of fields to return for each citing paper."</span>,</span>
+<span>            <span class="st">"Default: 'title,authors,year,abstract,citationCount,url,venue,publicationDate'"</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        fn <span class="op">=</span> <span class="va">semantic_scholar_get_paper_citations</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">get_paper_references_tool</span> <span class="op">&lt;-</span> <span class="fu">argent</span><span class="fu">::</span><span class="fu"><a href="../reference/tool_definitions.html">tool</a></span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"get_paper_references"</span>,</span>
+<span>        description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"Get papers referenced by a given paper (its bibliography)."</span>,</span>
+<span>            <span class="st">"Returns a list of referenced papers with their metadata."</span>,</span>
+<span>            <span class="st">"Useful for finding foundational work and related research."</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        paper_id <span class="op">=</span> <span class="st">"string* Paper ID (Semantic Scholar ID or DOI)"</span>,</span>
+<span>        limit <span class="op">=</span> <span class="st">"integer Maximum number of references to return (default: 10, max: 1000)"</span>,</span>
+<span>        fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>            <span class="st">"string Comma-separated list of fields to return for each referenced paper."</span>,</span>
+<span>            <span class="st">"Default: 'title,authors,year,abstract,citationCount,url,venue,publicationDate'"</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        fn <span class="op">=</span> <span class="va">semantic_scholar_get_paper_references</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>    <span class="co"># Add tools to server</span></span>
+<span>    <span class="va">server</span><span class="op">$</span><span class="fu">add_tool</span><span class="op">(</span><span class="va">search_papers_tool</span><span class="op">)</span></span>
+<span>    <span class="va">server</span><span class="op">$</span><span class="fu">add_tool</span><span class="op">(</span><span class="va">get_paper_tool</span><span class="op">)</span></span>
+<span>    <span class="va">server</span><span class="op">$</span><span class="fu">add_tool</span><span class="op">(</span><span class="va">get_paper_citations_tool</span><span class="op">)</span></span>
+<span>    <span class="va">server</span><span class="op">$</span><span class="fu">add_tool</span><span class="op">(</span><span class="va">get_paper_references_tool</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="co"># Start HTTP server</span></span>
+<span>    <span class="va">server</span><span class="op">$</span><span class="fu">serve_http</span><span class="op">(</span>host <span class="op">=</span> <span class="va">host</span>, port <span class="op">=</span> <span class="va">port</span>, block <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Run server with command line args or defaults</span></span>
+<span><span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/commandArgs.html" class="external-link">commandArgs</a></span><span class="op">(</span>trailingOnly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">port</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">args</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">args</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span> <span class="kw">else</span> <span class="fl">8080</span></span>
+<span><span class="fu">semantic_scholar_mcp_server</span><span class="op">(</span>port <span class="op">=</span> <span class="va">port</span><span class="op">)</span></span></code></pre>
+</details><div>
+<blockquote>
+<p><strong>Note</strong></p>
+<p>The Semantic Scholar MCP server code is available at <code>inst/examples/semantic_scholar_mcp_server.R</code>.</p>
+</blockquote>
+</div>
+</section><section class="level3"><h4 id="using-the-http-mcp-server">Using the HTTP MCP Server<a class="anchor" aria-label="anchor" href="#using-the-http-mcp-server"></a>
+</h4>
+<p>First, start the server in a separate R session or terminal:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples/semantic_scholar_mcp_server.R"</span>, package <span class="op">=</span> <span class="st">"argent"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; ✔ Starting semantic-scholar MCP server on &lt;http://127.0.0.1:8080&gt;</span></span></code></pre></div>
+</div>
+<p>Then connect to it from your main session:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">semantic_scholar_client</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_connect</a></span><span class="op">(</span></span>
+<span>    name <span class="op">=</span> <span class="st">"semantic-scholar"</span>,</span>
+<span>    type <span class="op">=</span> <span class="st">"http"</span>,</span>
+<span>    url <span class="op">=</span> <span class="st">"http://127.0.0.1:8080"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">semantic_scholar_tools</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_tools</a></span><span class="op">(</span><span class="va">semantic_scholar_client</span><span class="op">)</span></span></code></pre></div>
+</div>
+<p>Test the server manually:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">papers</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/execute_mcp_tool.html">execute_mcp_tool</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="../reference/get_mcp_tool.html">get_mcp_tool</a></span><span class="op">(</span><span class="va">semantic_scholar_tools</span>, <span class="st">"search_papers"</span><span class="op">)</span>,</span>
+<span>    arguments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        query <span class="op">=</span> <span class="st">"Sensorimotor Contingencies"</span>,</span>
+<span>        limit <span class="op">=</span> <span class="fl">2L</span>,</span>
+<span>        fields <span class="op">=</span> <span class="st">"title,authors,year,abstract,citationCount"</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Parse results</span></span>
+<span><span class="va">papers_df</span> <span class="op">&lt;-</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">fromJSON</a></span><span class="op">(</span><span class="va">papers</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">paperId</span>, <span class="va">title</span>, <span class="va">year</span>, <span class="va">citationCount</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">paper_id</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_max</a></span><span class="op">(</span><span class="va">papers_df</span>, order_by <span class="op">=</span> <span class="va">citationCount</span><span class="op">)</span><span class="op">$</span><span class="va">paperId</span></span>
+<span></span>
+<span><span class="co"># Getting the details of the first paper</span></span>
+<span><span class="fu"><a href="../reference/execute_mcp_tool.html">execute_mcp_tool</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="../reference/get_mcp_tool.html">get_mcp_tool</a></span><span class="op">(</span><span class="va">semantic_scholar_tools</span>, <span class="st">"get_paper"</span><span class="op">)</span>,</span>
+<span>    arguments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        paper_id <span class="op">=</span> <span class="va">paper_id</span>,</span>
+<span>        fields <span class="op">=</span> <span class="st">"title,authors,year,abstract"</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<p>Now use it with an LLM agent:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gemini</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Google.html">Google</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
+<span>    <span class="st">"Find recent papers (2020+) on Sensory Substitution and Cross-Modal Plasticity and summarize the key innovations"</span>,</span>
+<span>    <span class="st">"When using the `search_papers` tool, use a limit of 2 by search, to not exceed the rate limit."</span>,</span>
+<span>    <span class="st">"Use the `get_paper` tool to get the details of the papers like its abstract."</span>,</span>
+<span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
+<span>    tools <span class="op">=</span> <span class="va">semantic_scholar_tools</span>,</span>
+<span>    output_schema <span class="op">=</span> <span class="fu"><a href="../reference/tool_definitions.html">schema</a></span><span class="op">(</span></span>
+<span>        name <span class="op">=</span> <span class="st">"research_papers_summary"</span>,</span>
+<span>        description <span class="op">=</span> <span class="st">"Information about research papers"</span>,</span>
+<span>        papers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>            type <span class="op">=</span> <span class="st">"[object]*"</span>,</span>
+<span>            description <span class="op">=</span> <span class="st">"Array of paper objects"</span>,</span>
+<span>            paper_id <span class="op">=</span> <span class="st">"string* The ID of the paper"</span>,</span>
+<span>            title <span class="op">=</span> <span class="st">"string* The title of the paper"</span>,</span>
+<span>            year <span class="op">=</span> <span class="st">"integer* The year of the paper"</span>,</span>
+<span>            main_findings <span class="op">=</span> <span class="st">"string* The main findings of the paper"</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div>
+<blockquote>
+<p><strong>Tip</strong></p>
+<p><strong>HTTP vs stdio servers:</strong></p>
+<ul>
+<li>
+<strong>HTTP servers</strong> can be accessed remotely, support multiple concurrent clients, and can be deployed as web services</li>
+<li>
+<strong>stdio servers</strong> are simpler, work locally only, and are typically one client per server instance</li>
+<li>Both types use the same MCP protocol and tool definitions</li>
+</ul>
+</blockquote>
+</div>
+<div>
+<blockquote>
+<p><strong>Tip</strong></p>
+<p>You can use this server with other MCP clients by configuring them to connect to <code>http://127.0.0.1:8080</code>.</p>
 </blockquote>
 </div>
 </section></section></section><script id="quarto-html-after-body" type="application/javascript">

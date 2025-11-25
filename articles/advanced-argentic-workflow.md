@@ -295,7 +295,7 @@ github_mcp_tools <- mcp_tools(github_mcp_server, tools = c("search_code", "get_f
 > **Note**
 >
 > See the [Using MCP Servers with
-> `argent`](https://ma-riviere.github.io/argent/articles/advanced-mcp.qmd)
+> `argent`](https://ma-riviere.github.io/argent/articles/advanced-mcp)
 > article for more details on how to use MCP servers with `argent`.
 
 ## Creating our Agents

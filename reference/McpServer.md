@@ -39,7 +39,7 @@ this to expose R functions as tools to LLMs via the MCP protocol.
 
 - [`McpServer$serve_stdio()`](#method-McpServer-serve_stdio)
 
-- [`McpServer$handle_request()`](#method-McpServer-handle_request)
+- [`McpServer$serve_http()`](#method-McpServer-serve_http)
 
 - [`McpServer$clone()`](#method-McpServer-clone)
 
@@ -143,19 +143,38 @@ JSON-RPC requests on stdin.
 
 ------------------------------------------------------------------------
 
-### Method `handle_request()`
+### Method `serve_http()`
 
-Handle a single JSON-RPC request line
+Serve the MCP protocol over HTTP This method starts an HTTP server and
+blocks, listening for JSON-RPC requests on POST /.
 
 #### Usage
 
-    McpServer$handle_request(line)
+    McpServer$serve_http(
+      host = "127.0.0.1",
+      port = 8080,
+      block = TRUE,
+      silent = FALSE
+    )
 
 #### Arguments
 
-- `line`:
+- `host`:
 
-  JSON string
+  Character. Host to bind to (default: "127.0.0.1")
+
+- `port`:
+
+  Integer. Port to listen on (default: 8080)
+
+- `block`:
+
+  Logical. Whether to block the console (default: TRUE)
+
+- `silent`:
+
+  Logical. Whether to suppress startup messages (default: FALSE) Format
+  a JSON-RPC response
 
 ------------------------------------------------------------------------
 
