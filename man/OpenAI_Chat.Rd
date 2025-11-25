@@ -79,7 +79,7 @@ response <- openai$chat(
 }
 }
 \section{Super classes}{
-\code{\link[argent:Provider]{argent::Provider}} -> \code{\link[argent:OpenAI]{argent::OpenAI}} -> \code{OpenAI_Chat}
+\code{argent::Provider} -> \code{argent::OpenAI} -> \code{OpenAI_Chat}
 }
 \section{Methods}{
 \subsection{Public methods}{

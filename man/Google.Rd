@@ -122,7 +122,7 @@ embeddings <- google$embeddings(
 }
 }
 \section{Super class}{
-\code{\link[argent:Provider]{argent::Provider}} -> \code{Google}
+\code{argent::Provider} -> \code{Google}
 }
 \section{Methods}{
 \subsection{Public methods}{

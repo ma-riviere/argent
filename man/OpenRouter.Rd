@@ -115,7 +115,7 @@ embeddings <- openrouter$embeddings(
 }
 }
 \section{Super class}{
-\code{\link[argent:Provider]{argent::Provider}} -> \code{OpenRouter}
+\code{argent::Provider} -> \code{OpenRouter}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}

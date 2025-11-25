@@ -157,239 +157,386 @@ McpServer <- R6::R6Class(
             # Open stdin as a file connection to ensure it stays open
             con <- file("stdin", "open" = "r")
             on.exit(close(con))
-            
-            # Main loop
-            while (TRUE) {
-                line <- readLines(con, n = 1, warn = FALSE)
-                if (length(line) == 0) break
-                if (nchar(line) == 0) next
-                
-                self$handle_request(line)
-            }
+
+            # Main loop - wrapped in tryCatch to allow Ctrl+C interruption
+            tryCatch({
+                while (TRUE) {
+                    line <- readLines(con, n = 1, warn = FALSE)
+                    if (length(line) == 0) break
+                    if (nchar(line) == 0) next
+
+                    private$process_and_respond_stdio(line)
+                }
+            }, interrupt = function(e) {
+                message("\nServer interrupted by user")
+            })
         },
 
         #' @description
-        #' Handle a single JSON-RPC request line
-        #' @param line JSON string
-        handle_request = function(line) {
-            # Parse request
+        #' Serve the MCP protocol over HTTP
+        #' This method starts an HTTP server and blocks, listening for JSON-RPC requests on POST /.
+        #' @param host Character. Host to bind to (default: "127.0.0.1")
+        #' @param port Integer. Port to listen on (default: 8080)
+        #' @param block Logical. Whether to block the console (default: TRUE)
+        #' @param silent Logical. Whether to suppress startup messages (default: FALSE)
+        serve_http = function(host = "127.0.0.1", port = 8080, block = TRUE, silent = FALSE) {
+            # Main request handler
+            app <- list(
+                call = function(req) {
+                    if (req$REQUEST_METHOD == "POST") {
+                        private$handle_http_post(req)
+                    } else if (req$REQUEST_METHOD == "OPTIONS") {
+                        private$handle_http_options(req)
+                    } else {
+                        list(
+                            status = 405L,
+                            headers = list("Content-Type" = "text/plain"),
+                            body = "Method Not Allowed"
+                        )
+                    }
+                }
+            )
+
+            # Show startup message
+            if (!silent) {
+                cli::cli_alert_success("Starting {.field {self$name}} MCP server on {.url http://{host}:{port}}")
+            }
+
+            # Start server
+            server <- httpuv::startServer(host = host, port = port, app = app)
+
+            if (block) {
+                on.exit(httpuv::stopServer(server))
+                httpuv::service(Inf)
+            } else {
+                invisible(server)
+            }
+        }
+    ),
+    private = list(
+        #' Format a JSON-RPC response
+        #' @param id Request ID (NULL for notifications)
+        #' @param result Result object (for success responses)
+        #' @param error Error object (for error responses)
+        #' @return Formatted JSON-RPC response list (or NULL for notifications)
+        format_jsonrpc_response = function(id, result = NULL, error = NULL) {
+            if (!is.null(id)) {
+                resp <- list(jsonrpc = "2.0", id = id)
+                if (!is.null(error)) {
+                    resp$error <- if (is.list(error) && !is.null(error$code)) {
+                        error
+                    } else {
+                        list(code = -32603, message = as.character(error))
+                    }
+                } else {
+                    resp$result <- result
+                }
+                return(resp)
+            }
+            return(NULL)
+        },
+
+        #' Process stdio request and send response
+        #' @param line JSON string from stdin
+        process_and_respond_stdio = function(line) {
             req <- purrr::possibly(jsonlite::fromJSON, otherwise = NULL)(line)
-            
+
             if (is.null(req) || is.null(req$jsonrpc)) {
                 return(invisible(NULL))
             }
-            
-            # Handle request based on method
-            response <- tryCatch({
-                if (!is.null(req$error)) stop("Request has error")
-                
-                method <- req$method
-                id <- req$id
-                
-                if (method == "initialize") {
-                    list(
-                        protocolVersion = "2024-11-05",
-                        serverInfo = list(
-                            name = self$name,
-                            version = self$version
-                        ),
-                        capabilities = list(
-                            tools = list(listChanged = FALSE),
-                            resources = list(subscribe = FALSE, listChanged = FALSE),
-                            prompts = list(listChanged = FALSE)
-                        )
-                    )
-                } else if (method == "notifications/initialized") {
-                    # No response needed for notification
-                    NULL
-                } else if (method == "tools/list") {
-                    # Convert stored tool definitions to MCP format
-                    mcp_tools <- lapply(self$tools, function(t) {
-                        def <- t$definition
-                        list(
-                            name = def$name,
-                            description = def$description,
-                            inputSchema = def$args_schema
-                        )
-                    })
 
-                    list(tools = unname(mcp_tools))
+            result <- tryCatch(
+                private$process_jsonrpc_method(req$method, req$params),
+                error = function(e) list(.error = TRUE, message = e$message)
+            )
 
-                } else if (method == "tools/call") {
-                    params <- req$params
-                    tool_name <- params$name
-                    args <- params$arguments
-
-                    if (is.null(self$tools[[tool_name]])) {
-                        cli::cli_abort("Tool not found: {tool_name}")
-                    }
-
-                    handler <- self$tools[[tool_name]]$handler
-                    result <- rlang::exec(handler, !!!args)
-
-                    # Check if result is a structured mcp_error
-                    if (inherits(result, "mcp_error")) {
-                        # Format error response with structured information
-                        error_parts <- paste0("Error (", result$type, "): ", result$message)
-
-                        if (!is.null(result$details)) {
-                            error_parts <- c(error_parts, paste0("Details: ", result$details))
-                        }
-
-                        if (!is.null(result$suggestion)) {
-                            error_parts <- c(error_parts, paste0("Suggestion: ", result$suggestion))
-                        }
-
-                        content_text <- paste(error_parts, collapse = "\n")
-
-                        return(list(
-                            content = list(list(type = "text", text = content_text)),
-                            isError = TRUE
-                        ))
-                    }
-
-                    # Check if result is a structured mcp_success
-                    if (inherits(result, "mcp_success")) {
-                        if (is.character(result$data) && length(result$data) == 1) {
-                            data_text <- result$data
-                        } else {
-                            data_text <- jsonlite::toJSON(result$data, auto_unbox = TRUE, pretty = TRUE)
-                        }
-
-                        if (!is.null(result$warning)) {
-                            content_text <- paste0("Warning: ", result$warning, "\n\n", data_text)
-                        } else {
-                            content_text <- data_text
-                        }
-
-                        return(list(
-                            content = list(list(type = "text", text = content_text)),
-                            isError = FALSE
-                        ))
-                    }
-
-                    # Format regular result as MCP expects (including JSON strings)
-                    if (is.character(result) && length(result) == 1) {
-                        content_text <- result
-                    } else {
-                        content_text <- jsonlite::toJSON(result, auto_unbox = TRUE, pretty = TRUE)
-                    }
-
-                    list(
-                        content = list(list(type = "text", text = content_text)),
-                        isError = FALSE
-                    )
-                } else if (method == "resources/list") {
-                    # Convert stored resource definitions to MCP format
-                    mcp_resources <- lapply(self$resources, function(r) {
-                        def <- r$definition
-                        list(
-                            uri = def$uri,
-                            name = def$name,
-                            description = def$description,
-                            mimeType = def$mimeType
-                        )
-                    })
-
-                    list(resources = unname(mcp_resources))
-
-                } else if (method == "resources/read") {
-                    params <- req$params
-                    uri <- params$uri
-
-                    if (is.null(self$resources[[uri]])) {
-                        cli::cli_abort("Resource not found: {uri}")
-                    }
-
-                    handler <- self$resources[[uri]]$handler
-                    result <- handler(uri)
-
-                    # Format result as MCP expects
-                    # Result should be a list with either 'text' or 'blob' field
-                    content_item <- if (is.character(result) && length(result) == 1) {
-                        list(
-                            uri = uri,
-                            mimeType = self$resources[[uri]]$definition$mimeType %||% "text/plain",
-                            text = result
-                        )
-                    } else if (is.list(result) && !is.null(result$text)) {
-                        list(
-                            uri = uri,
-                            mimeType = result$mimeType %||% self$resources[[uri]]$definition$mimeType %||% "text/plain",
-                            text = result$text
-                        )
-                    } else if (is.list(result) && !is.null(result$blob)) {
-                        list(
-                            uri = uri,
-                            mimeType = result$mimeType %||% self$resources[[uri]]$definition$mimeType %||% "application/octet-stream",
-                            blob = result$blob
-                        )
-                    } else {
-                        list(
-                            uri = uri,
-                            mimeType = "text/plain",
-                            text = jsonlite::toJSON(result, auto_unbox = TRUE, pretty = TRUE)
-                        )
-                    }
-
-                    list(contents = list(content_item))
-
-                } else if (method == "prompts/list") {
-                    # Convert stored prompt definitions to MCP format
-                    mcp_prompts <- lapply(self$prompts, function(p) {
-                        def <- p$definition
-                        list(
-                            name = def$name,
-                            description = def$description,
-                            arguments = def$arguments
-                        )
-                    })
-
-                    list(prompts = unname(mcp_prompts))
-
-                } else if (method == "prompts/get") {
-                    params <- req$params
-                    prompt_name <- params$name
-                    args <- params$arguments
-
-                    if (is.null(self$prompts[[prompt_name]])) {
-                        cli::cli_abort("Prompt not found: {prompt_name}")
-                    }
-
-                    handler <- self$prompts[[prompt_name]]$handler
-                    result <- rlang::exec(handler, !!!args)
-
-                    # Result should be a list with 'description' (optional) and 'messages' fields
-                    # messages should be a list of lists with 'role' and 'content' fields
-                    if (is.null(result$messages)) {
-                        cli::cli_abort("Prompt handler must return a list with a 'messages' field")
-                    }
-
-                    list(description = result$description, messages = result$messages)
-                    
+            if (!is.null(req$id)) {
+                resp <- if (isTRUE(result$.error)) {
+                    private$format_jsonrpc_response(req$id, error = result)
                 } else {
-                    cli::cli_abort("Method not found: {method}")
-                }
-            },
-            error = function(e) {
-                # Problem with the data being sent to the MCP server, 
-                #  often due to undefined properties or incorrect JSON structure
-                return(list(code = -32603, message = e$message))
-            })
-            
-            # Send response if needed (requests with IDs expect responses)
-            if (!is.null(req$id) && !is.null(response)) {
-                resp_obj <- list(jsonrpc = "2.0", id = req$id)
-                
-                if (!is.null(response$code) && !is.null(response$message)) {
-                    resp_obj$error <- response
-                } else {
-                    resp_obj$result <- response
+                    private$format_jsonrpc_response(req$id, result = result)
                 }
 
-                cat(jsonlite::toJSON(resp_obj, auto_unbox = TRUE), "\n")
-                flush(stdout())
+                if (!is.null(resp)) {
+                    cat(jsonlite::toJSON(resp, auto_unbox = TRUE), "\n")
+                    flush(stdout())
+                }
             }
+        },
+
+        #' Handle HTTP POST request
+        #' @param req HTTP request object
+        #' @return HTTP response list
+        handle_http_post = function(req) {
+            if (!private$validate_origin(req)) {
+                return(list(
+                    status = 403L,
+                    headers = list("Content-Type" = "application/json"),
+                    body = '{"error":"Forbidden origin"}'
+                ))
+            }
+
+            body_text <- rawToChar(req$rook.input$read())
+            json_req <- purrr::possibly(jsonlite::fromJSON)(body_text, simplifyVector = FALSE)
+
+            if (is.null(json_req) || is.null(json_req$jsonrpc)) {
+                return(list(
+                    status = 400L,
+                    headers = list("Content-Type" = "application/json"),
+                    body = jsonlite::toJSON(list(
+                        jsonrpc = "2.0",
+                        error = list(code = -32600, message = "Invalid Request"),
+                        id = NULL
+                    ), auto_unbox = TRUE)
+                ))
+            }
+
+            result <- tryCatch(
+                private$process_jsonrpc_method(json_req$method, json_req$params),
+                error = function(e) list(.error = TRUE, message = e$message)
+            )
+
+            resp <- if (isTRUE(result$.error)) {
+                private$format_jsonrpc_response(json_req$id, error = result)
+            } else {
+                private$format_jsonrpc_response(json_req$id, result = result)
+            }
+
+            if (!is.null(resp)) {
+                list(
+                    status = 200L,
+                    headers = list(
+                        "Content-Type" = "application/json",
+                        "Access-Control-Allow-Origin" = "*"
+                    ),
+                    body = jsonlite::toJSON(resp, auto_unbox = TRUE)
+                )
+            } else {
+                list(status = 204L, headers = list(), body = "")
+            }
+        },
+
+        #' Handle HTTP OPTIONS request (CORS preflight)
+        #' @param req HTTP request object
+        #' @return HTTP response list
+        handle_http_options = function(req) {
+            list(
+                status = 200L,
+                headers = list(
+                    "Access-Control-Allow-Origin" = "*",
+                    "Access-Control-Allow-Methods" = "POST, OPTIONS",
+                    "Access-Control-Allow-Headers" = "Content-Type"
+                ),
+                body = ""
+            )
+        },
+
+        #' Validate HTTP request origin
+        #' @param req HTTP request object
+        #' @return Logical indicating if origin is allowed
+        validate_origin = function(req) {
+            origin <- req$HTTP_ORIGIN
+            if (!is.null(origin)) {
+                allowed <- c(
+                    "http://localhost", "http://127.0.0.1",
+                    "https://localhost", "https://127.0.0.1"
+                )
+                if (!any(startsWith(origin, allowed))) {
+                    return(FALSE)
+                }
+            }
+            return(TRUE)
+        },
+
+        #' Process a JSON-RPC method call
+        #' @param method Character. The JSON-RPC method name
+        #' @param params List. The method parameters (NULL for methods without params)
+        #' @return The result object (or NULL for notifications)
+        process_jsonrpc_method = function(method, params = NULL) {
+            if (method == "initialize") {
+                return(list(
+                    protocolVersion = "2024-11-05",
+                    serverInfo = list(name = self$name, version = self$version),
+                    capabilities = list(
+                        tools = list(listChanged = FALSE),
+                        resources = list(subscribe = FALSE, listChanged = FALSE),
+                        prompts = list(listChanged = FALSE)
+                    )
+                ))
+            }
+
+            if (method == "notifications/initialized") {
+                return(NULL)
+            }
+
+            if (method == "tools/list") {
+                mcp_tools <- lapply(self$tools, function(t) {
+                    def <- t$definition
+                    list(
+                        name = def$name,
+                        description = def$description,
+                        inputSchema = def$args_schema
+                    )
+                })
+                return(list(tools = unname(mcp_tools)))
+            }
+
+            if (method == "tools/call") {
+                return(private$handle_tool_call(params$name, params$arguments))
+            }
+
+            if (method == "resources/list") {
+                mcp_resources <- lapply(self$resources, function(r) {
+                    def <- r$definition
+                    list(
+                        uri = def$uri,
+                        name = def$name,
+                        description = def$description,
+                        mimeType = def$mimeType
+                    )
+                })
+                return(list(resources = unname(mcp_resources)))
+            }
+
+            if (method == "resources/read") {
+                return(private$handle_resource_read(params$uri))
+            }
+
+            if (method == "prompts/list") {
+                mcp_prompts <- lapply(self$prompts, function(p) {
+                    def <- p$definition
+                    list(
+                        name = def$name,
+                        description = def$description,
+                        arguments = def$arguments
+                    )
+                })
+                return(list(prompts = unname(mcp_prompts)))
+            }
+
+            if (method == "prompts/get") {
+                return(private$handle_prompt_get(params$name, params$arguments))
+            }
+
+            cli::cli_abort("Method not found: {method}")
+        },
+
+        #' Handle tools/call method
+        #' @param tool_name Character. Name of the tool to call
+        #' @param args List. Arguments to pass to the tool
+        #' @return MCP-formatted tool result
+        handle_tool_call = function(tool_name, args) {
+            if (is.null(self$tools[[tool_name]])) {
+                cli::cli_abort("Tool not found: {tool_name}")
+            }
+
+            handler <- self$tools[[tool_name]]$handler
+            result <- rlang::exec(handler, !!!args)
+
+            # Handle structured error responses
+            if (inherits(result, "mcp_error")) {
+                error_parts <- paste0("Error (", result$type, "): ", result$message)
+                if (!is.null(result$details)) {
+                    error_parts <- c(error_parts, paste0("Details: ", result$details))
+                }
+                if (!is.null(result$suggestion)) {
+                    error_parts <- c(error_parts, paste0("Suggestion: ", result$suggestion))
+                }
+                content_text <- paste(error_parts, collapse = "\n")
+                return(list(
+                    content = list(list(type = "text", text = content_text)),
+                    isError = TRUE
+                ))
+            }
+
+            # Handle structured success responses
+            if (inherits(result, "mcp_success")) {
+                if (is.character(result$data) && length(result$data) == 1) {
+                    data_text <- result$data
+                } else {
+                    data_text <- jsonlite::toJSON(result$data, auto_unbox = TRUE, pretty = TRUE)
+                }
+                if (!is.null(result$warning)) {
+                    content_text <- paste0("Warning: ", result$warning, "\n\n", data_text)
+                } else {
+                    content_text <- data_text
+                }
+                return(list(
+                    content = list(list(type = "text", text = content_text)),
+                    isError = FALSE
+                ))
+            }
+
+            # Handle regular results
+            if (is.character(result) && length(result) == 1) {
+                content_text <- result
+            } else {
+                content_text <- jsonlite::toJSON(result, auto_unbox = TRUE, pretty = TRUE)
+            }
+            return(list(
+                content = list(list(type = "text", text = content_text)),
+                isError = FALSE
+            ))
+        },
+
+        #' Handle resources/read method
+        #' @param uri Character. URI of the resource to read
+        #' @return MCP-formatted resource content
+        handle_resource_read = function(uri) {
+            if (is.null(self$resources[[uri]])) {
+                cli::cli_abort("Resource not found: {uri}")
+            }
+
+            handler <- self$resources[[uri]]$handler
+            result <- handler(uri)
+
+            # Format content based on result type
+            content_item <- if (is.character(result) && length(result) == 1) {
+                list(
+                    uri = uri,
+                    mimeType = self$resources[[uri]]$definition$mimeType %||% "text/plain",
+                    text = result
+                )
+            } else if (is.list(result) && !is.null(result$text)) {
+                list(
+                    uri = uri,
+                    mimeType = result$mimeType %||% self$resources[[uri]]$definition$mimeType %||% "text/plain",
+                    text = result$text
+                )
+            } else if (is.list(result) && !is.null(result$blob)) {
+                list(
+                    uri = uri,
+                    mimeType = result$mimeType %||% self$resources[[uri]]$definition$mimeType %||% "application/octet-stream",
+                    blob = result$blob
+                )
+            } else {
+                list(
+                    uri = uri,
+                    mimeType = "text/plain",
+                    text = jsonlite::toJSON(result, auto_unbox = TRUE, pretty = TRUE)
+                )
+            }
+
+            return(list(contents = list(content_item)))
+        },
+
+        #' Handle prompts/get method
+        #' @param prompt_name Character. Name of the prompt to get
+        #' @param args List. Arguments to pass to the prompt handler
+        #' @return MCP-formatted prompt result
+        handle_prompt_get = function(prompt_name, args) {
+            if (is.null(self$prompts[[prompt_name]])) {
+                cli::cli_abort("Prompt not found: {prompt_name}")
+            }
+
+            handler <- self$prompts[[prompt_name]]$handler
+            result <- rlang::exec(handler, !!!args)
+
+            if (is.null(result$messages)) {
+                cli::cli_abort("Prompt handler must return a list with a 'messages' field")
+            }
+
+            return(list(description = result$description, messages = result$messages))
         }
     )
 )

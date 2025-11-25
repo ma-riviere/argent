@@ -610,10 +610,11 @@ Provider <- R6::R6Class( # nolint
 
             # Detect if user passed a list of inputs to chat() instead of chat(!!!inputs)
             # This is not perfect and will miss some cases, thus we only warn instead of aborting
-            if (length(inputs) == 1 && rlang::is_quosure(inputs[[1]])) {
+            if (is.list(inputs) && length(inputs) == 1 && rlang::is_quosure(inputs[[1]])) {
                 content <- rlang::eval_tidy(inputs[[1]])
                 if (
                     is.list(content) && 
+                        !is.data.frame(content) &&
                         length(content) > 1 &&
                         purrr::some(purrr::list_flatten(content), \(x) !is.null(attr(x, "argent_input_type")))
                 ) {

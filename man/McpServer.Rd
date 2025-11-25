@@ -31,7 +31,7 @@ Use this to expose R functions as tools to LLMs via the MCP protocol.
 \item \href{#method-McpServer-add_resource}{\code{McpServer$add_resource()}}
 \item \href{#method-McpServer-add_prompt}{\code{McpServer$add_prompt()}}
 \item \href{#method-McpServer-serve_stdio}{\code{McpServer$serve_stdio()}}
-\item \href{#method-McpServer-handle_request}{\code{McpServer$handle_request()}}
+\item \href{#method-McpServer-serve_http}{\code{McpServer$serve_http()}}
 \item \href{#method-McpServer-clone}{\code{McpServer$clone()}}
 }
 }
@@ -128,18 +128,31 @@ This method blocks and listens for JSON-RPC requests on stdin.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-McpServer-handle_request"></a>}}
-\if{latex}{\out{\hypertarget{method-McpServer-handle_request}{}}}
-\subsection{Method \code{handle_request()}}{
-Handle a single JSON-RPC request line
+\if{html}{\out{<a id="method-McpServer-serve_http"></a>}}
+\if{latex}{\out{\hypertarget{method-McpServer-serve_http}{}}}
+\subsection{Method \code{serve_http()}}{
+Serve the MCP protocol over HTTP
+This method starts an HTTP server and blocks, listening for JSON-RPC requests on POST /.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpServer$handle_request(line)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{McpServer$serve_http(
+  host = "127.0.0.1",
+  port = 8080,
+  block = TRUE,
+  silent = FALSE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{line}}{JSON string}
+\item{\code{host}}{Character. Host to bind to (default: "127.0.0.1")}
+
+\item{\code{port}}{Integer. Port to listen on (default: 8080)}
+
+\item{\code{block}}{Logical. Whether to block the console (default: TRUE)}
+
+\item{\code{silent}}{Logical. Whether to suppress startup messages (default: FALSE)
+Format a JSON-RPC response}
 }
 \if{html}{\out{</div>}}
 }

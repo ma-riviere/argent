@@ -87,7 +87,7 @@ github_mcp_tools <- mcp_tools(github_mcp_server, tools = c("search_code", "get_f
 ```
 
 ::: {.callout-note appearance="simple"}
-See the [Using MCP Servers with `argent`](/articles/advanced-mcp.qmd) article for more details on how to use MCP servers with `argent`.
+See the [Using MCP Servers with `argent`](/articles/advanced-mcp) article for more details on how to use MCP servers with `argent`.
 :::
 
 # Creating our Agents

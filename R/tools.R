@@ -321,7 +321,7 @@ schema <- function(name, description, ..., strict = TRUE, additional_properties 
 
     params <- list(...)
 
-    if (length(params) == 0) {
+    if (length(params) == 0 && isTRUE(getOption("argent.debug"))) {
         cli::cli_warn("No parameters specified for schema {.val {name}}")
     }
 

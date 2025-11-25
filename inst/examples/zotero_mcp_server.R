@@ -4,28 +4,20 @@
 # This server can be used with argent or other MCP clients like Claude Code.
 
 # ------🔺 SETUP ---------------------------------------------------------------
+# Setup for when the server is used as a standalone MCP server (e.g. from Claude Desktop)
 
-# Check and install required packages
-required_packages <- c("httr2", "cli", "jsonlite", "argent")
-missing_packages <- required_packages[!sapply(required_packages, requireNamespace, quietly = TRUE)]
-
-if (length(missing_packages) > 0) {
-    message("Installing missing packages: ", paste(missing_packages, collapse = ", "))
-    install.packages(missing_packages, repos = "https://cloud.r-project.org", quiet = TRUE)
-}
-
-suppressPackageStartupMessages({
-    library(httr2)
-    library(cli)
-    library(jsonlite)
-    # library(argent)
-    devtools::load_all()
-})
+# Since this file is part of the argent package, there should be no need to test is the package is installed or not.
+# `argent` imports httr2, jsonlite & purrr, so we don't need to check if those are installed either.
+suppressPackageStartupMessages(library(argent))
 
 # Disable httr2 progress bars to avoid stderr noise
-options(httr2_progress = FALSE)
+options(
+    httr2_progress = FALSE,
+    argent.debug = FALSE
+)
 
 # ------🔺 TOOLS ---------------------------------------------------------------
+# Defining the tools that the server will expose
 
 # Base request function to Zotero local API
 zotero_request <- function(endpoint, query = list(), user_id = "0", valid_statuses = 200) {
