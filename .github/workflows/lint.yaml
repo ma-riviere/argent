@@ -1,0 +1,50 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+name: lint.yaml
+
+permissions: read-all
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::lintr, local::.
+          needs: lint
+
+      - name: Lint R/ directory
+        run: |
+          lints_R <- lintr::lint_dir("R")
+          lints_tests <- lintr::lint_dir("tests")
+          lints_examples <- lintr::lint_dir("inst/examples")
+          
+          lints <- c(lints_R, lints_tests, lints_examples)
+          if (length(lints) > 0) {
+            print(lints)
+            for (lint in lints) {
+              cat(sprintf(
+                "::error file=%s,line=%d,col=%d::%s: %s\n",
+                lint$filename, lint$line_number, lint$column_number,
+                lint$type, lint$message
+              ))
+            }
+            stop(sprintf("Found %d lint issue(s)", length(lints)), call. = FALSE)
+          }
+          message("No lints found!")
+        shell: Rscript {0}
+
