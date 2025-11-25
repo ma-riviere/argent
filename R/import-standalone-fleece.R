@@ -1,9 +1,3 @@
-# Standalone file: do not edit by hand
-# Source: https://github.com/thieled/fleece
-# ----------------------------------------------------------------------
-#
-# This file provides a standalone implementation of fleece::rectangularize()
-#
 # nocov start
 
 #' Bind JSON data parsed as an R list to a data frame and unnest nested columns
@@ -27,7 +21,7 @@ rectangularize <- function(content) {
 
     # Check if content contains 1 observation (=> simple rbind; 1 row df)
     if (all(sapply(content, is.list))) {
-        con <- do.call(rbind, content) |> tibble::as_tibble()
+        con <- tibble::as_tibble(do.call(rbind, content))
         con <- unnest_recursively(con)
         return(con)
 
