@@ -62,11 +62,16 @@ navbar:
       text: Advanced Use
       menu:
       - text: RAG with `ragnar`
-        href: articles/advanced-rag.html
-      - text: Using MCP Servers
-        href: articles/advanced-mcp.html
+        href: articles/basic-rag.html
+      - text: -------
+      - text: MCP Servers
+      - text: Connecting to MCP Servers
+        href: articles/mcp-client.html
+      - text: Creating MCP Servers
+        href: articles/mcp-server.html
+      - text: -------
       - text: Advanced Argentic Workflow
-        href: articles/advanced-argentic-workflow.html
+        href: articles/argentic-workflow.html
 
 articles:
 - title: Provider Guides
@@ -91,9 +96,10 @@ articles:
   desc: Advanced features and techniques
   navbar: Advanced Use
   contents:
-    - articles/advanced-rag
-    - articles/advanced-mcp
-    - articles/advanced-argentic-workflow
+    - articles/basic-rag
+    - articles/mcp-client
+    - articles/mcp-server
+    - articles/argentic-workflow
 
 reference:
 - title: Provider Classes

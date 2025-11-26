@@ -118,6 +118,9 @@ mcp_tools <- function(client, tools = NULL) {
 
 #' Execute an MCP tool
 #'
+#' @description
+#' This is meant to test MCP tools manually, simulating a tool call from an LLM.
+#'
 #' @param tool_def List. The tool definition (e.g. one of the items returned by `mcp_tools()`).
 #' @param arguments List. The arguments to pass to the tool
 #'

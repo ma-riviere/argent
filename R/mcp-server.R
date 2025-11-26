@@ -421,7 +421,7 @@ McpServer <- R6::R6Class(
             list(status = 204L, headers = private$add_mcp_headers(list()), body = "")
         },
 
-        # Validate HTTP request origin
+        # Validate HTTP request origin. We only allow local requests for now.
         # @param req HTTP request object
         # @return Logical indicating if origin is allowed
         validate_origin = function(req) {

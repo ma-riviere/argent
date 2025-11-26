@@ -15,5 +15,5 @@ execute_mcp_tool(tool_def, arguments = list())
 The result of the tool execution
 }
 \description{
-Execute an MCP tool
+This is meant to test MCP tools manually, simulating a tool call from an LLM.
 }

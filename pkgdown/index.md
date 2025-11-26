@@ -380,8 +380,7 @@ get_user_info <- function(user_name) {
     #' @description Provides information about the user, like their favorite programming language
     #' @param user_name:string* The name of the user
 
-    switch(
-        user_name,
+    switch(user_name,
         "Marc" = list(favorite_language = "R", favorite_framework = "Shiny"),
         "Alice" = list(favorite_language = "Python", favorite_framework = "Flask"),
         "Bob" = list(favorite_language = "JavaScript", favorite_framework = "React"),
@@ -688,10 +687,7 @@ file_metadata <- gemini$upload_file("https://ma-riviere.com/res/cv.pdf")
 ```
 
 ``` r
-multipart_prompt <- list(
-    "What is my favorite programming language?",
-    as_file_content(file_metadata$name)
-)
+multipart_prompt <- list("What is my favorite programming language?", as_file_content(file_metadata$name))
 
 gemini$chat(!!!multipart_prompt, model = "gemini-2.5-flash")
 ```
@@ -754,13 +750,16 @@ Guides for OpenAI’s three different APIs:
 
 ### Advanced Topics
 
--   [RAG](https://ma-riviere.github.io/argent/articles/advanced-rag.html) -
+-   [RAG](https://ma-riviere.github.io/argent/articles/basic-rag.html) -
     How to use `argent` & `ragnar` for RAG
--   [MCP Servers &
-    Tools](https://ma-riviere.github.io/argent/articles/advanced-mcp.html) -
-    How to use MCP server tools with `argent`
+-   [MCP: Connecting to MCP
+    Servers](https://ma-riviere.github.io/argent/articles/mcp-client.html) -
+    How to connect to MCP servers with `argent`
+-   [MCP: Creating MCP
+    Servers](https://ma-riviere.github.io/argent/articles/mcp-server.html) -
+    How to create your own MCP servers with `argent`
 -   [Argentic
-    Workflow](https://ma-riviere.github.io/argent/articles/advanced-argentic-workflow.html) -
+    Workflow](https://ma-riviere.github.io/argent/articles/argentic-workflow.html) -
     How to use `argent` for an advanced Agentic Workflows
 
 ## Contributing

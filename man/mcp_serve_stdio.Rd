@@ -4,7 +4,7 @@
 \alias{mcp_serve_stdio}
 \title{Create and serve MCP server from file over stdio}
 \usage{
-mcp_serve_stdio(file, name = NULL, version = NULL)
+mcp_serve_stdio(file, name = NULL, version = NULL, groups = NULL)
 }
 \arguments{
 \item{file}{Character. Path to R file with annotated functions. Functions should
@@ -15,6 +15,9 @@ for arguments.}
 \item{name}{Character. Server name. If NULL, auto-detected from filename.}
 
 \item{version}{Character. Server version. If NULL, defaults to "1.0.0".}
+
+\item{groups}{Character vector. Optional. If provided, only serve tools/resources/prompts
+in the specified groups. Use the \verb{@group} annotation to assign functions to groups.}
 }
 \value{
 NULL (server runs blocking)
@@ -29,6 +32,9 @@ tools/resources/prompts, and starting the server.
 \dontrun{
 # Simple usage - auto-detects name from filename
 mcp_serve_stdio("zotero_tools.R")
+
+# Serve only specific groups
+mcp_serve_stdio("all_tools.R", groups = c("zotero", "web"))
 
 # Explicit name and version
 mcp_serve_stdio("tools.R", name = "my-server", version = "2.0.0")

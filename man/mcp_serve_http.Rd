@@ -8,6 +8,7 @@ mcp_serve_http(
   file,
   name = NULL,
   version = NULL,
+  groups = NULL,
   host = "127.0.0.1",
   port = 8080,
   ...
@@ -22,6 +23,9 @@ for arguments.}
 \item{name}{Character. Server name. If NULL, auto-detected from filename.}
 
 \item{version}{Character. Server version. If NULL, defaults to "1.0.0".}
+
+\item{groups}{Character vector. Optional. If provided, only serve tools/resources/prompts
+in the specified groups. Use the \verb{@group} annotation to assign functions to groups.}
 
 \item{host}{Character. Host to bind to (default: "127.0.0.1")}
 
@@ -41,6 +45,9 @@ parsing the file, registering tools/resources/prompts, and starting the server.
 \dontrun{
 # Simple usage - auto-detects name from filename
 mcp_serve_http("zotero_tools.R", port = 8080)
+
+# Serve only specific groups
+mcp_serve_http("all_tools.R", groups = c("zotero", "web"), port = 8080)
 
 # Explicit name and version
 mcp_serve_http("tools.R", name = "my-server", version = "2.0.0", port = 8080)

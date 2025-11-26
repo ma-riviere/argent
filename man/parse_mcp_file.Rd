@@ -4,10 +4,13 @@
 \alias{parse_mcp_file}
 \title{Parse a file and extract all MCP definitions (tools/resources/prompts)}
 \usage{
-parse_mcp_file(file)
+parse_mcp_file(file, groups = NULL)
 }
 \arguments{
 \item{file}{Character. Path to R file with annotated functions}
+
+\item{groups}{Character vector. Optional. If provided, only return tools/resources/prompts
+in the specified groups. If NULL (default), return all.}
 }
 \value{
 List with \code{tools}, \code{resources}, \code{prompts} fields (each a list)
@@ -21,6 +24,7 @@ Supported annotations:
 \itemize{
 \item \verb{@description}: Function description (required)
 \item \verb{@mcp tool|resource|prompt}: MCP type (defaults to "tool" if omitted)
+\item \verb{@group}: Group name for organizing tools (defaults to "general")
 \item \verb{@param name:type* description}: Parameter specification (for tools/prompts)
 \item \verb{@uri}: Resource URI (for resources)
 \item \verb{@mimeType}: Resource MIME type (for resources)
@@ -31,6 +35,9 @@ Supported annotations:
 # Parse a file with annotated tools
 parsed <- parse_mcp_file("inst/examples/zotero_tools.R")
 
+# Parse only specific groups
+parsed <- parse_mcp_file("inst/examples/all_tools.R", groups = c("zotero", "web"))
+
 # Inspect results
 length(parsed$tools)      # Number of tools found
 length(parsed$resources)  # Number of resources found
@@ -40,6 +47,7 @@ length(parsed$prompts)    # Number of prompts found
 tool <- parsed$tools[[1]]
 tool$name
 tool$description
+tool$group
 tool$args_schema
 }
 }

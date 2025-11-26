@@ -1,5 +1,5 @@
 ---
-title: "Using MCP Servers with `argent`"
+title: "MCP: Connecting to MCP Servers"
 format: html
 execute:
   echo: true
@@ -8,13 +8,13 @@ execute:
 
 # Introduction
 
-The Model Context Protocol (MCP) enables LLMs to securely interact with external tools and data sources. This vignette demonstrates how to integrate MCP servers with argent to extend your AI agent's capabilities.
+The Model Context Protocol (MCP) enables LLMs to securely interact with external tools and data sources. This vignette demonstrates how to connect to MCP servers with argent to extend your AI agent's capabilities.
 
 MCP (Model Context Protocol) is an open protocol that standardizes how applications provide context to LLMs. MCP servers expose three main primitives:
 
 - **Tools**: Executable functions the LLM can call
-- **Resources**: File-like structured data the LLM can access (not supported yet)
-- **Prompts**: Predefined templates for interactions (not supported yet)
+- **Resources**: File-like structured data the LLM can access
+- **Prompts**: Predefined templates for interactions
 
 There are two main types of MCP servers: *HTTP* and *stdio*. HTTP servers are typically used for cloud-based services like GitHub, while stdio servers are typically used for local services like Docker or npx. Both types of MCP servers can be used with `argent`.
 
@@ -56,7 +56,7 @@ execute_mcp_tool(
 
 ## Using a 'stdio' MCP Server
 
-Let's look at the BTW MCP server as an example (which requires the [`btw`](https://github.com/posit-dev/btw) package to be installed). 
+Let's look at the BTW MCP server as an example (which requires the [`btw`](https://github.com/posit-dev/btw) package to be installed).
 It is a stdio server that can be used to interact with the `btw` package.
 
 ```{r}
@@ -111,7 +111,7 @@ google$chat(
 ```
 
 ```{verbatim}
-`posit-dev/mcptools` does not directly implement the ability to use HTTP MCP servers with `ellmer`. When `mcptools` acts as an MCP *client* via `ellmer`, it only supports the local (stdio) protocol. 
+`posit-dev/mcptools` does not directly implement the ability to use HTTP MCP servers with `ellmer`. When `mcptools` acts as an MCP *client* via `ellmer`, it only supports the local (stdio) protocol.
 To connect to remote (HTTP) MCP servers, the `mcptools` documentation recommends using `mcp-remote`, an external tool (a local stdio MCP server) that converts remote HTTP servers to `mcptools`-compatible local ones. This allows `ellmer` (using the stdio protocol) to interact with remote HTTP MCP servers through `mcp-remote`.
 ```
 
@@ -233,270 +233,3 @@ No, `posit-dev/mcptools` itself does not directly implement the ability to use H
 ```
 
 </details>
-
-# Advanced Usage: making our own MCP servers
-
-## Building a STDIO MCP Server
-
-Let's create our own stdio MCP server for interacting with Zotero's local API. This server will be
-usable both from argent and from other MCP clients, like Claude Code.
-
-### Prerequisites
-
-- Zotero 7+ must be running
-- Enable "Allow other applications on this computer to communicate with Zotero" in Preferences > Advanced
-
-### Server Implementation
-
-```{=html}
-<details>
-<summary>Zotero MCP Server Implementation</summary>
-```
-
-`r knitr::spin_child(here::here("inst", "examples", "zotero_mcp_server.R"))`
-
-</details>
-
-::: {.callout-note appearance="simple"}
-
-This implementation uses `argent`'s annotation parsing & MCP machinery, which allows us to implement a fully-featured MCP server by simply defining the tools we want to expose as annotated functions.
-All the 'boilerplate' code for setting up the MCP server is handled by `argent`.
-
-The Zotero MCP server code is available in the package at `inst/examples/zotero_mcp_server.R`.
-:::
-
-### Using the MCP Server
-
-```{r}
-zotero_client <- mcp_connect(
-    name = "zotero",
-    type = "stdio",
-    command = "Rscript",
-    args = c("-e", "argent::mcp_serve_stdio(system.file('examples/zotero_mcp_server.R', package = 'argent'))")
-)
-
-zotero_tools <- mcp_tools(zotero_client)
-zotero_resources <- mcp_resources(zotero_client)
-zotero_prompts <- mcp_prompts(zotero_client)
-```
-
-::: {.callout-tip appearance="simple"}
-We could have served the MCP server with the `groups = c('papers')` argument, so that only the tools/resources/prompts with the `@group papers` annotation are available.
-:::
-
-We could test if the MCP server is working by querying it 'manually':
-
-```{r}
-#| code-fold: true
-#| code-summary: Testing the Zotero MCP Server manually
-
-# Getting details on all my collections
-my_collections <- execute_mcp_tool(get_mcp_tool(zotero_tools, "zotero_get_collections"))
-
-# Getting the key of the Neuroscience collection
-neuroscience_collection_key <- jsonlite::fromJSON(my_collections) |>
-    dplyr::filter(stringr::str_detect(name, "Neuroscience")) |>
-    dplyr::pull(key)
-
-# Getting details on all the items/papers in the Neuroscience collection
-neuroscience_items <- execute_mcp_tool(
-    get_mcp_tool(zotero_tools, "zotero_get_collection_items"),
-    arguments = list(collection_key = neuroscience_collection_key)
-)
-
-# Getting a specific paper's key with a keyword from its title
-neuroscience_paper_key <- jsonlite::fromJSON(neuroscience_items) |>
-    dplyr::filter(stringr::str_detect(title, "cross-modal plasticity")) |>
-    dplyr::pull(key)
-
-# Getting the details on the paper
-neuroscience_paper_details <- execute_mcp_tool(
-    get_mcp_tool(zotero_tools, "zotero_get_item"),
-    arguments = list(item_key = neuroscience_paper_key)
-)
-
-# Getting the fulltext of the paper (as a string)
-neuroscience_paper_fulltext <- execute_mcp_tool(
-    get_mcp_tool(zotero_tools, "zotero_get_fulltext"),
-    arguments = list(item_key = neuroscience_paper_key)
-)
-
-cat(neuroscience_paper_fulltext)
-```
-
-Now, let's give the tools to an LLM Agent instead:
-
-```{r}
-gemini <- Google$new()
-
-gemini$chat(
-    "Can you summarize O'Regan's view on sensory substitution and on how the brain differentiates sensory inputs ?",
-    "Find at least 2 papers in my library",
-    model = "gemini-2.5-flash",
-    tools = zotero_tools
-)
-```
-
-::: {.callout-tip appearance="simple"}
-
-We can use our new Zotero MCP server with other MCP clients (like Claude Code, Claude Desktop, Gemini CLI, etc):
-
-```{json}
-{
-  "mcpServers": {
-    "zotero": {
-      "type": "stdio",
-      "command": "Rscript",
-      "args": [
-        "-e",
-        "argent::mcp_serve_stdio(system.file('examples/zotero_mcp_server.R', package = 'argent'))"
-      ]
-    }
-  }
-}
-```
-
-:::
-
-## Building an HTTP MCP Server
-
-Let's create an HTTP MCP server for searching academic papers using the Semantic Scholar API. 
-Unlike stdio servers that communicate via standard input/output, HTTP servers expose a REST endpoint that can be accessed over the network.
-
-::: {.callout-note appearance="simple"}
-`argent` provides convenience functions to create HTTP MCP servers, but you can also create your own with `plumber2` or other HTTP server frameworks, independently from `argent`.
-:::
-
-### Prerequisites
-
-- A Semantic Scholar API key (not required, but the rate limits are low without one)
-
-### Server Implementation
-
-```{=html}
-<details>
-<summary>Semantic Scholar MCP Server Implementation</summary>
-```
-
-`r knitr::spin_child(here::here("inst", "examples", "semantic_scholar_mcp_server.R"))`
-
-</details>
-
-We can start the server **in a separate R session or terminal** with:
-
-```{r}
-#| eval: false
-
-mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "argent"), port = 8080)
-#> ✔ Starting semantic_scholar_mcp_server MCP server on <http://127.0.0.1:8080>
-```
-
-::: {.callout-note appearance="simple"}
-**Why start the server separately?** Unlike stdio servers (like Zotero above), which are spawned as child processes by `mcp_connect()` using the provided `command` and `args`, HTTP servers are independent network services. `mcp_connect()` with `type = "http"` simply connects to an already-running server at the specified URL—it cannot start the server for you.
-:::
-
-::: {.callout-note appearance="simple"}
-
-This implementation uses `argent`'s annotation parsing & MCP machinery, which allows us to implement a fully-featured MCP server by simply defining the tools we want to expose as annotated functions. All the 'boilerplate' code for setting up the MCP server is handled by `argent`.
-
-If we were to create the same MCP server manually using an HTTP server framework like `plumber2`, here is what it would look like:
-
-```{=html}
-<details>
-<summary>'Manual' HTTP MCP Server Implementation</summary>
-```
-
-`r knitr::spin_child(here::here("inst", "examples", "semantic_scholar_mcp_server_plumber.R"))`
-
-Which we can run **in a separate R session or terminal** with:
-
-```{r}
-plumber2::api(system.file("examples/semantic_scholar_mcp_server_plumber.R", package = "argent")) |>
-    plumber2::api_run(host = "127.0.0.1", port = 8080, block = TRUE, silent = FALSE, showcase = FALSE)
-```
-
-</details>
-
-:::
-
-Then, we can connect to it from our main session:
-
-```{r}
-semantic_scholar_client <- mcp_connect(name = "semantic-scholar", type = "http", url = "http://127.0.0.1:8080/mcp")
-
-semantic_scholar_tools <- mcp_tools(semantic_scholar_client)
-```
-
-Test the server manually:
-
-```{r}
-papers <- execute_mcp_tool(
-    get_mcp_tool(semantic_scholar_tools, "search_papers"),
-    arguments = list(
-        query = "Sensorimotor Contingencies",
-        limit = 2L,
-        fields = "title,authors,year,abstract,citationCount"
-    )
-)
-
-# Parse results
-papers_df <- jsonlite::fromJSON(papers) |> dplyr::select(paperId, title, year, citationCount)
-
-paper_id <- dplyr::slice_max(papers_df, order_by = citationCount)$paperId
-
-# Getting the details of the first paper
-execute_mcp_tool(
-    get_mcp_tool(semantic_scholar_tools, "get_paper"),
-    arguments = list(paper_id = paper_id, fields = "title,authors,year,abstract")
-)
-```
-
-Now use it with an LLM agent:
-
-```{r}
-gemini <- Google$new()
-
-gemini$chat(
-    "Find recent papers (2020+) on Sensory Substitution and Cross-Modal Plasticity and summarize the key innovations",
-    "When using the `search_papers` tool, use a limit of 2 by search, to not exceed the rate limit.",
-    "If you exceed the rate limit, wait a few seconds before trying again.",
-    "Use the `get_paper` tool to get the details of the papers like its abstract.",
-    model = "gemini-2.5-flash",
-    tools = semantic_scholar_tools,
-    output_schema = schema(
-        name = "research_papers_summary",
-        description = "Information about research papers",
-        papers = list(
-            type = "[object]*",
-            description = "Array of paper objects",
-            paper_id = "string* The ID of the paper",
-            title = "string* The title of the paper",
-            year = "integer* The year of the paper",
-            main_findings = "string* The main findings of the paper"
-        )
-    )
-)
-```
-
-::: {.callout-tip appearance="simple"}
-**HTTP vs stdio servers:**
-
-- **HTTP servers** can be accessed remotely, support multiple concurrent clients, and can be deployed as web services
-- **stdio servers** are simpler, work locally only, and are typically one client per server instance
-- Both types use the same MCP protocol and tool definitions
-:::
-
-::: {.callout-tip appearance="simple"}
-
-We can use our new Semantic Scholar MCP server (either the standalone `plumber2` implementation or the `argent` implementation) with other MCP clients with:
-
-```{json}
-{
-  "mcpServers": {
-    "semantic-scholar": {
-      "httpUrl": "http://127.0.0.1:8080/mcp"
-    }
-  }
-}
-```
-:::

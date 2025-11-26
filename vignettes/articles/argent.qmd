@@ -155,11 +155,7 @@ You can pass any R object to `chat()` as is:
 
 lm_obj <- lm(body_mass ~ species + sex, data = datasets::penguins)
 
-gemini$chat(
-    "What can we deduct from this regression model ?",
-    lm_obj,
-    model = "gemini-2.5-flash"
-)
+gemini$chat("What can we deduct from this regression model ?", lm_obj, model = "gemini-2.5-flash")
 ```
 
 ```{verbatim}
@@ -185,10 +181,7 @@ Upload a file and reference it with `as_file_content()`:
 
 file_metadata <- gemini$upload_file("https://ma-riviere.com/res/cv.pdf")
 
-multipart_prompt <- list(
-    "What are my two favorite frameworks/tools ?",
-    as_file_content(file_metadata$name)
-)
+multipart_prompt <- list("What are my two favorite frameworks/tools ?", as_file_content(file_metadata$name))
 
 gemini$chat(!!!multipart_prompt, model = "gemini-2.5-flash")
 
@@ -236,9 +229,10 @@ Guides for OpenAI's three different APIs:
 
 ### Advanced Topics
 
-- [RAG](articles/advanced-rag.html) - How to use `argent` & `ragnar` for RAG
-- [MCP Servers & Tools](articles/advanced-mcp.html) - How to use MCP server tools with `argent`
-- [Argentic Workflow](articles/advanced-argentic-workflow.html) - How to use `argent` for an advanced Agentic Workflows
+- [RAG](articles/basic-rag.html) - How to use `argent` & `ragnar` for RAG
+- [MCP: Connecting to MCP Servers](articles/mcp-client.html) - How to connect to MCP servers with `argent`
+- [MCP: Creating MCP Servers](articles/mcp-server.html) - How to create your own MCP servers with `argent`
+- [Argentic Workflow](articles/argentic-workflow.html) - How to use `argent` for an advanced Agentic Workflows
 
 ## Other Topics
 
@@ -258,16 +252,10 @@ The chat history maintains a list of messages exchanged between the user and the
 
 gemini <- Google$new()
 
-gemini$chat(
-    prompt = "My name is Alice",
-    model = "gemini-2.5-flash"
-)
+gemini$chat(prompt = "My name is Alice", model = "gemini-2.5-flash")
 #> [1] "Hello Alice. It's nice to meet you."
 
-gemini$chat(
-    prompt = "What's my name?",
-    model = "gemini-2.5-flash"
-)
+gemini$chat(prompt = "What's my name?", model = "gemini-2.5-flash")
 #> [1] "Your name is Alice."
 ```
 
@@ -324,7 +312,7 @@ By default, history is automatically saved to timestamped JSON files in `data/hi
 #| eval: false
 
 options(
-    argent.history_dir = "data/history/"  # Default
+    argent.history_dir = "data/history/" # Default
 )
 
 gemini <- Google$new(auto_save_history = FALSE)
@@ -370,10 +358,7 @@ response_schema <- schema(
     field2 = "number Optional numeric field"
 )
 
-result <- gemini$chat(
-    "Your question here",
-    output_schema = response_schema
-)
+result <- gemini$chat("Your question here", output_schema = response_schema)
 ```
 
 ### Tool Calling
@@ -391,7 +376,7 @@ my_tool <- tool(
     name = "my_function",
     description = "What the function does",
     arg1 = "string* Required string argument description",
-    fn = my_function  # Store the function with the tool definition
+    fn = my_function # Store the function with the tool definition
 )
 my_tool
 ```
@@ -417,7 +402,7 @@ my_function <- function(arg1) {
 
     return(arg1)
 }
-my_tool <- as_tool(my_function)  # Automatically stores the function in .fn
+my_tool <- as_tool(my_function) # Automatically stores the function in .fn
 ```
 
 And then, use the tool within a chat:
@@ -425,8 +410,5 @@ And then, use the tool within a chat:
 ```{r}
 #| eval: false
 
-gemini$chat(
-    "Use the tool to answer this",
-    tools = list(my_tool)
-)
+gemini$chat("Use the tool to answer this", tools = list(my_tool))
 ```
