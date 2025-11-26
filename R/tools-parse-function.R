@@ -87,10 +87,18 @@ as_tool <- function(fn) {
     annotations <- extract_annotations(fn)
     if (length(annotations) == 0) {
         cli::cli_abort(c(
-            "No annotations found in function {.fn {fn_name}}",
-            "i" = "Annotations must be inside the function body as comments starting with {.code #'}",
-            "i" = "If you defined this function before loading argent, simply redefine it.",
-            "i" = "For sourced files, use {.code source(..., keep.source = TRUE)}."
+            "No MCP annotations found in function {.fn {fn_name}}",
+            "x" = "Functions must have inline comments with {.code #'} prefix",
+            "i" = "Annotations must be inside the function body, not above it",
+            "i" = "If you defined this function before loading argent, redefine it",
+            "i" = "For sourced files, use {.code source(file, keep.source = TRUE)}",
+            "i" = "Example:",
+            " " = "  my_fn <- function(x) {{",
+            " " = "    #' @mcp tool",
+            " " = "    #' @description Does something",
+            " " = "    #' @param x:string Input",
+            " " = "    # implementation",
+            " " = "  }}"
         ))
     }
 
@@ -117,7 +125,18 @@ as_tool <- function(fn) {
         param_desc <- param$description
 
         if (!is_schema_fn && !param_name %in% names(formals_list)) {
-            cli::cli_abort("Parameter {.arg {param_name}} in annotations does not exist in function signature")
+            available_params <- if (length(formals_list) > 0) {
+                paste(names(formals_list), collapse = ", ")
+            } else {
+                "none"
+            }
+            suggestion <- did_you_mean(param_name, names(formals_list))
+            cli::cli_abort(c(
+                "Parameter mismatch in function {.fn {fn_name}}",
+                "x" = "Annotated parameter {.arg {param_name}} not in function signature",
+                "i" = "Available parameters: {.val {available_params}}",
+                if (!is.null(suggestion)) paste0("Did you mean: {.arg {suggestion}}")
+            ))
         }
 
         if (is_schema_fn) {
@@ -361,4 +380,18 @@ infer_required <- function(param_name, has_star, has_default) {
         return(FALSE)
     }
     return(FALSE)
+}
+
+#' Suggest a parameter name based on string distance
+#' @noRd
+did_you_mean <- function(input, options) {
+    if (length(options) == 0) {
+        return(NULL)
+    }
+    distances <- adist(input, options)
+    min_dist <- min(distances)
+    if (min_dist > 3) {
+        return(NULL)
+    }
+    options[which.min(distances)]
 }

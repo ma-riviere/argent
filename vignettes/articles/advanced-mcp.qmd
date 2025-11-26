@@ -280,6 +280,10 @@ zotero_resources <- mcp_resources(zotero_client)
 zotero_prompts <- mcp_prompts(zotero_client)
 ```
 
+::: {.callout-tip appearance="simple"}
+We could have served the MCP server with the `groups = c('papers')` argument, so that only the tools/resources/prompts with the `@group papers` annotation are available.
+:::
+
 We could test if the MCP server is working by querying it 'manually':
 
 ```{r}

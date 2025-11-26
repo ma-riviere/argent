@@ -48,6 +48,7 @@ zotero_request <- function(endpoint, query = list(), user_id = "0", valid_status
 
 zotero_search_items <- function(query = NULL, qmode = "titleCreatorYear", tag = NULL, item_type = NULL, limit = 25L) {
     #' @mcp tool
+    #' @group papers
     #' @description Search for items in your Zotero library using phrase-based
     #'   matching. Returns a list of items with their metadata (title, authors,
     #'   year, type). IMPORTANT SEARCH TIPS: The 'query' parameter performs
@@ -108,6 +109,7 @@ zotero_search_items <- function(query = NULL, qmode = "titleCreatorYear", tag = 
 
 zotero_get_item <- function(item_key) {
     #' @mcp tool
+    #' @group papers
     #' @description Get detailed metadata for a specific Zotero item by its key.
     #'   Returns comprehensive information including title, creators, abstract,
     #'   date, type, tags, and URL. Use this after zotero_search_items to get full
@@ -153,6 +155,7 @@ zotero_get_item <- function(item_key) {
 
 zotero_get_collections <- function() {
     #' @mcp tool
+    #' @group collections
     #' @description List all collections (folders) in your Zotero library.
     #'   Collections organize items hierarchically. Returns collection keys, names,
     #'   and parent-child relationships. Use collection keys with other endpoints
@@ -178,6 +181,7 @@ zotero_get_collections <- function() {
 
 zotero_get_fulltext <- function(item_key) {
     #' @mcp tool
+    #' @group papers
     #' @description Extract full-text content from a Zotero item's attached PDF.
     #'   Automatically finds PDF attachments if given a parent item key.
     #'   REQUIREMENTS: Item must have an attached PDF file (stored or linked); PDF
@@ -285,6 +289,8 @@ zotero_get_fulltext <- function(item_key) {
 }
 
 zotero_list_fulltext_items <- function(since = 0L) {
+    #' @mcp tool
+    #' @group overview
     #' @description List all items in the library that have indexed fulltext
     #'   content. Returns item keys and their fulltext version numbers. Useful for
     #'   discovering which items have searchable PDF content before retrieving it.
@@ -308,6 +314,7 @@ zotero_list_fulltext_items <- function(since = 0L) {
 
 zotero_get_collection_items <- function(collection_key, limit = 100L) {
     #' @mcp tool
+    #' @group collections
     #' @description Get all items within a specific collection (folder). Returns
     #'   metadata for items including title, authors, year, and type. Use
     #'   zotero_get_collections to get collection keys first.
@@ -350,6 +357,7 @@ zotero_get_collection_items <- function(collection_key, limit = 100L) {
 
 zotero_get_top_items <- function(limit = 100L) {
     #' @mcp tool
+    #' @group overview
     #' @description Get only top-level items in the library. Excludes child items
     #'   like attachments and notes. Returns metadata including title, authors,
     #'   year, and type. Useful for getting a clean list of main references without
@@ -390,6 +398,7 @@ zotero_get_top_items <- function(limit = 100L) {
 
 zotero_get_item_types <- function() {
     #' @mcp tool
+    #' @group overview
     #' @description Get a list of all valid item types supported by Zotero. Item
     #'   types include: book, journalArticle, conferencePaper, thesis, etc. Useful
     #'   for understanding what types can be used with the item_type filter in
@@ -410,6 +419,7 @@ zotero_get_item_types <- function() {
 
 zotero_library_stats <- function() {
     #' @mcp resource
+    #' @group overview
     #' @description Overview statistics of your Zotero library including total
     #'   item counts, number of collections, and breakdown by item type. Useful
     #'   for understanding the scope and composition of your reference library.
@@ -448,6 +458,7 @@ zotero_library_stats <- function() {
 
 summarize_paper <- function(item_key) {
     #' @mcp prompt
+    #' @group papers
     #' @description Generate a structured summary of a research paper from your
     #'   Zotero library. Fetches the paper's metadata and full text, then creates
     #'   a prompt asking for: main research question, methodology, key findings,

@@ -505,7 +505,33 @@ McpServer <- R6::R6Class(
             }
 
             handler <- self$tools[[tool_name]]$handler
-            result <- rlang::exec(handler, !!!args)
+
+            # Execute tool with improved error handling
+            result <- tryCatch(rlang::exec(handler, !!!args), error = function(e) {
+                # Check if it's a missing argument error
+                if (grepl("argument.*missing|missing.*argument", e$message, ignore.case = TRUE)) {
+                    mcp_error(
+                        message = paste0("Missing required parameter for tool '", tool_name, "'"),
+                        type = "validation",
+                        details = e$message,
+                        suggestion = "Check the tool's required parameters and provide all necessary arguments"
+                    )
+                } else if (grepl("unused argument", e$message, ignore.case = TRUE)) {
+                    mcp_error(
+                        message = paste0("Invalid parameter for tool '", tool_name, "'"),
+                        type = "validation",
+                        details = e$message,
+                        suggestion = "Check the tool's parameter names and remove any invalid arguments"
+                    )
+                } else {
+                    mcp_error(
+                        message = paste0("Tool '", tool_name, "' execution failed"),
+                        type = "error",
+                        details = e$message,
+                        suggestion = "Check the tool implementation and input parameters"
+                    )
+                }
+            })
 
             # Handle structured error responses
             if (inherits(result, "mcp_error")) {
@@ -619,6 +645,8 @@ McpServer <- R6::R6Class(
 #'   for arguments.
 #' @param name Character. Server name. If NULL, auto-detected from filename.
 #' @param version Character. Server version. If NULL, defaults to "1.0.0".
+#' @param groups Character vector. Optional. If provided, only serve tools/resources/prompts
+#'   in the specified groups. Use the `@group` annotation to assign functions to groups.
 #' @param host Character. Host to bind to (default: "127.0.0.1")
 #' @param port Integer. Port to listen on (default: 8080)
 #' @param ... Additional arguments passed to `McpServer$serve_http()`
@@ -630,6 +658,9 @@ McpServer <- R6::R6Class(
 #' \dontrun{
 #' # Simple usage - auto-detects name from filename
 #' mcp_serve_http("zotero_tools.R", port = 8080)
+#'
+#' # Serve only specific groups
+#' mcp_serve_http("all_tools.R", groups = c("zotero", "web"), port = 8080)
 #'
 #' # Explicit name and version
 #' mcp_serve_http("tools.R", name = "my-server", version = "2.0.0", port = 8080)
@@ -643,7 +674,7 @@ McpServer <- R6::R6Class(
 #'     silent = FALSE
 #' )
 #' }
-mcp_serve_http <- function(file, name = NULL, version = NULL, host = "127.0.0.1", port = 8080, ...) {
+mcp_serve_http <- function(file, name = NULL, version = NULL, groups = NULL, host = "127.0.0.1", port = 8080, ...) {
     # Auto-detect name from filename if not provided
     if (is.null(name)) {
         name <- tools::file_path_sans_ext(basename(file))
@@ -655,7 +686,7 @@ mcp_serve_http <- function(file, name = NULL, version = NULL, host = "127.0.0.1"
     }
 
     # Parse file to extract tools/resources/prompts
-    parsed <- parse_mcp_file(file)
+    parsed <- parse_mcp_file(file, groups = groups)
 
     # Create server
     server <- McpServer$new(name = name, version = version)
@@ -693,6 +724,8 @@ mcp_serve_http <- function(file, name = NULL, version = NULL, host = "127.0.0.1"
 #'   for arguments.
 #' @param name Character. Server name. If NULL, auto-detected from filename.
 #' @param version Character. Server version. If NULL, defaults to "1.0.0".
+#' @param groups Character vector. Optional. If provided, only serve tools/resources/prompts
+#'   in the specified groups. Use the `@group` annotation to assign functions to groups.
 #'
 #' @return NULL (server runs blocking)
 #' @export
@@ -701,6 +734,9 @@ mcp_serve_http <- function(file, name = NULL, version = NULL, host = "127.0.0.1"
 #' \dontrun{
 #' # Simple usage - auto-detects name from filename
 #' mcp_serve_stdio("zotero_tools.R")
+#'
+#' # Serve only specific groups
+#' mcp_serve_stdio("all_tools.R", groups = c("zotero", "web"))
 #'
 #' # Explicit name and version
 #' mcp_serve_stdio("tools.R", name = "my-server", version = "2.0.0")
@@ -713,7 +749,7 @@ mcp_serve_http <- function(file, name = NULL, version = NULL, host = "127.0.0.1"
 #'     )
 #' }
 #' }
-mcp_serve_stdio <- function(file, name = NULL, version = NULL) {
+mcp_serve_stdio <- function(file, name = NULL, version = NULL, groups = NULL) {
     # Auto-detect name from filename if not provided
     if (is.null(name)) {
         name <- tools::file_path_sans_ext(basename(file))
@@ -725,7 +761,7 @@ mcp_serve_stdio <- function(file, name = NULL, version = NULL) {
     }
 
     # Parse file to extract tools/resources/prompts
-    parsed <- parse_mcp_file(file)
+    parsed <- parse_mcp_file(file, groups = groups)
 
     # Create server
     server <- McpServer$new(name = name, version = version)

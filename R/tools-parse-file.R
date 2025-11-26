@@ -13,17 +13,23 @@
 #' Supported annotations:
 #' - `@description`: Function description (required)
 #' - `@mcp tool|resource|prompt`: MCP type (defaults to "tool" if omitted)
+#' - `@group`: Group name for organizing tools (defaults to "general")
 #' - `@param name:type* description`: Parameter specification (for tools/prompts)
 #' - `@uri`: Resource URI (for resources)
 #' - `@mimeType`: Resource MIME type (for resources)
 #'
 #' @param file Character. Path to R file with annotated functions
+#' @param groups Character vector. Optional. If provided, only return tools/resources/prompts
+#'   in the specified groups. If NULL (default), return all.
 #' @return List with `tools`, `resources`, `prompts` fields (each a list)
 #' @keywords internal
 #' @examples
 #' \dontrun{
 #' # Parse a file with annotated tools
 #' parsed <- parse_mcp_file("inst/examples/zotero_tools.R")
+#'
+#' # Parse only specific groups
+#' parsed <- parse_mcp_file("inst/examples/all_tools.R", groups = c("zotero", "web"))
 #'
 #' # Inspect results
 #' length(parsed$tools)      # Number of tools found
@@ -34,9 +40,10 @@
 #' tool <- parsed$tools[[1]]
 #' tool$name
 #' tool$description
+#' tool$group
 #' tool$args_schema
 #' }
-parse_mcp_file <- function(file) {
+parse_mcp_file <- function(file, groups = NULL) {
     if (!file.exists(file)) {
         cli::cli_abort("File not found: {.file {file}}")
     }
@@ -45,7 +52,12 @@ parse_mcp_file <- function(file) {
     env <- new.env(parent = .GlobalEnv)
 
     tryCatch(source(file, local = env, keep.source = TRUE), error = function(e) {
-        cli::cli_abort(c("Failed to source file {.file {file}}", "i" = "Error: {e$message}"))
+        cli::cli_abort(c(
+            "Failed to source file {.file {file}}",
+            "x" = "R error: {e$message}",
+            "i" = "Check for syntax errors in the file",
+            "i" = "Ensure all required packages are loaded"
+        ))
     })
 
     result <- list(tools = list(), resources = list(), prompts = list())
@@ -63,6 +75,13 @@ parse_mcp_file <- function(file) {
             category <- paste0(type, "s")
             result[[category]] <- c(result[[category]], list(parsed$definition))
         }
+    }
+
+    # Filter by groups if specified
+    if (!is.null(groups)) {
+        result$tools <- purrr::keep(result$tools, \(t) t$group %in% groups)
+        result$resources <- purrr::keep(result$resources, \(r) r$group %in% groups)
+        result$prompts <- purrr::keep(result$prompts, \(p) p$group %in% groups)
     }
 
     return(result)
@@ -125,10 +144,24 @@ extract_mcp_type <- function(annotations) {
     return(mcp_type)
 }
 
+#' Extract @group from annotations
+#' @noRd
+extract_group <- function(annotations) {
+    group_lines <- grep("^@group\\s+", annotations, value = TRUE)
+
+    if (length(group_lines) == 0) {
+        return("general") # Default group
+    }
+
+    group <- trimws(gsub("^@group\\s+", "", group_lines[1]))
+    return(group)
+}
+
 #' Parse tool from inline annotations
 #' @noRd
 parse_tool_from_annotations <- function(fn, fn_name, description, annotations) {
     params <- extract_params(annotations)
+    group <- extract_group(annotations)
     formals_list <- formals(fn)
 
     properties <- list()
@@ -159,6 +192,7 @@ parse_tool_from_annotations <- function(fn, fn_name, description, annotations) {
     return(list(
         name = fn_name,
         description = description,
+        group = group,
         args_schema = list(
             type = "object",
             properties = if (length(properties) > 0) properties else named_list(),
@@ -171,6 +205,8 @@ parse_tool_from_annotations <- function(fn, fn_name, description, annotations) {
 #' Parse resource from inline annotations
 #' @noRd
 parse_resource_from_annotations <- function(fn, fn_name, description, annotations) {
+    group <- extract_group(annotations)
+
     # Extract @uri
     uri_lines <- grep("^@uri\\s+", annotations, value = TRUE)
     uri <- if (length(uri_lines) > 0) {
@@ -187,13 +223,21 @@ parse_resource_from_annotations <- function(fn, fn_name, description, annotation
         "text/plain"
     }
 
-    return(list(uri = uri, name = fn_name, description = description, mimeType = mime_type, .fn = fn))
+    return(list(
+        uri = uri,
+        name = fn_name,
+        description = description,
+        group = group,
+        mimeType = mime_type,
+        .fn = fn
+    ))
 }
 
 #' Parse prompt from inline annotations
 #' @noRd
 parse_prompt_from_annotations <- function(fn, fn_name, description, annotations) {
     params <- extract_params(annotations)
+    group <- extract_group(annotations)
     formals_list <- formals(fn)
 
     arguments <- list()
@@ -208,5 +252,5 @@ parse_prompt_from_annotations <- function(fn, fn_name, description, annotations)
         arguments <- c(arguments, list(arg_def))
     }
 
-    return(list(name = fn_name, description = description, arguments = arguments, .fn = fn))
+    return(list(name = fn_name, description = description, group = group, arguments = arguments, .fn = fn))
 }
