@@ -52,9 +52,7 @@ test_that("Google client with GitHub MCP tools integration", {
             name = "github",
             type = "http",
             url = "https://api.githubcopilot.com/mcp",
-            headers = list(
-                Authorization = paste("Bearer", Sys.getenv("PAT_GITHUB"))
-            )
+            headers = list(Authorization = paste("Bearer", Sys.getenv("PAT_GITHUB")))
         ),
         error = function(e) NULL
     )
@@ -62,10 +60,7 @@ test_that("Google client with GitHub MCP tools integration", {
     skip_if(is.null(github_client), "Could not connect to GitHub MCP server")
 
     # Get GitHub tools
-    github_tools <- tryCatch(
-        mcp_tools(github_client),
-        error = function(e) NULL
-    )
+    github_tools <- tryCatch(mcp_tools(github_client), error = function(e) NULL)
 
     skip_if(purrr::is_empty(github_tools), "No GitHub tools available")
 
@@ -93,7 +88,7 @@ test_that("Google client with GitHub MCP tools integration", {
     text <- gemini$get_content_text()
     expect_type(text, "character")
     expect_true(nzchar(text))
-    
+
     # Check that response and get_content_text are identical
     expect_identical(response, text)
 
@@ -155,11 +150,7 @@ test_that("Google client handles multipart content", {
     data_list <- list(values = c(1, 2, 3), label = "test")
 
     response <- tryCatch(
-        gemini$chat(
-            "What is in this data?",
-            as_json_content(data_list),
-            model = "gemini-2.5-flash-lite"
-        ),
+        gemini$chat("What is in this data?", as_json_content(data_list), model = "gemini-2.5-flash-lite"),
         error = function(e) NULL
     )
 

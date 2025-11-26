@@ -1,6 +1,6 @@
 linters: linters_with_defaults(
     line_length_linter = NULL,
-    indentation_linter(4L, hanging_indent_style = "always"),
+    indentation_linter(4L),
     trailing_whitespace_linter = NULL,
     object_name_linter = NULL,
     commented_code_linter = NULL,

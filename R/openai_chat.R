@@ -57,11 +57,11 @@
 #'   )
 #' )
 #' }
-OpenAI_Chat <- R6::R6Class( # nolint
+OpenAI_Chat <- R6::R6Class(
+    # nolint
     classname = "OpenAI_Chat",
     inherit = OpenAI,
     public = list(
-
         # ------🔺 INIT --------------------------------------------------------
 
         #' @description
@@ -157,7 +157,6 @@ OpenAI_Chat <- R6::R6Class( # nolint
             verbosity = "medium",
             store = FALSE
         ) {
-
             # ---- Build input ----
 
             # Add system message if provided and not already in history
@@ -167,7 +166,7 @@ OpenAI_Chat <- R6::R6Class( # nolint
 
             # Capture prompt inputs as quosures
             inputs <- rlang::enquos(...)
-            
+
             # Add user message
             if (length(inputs) > 0) {
                 content <- private$process_multipart_content(inputs)
@@ -189,7 +188,7 @@ OpenAI_Chat <- R6::R6Class( # nolint
                             # String form: "web_search"
                             web_search_options <- named_list()
                         }
-                        break  # Only process first web_search found
+                        break # Only process first web_search found
                     }
                 }
             }
@@ -223,12 +222,7 @@ OpenAI_Chat <- R6::R6Class( # nolint
             )
 
             # Search models don't support standard sampling parameters
-            query_data <- list3(
-                model = model,
-                messages = self$chat_history,
-                verbosity = verbosity,
-                store = store
-            )
+            query_data <- list3(model = model, messages = self$chat_history, verbosity = verbosity, store = store)
 
             # Only add sampling parameters for non-search models
             if (!is_search_model) {
@@ -296,14 +290,17 @@ OpenAI_Chat <- R6::R6Class( # nolint
                         }
 
                         # Convert returns {type, name, description, parameters}, wrap for API
-                        converted_tools <- append(converted_tools, list(list(
-                            type = "function",
-                            `function` = list(
-                                name = converted$name,
-                                description = converted$description,
-                                parameters = converted$parameters
-                            )
-                        )))
+                        converted_tools <- append(
+                            converted_tools,
+                            list(list(
+                                type = "function",
+                                `function` = list(
+                                    name = converted$name,
+                                    description = converted$description,
+                                    parameters = converted$parameters
+                                )
+                            ))
+                        )
                     }
                     query_data$tools <- converted_tools
                     query_data$tool_choice <- tool_choice
@@ -311,10 +308,7 @@ OpenAI_Chat <- R6::R6Class( # nolint
             }
 
             if (!is.null(output_schema)) {
-                query_data$response_format <- list(
-                    type = "json_schema", 
-                    json_schema = as_schema_openai(output_schema)
-                )
+                query_data$response_format <- list(type = "json_schema", json_schema = as_schema_openai(output_schema))
             }
 
             if (!is.null(reasoning_effort)) {
@@ -328,7 +322,7 @@ OpenAI_Chat <- R6::R6Class( # nolint
             # ---- Handle response ----
 
             # Handle API errors
-            if (purrr::is_empty(private$extract_root(res))) {
+            if (purrr::is_empty(res) || purrr::is_empty(private$extract_root(res))) {
                 cli::cli_abort("[{self$provider_name}] Error: API request failed or returned no choices")
             }
 
@@ -347,32 +341,29 @@ OpenAI_Chat <- R6::R6Class( # nolint
             }
 
             if (private$is_tool_call(res)) {
-
                 # Execute tools and add results to history
                 private$tool_results_to_chat_history(private$use_tools(res))
 
                 # Recursive call
-                return(
-                    self$chat(
-                        system = NULL,
-                        model = model,
-                        temperature = temperature,
-                        max_completion_tokens = max_completion_tokens,
-                        top_p = top_p,
-                        frequency_penalty = frequency_penalty,
-                        presence_penalty = presence_penalty,
-                        logprobs = logprobs,
-                        top_logprobs = top_logprobs,
-                        n = n,
-                        logit_bias = logit_bias,
-                        tools = tools,
-                        tool_choice = tool_choice,
-                        output_schema = output_schema,
-                        reasoning_effort = reasoning_effort,
-                        verbosity = verbosity,
-                        store = store
-                    )
-                )
+                return(self$chat(
+                    system = NULL,
+                    model = model,
+                    temperature = temperature,
+                    max_completion_tokens = max_completion_tokens,
+                    top_p = top_p,
+                    frequency_penalty = frequency_penalty,
+                    presence_penalty = presence_penalty,
+                    logprobs = logprobs,
+                    top_logprobs = top_logprobs,
+                    n = n,
+                    logit_bias = logit_bias,
+                    tools = tools,
+                    tool_choice = tool_choice,
+                    output_schema = output_schema,
+                    reasoning_effort = reasoning_effort,
+                    verbosity = verbosity,
+                    store = store
+                ))
             }
 
             # ---- Final response ----
@@ -390,7 +381,6 @@ OpenAI_Chat <- R6::R6Class( # nolint
     ),
 
     private = list(
-
         # ------🔺 EXTRACTION --------------------------------------------------
 
         is_root = function(input) {
@@ -434,8 +424,7 @@ OpenAI_Chat <- R6::R6Class( # nolint
         },
 
         extract_content_text = function(root) {
-            answer_content <- private$extract_content(root) |>
-                purrr::pluck("content")
+            answer_content <- private$extract_content(root) |> purrr::pluck("content")
 
             if (purrr::is_empty(answer_content)) {
                 return(NULL)
@@ -498,17 +487,13 @@ OpenAI_Chat <- R6::R6Class( # nolint
                     ))
                 } else if (is_server_tool(tool, self$server_tools)) {
                     tool_name <- get_server_tool_name(tool)
-                    return(list(
-                        name = tool_name,
-                        description = NULL,
-                        type = "server",
-                        parameters = character(0)
-                    ))
+                    return(list(name = tool_name, description = NULL, type = "server", parameters = character(0)))
                 } else {
                     cli::cli_alert_danger("[{self$provider_name}] Invalid tool: {.field {tool}}")
                     return(NULL)
                 }
-            }) |> purrr::compact()
+            }) |>
+                purrr::compact()
 
             if (purrr::is_empty(normalized_tools)) {
                 return(NULL)
@@ -573,11 +558,9 @@ OpenAI_Chat <- R6::R6Class( # nolint
             }
 
             # Keep only relevant fields
-            return(
-                purrr::map(tool_calls, \(tool_call) {
-                    purrr::keep_at(tool_call, c("id", "type", "function"))
-                })
-            )
+            return(purrr::map(tool_calls, \(tool_call) {
+                purrr::keep_at(tool_call, c("id", "type", "function"))
+            }))
         },
 
         extract_tool_call_name = function(tool_call) {

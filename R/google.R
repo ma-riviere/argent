@@ -16,7 +16,7 @@
 #' @section Useful links:
 #' - API reference: https://ai.google.dev/api/generate-content
 #' - API docs: https://ai.google.dev/gemini-api/docs
-#' 
+#'
 #' @section Main entrypoints:
 #' - `chat()`: Multi-turn multimodal conversations with tool use and structured outputs.
 #' - `embeddings()`: Vector embeddings for text inputs.
@@ -39,30 +39,30 @@
 #' \dontrun{
 #' # Initialize with API key from environment
 #' google <- Google$new()
-#' 
+#'
 #' # Or provide API key explicitly
 #' google <- Google$new(api_key = "your-api-key")
-#' 
+#'
 #' # Simple chat completion
 #' response <- google$chat(
 #'   "What is R programming?",
 #'   model = "gemini-2.5-pro"
 #' )
-#' 
+#'
 #' # With system instructions
 #' response <- google$chat(
 #'   "Explain quantum computing",
 #'   model = "gemini-2.5-pro",
 #'   system = "You are a physics professor"
 #' )
-#' 
+#'
 #' # With R objects (names captured automatically)
 #' my_data <- mtcars
 #' response <- google$chat(
 #'   my_data, "Analyze this dataset",
 #'   model = "gemini-2.5-pro"
 #' )
-#' 
+#'
 #' # With context caching for repeated queries
 #' cache_name <- google$create_cache(
 #'   model = "gemini-2.5-flash",
@@ -70,11 +70,11 @@
 #'   ttl = "3600s"
 #' )
 #' }
-Google <- R6::R6Class( # nolint
+Google <- R6::R6Class(
+    # nolint
     classname = "Google",
     inherit = Provider,
     public = list(
-        
         # ------🔺 INIT --------------------------------------------------------
 
         #' @description
@@ -117,10 +117,8 @@ Google <- R6::R6Class( # nolint
         #' @return Data frame. Available models with their specifications
         list_models = function() {
             endpoint <- paste0(self$base_url, "/v1beta/models")
-            
-            resp <- private$request(endpoint) |> 
-                purrr::pluck("models") |> 
-                lol_to_df()
+
+            resp <- private$request(endpoint) |> purrr::pluck("models") |> lol_to_df()
 
             resp <- resp |>
                 dplyr::select(name, description, inputTokenLimit, outputTokenLimit) |>
@@ -129,16 +127,16 @@ Google <- R6::R6Class( # nolint
 
             return(resp)
         },
-        
+
         #' @description
         #' Get information about a specific Google model
         #' @param model_id Character. Model ID (e.g., "gemini-2.5-pro")
         #' @return List. Model information
         get_model_info = function(model_id) {
             endpoint <- paste0(self$base_url, "/v1beta/models/", model_id)
-            
+
             resp <- private$request(endpoint)
-            
+
             return(resp)
         },
 
@@ -201,8 +199,11 @@ Google <- R6::R6Class( # nolint
             # Validate task_type if provided
             if (!is.null(task_type)) {
                 valid_task_types <- c(
-                    "RETRIEVAL_QUERY", "RETRIEVAL_DOCUMENT", "SEMANTIC_SIMILARITY",
-                    "CLASSIFICATION", "CLUSTERING"
+                    "RETRIEVAL_QUERY",
+                    "RETRIEVAL_DOCUMENT",
+                    "SEMANTIC_SIMILARITY",
+                    "CLASSIFICATION",
+                    "CLUSTERING"
                 )
                 if (!task_type %in% valid_task_types) {
                     cli::cli_abort(
@@ -481,9 +482,7 @@ Google <- R6::R6Class( # nolint
                 # Validate chunking parameters
                 if (!is.null(max_tokens)) {
                     if (!is.numeric(max_tokens) || max_tokens < 0 || max_tokens > 512) {
-                        cli::cli_abort(
-                            "{.arg max_tokens_per_chunk} must be between 0 and 512, got {max_tokens}"
-                        )
+                        cli::cli_abort("{.arg max_tokens_per_chunk} must be between 0 and 512, got {max_tokens}")
                     }
                 }
 
@@ -495,10 +494,7 @@ Google <- R6::R6Class( # nolint
 
                 if (!is.null(max_tokens) || !is.null(max_overlap)) {
                     chunking_config_obj <- list(
-                        whiteSpaceConfig = list3(
-                            maxTokensPerChunk = max_tokens,
-                            maxOverlapTokens = max_overlap
-                        )
+                        whiteSpaceConfig = list3(maxTokensPerChunk = max_tokens, maxOverlapTokens = max_overlap)
                     )
                 }
             }
@@ -512,12 +508,7 @@ Google <- R6::R6Class( # nolint
             )
 
             # Initialize resumable upload to store
-            init_endpoint <- paste0(
-                self$base_url,
-                "/upload/v1beta/",
-                store_name,
-                ":uploadToFileSearchStore"
-            )
+            init_endpoint <- paste0(self$base_url, "/upload/v1beta/", store_name, ":uploadToFileSearchStore")
 
             init_req <- httr2::request(init_endpoint) |>
                 httr2::req_url_query(key = private$api_key) |>
@@ -564,10 +555,9 @@ Google <- R6::R6Class( # nolint
             }
 
             if (httr2::resp_is_error(upload_resp)) {
-                error_body <- tryCatch(
-                    httr2::resp_body_json(upload_resp),
-                    error = function(e) list(error = list(message = "Unknown error"))
-                )
+                error_body <- tryCatch(httr2::resp_body_json(upload_resp), error = function(e) {
+                    list(error = list(message = "Unknown error"))
+                })
                 error_msg <- purrr::pluck(error_body, "error", "message", .default = "Unknown error")
                 cli::cli_alert_danger("[{self$provider_name}] Upload failed: {error_msg}")
                 return(NULL)
@@ -589,9 +579,7 @@ Google <- R6::R6Class( # nolint
                     if (is.null(document$name)) {
                         document$name <- paste0(store_name, "/documents/", document$documentName)
                     }
-                    cli::cli_alert_success(
-                        "[{self$provider_name}] File uploaded to store: {document$name}"
-                    )
+                    cli::cli_alert_success("[{self$provider_name}] File uploaded to store: {document$name}")
                     return(invisible(document))
                 }
             }
@@ -607,11 +595,7 @@ Google <- R6::R6Class( # nolint
         #' @param store_name Character. Store name (e.g., "fileSearchStores/abc123")
         #' @param custom_metadata List. Custom metadata as key-value pairs (optional)
         #' @return List. Document metadata or NULL on error
-        import_file_to_store = function(
-            file_name,
-            store_name,
-            custom_metadata = NULL
-        ) {
+        import_file_to_store = function(file_name, store_name, custom_metadata = NULL) {
             endpoint <- paste0(self$base_url, "/v1beta/", store_name, ":importFile")
 
             custom_metadata_list <- if (!is.null(custom_metadata)) {
@@ -624,10 +608,7 @@ Google <- R6::R6Class( # nolint
                 }))
             }
 
-            query_data <- list3(
-                fileName = file_name,
-                customMetadata = custom_metadata_list
-            )
+            query_data <- list3(fileName = file_name, customMetadata = custom_metadata_list)
 
             operation_metadata <- private$request(endpoint, query_data)
 
@@ -720,11 +701,7 @@ Google <- R6::R6Class( # nolint
         query_file = function(file_name, query, results_count = 10, metadata_filters = NULL) {
             endpoint <- paste0(self$base_url, "/v1beta/", file_name, ":query")
 
-            query_data <- list3(
-                query = query,
-                resultsCount = results_count,
-                metadataFilters = metadata_filters
-            )
+            query_data <- list3(query = query, resultsCount = results_count, metadataFilters = metadata_filters)
 
             return(private$request(endpoint, query_data))
         },
@@ -741,7 +718,7 @@ Google <- R6::R6Class( # nolint
         },
 
         # ------🔺 CHAT --------------------------------------------------------
-        
+
         #' @description
         #' Send a chat completion request to Google
         #'
@@ -812,7 +789,6 @@ Google <- R6::R6Class( # nolint
             thinking_budget = 0,
             include_thoughts = FALSE
         ) {
-
             # ---- Validate parameters ----
 
             if (temperature < 0 | temperature > 2) {
@@ -826,7 +802,7 @@ Google <- R6::R6Class( # nolint
 
             # Capture prompt inputs as quosures
             inputs <- rlang::enquos(...)
-            
+
             # Adding the prompt to the chat history if it's not empty
             # It will be NULL when the prompt is the result of function calling
             new_message_parts <- NULL
@@ -851,13 +827,11 @@ Google <- R6::R6Class( # nolint
 
                         # We add the original tool because the converted one no longer has the .mcp metadata
                         private$add_active_tool(type = "mcp", tool = tool)
-
                     } else if (is_client_tool(tool)) {
                         converted_tool <- as_tool_google(tool)
                         function_declarations <- append(function_declarations, list(converted_tool))
 
                         private$add_active_tool(type = "client", tool = tool)
-
                     } else if (is_server_tool(tool, self$server_tools)) {
                         tool_name <- get_server_tool_name(tool)
 
@@ -868,10 +842,12 @@ Google <- R6::R6Class( # nolint
                                     # Get file metadata to retrieve mime_type and uri
                                     file_metadata <- self$get_file_metadata(file_id)
                                     if (!is.null(file_metadata)) {
-                                        file_part <- list(file_data = list(
-                                            mime_type = file_metadata$mimeType,
-                                            file_uri = file_metadata$uri
-                                        ))
+                                        file_part <- list(
+                                            file_data = list(
+                                                mime_type = file_metadata$mimeType,
+                                                file_uri = file_metadata$uri
+                                            )
+                                        )
                                         new_message_parts <- append(new_message_parts, list(file_part))
                                     }
                                 }
@@ -968,7 +944,7 @@ Google <- R6::R6Class( # nolint
             if (!is.null(system)) {
                 query_data$systemInstruction <- list(parts = list(list(text = system)))
             }
-            
+
             if (!is.null(tools)) {
                 query_data$tools <- tool_list
 
@@ -984,10 +960,7 @@ Google <- R6::R6Class( # nolint
                 # Add retrieval config for Google Maps location context
                 if (!is.null(maps_location)) {
                     tool_config_obj$retrievalConfig <- list(
-                        latLng = list(
-                            latitude = maps_location$latitude,
-                            longitude = maps_location$longitude
-                        )
+                        latLng = list(latitude = maps_location$latitude, longitude = maps_location$longitude)
                     )
                 }
 
@@ -996,14 +969,13 @@ Google <- R6::R6Class( # nolint
                     query_data$toolConfig <- tool_config_obj
                 }
             }
-            
+
             # Add thinking_budget to generationConfig if provided
             # Validate thinking budget based on model
             if (!is.null(thinking_budget)) {
                 # Determine model type
                 is_pro <- stringr::str_detect(model, "2\\.5-pro")
-                is_flash <- stringr::str_detect(model, "2\\.5-flash") &&
-                    !stringr::str_detect(model, "lite")
+                is_flash <- stringr::str_detect(model, "2\\.5-flash") && !stringr::str_detect(model, "lite")
                 is_flash_lite <- stringr::str_detect(model, "2\\.5-flash-lite")
 
                 # Pro requires thinking (cannot be disabled)
@@ -1017,11 +989,23 @@ Google <- R6::R6Class( # nolint
 
                 # Validate ranges per model
                 if (thinking_budget != 0 && thinking_budget != -1) {
-                    min_budget <- if (is_pro) 128 else if (is_flash) 8 else 512
+                    min_budget <- if (is_pro) {
+                        128
+                    } else if (is_flash) {
+                        8
+                    } else {
+                        512
+                    }
                     max_budget <- if (is_pro) 32768 else 24576
 
                     if (thinking_budget < min_budget | thinking_budget > max_budget) {
-                        model_name <- if (is_pro) "2.5 Pro" else if (is_flash) "2.5 Flash" else "2.5 Flash Lite"
+                        model_name <- if (is_pro) {
+                            "2.5 Pro"
+                        } else if (is_flash) {
+                            "2.5 Flash"
+                        } else {
+                            "2.5 Flash Lite"
+                        }
                         cli::cli_alert_danger(paste(
                             "[{self$provider_name}] Error: thinking_budget for Gemini {model_name}",
                             "must be -1 (dynamic), 0 (disabled), or between {min_budget} and {max_budget}"
@@ -1072,7 +1056,7 @@ Google <- R6::R6Class( # nolint
             # ---- Handle response ----
 
             # Handle API errors
-            if (purrr::is_empty(private$extract_root(res))) {
+            if (purrr::is_empty(res) || purrr::is_empty(private$extract_root(res))) {
                 cli::cli_abort("[{self$provider_name}] Error: API request failed or returned no choices")
             }
 
@@ -1089,39 +1073,35 @@ Google <- R6::R6Class( # nolint
             private$response_to_chat_history(res)
 
             # ---- Process response ----
-            
+
             if (private$is_tool_call(res)) {
                 private$tool_results_to_chat_history(private$use_tools(res))
 
                 # Recurse to continue conversation, suppressing output_schema during tool execution
                 # (will apply structured output after tools are done)
-                return(
-                    self$chat(
-                        model = model,
-                        system = system,
-                        max_tokens = max_tokens,
-                        temperature = temperature,
-                        top_p = top_p,
-                        top_k = top_k,
-                        stop_sequences = stop_sequences,
-                        tools = tools,
-                        tool_choice = tool_choice,
-                        output_schema = output_schema,
-                        thinking_budget = thinking_budget,
-                        include_thoughts = include_thoughts
-                    )
-                )
+                return(self$chat(
+                    model = model,
+                    system = system,
+                    max_tokens = max_tokens,
+                    temperature = temperature,
+                    top_p = top_p,
+                    top_k = top_k,
+                    stop_sequences = stop_sequences,
+                    tools = tools,
+                    tool_choice = tool_choice,
+                    output_schema = output_schema,
+                    thinking_budget = thinking_budget,
+                    include_thoughts = include_thoughts
+                ))
             }
 
             # ---- Final response ----
 
             # Handle structured output
             if (is.list(output_schema)) {
-
                 # If tools were present, we need a separate formatting call
                 # (Google doesn't support using both tools and responseSchema simultaneously)
                 if (!is.null(tools)) {
-
                     format_instance <- Google$new(
                         api_key = private$api_key,
                         base_url = self$base_url,
@@ -1131,18 +1111,16 @@ Google <- R6::R6Class( # nolint
                     format_instance$set_history(self$get_history())
 
                     # Make final call with native structured output (no tools)
-                    return(
-                        self$chat(
-                            "Please format your previous response according to the requested schema.",
-                            model = model,
-                            system = system,
-                            max_tokens = max_tokens,
-                            temperature = 0,
-                            tools = NULL,
-                            output_schema = output_schema,
-                            thinking_budget = thinking_budget
-                        )
-                    )
+                    return(self$chat(
+                        "Please format your previous response according to the requested schema.",
+                        model = model,
+                        system = system,
+                        max_tokens = max_tokens,
+                        temperature = 0,
+                        tools = NULL,
+                        output_schema = output_schema,
+                        thinking_budget = thinking_budget
+                    ))
                 }
 
                 # No tools were present, native structured output was already applied
@@ -1188,9 +1166,9 @@ Google <- R6::R6Class( # nolint
             role <- private$extract_role(root)
 
             if (role %in% c("model", "user")) {
-                answers <- purrr::pluck(root, "parts") |> 
+                answers <- purrr::pluck(root, "parts") |>
                     purrr::keep(\(part) !is.null(purrr::pluck(part, "text")) && is.null(purrr::pluck(part, "thought")))
-                
+
                 if (purrr::is_empty(answers)) {
                     return(NULL)
                 }
@@ -1200,8 +1178,7 @@ Google <- R6::R6Class( # nolint
         },
 
         extract_content_text = function(root) {
-            answer_text <- private$extract_content(root) |> 
-                purrr::map_chr("text")
+            answer_text <- private$extract_content(root) |> purrr::map_chr("text")
             if (is.null(answer_text) || purrr::is_empty(answer_text)) {
                 return(NULL)
             }
@@ -1213,8 +1190,7 @@ Google <- R6::R6Class( # nolint
 
         # For Google, the system instructions are out of the 'root'
         extract_system_instructions = function(entry_data) {
-            system_instructions <- purrr::pluck(entry_data, "systemInstruction", "parts") |> 
-                purrr::map_chr("text")
+            system_instructions <- purrr::pluck(entry_data, "systemInstruction", "parts") |> purrr::map_chr("text")
             if (purrr::is_empty(system_instructions)) {
                 return(NULL)
             }
@@ -1225,8 +1201,7 @@ Google <- R6::R6Class( # nolint
             role <- private$extract_role(root)
 
             if (role %in% c("model")) {
-                reasoning <- purrr::pluck(root, "parts") |>
-                    purrr::keep(\(part) isTRUE(purrr::pluck(part, "thought")))
+                reasoning <- purrr::pluck(root, "parts") |> purrr::keep(\(part) isTRUE(purrr::pluck(part, "thought")))
                 if (purrr::is_empty(reasoning)) {
                     return(NULL)
                 }
@@ -1236,8 +1211,7 @@ Google <- R6::R6Class( # nolint
         },
 
         extract_reasoning_text = function(root) {
-            reasoning_text <- private$extract_reasoning(root) |> 
-                purrr::map_chr("text")
+            reasoning_text <- private$extract_reasoning(root) |> purrr::map_chr("text")
             if (is.null(reasoning_text) || purrr::is_empty(reasoning_text)) {
                 return(NULL)
             }
@@ -1254,7 +1228,7 @@ Google <- R6::R6Class( # nolint
                 tool_calls <- purrr::pluck(root, "parts") |>
                     purrr::keep(\(part) !is.null(part$functionCall)) |>
                     purrr::map("functionCall") # Note: thoughtSignature preserved in chat_history
-                
+
                 if (purrr::is_empty(tool_calls)) {
                     return(NULL)
                 }
@@ -1279,8 +1253,8 @@ Google <- R6::R6Class( # nolint
             role <- private$extract_role(root)
 
             if (role %in% c("function")) {
-                tool_results <- purrr::pluck(root, "parts") |> 
-                    purrr::keep(\(part) !is.null(part$functionResponse)) |> 
+                tool_results <- purrr::pluck(root, "parts") |>
+                    purrr::keep(\(part) !is.null(part$functionResponse)) |>
                     purrr::map("functionResponse")
                 if (purrr::is_empty(tool_results)) {
                     return(NULL)
@@ -1319,12 +1293,12 @@ Google <- R6::R6Class( # nolint
                     return(NULL)
                 }
                 return(list(language = lang, code = code))
-            }) |> purrr::compact()
+            }) |>
+                purrr::compact()
         },
 
         extract_generated_files = function(root) {
-            file_parts <- purrr::pluck(root, "parts") |> 
-                purrr::keep(\(part) !is.null(part$inlineData))
+            file_parts <- purrr::pluck(root, "parts") |> purrr::keep(\(part) !is.null(part$inlineData))
 
             if (is.null(file_parts) || purrr::is_empty(file_parts)) {
                 return(NULL)
@@ -1332,10 +1306,7 @@ Google <- R6::R6Class( # nolint
 
             # Return list of files with mime_type and decoded data
             purrr::map(file_parts, \(part) {
-                list(
-                    mime_type = part$inlineData$mimeType,
-                    data = jsonlite::base64_dec(part$inlineData$data)
-                )
+                list(mime_type = part$inlineData$mimeType, data = jsonlite::base64_dec(part$inlineData$data))
             })
         },
 
@@ -1360,14 +1331,17 @@ Google <- R6::R6Class( # nolint
                     ))
                 }
 
-                tryCatch({
-                    writeBin(file$data, final_path)
-                    cli::cli_alert_success("File saved: {.path {final_path}}")
-                    return(final_path)
-                }, error = function(e) {
-                    cli::cli_alert_danger("Failed to save file: {.path {final_path}}. Error: {e$message}")
-                    return(NA_character_)
-                })
+                tryCatch(
+                    {
+                        writeBin(file$data, final_path)
+                        cli::cli_alert_success("File saved: {.path {final_path}}")
+                        return(final_path)
+                    },
+                    error = function(e) {
+                        cli::cli_alert_danger("Failed to save file: {.path {final_path}}. Error: {e$message}")
+                        return(NA_character_)
+                    }
+                )
             })
 
             invisible(stats::na.omit(saved_paths))
@@ -1408,12 +1382,7 @@ Google <- R6::R6Class( # nolint
                         parameters = names(purrr::pluck(tool, "parameters", "properties"))
                     ))
                 } else if (is_server_tool(tool_name, self$server_tools)) {
-                    return(list(
-                        name = tool_name,
-                        description = NULL,
-                        type = "server",
-                        parameters = character(0)
-                    ))
+                    return(list(name = tool_name, description = NULL, type = "server", parameters = character(0)))
                 } else {
                     cli::cli_alert_danger("[{self$provider_name}] Invalid tool: {.field {tool}}")
                     return(NULL)
@@ -1438,8 +1407,13 @@ Google <- R6::R6Class( # nolint
 
             grounding_metadata <- purrr::keep_at(
                 metadata,
-                c("searchEntryPoint", "groundingChunks", "groundingSupports", "webSearchQueries",
-                  "googleMapsWidgetContextToken")
+                c(
+                    "searchEntryPoint",
+                    "groundingChunks",
+                    "groundingSupports",
+                    "webSearchQueries",
+                    "googleMapsWidgetContextToken"
+                )
             )
 
             return(grounding_metadata)
@@ -1454,16 +1428,15 @@ Google <- R6::R6Class( # nolint
 
         trim_response_for_chat_history = function(res) {
             root <- private$extract_root(res)
-            
+
             if (!purrr::is_empty(root)) {
                 # Remove executableCode, codeExecutionResult, or inlineData elements (from code execution tool)
-                trimmed_parts <- keep(
-                    root$parts, 
-                    \(part) is.null(part$executableCode) && is.null(part$codeExecutionResult) && is.null(part$inlineData)
-                )
+                trimmed_parts <- keep(root$parts, \(part) {
+                    is.null(part$executableCode) && is.null(part$codeExecutionResult) && is.null(part$inlineData)
+                })
                 root$parts <- trimmed_parts
                 # Note: grounding metadata (google_search, url_context, google_maps) are not part of 'root' -> not kept
-                
+
                 return(root)
             }
         },
@@ -1499,7 +1472,7 @@ Google <- R6::R6Class( # nolint
                 # We're getting the file id (well, 'name' here), but we need the mime type and uri
                 input <- self$get_file_metadata(input)
             }
-            
+
             return(list(file_data = list(mime_type = input$mimeType, file_uri = input$uri)))
         },
 
@@ -1518,10 +1491,7 @@ Google <- R6::R6Class( # nolint
             output <- super$use_tool(fn_name, args)
 
             return(list(
-                functionResponse = list(
-                    name = fn_name,
-                    response = list(name = fn_name, content = as.list(output))
-                )
+                functionResponse = list(name = fn_name, response = list(name = fn_name, content = as.list(output)))
             ))
         },
 
@@ -1565,9 +1535,7 @@ Google <- R6::R6Class( # nolint
                     }
 
                     if (!is.character(tool_choice$allowed_function_names)) {
-                        cli::cli_abort(
-                            "[{self$provider_name}] allowed_function_names must be a character vector"
-                        )
+                        cli::cli_abort("[{self$provider_name}] allowed_function_names must be a character vector")
                     }
                 }
 
@@ -1587,16 +1555,13 @@ Google <- R6::R6Class( # nolint
 
         # Execute paginated list request with error handling
         list = function(endpoint, page_size, page_token = NULL) {
-            req <- private$base_request(endpoint) |>
-                httr2::req_url_query(pageSize = page_size)
+            req <- private$base_request(endpoint) |> httr2::req_url_query(pageSize = page_size)
 
             if (!is.null(page_token)) {
                 req <- httr2::req_url_query(req, pageToken = page_token)
             }
 
-            res <- req |>
-                httr2::req_perform() |>
-                httr2::resp_body_json()
+            res <- req |> httr2::req_perform() |> httr2::resp_body_json()
 
             if ("error" %in% names(res)) {
                 cli::cli_alert_danger("[{self$provider_name}] Error in API request:")
@@ -1609,16 +1574,13 @@ Google <- R6::R6Class( # nolint
 
         # Execute DELETE request with error handling
         delete = function(endpoint, force = FALSE) {
-            req <- private$base_request(endpoint) |>
-                httr2::req_method("DELETE")
+            req <- private$base_request(endpoint) |> httr2::req_method("DELETE")
 
             if (force) {
                 req <- httr2::req_url_query(req, force = TRUE)
             }
 
-            resp <- req |>
-                httr2::req_perform() |>
-                httr2::resp_body_json()
+            resp <- req |> httr2::req_perform() |> httr2::resp_body_json()
 
             if ("error" %in% names(resp)) {
                 cli::cli_alert_danger("[{self$provider_name}] Error in API request:")
@@ -1674,10 +1636,9 @@ Google <- R6::R6Class( # nolint
 
             if (httr2::resp_is_error(upload_resp)) {
                 status_code <- httr2::resp_status(upload_resp)
-                error_body <- tryCatch(
-                    httr2::resp_body_json(upload_resp),
-                    error = function(e) list(error = list(message = "Unknown error"))
-                )
+                error_body <- tryCatch(httr2::resp_body_json(upload_resp), error = function(e) {
+                    list(error = list(message = "Unknown error"))
+                })
                 error_msg <- purrr::pluck(error_body, "error", "message", .default = "Unknown error")
 
                 cli::cli_alert_danger("[{self$provider_name}] Failed to upload file (status {status_code})")
@@ -1735,12 +1696,8 @@ Google <- R6::R6Class( # nolint
 as_tool_google <- function(tool_schema) {
     tool_args <- tool_schema$args_schema %||% tool_schema$parameters %||% tool_schema$input_schema %||% NULL
     tool_args$additionalProperties <- NULL
-    
-    list3(
-        name = tool_schema$name,
-        description = tool_schema$description,
-        parameters = tool_args
-    )
+
+    list3(name = tool_schema$name, description = tool_schema$description, parameters = tool_args)
 }
 
 #' Convert schema to Google's native responseSchema format (internal)

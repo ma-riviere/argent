@@ -27,6 +27,7 @@ A client for interacting with remote MCP servers via HTTP.
 \item \href{#method-McpClientHttp-new}{\code{McpClientHttp$new()}}
 \item \href{#method-McpClientHttp-initialize_connection}{\code{McpClientHttp$initialize_connection()}}
 \item \href{#method-McpClientHttp-send_request}{\code{McpClientHttp$send_request()}}
+\item \href{#method-McpClientHttp-terminate_session}{\code{McpClientHttp$terminate_session()}}
 \item \href{#method-McpClientHttp-clone}{\code{McpClientHttp$clone()}}
 }
 }
@@ -89,6 +90,16 @@ Send request via HTTP
 }
 \if{html}{\out{</div>}}
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-McpClientHttp-terminate_session"></a>}}
+\if{latex}{\out{\hypertarget{method-McpClientHttp-terminate_session}{}}}
+\subsection{Method \code{terminate_session()}}{
+Terminate the HTTP session
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{McpClientHttp$terminate_session()}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClientHttp-clone"></a>}}

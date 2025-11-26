@@ -10,32 +10,26 @@ McpClient <- R6::R6Class(
     public = list(
         #' @field name Client name
         name = NULL,
-        
+
         #' @description
         #' Initialize client
         initialize = function() {
             self$name <- "argent-client"
         },
-        
+
         #' @description
         #' List tools available on the server
         list_tools = function() {
             res <- self$send_request(list(method = "tools/list"))
             return(res$tools %||% list())
         },
-        
+
         #' @description
         #' Call a tool on the server
         #' @param tool_name Name of the tool
         #' @param args List of arguments
         call_tool = function(tool_name, args) {
-            req <- list(
-                method = "tools/call",
-                params = list(
-                    name = tool_name,
-                    arguments = args
-                )
-            )
+            req <- list(method = "tools/call", params = list(name = tool_name, arguments = args))
 
             res <- self$send_request(req)
 
@@ -63,11 +57,10 @@ McpClient <- R6::R6Class(
                     } else if (item$type == "image") {
                         resource_content <- c(
                             resource_content,
-                            list(jsonlite::toJSON(list(
-                                type = "image",
-                                data = item$data,
-                                mimeType = item$mimeType
-                            ), auto_unbox = TRUE))
+                            list(jsonlite::toJSON(
+                                list(type = "image", data = item$data, mimeType = item$mimeType),
+                                auto_unbox = TRUE
+                            ))
                         )
                     } else if (item$type == "text") {
                         text_content <- c(text_content, list(item$text %||% ""))
@@ -120,18 +113,12 @@ McpClient <- R6::R6Class(
         #' @param name Name of the prompt
         #' @param arguments List of arguments for the prompt
         get_prompt = function(name, arguments = NULL) {
-            req <- list(
-                method = "prompts/get",
-                params = list(
-                    name = name,
-                    arguments = arguments
-                )
-            )
+            req <- list(method = "prompts/get", params = list(name = name, arguments = arguments))
 
             res <- self$send_request(req)
             return(res)
         },
-        
+
         #' @description
         #' Send a JSON-RPC request
         #' @param req List containing method and params
@@ -151,7 +138,7 @@ McpClientStdio <- R6::R6Class(
     public = list(
         #' @field process processx process object
         process = NULL,
-        
+
         #' @description
         #' Initialize stdio client
         #' @param command Command to run
@@ -159,7 +146,7 @@ McpClientStdio <- R6::R6Class(
         #' @param env Environment variables
         initialize = function(command, args = character(), env = NULL) {
             super$initialize()
-            
+
             self$process <- processx::process$new(
                 command = command,
                 args = args,
@@ -168,11 +155,11 @@ McpClientStdio <- R6::R6Class(
                 stdout = "|",
                 stderr = "|" # Capture stderr to avoid polluting console
             )
-            
+
             # Perform handshake
             self$initialize_connection()
         },
-        
+
         #' @description
         #' Initialize MCP connection
         initialize_connection = function() {
@@ -189,12 +176,12 @@ McpClientStdio <- R6::R6Class(
                 )
             )
             self$send_request(req)
-            
+
             # Send initialized notification
             notif <- list(method = "notifications/initialized", params = named_list())
             self$send_notification(notif)
         },
-        
+
         #' @description
         #' Send request to stdio process
         #' @param req Request list
@@ -208,7 +195,7 @@ McpClientStdio <- R6::R6Class(
 
             json <- jsonlite::toJSON(req, auto_unbox = TRUE)
             self$process$write_input(paste0(json, "\n"))
-            
+
             # Read response (blocking simple implementation)
             # TODO: Improve robustness with timeouts/loops
             while (TRUE) {
@@ -216,7 +203,7 @@ McpClientStdio <- R6::R6Class(
                 if (!self$process$is_alive()) {
                     cli::cli_abort("MCP server process died")
                 }
-                
+
                 out <- self$process$read_output_lines()
                 if (length(out) > 0) {
                     # Parse the first valid JSON line
@@ -233,7 +220,7 @@ McpClientStdio <- R6::R6Class(
                         }
                     }
                 }
-                
+
                 # Check stderr for debugging
                 err <- self$process$read_error_lines()
                 if (length(err) > 0) {
@@ -241,7 +228,7 @@ McpClientStdio <- R6::R6Class(
                 }
             }
         },
-        
+
         #' @description
         #' Send notification (no ID, no response expected)
         #' @param req Request list
@@ -267,7 +254,7 @@ McpClientHttp <- R6::R6Class(
         headers = NULL,
         #' @field session_id Session ID from server
         session_id = NULL,
-        
+
         #' @description
         #' Initialize HTTP client
         #' @param url Server URL
@@ -278,14 +265,14 @@ McpClientHttp <- R6::R6Class(
             self$headers <- headers
             self$initialize_connection()
         },
-        
+
         #' @description
         #' Initialize connection
         initialize_connection = function() {
             req <- list(
                 method = "initialize",
                 params = list(
-                    protocolVersion = "2024-11-05",
+                    protocolVersion = "2025-06-18",
                     capabilities = list(
                         tools = list(listChanged = FALSE),
                         resources = list(subscribe = FALSE, listChanged = FALSE),
@@ -296,7 +283,7 @@ McpClientHttp <- R6::R6Class(
             )
             self$send_request(req, is_init = TRUE)
         },
-        
+
         #' @description
         #' Send request via HTTP
         #' @param req Request list
@@ -308,23 +295,22 @@ McpClientHttp <- R6::R6Class(
             # Remove NULL values to ensure proper JSON-RPC structure
             req <- purrr::discard(req, is.null)
 
-            http_req <- httr2::request(self$url) |>
-                httr2::req_body_json(req)
-            
+            http_req <- httr2::request(self$url) |> httr2::req_body_json(req)
+
             if (!is.null(self$headers)) {
                 http_req <- httr2::req_headers(http_req, !!!self$headers)
             }
-            
+
             if (!is.null(self$session_id)) {
-                http_req <- httr2::req_headers(http_req, `mcp-session-id` = self$session_id)
+                http_req <- httr2::req_headers(http_req, `Mcp-Session-Id` = self$session_id)
             }
-            
+
             resp <- httr2::req_perform(http_req)
-            
+
             if (is_init) {
-                self$session_id <- httr2::resp_header(resp, "mcp-session-id")
+                self$session_id <- httr2::resp_header(resp, "Mcp-Session-Id")
             }
-            
+
             body <- httr2::resp_body_json(resp)
 
             if (!is.null(body$error)) {
@@ -332,6 +318,27 @@ McpClientHttp <- R6::R6Class(
             }
 
             return(body$result)
+        },
+
+        #' @description
+        #' Terminate the HTTP session
+        terminate_session = function() {
+            if (is.null(self$session_id)) {
+                return(invisible(NULL))
+            }
+
+            http_req <- httr2::request(self$url) |>
+                httr2::req_method("DELETE") |>
+                httr2::req_headers(`Mcp-Session-Id` = self$session_id)
+
+            if (!is.null(self$headers)) {
+                http_req <- httr2::req_headers(http_req, !!!self$headers)
+            }
+
+            tryCatch(httr2::req_perform(http_req), error = \(e) NULL)
+
+            self$session_id <- NULL
+            invisible(NULL)
         }
     )
 )

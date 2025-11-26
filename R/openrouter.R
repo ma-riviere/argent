@@ -29,7 +29,7 @@
 #'
 #' @field allowed_providers Character vector. Allowed provider slugs (default: NULL)
 #' @field blocked_providers Character vector. Blocked provider slugs (default: NULL)
-#' 
+#'
 #' @export
 #' @examples
 #' \dontrun{
@@ -68,7 +68,8 @@
 #'   tools = list(get_weather_tool)
 #' )
 #' }
-OpenRouter <- R6::R6Class( # nolint
+OpenRouter <- R6::R6Class(
+    # nolint
     classname = "OpenRouter",
     inherit = Provider,
     public = list(
@@ -76,7 +77,7 @@ OpenRouter <- R6::R6Class( # nolint
         blocked_providers = NULL,
 
         # ------🔺 INIT --------------------------------------------------------
-        
+
         #' @description
         #' Initialize a new OpenRouter client
         #' @param base_url Character. Base URL for API (default: "https://openrouter.ai/api")
@@ -114,7 +115,7 @@ OpenRouter <- R6::R6Class( # nolint
         },
 
         # ------🔺 PROVIDERS ---------------------------------------------------
-        
+
         #' @description
         #' Get the list of allowed providers
         #' @return Character vector. Allowed provider slugs, or NULL if none set
@@ -155,19 +156,17 @@ OpenRouter <- R6::R6Class( # nolint
         list_providers = function() {
             endpoint <- paste0(self$base_url, "/v1/providers")
 
-            private$list(endpoint) |>
-                dplyr::select(name, slug) |>
-                dplyr::arrange(name)
+            private$list(endpoint) |> dplyr::select(name, slug) |> dplyr::arrange(name)
         },
 
         # ------🔺 MODELS ------------------------------------------------------
 
         #' @description
         #' List all available models from OpenRouter
-        #' @param supported_parameters Character vector. Supported parameters to filter models by. 
-        #' Options include: "tools", "temperature", "top_p", "top_k", "min_p", "top_a", "frequency_penalty", 
-        #' "presence_penalty", "repetition_penalty", "max_tokens", "logit_bias", "logprobs", "top_logprobs", "seed", 
-        #' "response_format", "structured_outputs", "stop", "parallel_tool_calls", "include_reasoning", "reasoning", 
+        #' @param supported_parameters Character vector. Supported parameters to filter models by.
+        #' Options include: "tools", "temperature", "top_p", "top_k", "min_p", "top_a", "frequency_penalty",
+        #' "presence_penalty", "repetition_penalty", "max_tokens", "logit_bias", "logprobs", "top_logprobs", "seed",
+        #' "response_format", "structured_outputs", "stop", "parallel_tool_calls", "include_reasoning", "reasoning",
         #' "web_search_options", "verbosity".
         #' Example: c("tools", "response_format")
         #' @return Data frame. Available models with their specifications
@@ -175,13 +174,12 @@ OpenRouter <- R6::R6Class( # nolint
             endpoint <- paste0(self$base_url, "/v1/models")
 
             req <- private$base_request(endpoint)
-            
+
             if (!is.null(supported_parameters)) {
                 req <- httr2::req_url_query(req, supported_parameters = paste(supported_parameters, collapse = ", "))
             }
-            
-            res <- httr2::req_perform(req) |>
-                httr2::resp_body_json()
+
+            res <- httr2::req_perform(req) |> httr2::resp_body_json()
 
             if (purrr::is_empty(res$data)) {
                 cli::cli_alert_danger("[{self$provider_name}] Error: Failed to retrieve model list")
@@ -209,7 +207,8 @@ OpenRouter <- R6::R6Class( # nolint
                     pricing_internal_reasoning = model$pricing$internal_reasoning %||% NA_character_,
                     supported_parameters = paste(unlist(model$supported_parameters), collapse = ", ") %||% NA_character_
                 )
-            }) |> purrr::list_rbind()
+            }) |>
+                purrr::list_rbind()
 
             if (!is.null(models_df$created)) {
                 models_df <- models_df |>
@@ -226,7 +225,9 @@ OpenRouter <- R6::R6Class( # nolint
         #' @return List. Model information
         get_model_info = function(model_id) {
             models <- self$list_models()
-            if (is.null(models)) return(NULL)
+            if (is.null(models)) {
+                return(NULL)
+            }
 
             model_info <- models |> dplyr::filter(id == model_id)
 
@@ -436,7 +437,6 @@ OpenRouter <- R6::R6Class( # nolint
             provider_options = NULL,
             output_schema = NULL
         ) {
-
             # Capture prompt inputs as quosures
             inputs <- rlang::enquos(...)
 
@@ -461,13 +461,7 @@ OpenRouter <- R6::R6Class( # nolint
                     # For Anthropic/Google: use multipart content with cache_control
                     system_msg <- list(
                         role = "system",
-                        content = list(
-                            list(
-                                type = "text",
-                                text = system,
-                                cache_control = list(type = "ephemeral")
-                            )
-                        )
+                        content = list(list(type = "text", text = system, cache_control = list(type = "ephemeral")))
                     )
                 } else {
                     # Standard system message
@@ -494,15 +488,13 @@ OpenRouter <- R6::R6Class( # nolint
                     if (!purrr::is_empty(pdf_plugins)) {
                         plugins <- append(
                             plugins,
-                            list(
-                                list(
-                                    id = "file-parser",
-                                    pdf = list(engine = purrr::pluck(pdf_plugins, 1, "pdf_parser"))
-                                )
-                            )
+                            list(list(
+                                id = "file-parser",
+                                pdf = list(engine = purrr::pluck(pdf_plugins, 1, "pdf_parser"))
+                            ))
                         )
                     }
-                }                
+                }
 
                 # Add cache_control if needed
                 if (cache_prompt && requires_cache_control && !is.null(content[[1]]$type)) {
@@ -536,13 +528,11 @@ OpenRouter <- R6::R6Class( # nolint
 
                         # We add the original tool because the converted one no longer has the .mcp metadata
                         private$add_active_tool(type = "mcp", tool = tool)
-
                     } else if (is_client_tool(tool)) {
                         converted_tool <- as_tool_openrouter(tool)
                         function_tools <- append(function_tools, list(converted_tool))
 
                         private$add_active_tool(type = "client", tool = tool)
-
                     } else if (is_server_tool(tool, self$server_tools)) {
                         tool_name <- get_server_tool_name(tool)
 
@@ -624,7 +614,7 @@ OpenRouter <- R6::R6Class( # nolint
             # ---- Handle response ----
 
             # Handle API errors
-            if (purrr::is_empty(private$extract_root(res))) {
+            if (purrr::is_empty(res) || purrr::is_empty(private$extract_root(res))) {
                 cli::cli_abort("[{self$provider_name}] Error: API request failed or returned no choices")
             }
 
@@ -642,7 +632,6 @@ OpenRouter <- R6::R6Class( # nolint
             }
 
             if (private$is_tool_call(res)) {
-
                 # Final round of forced JSON output: return the tool call as is without executing it
                 if (isTRUE(output_schema)) {
                     tool_result <- private$extract_root(res) |>
@@ -650,27 +639,20 @@ OpenRouter <- R6::R6Class( # nolint
                         purrr::pluck(1) |>
                         private$extract_tool_call_args()
 
-                    # Hack: Convert tool_use to text for both histories, 
+                    # Hack: Convert tool_use to text for both histories,
                     #  as if it was the return of a native structured output of the API.
                     json_text <- jsonlite::toJSON(tool_result, auto_unbox = TRUE, pretty = TRUE)
-                    
-                    purrr::pluck(self$chat_history, length(self$chat_history), "content") <- list(
-                        private$text_input(json_text)
-                    )
-                    purrr::pluck(self$session_history, length(self$session_history), "data", "choices") <- list(
-                        list(
-                            logprobs = list(),
-                            finish_reason = "stop",
-                            native_finish_reason = "stop",
-                            index = 0,
-                            message = list(
-                                role = "assistant",
-                                content = json_text,
-                                refusal = list(),
-                                reasoning = list()
-                            )
-                        )
-                    )
+
+                    purrr::pluck(self$chat_history, length(self$chat_history), "content") <- list(private$text_input(
+                        json_text
+                    ))
+                    purrr::pluck(self$session_history, length(self$session_history), "data", "choices") <- list(list(
+                        logprobs = list(),
+                        finish_reason = "stop",
+                        native_finish_reason = "stop",
+                        index = 0,
+                        message = list(role = "assistant", content = json_text, refusal = list(), reasoning = list())
+                    ))
 
                     # Trigger auto-save to persist changes
                     private$auto_save_history()
@@ -682,76 +664,70 @@ OpenRouter <- R6::R6Class( # nolint
                 private$tool_results_to_chat_history(private$use_tools(res))
 
                 # Recursive call
-                return(
-                    self$chat(
-                        system = system,
-                        model = model,
-                        temperature = temperature,
-                        max_tokens = max_tokens,
-                        top_p = top_p,
-                        top_k = top_k,
-                        frequency_penalty = frequency_penalty,
-                        presence_penalty = presence_penalty,
-                        repetition_penalty = repetition_penalty,
-                        min_p = min_p,
-                        top_a = top_a,
-                        seed = seed,
-                        stop_sequences = stop_sequences,
-                        logit_bias = logit_bias,
-                        logprobs = logprobs,
-                        top_logprobs = top_logprobs,
-                        tools = tools,
-                        tool_choice = tool_choice,
-                        parallel_tool_calls = parallel_tool_calls,
-                        cache_prompt = FALSE,
-                        cache_system = FALSE,
-                        thinking_budget = thinking_budget,
-                        verbosity = verbosity,
-                        provider_options = provider_options,
-                        output_schema = output_schema
-                    )
-                )
-
+                return(self$chat(
+                    system = system,
+                    model = model,
+                    temperature = temperature,
+                    max_tokens = max_tokens,
+                    top_p = top_p,
+                    top_k = top_k,
+                    frequency_penalty = frequency_penalty,
+                    presence_penalty = presence_penalty,
+                    repetition_penalty = repetition_penalty,
+                    min_p = min_p,
+                    top_a = top_a,
+                    seed = seed,
+                    stop_sequences = stop_sequences,
+                    logit_bias = logit_bias,
+                    logprobs = logprobs,
+                    top_logprobs = top_logprobs,
+                    tools = tools,
+                    tool_choice = tool_choice,
+                    parallel_tool_calls = parallel_tool_calls,
+                    cache_prompt = FALSE,
+                    cache_system = FALSE,
+                    thinking_budget = thinking_budget,
+                    verbosity = verbosity,
+                    provider_options = provider_options,
+                    output_schema = output_schema
+                ))
             }
 
             # ---- Final response ----
 
             # Handle structured output using the tool call trick
             if (is.list(output_schema)) {
-
                 format_tool <- response_schema_to_tool_openrouter(output_schema)
                 format_prompt <- make_format_prompt(format_tool$name)
 
-                return(
-                    self$chat(
-                        format_prompt,
-                        system = system,
-                        model = model,
-                        max_tokens = max_tokens,
-                        temperature = 0,
-                        top_p = top_p,
-                        top_k = top_k,
-                        frequency_penalty = frequency_penalty,
-                        presence_penalty = presence_penalty,
-                        repetition_penalty = repetition_penalty,
-                        min_p = min_p,
-                        top_a = top_a,
-                        seed = seed,
-                        stop_sequences = stop_sequences,
-                        logit_bias = logit_bias,
-                        logprobs = logprobs,
-                        top_logprobs = top_logprobs,
-                        tools = list(format_tool),
-                        tool_choice = "auto",
-                        parallel_tool_calls = parallel_tool_calls,
-                        cache_prompt = FALSE,
-                        cache_system = FALSE,
-                        thinking_budget = thinking_budget,
-                        verbosity = verbosity,
-                        provider_options = provider_options,
-                        output_schema = TRUE
-                    )
-                )
+                return(self$chat(
+                    format_prompt,
+                    system = system,
+                    model = model,
+                    max_tokens = max_tokens,
+                    temperature = 0,
+                    top_p = top_p,
+                    top_k = top_k,
+                    frequency_penalty = frequency_penalty,
+                    presence_penalty = presence_penalty,
+                    repetition_penalty = repetition_penalty,
+                    min_p = min_p,
+                    top_a = top_a,
+                    seed = seed,
+                    stop_sequences = stop_sequences,
+                    logit_bias = logit_bias,
+                    logprobs = logprobs,
+                    top_logprobs = top_logprobs,
+                    tools = list(format_tool),
+                    tool_choice = "auto",
+                    parallel_tool_calls = parallel_tool_calls,
+                    cache_prompt = FALSE,
+                    cache_system = FALSE,
+                    thinking_budget = thinking_budget,
+                    verbosity = verbosity,
+                    provider_options = provider_options,
+                    output_schema = TRUE
+                ))
             }
 
             # No structured output: return the response content
@@ -807,8 +783,7 @@ OpenRouter <- R6::R6Class( # nolint
         },
 
         extract_content_text = function(root) {
-            answer_content <- private$extract_content(root) |> 
-                purrr::pluck("content")
+            answer_content <- private$extract_content(root) |> purrr::pluck("content")
 
             if (purrr::is_empty(answer_content)) {
                 return(NULL)
@@ -833,7 +808,7 @@ OpenRouter <- R6::R6Class( # nolint
 
         extract_system_instructions = function(entry_data) {
             root <- private$extract_root(entry_data)
-            system_instructions <- purrr::keep(root, \(msg) purrr::pluck(msg, "role") == "system") |> 
+            system_instructions <- purrr::keep(root, \(msg) purrr::pluck(msg, "role") == "system") |>
                 purrr::map_chr("content")
             if (purrr::is_empty(system_instructions)) {
                 return(NULL)
@@ -859,8 +834,7 @@ OpenRouter <- R6::R6Class( # nolint
         },
 
         extract_reasoning_text = function(root) {
-            reasoning_text <- private$extract_reasoning(root) |> 
-                purrr::pluck("reasoning")
+            reasoning_text <- private$extract_reasoning(root) |> purrr::pluck("reasoning")
             if (purrr::is_empty(reasoning_text) || reasoning_text %in% c("\n", "")) {
                 return(NULL)
             }
@@ -895,11 +869,9 @@ OpenRouter <- R6::R6Class( # nolint
             })
 
             # Keep only relevant fields
-            return(
-                purrr::map(tool_calls, \(tool_call) {
-                    purrr::keep_at(tool_call, c("id", "type", "function"))
-                })
-            )
+            return(purrr::map(tool_calls, \(tool_call) {
+                purrr::keep_at(tool_call, c("id", "type", "function"))
+            }))
         },
 
         extract_tool_call_name = function(tool_call) {
@@ -970,7 +942,7 @@ OpenRouter <- R6::R6Class( # nolint
 
         extract_tool_definitions = function(entry_data) {
             tools <- purrr::pluck(entry_data, "tools")
-            
+
             if (!purrr::is_empty(entry_data$plugins)) {
                 plugin_ids <- purrr::map_chr(entry_data$plugins, \(plugin) purrr::pluck(plugin, "id"))
                 if (any(plugin_ids %in% c("web"))) {
@@ -996,17 +968,13 @@ OpenRouter <- R6::R6Class( # nolint
                     ))
                 } else if (is_server_tool(tool, self$server_tools)) {
                     tool_name <- get_server_tool_name(tool)
-                    return(list(
-                        name = tool_name,
-                        description = NULL,
-                        type = "server",
-                        parameters = character(0)
-                    ))
+                    return(list(name = tool_name, description = NULL, type = "server", parameters = character(0)))
                 } else {
                     cli::cli_alert_danger("[{self$provider_name}] Invalid tool: {.field {tool}}")
                     return(NULL)
                 }
-            }) |> purrr::compact()
+            }) |>
+                purrr::compact()
 
             if (purrr::is_empty(normalized_tools)) {
                 return(NULL)
@@ -1060,12 +1028,12 @@ OpenRouter <- R6::R6Class( # nolint
             if (!purrr::is_empty(root)) {
                 # root$reasoning <- NULL # Keeping reasoning = more tokens, but better conversation awareness
                 root$reasoning_details <- NULL
-                
+
                 # We keep annotations
                 # See: https://openrouter.ai/docs/features/multimodal/pdfs
                 # > When you send a PDF to the API, the response may include file annotations in the assistant's message
-                # > These annotations contain structured information about the PDF document that was parsed. 
-                # > By sending these annotations back in subsequent requests, you can avoid re-parsing the same PDF 
+                # > These annotations contain structured information about the PDF document that was parsed.
+                # > By sending these annotations back in subsequent requests, you can avoid re-parsing the same PDF
                 # > document multiple times, which saves both processing time and costs.
             }
             return(root)
@@ -1117,7 +1085,6 @@ OpenRouter <- R6::R6Class( # nolint
             httr2::req_headers_redacted(req, Authorization = paste0("Bearer ", private$api_key))
         },
 
-
         # ------🔺 TOOLS -------------------------------------------------------
 
         # Execute a single tool call
@@ -1139,25 +1106,19 @@ OpenRouter <- R6::R6Class( # nolint
             # Clean malformed JSON in output (e.g., duplicate objects)
             content_str <- clean_malformed_json(content_str)
 
-            return(list(
-                role = "tool",
-                tool_call_id = purrr::pluck(tool_call, "id"),
-                content = content_str
-            ))
+            return(list(role = "tool", tool_call_id = purrr::pluck(tool_call, "id"), content = content_str))
         },
 
         # ------🔺 HELPERS -----------------------------------------------------
 
         list = function(endpoint) {
-            private$request(endpoint) |> 
-                purrr::pluck("data") |> 
-                lol_to_df()
+            private$request(endpoint) |> purrr::pluck("data") |> lol_to_df()
         },
 
         delete = function(endpoint, id) {
             private$base_request(endpoint) |>
-                httr2::req_url_path_append(id) |> 
-                httr2::req_method("DELETE") |> 
+                httr2::req_url_path_append(id) |>
+                httr2::req_method("DELETE") |>
                 httr2::req_perform() |>
                 httr2::resp_body_json()
         }
@@ -1175,13 +1136,9 @@ as_tool_openrouter <- function(tool_schema) {
     # OpenRouter requires a non-empty parameters even if it has no properties
     tool_args <- tool_schema$args_schema %||%
         tool_schema$parameters %||%
-        tool_schema$input_schema %||% 
+        tool_schema$input_schema %||%
         list(type = "object")
-    list3(
-        name = tool_schema$name,
-        description = tool_schema$description,
-        parameters = tool_args
-    )
+    list3(name = tool_schema$name, description = tool_schema$description, parameters = tool_args)
 }
 
 #' Convert schema to structured output format for OpenRouter (internal)

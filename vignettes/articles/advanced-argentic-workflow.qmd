@@ -276,8 +276,22 @@ get_todos_llmr <- function(...) {
 get_todos_llmr_tool <- as_tool(get_todos_llmr)
 
 set_todos_llmr <- function(todos) {
+    #' @description Update your task list for planning and tracking multi-step work.
+    #'   This replaces the entire TODO list. Always include all TODOs (completed,
+    #'   in_progress, and pending) as a list of objects.
+    #' @param todos:[{content:string*, status:string*}]* List of TODO items with content and status
     set_todos(todo_list_llmr, todos)
 }
+set_todos_llmr_tool <- as_tool(set_todos_llmr)
+```
+
+::: {.callout-note appearance="simple" collapse="true"}
+
+## Alternative: Manual tool definition
+
+You can also define tools manually using `tool()` with nested list structures:
+
+```{r}
 set_todos_llmr_tool <- tool(
     name = "set_todos_llmr",
     description = "Update your task list for planning and tracking multi-step work. This
@@ -291,7 +305,11 @@ set_todos_llmr_tool <- tool(
     ),
     fn = set_todos_llmr
 )
+```
 
+:::
+
+```{r}
 main_tools <- flat_list(as_tool(planning_subagent), as_tool(research_subagent), get_todos_llmr_tool, set_todos_llmr_tool)
 ```
 

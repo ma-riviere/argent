@@ -380,7 +380,8 @@ get_user_info <- function(user_name) {
     #' @description Provides information about the user, like their favorite programming language
     #' @param user_name:string* The name of the user
 
-    switch(user_name,
+    switch(
+        user_name,
         "Marc" = list(favorite_language = "R", favorite_framework = "Shiny"),
         "Alice" = list(favorite_language = "Python", favorite_framework = "Flask"),
         "Bob" = list(favorite_language = "JavaScript", favorite_framework = "React"),
@@ -601,7 +602,7 @@ gemini$chat(
     model = "gemini-2.5-pro",
     tools = list("google_search"),
     thinking_budget = -1, # Unlimited thinking budget
-    include_thoughts = TRUE, # Google-specific parameter
+    include_thoughts = TRUE,
     output_schema = schema(
         name = "package_info",
         description = "Information about an R package release",
@@ -758,6 +759,9 @@ Guides for OpenAI’s three different APIs:
 -   [MCP Servers &
     Tools](https://ma-riviere.github.io/argent/articles/advanced-mcp.html) -
     How to use MCP server tools with `argent`
+-   [Argentic
+    Workflow](https://ma-riviere.github.io/argent/articles/advanced-argentic-workflow.html) -
+    How to use `argent` for an advanced Agentic Workflows
 
 ## Contributing
 

@@ -2,28 +2,25 @@
 % Please edit documentation in R/tools.R
 \name{tool_definitions}
 \alias{tool_definitions}
-\alias{as_tool}
 \alias{tool}
 \alias{schema}
-\title{Generate tools and schemas definitions from functions annotations, or direct specification}
+\title{Generate tools and schemas definitions from direct specification}
 \usage{
-as_tool(fn)
-
 tool(name, description, ..., fn = NULL)
 
 schema(name, description, ..., strict = TRUE, additional_properties = FALSE)
 }
 \arguments{
-\item{fn}{Function. For \code{tool()} only. Optional function implementation to store with the
-tool definition. When provided, this function (with its closure) will be called when the
-LLM invokes the tool, supporting locally-defined functions with access to local variables.
-If NULL (default), the function is looked up by name in the global environment.}
-
 \item{name}{Character. The tool or schema name}
 
 \item{description}{Character. What the tool does or what the schema represents}
 
 \item{...}{Named parameter specifications. See Details.}
+
+\item{fn}{Function. For \code{tool()} only. Optional function implementation to store with the
+tool definition. When provided, this function (with its closure) will be called when the
+LLM invokes the tool, supporting locally-defined functions with access to local variables.
+If NULL (default), the function is looked up by name in the global environment.}
 
 \item{strict}{Logical. For \code{schema()} only. Whether to use strict mode (defaults to TRUE).
 Added at root level of the schema definition.}
@@ -32,14 +29,6 @@ Added at root level of the schema definition.}
 properties in the schema (defaults to FALSE). Added to \code{args_schema}.}
 }
 \value{
-For \code{as_tool()}: A list with:
-\itemize{
-\item \code{name}: Tool name (character)
-\item \code{description}: Tool description (character)
-\item \code{args_schema}: JSON Schema object with \code{type}, \code{properties}, and \code{required} fields
-\item \code{.fn}: The original function (with closure) for execution
-}
-
 For \code{tool()}: A list with:
 \itemize{
 \item \code{name}: Tool name (character)
@@ -58,21 +47,6 @@ For \code{schema()}: A list with:
 }
 }
 \description{
-\subsection{Annotation-based approach}{
-
-\code{as_tool()} parses annotations from a function and converts it to a generic
-tool definition with an \code{args_schema} field. This standardized format can be
-converted to provider-specific formats internally.
-
-Annotations use roxygen2-style \verb{#'} comments inside the function body (not
-outside like regular roxygen2 documentation). The annotation syntax follows
-plumber2 conventions for type specifications.
-
-The package automatically enables source preservation when loaded. If you
-defined functions before loading the package, simply redefine them after
-loading argent.
-}
-
 \subsection{Direct specification approach}{
 
 \code{tool()} creates a tool definition by directly specifying parameters, as an
@@ -103,7 +77,12 @@ Parameters are specified as named arguments. Each parameter value can be:
 
 \strong{Descriptions:} Add text after type (e.g., \code{"string* The user's name"})
 
-\strong{Nested objects:} Use list with \code{type = "object"} or \code{type = "object*"}:
+\strong{Nested objects (string syntax):} Use \verb{\{prop:type, ...\}} inline:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{address = "\{street:string*, city:string*, zip:string\}* Mailing address"
+}\if{html}{\out{</div>}}
+
+\strong{Nested objects (list syntax):} Use list with \code{type = "object"}:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{address = list(
   type = "object*",
@@ -113,31 +92,23 @@ Parameters are specified as named arguments. Each parameter value can be:
 )
 }\if{html}{\out{</div>}}
 
-\strong{Arrays of objects:} Use \code{type = "[object]"}:
+\strong{Arrays of objects:} Use \verb{[\{...\}]} or \code{type = "[object]"}:
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{users = list(
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# String syntax
+items = "[\{name:string*, qty:integer*\}]* Order items"
+
+# List syntax
+items = list(
   type = "[object]*",
-  description = "List of users",
+  description = "Order items",
   name = "string*",
-  email = "string*"
+  qty = "integer*"
 )
 }\if{html}{\out{</div>}}
 }
 }
 \examples{
 \dontrun{
-# Annotation-based approach
-options(keep.source = TRUE)
-
-my_fn <- function(x, y = 3L) {
-    #' @description Add two numbers
-    #' @param x:number* First number
-    #' @param y:integer Second number (optional, has default)
-    x + y
-}
-
-as_tool(my_fn)
-
 # Direct specification - tool()
 search_tool <- tool(
   name = "search_db",
@@ -157,7 +128,15 @@ output_schema <- schema(
   additional_properties = FALSE
 )
 
-# Nested object
+# Nested object using string syntax (new!)
+create_order <- tool(
+  name = "create_order",
+  description = "Create a new order",
+  customer = "{name:string*, email:string*}* Customer information",
+  items = "[{product:string*, quantity:integer*}]* Order items"
+)
+
+# Nested object using list syntax (original)
 create_user_tool <- tool(
   name = "create_user",
   description = "Create a new user",
@@ -168,44 +147,6 @@ create_user_tool <- tool(
     street = "string* Street address",
     city = "string* City name",
     zip = "string Postal code"
-  )
-)
-
-# Using closures with local state
-create_counter_tool <- function() {
-  count <- 0
-
-  increment <- function() {
-    count <<- count + 1
-    count
-  }
-
-  as_tool(increment)
-}
-
-counter_tool <- create_counter_tool()
-# The LLM can now call this tool and it maintains state via closure
-
-# Using MCP tools alongside custom tools
-github_server <- mcp_connect(
-  name = "github",
-  type = "http",
-  url = "https://api.githubcopilot.com/mcp",
-  headers = list(
-    Authorization = paste("Bearer", Sys.getenv("GITHUB_PAT"))
-  )
-)
-
-github_tools <- mcp_tools(github_server)
-
-# Combine MCP tools with custom tools in chat
-google <- Google$new()
-google$chat(
-  "Create an issue about the bug I found",
-  tools = list(
-    github_tools,          # MCP tools from server
-    as_tool(my_fn),        # Custom R function
-    search_tool            # Direct specification
   )
 )
 }

@@ -35,9 +35,7 @@ github_mcp_client <- mcp_connect(
     name = "github",
     type = "http",
     url = "https://api.githubcopilot.com/mcp",
-    headers = list(
-        Authorization = paste("Bearer", Sys.getenv("GITHUB_PAT"))
-    )
+    headers = list(Authorization = paste("Bearer", Sys.getenv("GITHUB_PAT")))
 )
 ```
 
@@ -52,12 +50,7 @@ Finally, we can call the `get_file_contents` tool manually to see if it works:
 ```{r}
 execute_mcp_tool(
     tool_def = get_mcp_tool(github_mcp_tools, "get_file_contents"),
-    arguments = list(
-        owner = "tidyverse",
-        repo = "ellmer",
-        path = "/",
-        ref = "main"
-    )
+    arguments = list(owner = "tidyverse", repo = "ellmer", path = "/", ref = "main")
 )
 ```
 
@@ -71,10 +64,7 @@ btw_mcp_client <- mcp_connect(
     name = "btw",
     type = "stdio",
     command = "Rscript",
-    args = c(
-        "-e",
-        "btw::btw_mcp_server(tools = btw::btw_tools(c('docs', 'env', 'ide', 'search', 'session')))"
-    )
+    args = c("-e", "btw::btw_mcp_server(tools = btw::btw_tools(c('docs', 'env', 'ide', 'search', 'session')))")
 )
 ```
 
@@ -100,10 +90,7 @@ Finally, we can call the `help_topics` tool manually to see if it works:
 ```{r}
 execute_mcp_tool(
     tool_def = get_mcp_tool(btw_mcp_tools, "btw_tool_docs_package_help_topics"),
-    arguments = list(
-        package_name = "argent",
-        `_intent` = "Vignettes explaining how to use MCP servers with argent"
-    )
+    arguments = list(package_name = "argent", `_intent` = "Vignettes explaining how to use MCP servers with argent")
 )
 ```
 
@@ -271,6 +258,10 @@ usable both from argent and from other MCP clients, like Claude Code.
 </details>
 
 ::: {.callout-note appearance="simple"}
+
+This implementation uses `argent`'s annotation parsing & MCP machinery, which allows us to implement a fully-featured MCP server by simply defining the tools we want to expose as annotated functions.
+All the 'boilerplate' code for setting up the MCP server is handled by `argent`.
+
 The Zotero MCP server code is available in the package at `inst/examples/zotero_mcp_server.R`.
 :::
 
@@ -281,10 +272,12 @@ zotero_client <- mcp_connect(
     name = "zotero",
     type = "stdio",
     command = "Rscript",
-    args = system.file("examples/zotero_mcp_server.R", package = "argent")
+    args = c("-e", "argent::mcp_serve_stdio(system.file('examples/zotero_mcp_server.R', package = 'argent'))")
 )
 
 zotero_tools <- mcp_tools(zotero_client)
+zotero_resources <- mcp_resources(zotero_client)
+zotero_prompts <- mcp_prompts(zotero_client)
 ```
 
 We could test if the MCP server is working by querying it 'manually':
@@ -294,12 +287,10 @@ We could test if the MCP server is working by querying it 'manually':
 #| code-summary: Testing the Zotero MCP Server manually
 
 # Getting details on all my collections
-my_collections <- execute_mcp_tool(
-    get_mcp_tool(zotero_tools, "zotero_get_collections")
-)
+my_collections <- execute_mcp_tool(get_mcp_tool(zotero_tools, "zotero_get_collections"))
 
 # Getting the key of the Neuroscience collection
-neuroscience_collection_key <- jsonlite::fromJSON(my_collections)  |> 
+neuroscience_collection_key <- jsonlite::fromJSON(my_collections) |>
     dplyr::filter(stringr::str_detect(name, "Neuroscience")) |>
     dplyr::pull(key)
 
@@ -310,7 +301,7 @@ neuroscience_items <- execute_mcp_tool(
 )
 
 # Getting a specific paper's key with a keyword from its title
-neuroscience_paper_key <- jsonlite::fromJSON(neuroscience_items) |> 
+neuroscience_paper_key <- jsonlite::fromJSON(neuroscience_items) |>
     dplyr::filter(stringr::str_detect(title, "cross-modal plasticity")) |>
     dplyr::pull(key)
 
@@ -353,9 +344,8 @@ We can use our new Zotero MCP server with other MCP clients (like Claude Code, C
       "type": "stdio",
       "command": "Rscript",
       "args": [
-        "--quiet",
-        "--vanilla",
-        "/path/to/argent/inst/examples/zotero_mcp_server.R"
+        "-e",
+        "argent::mcp_serve_stdio(system.file('examples/zotero_mcp_server.R', package = 'argent'))"
       ]
     }
   }
@@ -388,29 +378,47 @@ Unlike stdio servers that communicate via standard input/output, HTTP servers ex
 
 </details>
 
-::: {.callout-note appearance="simple"}
-The Semantic Scholar MCP server code is available at `inst/examples/semantic_scholar_mcp_server.R`.
-:::
-
-### Using the HTTP MCP Server
-
-First, start the server in a separate R session or terminal:
+We can start the server **in a separate R session or terminal** with:
 
 ```{r}
 #| eval: false
 
-source(system.file("examples/semantic_scholar_mcp_server.R", package = "argent"))
-#> ✔ Starting semantic-scholar MCP server on <http://127.0.0.1:8080>
+mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "argent"), port = 8080)
+#> ✔ Starting semantic_scholar_mcp_server MCP server on <http://127.0.0.1:8080>
 ```
 
-Then connect to it from your main session:
+::: {.callout-note appearance="simple"}
+**Why start the server separately?** Unlike stdio servers (like Zotero above), which are spawned as child processes by `mcp_connect()` using the provided `command` and `args`, HTTP servers are independent network services. `mcp_connect()` with `type = "http"` simply connects to an already-running server at the specified URL—it cannot start the server for you.
+:::
+
+::: {.callout-note appearance="simple"}
+
+This implementation uses `argent`'s annotation parsing & MCP machinery, which allows us to implement a fully-featured MCP server by simply defining the tools we want to expose as annotated functions. All the 'boilerplate' code for setting up the MCP server is handled by `argent`.
+
+If we were to create the same MCP server manually using an HTTP server framework like `plumber2`, here is what it would look like:
+
+```{=html}
+<details>
+<summary>'Manual' HTTP MCP Server Implementation</summary>
+```
+
+`r knitr::spin_child(here::here("inst", "examples", "semantic_scholar_mcp_server_plumber.R"))`
+
+Which we can run **in a separate R session or terminal** with:
 
 ```{r}
-semantic_scholar_client <- mcp_connect(
-    name = "semantic-scholar",
-    type = "http",
-    url = "http://127.0.0.1:8080"
-)
+plumber2::api(system.file("examples/semantic_scholar_mcp_server_plumber.R", package = "argent")) |>
+    plumber2::api_run(host = "127.0.0.1", port = 8080, block = TRUE, silent = FALSE, showcase = FALSE)
+```
+
+</details>
+
+:::
+
+Then, we can connect to it from our main session:
+
+```{r}
+semantic_scholar_client <- mcp_connect(name = "semantic-scholar", type = "http", url = "http://127.0.0.1:8080/mcp")
 
 semantic_scholar_tools <- mcp_tools(semantic_scholar_client)
 ```
@@ -428,18 +436,14 @@ papers <- execute_mcp_tool(
 )
 
 # Parse results
-papers_df <- jsonlite::fromJSON(papers) |> 
-    dplyr::select(paperId, title, year, citationCount)
+papers_df <- jsonlite::fromJSON(papers) |> dplyr::select(paperId, title, year, citationCount)
 
 paper_id <- dplyr::slice_max(papers_df, order_by = citationCount)$paperId
 
 # Getting the details of the first paper
 execute_mcp_tool(
     get_mcp_tool(semantic_scholar_tools, "get_paper"),
-    arguments = list(
-        paper_id = paper_id,
-        fields = "title,authors,year,abstract"
-    )
+    arguments = list(paper_id = paper_id, fields = "title,authors,year,abstract")
 )
 ```
 
@@ -451,6 +455,7 @@ gemini <- Google$new()
 gemini$chat(
     "Find recent papers (2020+) on Sensory Substitution and Cross-Modal Plasticity and summarize the key innovations",
     "When using the `search_papers` tool, use a limit of 2 by search, to not exceed the rate limit.",
+    "If you exceed the rate limit, wait a few seconds before trying again.",
     "Use the `get_paper` tool to get the details of the papers like its abstract.",
     model = "gemini-2.5-flash",
     tools = semantic_scholar_tools,
@@ -478,5 +483,16 @@ gemini$chat(
 :::
 
 ::: {.callout-tip appearance="simple"}
-You can use this server with other MCP clients by configuring them to connect to `http://127.0.0.1:8080`.
+
+We can use our new Semantic Scholar MCP server (either the standalone `plumber2` implementation or the `argent` implementation) with other MCP clients with:
+
+```{json}
+{
+  "mcpServers": {
+    "semantic-scholar": {
+      "httpUrl": "http://127.0.0.1:8080/mcp"
+    }
+  }
+}
+```
 :::

@@ -151,8 +151,7 @@ This method starts an HTTP server and blocks, listening for JSON-RPC requests on
 
 \item{\code{block}}{Logical. Whether to block the console (default: TRUE)}
 
-\item{\code{silent}}{Logical. Whether to suppress startup messages (default: FALSE)
-Format a JSON-RPC response}
+\item{\code{silent}}{Logical. Whether to suppress startup messages (default: FALSE)}
 }
 \if{html}{\out{</div>}}
 }

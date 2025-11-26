@@ -24,31 +24,17 @@ test_that("tool() creates valid tool definition", {
 })
 
 test_that("tool() validates input parameters", {
-    expect_error(
-        tool(name = "", description = "Test"),
-        "must be a non-empty string"
-    )
+    expect_error(tool(name = "", description = "Test"), "must be a non-empty string")
 
-    expect_error(
-        tool(name = "test", description = ""),
-        "must be a non-empty string"
-    )
+    expect_error(tool(name = "test", description = ""), "must be a non-empty string")
 
-    expect_error(
-        tool(name = "test", description = "Test", fn = "not_a_function"),
-        "must be a function or NULL"
-    )
+    expect_error(tool(name = "test", description = "Test", fn = "not_a_function"), "must be a function or NULL")
 })
 
 test_that("tool() supports closure functions", {
     my_fn <- function(x) x * 2
 
-    result <- tool(
-        name = "multiply",
-        description = "Multiply by 2",
-        x = "number* Input number",
-        fn = my_fn
-    )
+    result <- tool(name = "multiply", description = "Multiply by 2", x = "number* Input number", fn = my_fn)
 
     expect_equal(result$.fn, my_fn)
     expect_true(is.function(result$.fn))
@@ -129,11 +115,7 @@ test_that("tool definitions support various parameter types", {
 })
 
 test_that("tool definitions have no .fn field by default", {
-    result <- tool(
-        name = "simple_tool",
-        description = "Simple tool",
-        param1 = "string* Parameter"
-    )
+    result <- tool(name = "simple_tool", description = "Simple tool", param1 = "string* Parameter")
 
     expect_null(result$.fn)
 })
@@ -222,4 +204,275 @@ test_that("arrays of objects are supported", {
     expect_contains(items$required, "name")
     expect_contains(items$required, "email")
     expect_false("age" %in% items$required)
+})
+
+# -----🔺 as_tool() with inline nested type annotations ----------------------------
+# Note: as_tool() requires source references to extract annotations from comments.
+# Functions must be sourced from files with keep.source = TRUE to preserve these.
+# These tests use temp files to simulate the real-world use case.
+
+# Helper to create a temp file with function code and source it
+source_tool_fn <- function(code) {
+    tmp <- tempfile(fileext = ".R")
+    on.exit(unlink(tmp))
+    writeLines(code, tmp)
+    env <- new.env(parent = .GlobalEnv)
+    source(tmp, local = env, keep.source = TRUE)
+    # Return the first function defined in the environment
+    fn_names <- ls(env)
+    fn_names <- fn_names[sapply(fn_names, function(n) is.function(env[[n]]))]
+    env[[fn_names[1]]]
+}
+
+test_that("as_tool() parses inline object type annotations", {
+    create_user <- source_tool_fn(
+        "
+        create_user <- function(user) {
+            #\' @description Create a new user with nested object
+            #\' @param user:{name:string*, email:string*, age:integer}* User information
+            user
+        }
+    "
+    )
+
+    result <- as_tool(create_user)
+
+    expect_equal(result$name, "create_user")
+    expect_equal(result$description, "Create a new user with nested object")
+
+    props <- result$args_schema$properties
+
+    # Check user is required and is an object
+    expect_contains(result$args_schema$required, "user")
+    expect_equal(props$user$type, "object")
+    expect_equal(props$user$description, "User information")
+
+    # Check nested properties
+    expect_equal(props$user$properties$name$type, "string")
+    expect_equal(props$user$properties$email$type, "string")
+    expect_equal(props$user$properties$age$type, "integer")
+
+    # Check nested required fields
+    expect_contains(props$user$required, "name")
+    expect_contains(props$user$required, "email")
+    expect_false("age" %in% props$user$required)
+})
+
+test_that("as_tool() parses inline array of objects annotations", {
+    process_items <- source_tool_fn(
+        "
+        process_items <- function(items) {
+            #\' @description Process a list of items
+            #\' @param items:[{id:string*, quantity:number*, price:number}]* List of items
+            items
+        }
+    "
+    )
+
+    result <- as_tool(process_items)
+
+    expect_equal(result$name, "process_items")
+    props <- result$args_schema$properties
+
+    # Check items is required and is an array
+    expect_contains(result$args_schema$required, "items")
+    expect_equal(props$items$type, "array")
+    expect_equal(props$items$description, "List of items")
+
+    # Check items schema (array of objects)
+    items_schema <- props$items$items
+    expect_equal(items_schema$type, "object")
+
+    # Check object properties within array
+    expect_equal(items_schema$properties$id$type, "string")
+    expect_equal(items_schema$properties$quantity$type, "number")
+    expect_equal(items_schema$properties$price$type, "number")
+
+    # Check required fields in nested object
+    expect_contains(items_schema$required, "id")
+    expect_contains(items_schema$required, "quantity")
+    expect_false("price" %in% items_schema$required)
+})
+
+test_that("as_tool() parses deeply nested object structures", {
+    configure_app <- source_tool_fn(
+        "
+        configure_app <- function(config) {
+            #\' @description Configure application with nested settings
+            #\' @param config:{db:{host:string*, port:integer*, ssl:boolean}, cache:{enabled:boolean*, ttl:integer}}* App configuration
+            config
+        }
+    "
+    )
+
+    result <- as_tool(configure_app)
+
+    props <- result$args_schema$properties
+
+    # Check top-level config object
+    expect_contains(result$args_schema$required, "config")
+    expect_equal(props$config$type, "object")
+
+    # Check db nested object
+    db <- props$config$properties$db
+    expect_equal(db$type, "object")
+    expect_equal(db$properties$host$type, "string")
+    expect_equal(db$properties$port$type, "integer")
+    expect_equal(db$properties$ssl$type, "boolean")
+    expect_contains(db$required, "host")
+    expect_contains(db$required, "port")
+    expect_false("ssl" %in% db$required)
+
+    # Check cache nested object
+    cache <- props$config$properties$cache
+    expect_equal(cache$type, "object")
+    expect_equal(cache$properties$enabled$type, "boolean")
+    expect_equal(cache$properties$ttl$type, "integer")
+    expect_contains(cache$required, "enabled")
+    expect_false("ttl" %in% cache$required)
+})
+
+test_that("as_tool() parses mixed simple and complex parameters", {
+    search_products <- source_tool_fn(
+        "
+        search_products <- function(query, filters = NULL, pagination = NULL) {
+            #\' @description Search for products with filters
+            #\' @param query:string* Search query string
+            #\' @param filters:{category:string, minPrice:number, maxPrice:number, tags:[string]} Optional filters
+            #\' @param pagination:{page:integer, limit:integer} Pagination options
+            list(query = query, filters = filters, pagination = pagination)
+        }
+    "
+    )
+
+    result <- as_tool(search_products)
+
+    props <- result$args_schema$properties
+
+    # Check simple required parameter
+    expect_contains(result$args_schema$required, "query")
+    expect_equal(props$query$type, "string")
+    expect_equal(props$query$description, "Search query string")
+
+    # Check filters is NOT required (has default NULL)
+    expect_false("filters" %in% result$args_schema$required)
+    expect_equal(props$filters$type, "object")
+
+    # Check filters nested properties
+    expect_equal(props$filters$properties$category$type, "string")
+    expect_equal(props$filters$properties$minPrice$type, "number")
+    expect_equal(props$filters$properties$maxPrice$type, "number")
+    expect_equal(props$filters$properties$tags$type, "array")
+    expect_equal(props$filters$properties$tags$items$type, "string")
+
+    # Check pagination is NOT required (has default NULL)
+    expect_false("pagination" %in% result$args_schema$required)
+    expect_equal(props$pagination$type, "object")
+})
+
+test_that("as_tool() parses array of objects with nested arrays", {
+    create_orders <- source_tool_fn(
+        "
+        create_orders <- function(orders) {
+            #\' @description Create multiple orders
+            #\' @param orders:[{customer:string*, items:[{sku:string*, qty:integer*}]*}]* Orders to create
+            orders
+        }
+    "
+    )
+
+    result <- as_tool(create_orders)
+
+    props <- result$args_schema$properties
+
+    # Check orders is required array
+    expect_contains(result$args_schema$required, "orders")
+    expect_equal(props$orders$type, "array")
+
+    # Check order object structure
+    order_schema <- props$orders$items
+    expect_equal(order_schema$type, "object")
+    expect_equal(order_schema$properties$customer$type, "string")
+    expect_contains(order_schema$required, "customer")
+    expect_contains(order_schema$required, "items")
+
+    # Check nested items array within each order
+    items_schema <- order_schema$properties$items
+    expect_equal(items_schema$type, "array")
+
+    # Check item object within items array
+    item_schema <- items_schema$items
+    expect_equal(item_schema$type, "object")
+    expect_equal(item_schema$properties$sku$type, "string")
+    expect_equal(item_schema$properties$qty$type, "integer")
+    expect_contains(item_schema$required, "sku")
+    expect_contains(item_schema$required, "qty")
+})
+
+test_that("as_tool() handles optional nested objects correctly", {
+    update_profile <- source_tool_fn(
+        "
+        update_profile <- function(user_id, profile = NULL) {
+            #\' @description Update user profile
+            #\' @param user_id:string* User ID
+            #\' @param profile:{bio:string, avatar:string, social:{twitter:string, github:string}} Optional profile data
+            list(user_id = user_id, profile = profile)
+        }
+    "
+    )
+
+    result <- as_tool(update_profile)
+
+    props <- result$args_schema$properties
+
+    # Check user_id is required
+    expect_contains(result$args_schema$required, "user_id")
+    expect_equal(props$user_id$type, "string")
+
+    # Check profile is NOT required (has default)
+    expect_false("profile" %in% result$args_schema$required)
+    expect_equal(props$profile$type, "object")
+
+    # Check deeply nested social object
+    social <- props$profile$properties$social
+    expect_equal(social$type, "object")
+    expect_equal(social$properties$twitter$type, "string")
+    expect_equal(social$properties$github$type, "string")
+})
+
+test_that("as_tool() validates MCP JSON Schema compliance for complex types", {
+    # This test ensures the output structure matches MCP JSON Schema expectations
+    complex_fn <- source_tool_fn(
+        "
+        complex_fn <- function(data) {
+            #\' @description Complex data processing
+            #\' @param data:{items:[{name:string*, value:number*}]*, metadata:{version:integer*}}* Input data
+            data
+        }
+    "
+    )
+
+    result <- as_tool(complex_fn)
+
+    # Verify top-level schema structure
+    expect_equal(result$args_schema$type, "object")
+    expect_type(result$args_schema$properties, "list")
+    expect_type(result$args_schema$required, "list")
+
+    props <- result$args_schema$properties
+
+    # Verify data object schema
+    expect_equal(props$data$type, "object")
+    expect_type(props$data$properties, "list")
+    expect_type(props$data$required, "list")
+
+    # Verify items array schema
+    expect_equal(props$data$properties$items$type, "array")
+    expect_type(props$data$properties$items$items, "list")
+    expect_equal(props$data$properties$items$items$type, "object")
+
+    # Verify metadata object schema
+    expect_equal(props$data$properties$metadata$type, "object")
+    expect_type(props$data$properties$metadata$properties, "list")
+    expect_contains(props$data$properties$metadata$required, "version")
 })

@@ -1,20 +1,6 @@
-#' Generate tools and schemas definitions from functions annotations, or direct specification
+#' Generate tools and schemas definitions from direct specification
 #'
 #' @description
-#'
-#' ## Annotation-based approach
-#'
-#' `as_tool()` parses annotations from a function and converts it to a generic
-#' tool definition with an `args_schema` field. This standardized format can be
-#' converted to provider-specific formats internally.
-#'
-#' Annotations use roxygen2-style `#'` comments inside the function body (not
-#' outside like regular roxygen2 documentation). The annotation syntax follows
-#' plumber2 conventions for type specifications.
-#'
-#' The package automatically enables source preservation when loaded. If you
-#' defined functions before loading the package, simply redefine them after
-#' loading argent.
 #'
 #' ## Direct specification approach
 #'
@@ -31,18 +17,6 @@
 #' - A string: `"type[*] [description]"` (e.g., `"string* The user's name"`)
 #' - A list: For nested objects with `type` field and nested properties
 #'
-#' @param fn A function with annotations in its body comments using `#'` prefix.
-#'   Supported tags:
-#'   - `@description`: Function description
-#'   - `@param name:type* description`: Parameter specification
-#'
-#'   Supported types: `string`, `integer`, `number`, `boolean`, `date`,
-#'   `date-time`, and arrays using `[type]` syntax (e.g., `[integer]`).
-#'
-#'   The `*` suffix marks a parameter as required. If a parameter has a
-#'   default value in the function signature and no `*` suffix, it is
-#'   optional. If it has a `*` suffix, it overrides the default and becomes
-#'   required.
 #' @param name Character. The tool or schema name
 #' @param description Character. What the tool does or what the schema represents
 #' @param ... Named parameter specifications. See Details.
@@ -55,13 +29,7 @@
 #' @param additional_properties Logical. For `schema()` only. Whether to allow additional
 #'   properties in the schema (defaults to FALSE). Added to `args_schema`.
 #'
-#' @return For `as_tool()`: A list with:
-#'   - `name`: Tool name (character)
-#'   - `description`: Tool description (character)
-#'   - `args_schema`: JSON Schema object with `type`, `properties`, and `required` fields
-#'   - `.fn`: The original function (with closure) for execution
-#'
-#'   For `tool()`: A list with:
+#' @return For `tool()`: A list with:
 #'   - `name`: Tool name (character)
 #'   - `description`: Tool description (character)
 #'   - `args_schema`: JSON Schema object with `type`, `properties`, and `required` fields
@@ -86,7 +54,12 @@
 #'
 #' **Descriptions:** Add text after type (e.g., `"string* The user's name"`)
 #'
-#' **Nested objects:** Use list with `type = "object"` or `type = "object*"`:
+#' **Nested objects (string syntax):** Use `{prop:type, ...}` inline:
+#' ```r
+#' address = "{street:string*, city:string*, zip:string}* Mailing address"
+#' ```
+#'
+#' **Nested objects (list syntax):** Use list with `type = "object"`:
 #' ```r
 #' address = list(
 #'   type = "object*",
@@ -96,31 +69,23 @@
 #' )
 #' ```
 #'
-#' **Arrays of objects:** Use `type = "[object]"`:
+#' **Arrays of objects:** Use `[{...}]` or `type = "[object]"`:
 #' ```r
-#' users = list(
+#' # String syntax
+#' items = "[{name:string*, qty:integer*}]* Order items"
+#'
+#' # List syntax
+#' items = list(
 #'   type = "[object]*",
-#'   description = "List of users",
+#'   description = "Order items",
 #'   name = "string*",
-#'   email = "string*"
+#'   qty = "integer*"
 #' )
 #' ```
 #'
 #' @name tool_definitions
 #' @examples
 #' \dontrun{
-#' # Annotation-based approach
-#' options(keep.source = TRUE)
-#'
-#' my_fn <- function(x, y = 3L) {
-#'     #' @description Add two numbers
-#'     #' @param x:number* First number
-#'     #' @param y:integer Second number (optional, has default)
-#'     x + y
-#' }
-#'
-#' as_tool(my_fn)
-#'
 #' # Direct specification - tool()
 #' search_tool <- tool(
 #'   name = "search_db",
@@ -140,7 +105,15 @@
 #'   additional_properties = FALSE
 #' )
 #'
-#' # Nested object
+#' # Nested object using string syntax (new!)
+#' create_order <- tool(
+#'   name = "create_order",
+#'   description = "Create a new order",
+#'   customer = "{name:string*, email:string*}* Customer information",
+#'   items = "[{product:string*, quantity:integer*}]* Order items"
+#' )
+#'
+#' # Nested object using list syntax (original)
 #' create_user_tool <- tool(
 #'   name = "create_user",
 #'   description = "Create a new user",
@@ -153,134 +126,8 @@
 #'     zip = "string Postal code"
 #'   )
 #' )
-#'
-#' # Using closures with local state
-#' create_counter_tool <- function() {
-#'   count <- 0
-#'
-#'   increment <- function() {
-#'     count <<- count + 1
-#'     count
-#'   }
-#'
-#'   as_tool(increment)
-#' }
-#'
-#' counter_tool <- create_counter_tool()
-#' # The LLM can now call this tool and it maintains state via closure
-#'
-#' # Using MCP tools alongside custom tools
-#' github_server <- mcp_connect(
-#'   name = "github",
-#'   type = "http",
-#'   url = "https://api.githubcopilot.com/mcp",
-#'   headers = list(
-#'     Authorization = paste("Bearer", Sys.getenv("GITHUB_PAT"))
-#'   )
-#' )
-#'
-#' github_tools <- mcp_tools(github_server)
-#'
-#' # Combine MCP tools with custom tools in chat
-#' google <- Google$new()
-#' google$chat(
-#'   "Create an issue about the bug I found",
-#'   tools = list(
-#'     github_tools,          # MCP tools from server
-#'     as_tool(my_fn),        # Custom R function
-#'     search_tool            # Direct specification
-#'   )
-#' )
 #' }
 NULL
-
-#' @export
-#' @rdname tool_definitions
-as_tool <- function(fn) {
-    if (!is.function(fn)) {
-        cli::cli_abort("{.arg fn} must be a function")
-    }
-
-    fn_name <- deparse(substitute(fn))
-    if (grepl("^function\\(", fn_name)) {
-        cli::cli_abort(
-            "Anonymous functions are not supported. Assign the function to a variable first."
-        )
-    }
-
-    annotations <- extract_annotations(fn)
-    if (length(annotations) == 0) {
-        cli::cli_abort(
-            c(
-                "No annotations found in function {.fn {fn_name}}",
-                "i" = "Annotations must be inside the function body as comments starting with {.code #'}",
-                "i" = "If you defined this function before loading argent, simply redefine it.",
-                "i" = "For sourced files, use {.code source(..., keep.source = TRUE)}."
-            )
-        )
-    }
-
-    # Group multi-line annotations into complete blocks
-    annotations <- group_multiline_annotations(annotations)
-
-    description <- extract_description(annotations)
-    params <- extract_params(annotations)
-
-    if (is.null(description)) {
-        cli::cli_abort("@description tag is required for function {.fn {fn_name}}")
-    }
-
-    formals_list <- formals(fn)
-    properties <- list()
-    required <- character(0)
-
-    is_schema_fn <- length(formals_list) == 0 && length(params) > 0
-
-    for (param in params) {
-        param_name <- param$name
-        param_type <- param$type
-        param_required <- param$required
-        param_desc <- param$description
-
-        if (!is_schema_fn && !param_name %in% names(formals_list)) {
-            cli::cli_abort(
-                "Parameter {.arg {param_name}} in annotations does not exist in function signature"
-            )
-        }
-
-        if (is_schema_fn) {
-            has_default <- FALSE
-        } else {
-            has_default <- !identical(formals_list[[param_name]], quote(expr = ))
-        }
-
-        is_required <- infer_required(param_name, param_required, has_default)
-
-        properties[[param_name]] <- parse_openapi_type(param_type)
-        if (!is.null(param_desc)) {
-            properties[[param_name]]$description <- param_desc
-        }
-
-        if (is_required) {
-            required <- c(required, param_name)
-        }
-    }
-
-    # Build args_schema even for no parameters
-    args_schema <- list(
-        type = "object",
-        properties = if (length(params) > 0) properties else named_list(),
-        required = if (length(required) > 0) as.list(required) else list()
-    )
-
-    list3(
-        name = fn_name,
-        description = description,
-        args_schema = args_schema,
-        .fn = fn
-    )
-}
-
 
 #' @rdname tool_definitions
 #' @export
@@ -325,202 +172,10 @@ schema <- function(name, description, ..., strict = TRUE, additional_properties 
         cli::cli_warn("No parameters specified for schema {.val {name}}")
     }
 
-    build_spec_from_params(
-        name,
-        description,
-        params,
-        strict = strict,
-        additional_properties = additional_properties
-    )
+    build_spec_from_params(name, description, params, strict = strict, additional_properties = additional_properties)
 }
 
 # -----🔺 INTERNAL -------------------------------------------------------------
-
-#' Extract annotation lines from function body
-#' @noRd
-extract_annotations <- function(fn) {
-    body_expr <- body(fn)
-
-    if (!is.call(body_expr) || as.character(body_expr[[1]]) != "{") {
-        return(character(0))
-    }
-
-    body_lines <- as.list(body_expr[-1])
-    comment_lines <- character(0)
-
-    for (line in body_lines) {
-        src_line <- attr(line, "srcref")
-        if (!is.null(src_line)) {
-            srcfile <- attr(src_line, "srcfile")
-            if (!is.null(srcfile) && !is.null(srcfile$lines)) {
-                line_text <- srcfile$lines[src_line[1]:src_line[3]]
-                comments <- grep("^\\s*#\\*", line_text, value = TRUE)
-                comment_lines <- c(comment_lines, comments)
-            }
-        }
-    }
-
-    if (length(comment_lines) == 0) {
-        fn_src <- attr(fn, "srcref")
-        if (!is.null(fn_src)) {
-            srcfile <- attr(fn_src, "srcfile")
-            if (!is.null(srcfile) && !is.null(srcfile$lines)) {
-                if (length(srcfile$lines) == 1) {
-                    all_lines <- strsplit(srcfile$lines, "\n")[[1]]
-                    start_line <- fn_src[1]
-                    end_line <- fn_src[3]
-                    all_lines <- all_lines[start_line:end_line]
-                } else {
-                    start_line <- fn_src[1]
-                    end_line <- fn_src[3]
-                    all_lines <- srcfile$lines[start_line:end_line]
-                }
-                comment_lines <- grep("^\\s*#'", all_lines, value = TRUE)
-            }
-        }
-    }
-
-    gsub("^\\s*#'\\s*", "", comment_lines)
-}
-
-#' Group multi-line annotations into complete blocks
-#' @noRd
-group_multiline_annotations <- function(annotations) {
-    if (length(annotations) == 0) {
-        return(character(0))
-    }
-
-    grouped <- character(0)
-    current_block <- NULL
-
-    for (line in annotations) {
-        # Check if line starts a new tag block
-        if (grepl("^@\\w+", line)) {
-            # Save previous block if it exists
-            if (!is.null(current_block)) {
-                grouped <- c(grouped, current_block)
-            }
-            # Start new block
-            current_block <- line
-        } else {
-            # Continuation line - append to current block
-            if (!is.null(current_block)) {
-                # Trim leading whitespace and join with space
-                line_trimmed <- trimws(line)
-                if (nchar(line_trimmed) > 0) {
-                    current_block <- paste(current_block, line_trimmed)
-                }
-            }
-        }
-    }
-
-    # Don't forget the last block
-    if (!is.null(current_block)) {
-        grouped <- c(grouped, current_block)
-    }
-
-    grouped
-}
-
-#' Extract description from annotations
-#' @noRd
-extract_description <- function(annotations) {
-    desc_lines <- grep("^@description\\s+", annotations, value = TRUE)
-    if (length(desc_lines) == 0) return(NULL)
-    paste(gsub("^@description\\s+", "", desc_lines), collapse = " ")
-}
-
-#' Extract parameter specifications from annotations
-#' @noRd
-extract_params <- function(annotations) {
-    param_lines <- grep("^@param\\s+", annotations, value = TRUE)
-    if (length(param_lines) == 0) return(list())
-
-    lapply(param_lines, function(line) {
-        line <- gsub("^@param\\s+", "", line)
-        split_param_spec(line)
-    })
-}
-
-#' Split parameter specification into components
-#' Adapted from plumber2
-#' @noRd
-split_param_spec <- function(x) {
-    pattern <- "^(\\w*)(:?(.*?))?((?<!,|:)\\s(.*))?$"
-    matches <- regmatches(x, regexec(pattern, x, perl = TRUE))[[1]]
-
-    if (length(matches) < 2) {
-        cli::cli_abort("Invalid parameter specification: {.val {x}}")
-    }
-
-    name <- matches[2]
-    type_spec <- if (nchar(matches[4]) > 0) matches[4] else "string"
-    description <- if (length(matches) >= 6 && nchar(matches[6]) > 0) matches[6] else NULL
-
-    type_info <- split_type_spec(type_spec)
-
-    list(
-        name = name,
-        type = type_info$type,
-        required = type_info$required,
-        description = description
-    )
-}
-
-#' Split type specification into components
-#' Adapted from plumber2
-#' @noRd
-split_type_spec <- function(x) {
-    pattern <- "^(.*?)(\\*)?$"
-    matches <- regmatches(x, regexec(pattern, x, perl = TRUE))[[1]]
-
-    if (length(matches) < 2) {
-        return(list(type = "string", required = FALSE))
-    }
-
-    type <- matches[2]
-    required <- length(matches) >= 3 && nchar(matches[3]) > 0
-
-    if (nchar(type) == 0) {
-        type <- "string"
-    }
-
-    list(
-        type = type,
-        required = required
-    )
-}
-
-#' Parse plumber2 type specification to OpenAPI/JSON Schema
-#' Adapted from plumber2
-#' @noRd
-parse_openapi_type <- function(type_str) {
-    if (grepl("^\\[(.+)\\]$", type_str)) {
-        inner_type <- gsub("^\\[(.+)\\]$", "\\1", type_str)
-        return(list(
-            type = "array",
-            items = parse_openapi_type(inner_type)
-        ))
-    }
-
-    type_map <- list(
-        string = list(type = "string"),
-        integer = list(type = "integer"),
-        number = list(type = "number"),
-        boolean = list(type = "boolean"),
-        date = list(type = "string", format = "date"),
-        "date-time" = list(type = "string", format = "date-time")
-    )
-
-    if (type_str %in% names(type_map)) {
-        return(type_map[[type_str]])
-    }
-
-    cli::cli_warn(
-        "Unknown type {.val {type_str}}, defaulting to {.val string}"
-    )
-    list(type = "string")
-}
 
 #' Build specification from parameter list
 #' @keywords internal
@@ -549,12 +204,7 @@ build_spec_from_params <- function(name, description, params, strict = NULL, add
         args_schema$additionalProperties <- additional_properties
     }
 
-    list3(
-        name = name,
-        description = description,
-        strict = strict,
-        args_schema = args_schema
-    )
+    list3(name = name, description = description, strict = strict, args_schema = args_schema)
 }
 
 #' Parse a single parameter specification
@@ -562,53 +212,43 @@ build_spec_from_params <- function(name, description, params, strict = NULL, add
 #' @noRd
 parse_param_spec <- function(spec, param_name) {
     if (is.character(spec) && length(spec) == 1) {
-        return(parse_string_spec(spec))
+        return(parse_string_spec(spec, param_name))
     }
 
     if (is.list(spec)) {
         return(parse_list_spec(spec, param_name))
     }
 
-    cli::cli_abort(
-        "Parameter {.arg {param_name}} must be a string or list specification"
-    )
+    cli::cli_abort("Parameter {.arg {param_name}} must be a string or list specification")
 }
 
 #' Parse string type specification
+#'
+#' Handles specs like "string* Description" or "{name:string*, age:integer} User info"
+#' Uses the shared type parser from tools-parse-types.R for full nested type support.
+#'
 #' @keywords internal
 #' @noRd
-parse_string_spec <- function(spec_str) {
-    required <- grepl("\\*", spec_str)
-    spec_clean <- gsub("\\*", "", spec_str)
+parse_string_spec <- function(spec_str, param_name = "param") {
+    # Use find_type_end() to properly split type from description
+    # This handles nested brackets correctly: "{a:string, b:integer} Description"
+    type_end <- find_type_end(spec_str)
+    type_str <- trimws(substr(spec_str, 1, type_end))
+    desc_str <- trimws(substr(spec_str, type_end + 1, nchar(spec_str)))
 
-    pattern <- "^(\\S+)\\s*(.*)"
-    matches <- regmatches(spec_clean, regexec(pattern, spec_clean))[[1]]
-
-    if (length(matches) < 2) {
+    if (nchar(type_str) == 0) {
         cli::cli_abort("Invalid type specification: {.val {spec_str}}")
     }
 
-    type_str <- matches[2]
-    desc_str <- if (length(matches) >= 3 && nchar(matches[3]) > 0) matches[3] else NULL
+    # Use the shared type parser (supports primitives, arrays, nested objects)
+    parsed <- parse_type_spec(type_str, param_name)
 
-    if (grepl("^\\[(.+)\\]$", type_str)) {
-        inner_type <- gsub("^\\[(.+)\\]$", "\\1", type_str)
-        schema <- list(
-            type = "array",
-            items = parse_openapi_type(inner_type)
-        )
-    } else {
-        schema <- parse_openapi_type(type_str)
+    # Add description if present
+    if (nchar(desc_str) > 0) {
+        parsed$schema$description <- desc_str
     }
 
-    if (!is.null(desc_str)) {
-        schema$description <- desc_str
-    }
-
-    list(
-        schema = schema,
-        required = required
-    )
+    return(parsed)
 }
 
 #' Parse list specification for nested objects
@@ -616,9 +256,7 @@ parse_string_spec <- function(spec_str) {
 #' @noRd
 parse_list_spec <- function(spec_list, param_name) {
     if (is.null(spec_list$type)) {
-        cli::cli_abort(
-            "List specification for {.arg {param_name}} must have a {.field type} field"
-        )
+        cli::cli_abort("List specification for {.arg {param_name}} must have a {.field type} field")
     }
 
     type_str <- spec_list$type
@@ -629,12 +267,10 @@ parse_list_spec <- function(spec_list, param_name) {
     is_object <- type_clean == "object"
 
     if (!is_array && !is_object) {
-        cli::cli_abort(
-            c(
-                "List specifications are only supported for object types",
-                "i" = "Got type: {.val {type_clean}} for {.arg {param_name}}"
-            )
-        )
+        cli::cli_abort(c(
+            "List specifications are only supported for object types",
+            "i" = "Got type: {.val {type_clean}} for {.arg {param_name}}"
+        ))
     }
 
     meta_fields <- c("type", "description")
@@ -665,12 +301,12 @@ parse_list_spec <- function(spec_list, param_name) {
     if (is_array) {
         # Build array schema with correct field order
         final_schema <- list(type = "array")
-        
+
         # Add description before items if it exists
         if (!is.null(spec_list$description)) {
             final_schema$description <- spec_list$description
         }
-        
+
         # Add items last (without description in object_schema)
         object_schema$description <- NULL
         final_schema$items <- object_schema
@@ -678,22 +314,7 @@ parse_list_spec <- function(spec_list, param_name) {
         final_schema <- object_schema
     }
 
-    list(
-        schema = final_schema,
-        required = required
-    )
-}
-
-#' Infer whether a parameter is required
-#' @noRd
-infer_required <- function(param_name, has_star, has_default) {
-    if (has_star) {
-        return(TRUE)
-    }
-    if (has_default) {
-        return(FALSE)
-    }
-    return(FALSE)
+    list(schema = final_schema, required = required)
 }
 
 # -----🔺 UTILS ----------------------------------------------------------------

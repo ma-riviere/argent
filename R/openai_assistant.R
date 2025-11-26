@@ -84,7 +84,8 @@
 #' )
 #' response <- assistant$chat("Summarize this document", "path/to/document.pdf")
 #' }
-OpenAI_Assistant <- R6::R6Class( # nolint
+OpenAI_Assistant <- R6::R6Class(
+    # nolint
     classname = "OpenAIAssistant",
     inherit = OpenAI,
     # DEPRECATION: This class implements OpenAI's deprecated Assistants API.
@@ -142,9 +143,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
         #' Override list_models to warn about gpt-5 incompatibility
         #' @return Data frame. Available models
         list_models = function() {
-            cli::cli_alert_warning(
-                "[{self$provider_name}] Note: gpt-5-* models are not supported for Assistants API."
-            )
+            cli::cli_alert_warning("[{self$provider_name}] Note: gpt-5-* models are not supported for Assistants API.")
             super$list_models()
         },
 
@@ -242,7 +241,6 @@ OpenAI_Assistant <- R6::R6Class( # nolint
             tools = NULL,
             response_format = "auto"
         ) {
-
             if (!is.null(self$assistant)) {
                 cli::cli_abort("An assistant already exists. Delete it first or create a new client.")
             }
@@ -265,10 +263,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
                 assistant_params$tools <- purrr::map(tools, \(tool) {
                     if (is_server_tool(tool, "code_interpreter")) {
                         if (is.list(tool) && !is.null(tool$file_ids)) {
-                            extracted_code_exec_file_ids <<- c(
-                                extracted_code_exec_file_ids,
-                                as.list(tool$file_ids)
-                            )
+                            extracted_code_exec_file_ids <<- c(extracted_code_exec_file_ids, as.list(tool$file_ids))
                         }
                         return(list(type = "code_interpreter"))
                     } else if (is_server_tool(tool, "file_search")) {
@@ -327,25 +322,25 @@ OpenAI_Assistant <- R6::R6Class( # nolint
                     # Merge vector_store_ids
                     if (!is.null(extracted_file_search_config$vector_store_ids)) {
                         existing_stores <- tool_resources$file_search$vector_store_ids %||% list()
-                        tool_resources$file_search$vector_store_ids <-
-                            c(existing_stores, extracted_file_search_config$vector_store_ids)
+                        tool_resources$file_search$vector_store_ids <- c(
+                            existing_stores,
+                            extracted_file_search_config$vector_store_ids
+                        )
                     }
                 }
             }
 
             if (!is.null(tool_resources)) {
-                if (!is.null(tool_resources$file_search) &&
-                        !is.null(tool_resources$file_search$vector_store_ids)) {
+                if (!is.null(tool_resources$file_search) && !is.null(tool_resources$file_search$vector_store_ids)) {
                     if (!is.list(tool_resources$file_search$vector_store_ids)) {
-                        tool_resources$file_search$vector_store_ids <-
-                            as.list(tool_resources$file_search$vector_store_ids)
+                        tool_resources$file_search$vector_store_ids <- as.list(
+                            tool_resources$file_search$vector_store_ids
+                        )
                     }
                 }
-                if (!is.null(tool_resources$code_interpreter) &&
-                        !is.null(tool_resources$code_interpreter$file_ids)) {
+                if (!is.null(tool_resources$code_interpreter) && !is.null(tool_resources$code_interpreter$file_ids)) {
                     if (!is.list(tool_resources$code_interpreter$file_ids)) {
-                        tool_resources$code_interpreter$file_ids <-
-                            as.list(tool_resources$code_interpreter$file_ids)
+                        tool_resources$code_interpreter$file_ids <- as.list(tool_resources$code_interpreter$file_ids)
                     }
                 }
                 assistant_params$tool_resources <- tool_resources
@@ -488,10 +483,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
 
             cli::cli_alert_success("[{self$provider_name}] Assistant and contents deleted: {assistant_id}")
 
-            invisible(list(
-                stores = purrr::list_c(store_deletion_res),
-                assistant = assistant_deletion_res
-            ))
+            invisible(list(stores = purrr::list_c(store_deletion_res), assistant = assistant_deletion_res))
         },
 
         # ------🔺 CHAT --------------------------------------------------------
@@ -515,13 +507,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
         #' @param remove_citations Logical. Remove file_search citation markers (default: TRUE).
         #'   When TRUE, removes citation markers like 【35†source】 and \[3:0†source\] from responses.
         #' @return Character. OpenAI Assistant API's response object.
-        chat = function(
-            ...,
-            in_new_thread = FALSE,
-            output_schema = NULL,
-            remove_citations = TRUE
-        ) {
-
+        chat = function(..., in_new_thread = FALSE, output_schema = NULL, remove_citations = TRUE) {
             # Ensure assistant is loaded
             if (is.null(self$assistant)) {
                 cli::cli_abort(c(
@@ -534,7 +520,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
 
             # Capture prompt inputs as quosures
             inputs <- rlang::enquos(...)
-            
+
             # Process multipart content
             processed_prompt <- private$process_multipart_content(inputs)
             if (is.null(processed_prompt)) {
@@ -542,9 +528,9 @@ OpenAI_Assistant <- R6::R6Class( # nolint
             }
 
             # Determine if we need to create a new thread
-            create_new <- is.null(self$thread) ||  # No thread exists
-                (!is.null(self$thread) && purrr::is_empty(private$read_thread(self$thread$id))) ||  # Thread is dead
-                in_new_thread  # User explicitly requested new thread
+            create_new <- is.null(self$thread) || # No thread exists
+                (!is.null(self$thread) && purrr::is_empty(private$read_thread(self$thread$id))) || # Thread is dead
+                in_new_thread # User explicitly requested new thread
 
             if (create_new) {
                 # Reset history when starting a new thread (similar to previous_response_id in Responses API)
@@ -558,10 +544,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
             separated <- private$separate_attachments(processed_prompt)
 
             # Always add message to thread (whether new or existing)
-            init_msg <- private$add_msg_to_thread(
-                query = separated$content,
-                attachments = separated$attachments
-            )
+            init_msg <- private$add_msg_to_thread(query = separated$content, attachments = separated$attachments)
 
             # Determine if we can pass response_format directly (no server tools + schema provided)
             use_direct_schema <- is.list(output_schema) && !private$has_server_tools()
@@ -569,10 +552,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
             # Run the thread with optional response_format
             if (use_direct_schema) {
                 init_run <- private$run_thread(
-                    response_format = list(
-                        type = "json_schema",
-                        json_schema = as_schema_openai(output_schema)
-                    )
+                    response_format = list(type = "json_schema", json_schema = as_schema_openai(output_schema))
                 )
             } else {
                 init_run <- private$run_thread()
@@ -581,7 +561,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
             init_run <- private$get_thread_run_info(run_id = init_run$id)
 
             # ---- Saving to session history ----
-            
+
             query_data <- init_run
             query_data$role <- init_msg$role
             query_data$content <- init_msg$content
@@ -597,7 +577,6 @@ OpenAI_Assistant <- R6::R6Class( # nolint
             run_status <- init_run$status
 
             while (run_status != "completed") {
-
                 if (run_status == "failed") {
                     cli::cli_abort("Assistant run failed (server-side error). Please try again.")
                     cli::cli_text("Run data: \n {jsonlite::toJSON(run, pretty = TRUE, auto_unbox = TRUE)}")
@@ -609,7 +588,6 @@ OpenAI_Assistant <- R6::R6Class( # nolint
                 # ---- Tool calls ----
 
                 if (run_status == "requires_action") {
-
                     res_data <- run
                     res_data$tools <- NULL
                     res_data$role <- "assistant"
@@ -620,7 +598,6 @@ OpenAI_Assistant <- R6::R6Class( # nolint
                     )
 
                     if (run$required_action$type == "submit_tool_outputs") {
-
                         tool_res <- private$use_tools(run)
                         submit_output_res <- private$submit_tool_outputs(run_id = run_id, tool_outputs = tool_res)
 
@@ -642,10 +619,8 @@ OpenAI_Assistant <- R6::R6Class( # nolint
                 # ---- Completed run ----
 
                 if (run_status == "completed") {
-
                     # Force a JSON response when schema provided AND server tools exist
                     if (is.list(output_schema) && private$has_server_tools()) {
-
                         private$append_to_session_history(
                             type = "response",
                             data = private$get_thread_last_msg(),
@@ -658,26 +633,18 @@ OpenAI_Assistant <- R6::R6Class( # nolint
                         )
 
                         # Save the formatting query to history
-                        private$append_to_session_history(
-                            type = "query",
-                            data = formatting_msg,
-                            tokens = 0
-                        )
+                        private$append_to_session_history(type = "query", data = formatting_msg, tokens = 0)
 
                         # Run the existing thread with JSON schema and no tools
                         run <- private$run_thread(
                             tools = list(),
-                            response_format = list(
-                                type = "json_schema",
-                                json_schema = as_schema_openai(output_schema)
-                            )
+                            response_format = list(type = "json_schema", json_schema = as_schema_openai(output_schema))
                         )
 
                         run_id <- run$id
                         run_status <- run$status
 
                         output_schema <- TRUE
-
                     } else {
                         assistant_msg <- private$get_thread_last_msg()
 
@@ -707,7 +674,6 @@ OpenAI_Assistant <- R6::R6Class( # nolint
         }
     ),
     private = list(
-
         # ------🔺 CHAT HISTORY OVERRIDES (server-side state) ------------------
         # These methods are private in Provider, so they must be private here too
 
@@ -768,14 +734,10 @@ OpenAI_Assistant <- R6::R6Class( # nolint
             file_obj <- self$upload_file(input, purpose = "assistants")
 
             # Return attachment format (distinguished from content by having file_id at root)
-            return(list(
-                file_id = file_obj$id,
-                tools = tools
-            ))
+            return(list(file_id = file_obj$id, tools = tools))
         },
 
         file_ref_input = function(input, tools = list(list(type = "file_search")), ...) {
-
             if (is.list(input)) {
                 file_id <- input$id
             } else {
@@ -783,10 +745,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
             }
 
             # File references become attachments in Assistants API
-            return(list(
-                file_id = file_id,
-                tools = tools
-            ))
+            return(list(file_id = file_id, tools = tools))
         },
 
         # Separate attachments from content in processed multipart input
@@ -864,10 +823,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
                 payload$attachments <- attachments
             }
 
-            private$request(
-                paste0(self$base_url, "/v1/threads/", thread_id, "/messages"),
-                payload
-            )
+            private$request(paste0(self$base_url, "/v1/threads/", thread_id, "/messages"), payload)
         },
 
         get_thread_run_info = function(thread_id = self$thread$id, run_id) {
@@ -875,10 +831,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
         },
 
         update_thread_run = function(thread_id = self$thread$id, run_id, ...) {
-            private$request(
-                paste0(self$base_url, "/v1/threads/", thread_id, "/runs/", run_id),
-                list(...)
-            )
+            private$request(paste0(self$base_url, "/v1/threads/", thread_id, "/runs/", run_id), list(...))
         },
 
         get_thread_msgs = function(thread_id = self$thread$id) {
@@ -920,36 +873,32 @@ OpenAI_Assistant <- R6::R6Class( # nolint
         # ------🔺 ASSISTANT INFO ----------------------------------------------
 
         display_assistant_info = function() {
-
             cli::cli_text("[{self$provider_name}] Current assistant's information:")
 
-            purrr::iwalk(
-                self$assistant,
-                \(x, idx) cli::cli_bullets(c("*" = "{.field {idx}}: {.val {x}}"))
-            )
+            purrr::iwalk(self$assistant, \(x, idx) cli::cli_bullets(c("*" = "{.field {idx}}: {.val {x}}")))
         },
 
         # ------🔺 REQUESTS ----------------------------------------------------
 
         validate_api_call = function(query_data) {
-            
             query_names <- get_all_names(query_data)
-            
+
             # If the response type is json_object, we need to check that the model was properly instructed to
             # answer in JSON in the system instructions or in the Query. The API call will fail if not.
             if ("content" %in% query_names) {
                 if (
-                    "type" %in% names(self$assistant$response_format) 
-                    && self$assistant$response_format$type == "json_object"
+                    "type" %in%
+                        names(self$assistant$response_format) &&
+                        self$assistant$response_format$type == "json_object"
                 ) {
-                    json_check <- stringr::str_detect(self$assistant$instructions, stringr::fixed("JSON", TRUE)) || 
+                    json_check <- stringr::str_detect(self$assistant$instructions, stringr::fixed("JSON", TRUE)) ||
                         stringr::str_detect(find_in_list(query_data, "content"), stringr::fixed("JSON", TRUE))
-                    
+
                     if (!json_check) {
-                        cli::cli_abort(
-                            c("!" = "{.var response_format} is 'json_object' but the query or instructions do 
-                          not explicitely ask for JSON output.")
-                        )
+                        cli::cli_abort(c(
+                            "!" = "{.var response_format} is 'json_object' but the query or instructions do 
+                          not explicitely ask for JSON output."
+                        ))
                     }
                 }
             }
@@ -1015,16 +964,15 @@ OpenAI_Assistant <- R6::R6Class( # nolint
             output <- super$use_tool(fn_name, args)
 
             # Assistants API format for tool outputs
-            return(list(
-                tool_call_id = tool_call$id,
-                output = jsonlite::toJSON(output, auto_unbox = TRUE)
-            ))
+            return(list(tool_call_id = tool_call$id, output = jsonlite::toJSON(output, auto_unbox = TRUE)))
         },
 
         # Override use_tools to handle run objects
         use_tools = function(run) {
             tool_calls <- private$extract_tool_calls(run)
-            if (is.null(tool_calls) || purrr::is_empty(tool_calls)) return(NULL)
+            if (is.null(tool_calls) || purrr::is_empty(tool_calls)) {
+                return(NULL)
+            }
 
             return(purrr::map(tool_calls, \(tc) private$use_tool(tc)))
         },
@@ -1076,14 +1024,18 @@ OpenAI_Assistant <- R6::R6Class( # nolint
 
         extract_content = function(root) {
             contents <- purrr::pluck(root, "content")
-            if (is.null(contents)) return(NULL)
+            if (is.null(contents)) {
+                return(NULL)
+            }
 
             purrr::keep(contents, \(item) purrr::pluck(item, "type") == "text")
         },
 
         extract_content_text = function(root) {
             contents <- private$extract_content(root)
-            if (purrr::is_empty(contents)) return(NULL)
+            if (purrr::is_empty(contents)) {
+                return(NULL)
+            }
 
             text_parts <- purrr::map_chr(contents, \(item) {
                 purrr::pluck(item, "text", "value", .default = "")
@@ -1101,7 +1053,7 @@ OpenAI_Assistant <- R6::R6Class( # nolint
         },
 
         extract_reasoning = function(root) {
-            return(NULL)  # Assistants API doesn't support reasoning
+            return(NULL) # Assistants API doesn't support reasoning
         },
 
         extract_reasoning_text = function(root) {
@@ -1109,15 +1061,19 @@ OpenAI_Assistant <- R6::R6Class( # nolint
         },
 
         extract_generated_code = function(root) {
-            return(NULL)  # Code from code_interpreter is in annotations, not as separate items
+            return(NULL) # Code from code_interpreter is in annotations, not as separate items
         },
 
         extract_generated_files = function(root) {
             citations <- private$extract_citations(root)
-            if (is.null(citations) || purrr::is_empty(citations)) return(NULL)
+            if (is.null(citations) || purrr::is_empty(citations)) {
+                return(NULL)
+            }
 
             file_annotations <- purrr::keep(citations, \(x) purrr::pluck(x, "type") == "file_path")
-            if (purrr::is_empty(file_annotations)) return(NULL)
+            if (purrr::is_empty(file_annotations)) {
+                return(NULL)
+            }
 
             return(purrr::map(file_annotations, \(annotation) {
                 list(
@@ -1183,17 +1139,13 @@ OpenAI_Assistant <- R6::R6Class( # nolint
                     ))
                 } else if (is_server_tool(tool, self$server_tools)) {
                     tool_name <- get_server_tool_name(tool)
-                    return(list(
-                        name = tool_name,
-                        description = NULL,
-                        type = "server",
-                        parameters = character(0)
-                    ))
+                    return(list(name = tool_name, description = NULL, type = "server", parameters = character(0)))
                 } else {
                     cli::cli_alert_danger("[{self$provider_name}] Invalid tool: {.field {tool}}")
                     return(NULL)
                 }
-            }) |> purrr::compact()
+            }) |>
+                purrr::compact()
 
             if (purrr::is_empty(normalized_tools)) {
                 return(NULL)

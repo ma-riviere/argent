@@ -31,10 +31,15 @@ set_todos <- function(todo_mgr, todos) {
         # Validate status
         valid_statuses <- c("pending", "in_progress", "completed")
         if (!todo$status %in% valid_statuses) {
-            errors <- c(errors, sprintf(
-                "Todo %d has invalid status '%s'. Must be one of: %s",
-                i, todo$status, paste(valid_statuses, collapse = ", ")
-            ))
+            errors <- c(
+                errors,
+                sprintf(
+                    "Todo %d has invalid status '%s'. Must be one of: %s",
+                    i,
+                    todo$status,
+                    paste(valid_statuses, collapse = ", ")
+                )
+            )
         }
     }
 
@@ -51,27 +56,27 @@ set_todos <- function(todo_mgr, todos) {
 print.todo_list <- function(x, ...) {
     name <- x$name
     todos <- x$todos
-    
+
     if (length(todos) == 0) {
         cat(sprintf("%s: []\n", name))
         return(invisible(x))
     }
-    
+
     cat(sprintf("%s:\n", name), "\n")
     for (i in seq_along(todos)) {
         todo <- todos[[i]]
-        
+
         # Determine checkbox symbol based on status
         checkbox <- switch(
             todo$status,
             "pending" = "[ ]",
             "in_progress" = "[-]",
             "completed" = "[x]",
-            "[ ]"  # default fallback
+            "[ ]" # default fallback
         )
-        
+
         cat(sprintf("- %s %s\n", checkbox, todo$content))
     }
-    
+
     invisible(x)
 }

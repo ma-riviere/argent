@@ -27,19 +27,19 @@
 #' \dontrun{
 #' # Connect to local llama.cpp server
 #' llm <- LocalLLM$new(base_url = "http://localhost:8080")
-#' 
+#'
 #' # With specific model
 #' llm <- LocalLLM$new(
 #'   base_url = "http://localhost:8080",
 #'   model = "llama-3-8b"
 #' )
-#' 
+#'
 #' # Simple chat completion
 #' response <- llm$chat(
 #'   prompt = "What is R programming?",
 #'   temperature = 0.7
 #' )
-#' 
+#'
 #' # With additional sampling parameters
 #' response <- llm$chat(
 #'   prompt = "Explain quantum computing",
@@ -50,13 +50,13 @@
 #'   repeat_penalty = 1.1
 #' )
 #' }
-LocalLLM <- R6::R6Class( # nolint
+LocalLLM <- R6::R6Class(
+    # nolint
     classname = "LocalLLM",
     inherit = Provider,
     public = list(
-
         # ------🔺 INIT --------------------------------------------------------
-        
+
         #' @description
         #' Initialize a new Local LLM client
         #' @param base_url Character. Base URL of the local server (default: "http://localhost:5000")
@@ -99,7 +99,7 @@ LocalLLM <- R6::R6Class( # nolint
                 }
             }
         },
-        
+
         # ------🔺 MODELS ------------------------------------------------------
 
         #' @description
@@ -135,7 +135,7 @@ LocalLLM <- R6::R6Class( # nolint
         # ------🔺 RESPONSE HELPERS --------------------------------------------
 
         # ------🔺 CHAT --------------------------------------------------------
-        
+
         #' @description
         #' Send a chat completion request to the local LLM
         #' @param ... One or more inputs for the prompt. Can be text strings, file paths, URLs, R objects,
@@ -151,7 +151,7 @@ LocalLLM <- R6::R6Class( # nolint
         #' @param repeat_penalty Numeric. Penalize repeat sequence of tokens (default: 1.0, 1.0 = disabled)
         #' @param presence_penalty Numeric. Repeat alpha presence penalty (default: 0.0, 0.0 = disabled)
         #' @param frequency_penalty Numeric. Repeat alpha frequency penalty (default: 0.0, 0.0 = disabled)
-        #' @param mirostat Integer. Use Mirostat sampling (default: 0, 0 = disabled, 1 = Mirostat, 
+        #' @param mirostat Integer. Use Mirostat sampling (default: 0, 0 = disabled, 1 = Mirostat,
         #'   2 = Mirostat 2.0)
         #' @param mirostat_tau Numeric. Mirostat target entropy, parameter tau (default: 5.0)
         #' @param mirostat_eta Numeric. Mirostat learning rate, parameter eta (default: 0.1)
@@ -180,7 +180,6 @@ LocalLLM <- R6::R6Class( # nolint
             tool_choice = "auto",
             output_schema = NULL
         ) {
-
             # ---- Validate parameters ----
 
             # Use default_model if model is not specified
@@ -200,7 +199,7 @@ LocalLLM <- R6::R6Class( # nolint
 
             # Capture prompt inputs as quosures
             inputs <- rlang::enquos(...)
-            
+
             # Add user message
             if (length(inputs) > 0) {
                 content <- private$process_multipart_content(inputs)
@@ -227,14 +226,17 @@ LocalLLM <- R6::R6Class( # nolint
                     }
 
                     # Add to API format
-                    converted_tools <- append(converted_tools, list(list(
-                        type = "function",
-                        `function` = list(
-                            name = converted$name,
-                            description = converted$description,
-                            parameters = converted$parameters
-                        )
-                    )))
+                    converted_tools <- append(
+                        converted_tools,
+                        list(list(
+                            type = "function",
+                            `function` = list(
+                                name = converted$name,
+                                description = converted$description,
+                                parameters = converted$parameters
+                            )
+                        ))
+                    )
                 }
             }
 
@@ -268,7 +270,7 @@ LocalLLM <- R6::R6Class( # nolint
             # ---- Handle response ----
 
             # Handle API errors
-            if (purrr::is_empty(private$extract_root(res))) {
+            if (purrr::is_empty(res) || purrr::is_empty(private$extract_root(res))) {
                 cli::cli_abort("[{self$provider_name}] Error: API request failed or returned no choices")
             }
 
@@ -282,7 +284,6 @@ LocalLLM <- R6::R6Class( # nolint
 
             # ---- Handle tool calls ----
             if (private$is_tool_call(res)) {
-
                 # Final round of forced JSON output: return the tool call as is without executing it
                 if (isTRUE(output_schema)) {
                     tool_result <- private$extract_root(res) |>
@@ -290,23 +291,18 @@ LocalLLM <- R6::R6Class( # nolint
                         purrr::pluck(1) |>
                         private$extract_tool_call_args()
 
-                    # Hack: Convert tool_use to text for both histories, 
+                    # Hack: Convert tool_use to text for both histories,
                     #  as if it was the return of a native structured output of the API.
                     json_text <- jsonlite::toJSON(tool_result, auto_unbox = TRUE, pretty = TRUE)
 
-                    purrr::pluck(self$chat_history, length(self$chat_history), "content") <- list(
-                        private$text_input(json_text)
-                    )
-                    purrr::pluck(self$session_history, length(self$session_history), "data", "choices") <- list(
-                        list(
-                            finish_reason = "stop",
-                            index = 0,
-                            message = list(
-                                role = "assistant",
-                                content = json_text
-                            )
-                        )
-                    )
+                    purrr::pluck(self$chat_history, length(self$chat_history), "content") <- list(private$text_input(
+                        json_text
+                    ))
+                    purrr::pluck(self$session_history, length(self$session_history), "data", "choices") <- list(list(
+                        finish_reason = "stop",
+                        index = 0,
+                        message = list(role = "assistant", content = json_text)
+                    ))
 
                     # Trigger auto-save to persist changes
                     private$auto_save_history()
@@ -318,27 +314,25 @@ LocalLLM <- R6::R6Class( # nolint
                 private$tool_results_to_chat_history(private$use_tools(res))
 
                 # Recursive call
-                return(
-                    self$chat(
-                        system = system,
-                        model = model,
-                        temperature = temperature,
-                        max_tokens = max_tokens,
-                        top_p = top_p,
-                        top_k = top_k,
-                        min_p = min_p,
-                        repeat_penalty = repeat_penalty,
-                        presence_penalty = presence_penalty,
-                        frequency_penalty = frequency_penalty,
-                        mirostat = mirostat,
-                        mirostat_tau = mirostat_tau,
-                        mirostat_eta = mirostat_eta,
-                        seed = seed,
-                        tools = tools,
-                        tool_choice = tool_choice,
-                        output_schema = output_schema
-                    )
-                )
+                return(self$chat(
+                    system = system,
+                    model = model,
+                    temperature = temperature,
+                    max_tokens = max_tokens,
+                    top_p = top_p,
+                    top_k = top_k,
+                    min_p = min_p,
+                    repeat_penalty = repeat_penalty,
+                    presence_penalty = presence_penalty,
+                    frequency_penalty = frequency_penalty,
+                    mirostat = mirostat,
+                    mirostat_tau = mirostat_tau,
+                    mirostat_eta = mirostat_eta,
+                    seed = seed,
+                    tools = tools,
+                    tool_choice = tool_choice,
+                    output_schema = output_schema
+                ))
             }
 
             # Handle case where reasoning model puts tool call in reasoning_content
@@ -349,7 +343,7 @@ LocalLLM <- R6::R6Class( # nolint
                     "i" = "The model returned finish_reason='stop' instead of 'tool_calls'.",
                     "i" = "Check if reasoning_content contains the tool call output."
                 ))
-                
+
                 # Return empty result
                 return(list())
             }
@@ -365,32 +359,29 @@ LocalLLM <- R6::R6Class( # nolint
 
             # Handle JSON response format with forced tool call
             if (is.list(output_schema)) {
-
                 format_tool <- response_schema_to_tool_local(output_schema)
                 format_prompt <- make_format_prompt(format_tool$name)
 
-                return(
-                    self$chat(
-                        format_prompt,
-                        system = system,
-                        model = model,
-                        max_tokens = max_tokens,
-                        temperature = 0,
-                        top_p = top_p,
-                        top_k = top_k,
-                        min_p = min_p,
-                        repeat_penalty = repeat_penalty,
-                        presence_penalty = presence_penalty,
-                        frequency_penalty = frequency_penalty,
-                        mirostat = mirostat,
-                        mirostat_tau = mirostat_tau,
-                        mirostat_eta = mirostat_eta,
-                        seed = seed,
-                        tools = list(format_tool),
-                        tool_choice = "auto",
-                        output_schema = TRUE
-                    )
-                )
+                return(self$chat(
+                    format_prompt,
+                    system = system,
+                    model = model,
+                    max_tokens = max_tokens,
+                    temperature = 0,
+                    top_p = top_p,
+                    top_k = top_k,
+                    min_p = min_p,
+                    repeat_penalty = repeat_penalty,
+                    presence_penalty = presence_penalty,
+                    frequency_penalty = frequency_penalty,
+                    mirostat = mirostat,
+                    mirostat_tau = mirostat_tau,
+                    mirostat_eta = mirostat_eta,
+                    seed = seed,
+                    tools = list(format_tool),
+                    tool_choice = "auto",
+                    output_schema = TRUE
+                ))
             }
 
             # No output schema: return the response text
@@ -404,17 +395,12 @@ LocalLLM <- R6::R6Class( # nolint
         #' @param input Character vector. Text(s) to embed
         #' @param model Character. Model to use (default: current model)
         #' @return Numeric matrix. Embeddings with one row per input text
-        embeddings = function(
-            input,
-            model = NULL
-        ) {
+        embeddings = function(input, model = NULL) {
             # Use default_model if model is not specified
             if (is.null(model)) {
                 model <- self$default_model
                 if (is.null(model)) {
-                    cli::cli_abort(
-                        "[{self$provider_name}] No model specified and no default model available."
-                    )
+                    cli::cli_abort("[{self$provider_name}] No model specified and no default model available.")
                 }
             }
 
@@ -424,10 +410,7 @@ LocalLLM <- R6::R6Class( # nolint
             }
 
             # Build API request
-            query_data <- list(
-                input = input,
-                model = model
-            )
+            query_data <- list(input = input, model = model)
 
             # Make API request
             res <- private$request(paste0(self$base_url, "/v1/embeddings"), query_data)
@@ -457,8 +440,8 @@ LocalLLM <- R6::R6Class( # nolint
         # ------🔺 EXTRACTION --------------------------------------------------
 
         is_root = function(input) {
-            is.list(input) && 
-                !is.null(input$role) && 
+            is.list(input) &&
+                !is.null(input$role) &&
                 (!is.null(input$content) || !is.null(input$reasoning_content) || !is.null(input$tool_calls))
         },
 
@@ -530,7 +513,7 @@ LocalLLM <- R6::R6Class( # nolint
 
         extract_system_instructions = function(entry_data) {
             root <- private$extract_root(entry_data)
-            system_instructions <- purrr::keep(root, \(msg) purrr::pluck(msg, "role") == "system") |> 
+            system_instructions <- purrr::keep(root, \(msg) purrr::pluck(msg, "role") == "system") |>
                 purrr::map_chr("content")
             if (purrr::is_empty(system_instructions)) {
                 return(NULL)
@@ -600,11 +583,9 @@ LocalLLM <- R6::R6Class( # nolint
             }
 
             # Keep only relevant fields
-            return(
-                purrr::map(tool_calls, \(tool_call) {
-                    purrr::keep_at(tool_call, c("id", "type", "function"))
-                })
-            )
+            return(purrr::map(tool_calls, \(tool_call) {
+                purrr::keep_at(tool_call, c("id", "type", "function"))
+            }))
         },
 
         extract_tool_call_name = function(tool_call) {
@@ -712,7 +693,8 @@ LocalLLM <- R6::R6Class( # nolint
                     cli::cli_alert_danger("[{self$provider_name}] Invalid tool: {.field {tool}}")
                     return(NULL)
                 }
-            }) |> purrr::compact()
+            }) |>
+                purrr::compact()
 
             if (purrr::is_empty(normalized_tools)) {
                 return(NULL)
@@ -776,8 +758,10 @@ LocalLLM <- R6::R6Class( # nolint
         },
 
         file_ref_input = function(input, ...) {
-            cli::cli_abort(c("[{self$provider_name}] Remote file references not supported.",
-                             "i" = "Local servers have no file storage APIs."))
+            cli::cli_abort(c(
+                "[{self$provider_name}] Remote file references not supported.",
+                "i" = "Local servers have no file storage APIs."
+            ))
         },
 
         # Add LocalLLM authentication (Bearer token)
@@ -790,7 +774,9 @@ LocalLLM <- R6::R6Class( # nolint
         list = function(endpoint, as_df = TRUE) {
             res <- private$request(endpoint) |> purrr::pluck("data")
 
-            if (as_df) res <- lol_to_df(res)
+            if (as_df) {
+                res <- lol_to_df(res)
+            }
 
             return(res)
         },
@@ -822,11 +808,7 @@ LocalLLM <- R6::R6Class( # nolint
 #' @noRd
 as_tool_local <- function(tool_schema) {
     tool_args <- tool_schema$args_schema %||% tool_schema$parameters %||% tool_schema$input_schema %||% NULL
-    list3(
-        name = tool_schema$name,
-        description = tool_schema$description,
-        parameters = tool_args
-    )
+    list3(name = tool_schema$name, description = tool_schema$description, parameters = tool_args)
 }
 
 #' Convert schema to structured output format for local LLM (internal)

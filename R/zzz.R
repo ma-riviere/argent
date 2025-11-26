@@ -8,9 +8,7 @@
 
         # Only show message in interactive sessions
         if (interactive()) {
-            packageStartupMessage(
-                "argent: Setting keep.source=TRUE to enable tool annotations"
-            )
+            packageStartupMessage("argent: Setting keep.source=TRUE to enable tool annotations")
         }
     }
 }

@@ -246,12 +246,7 @@ default_text_converter <- function(input, vec_len = 999, nchar_max = 999) {
 
 #' @rdname content_converters
 #' @export
-as_image_content <- function(
-    ...,
-    .resize = "none",
-    .converter = default_image_converter,
-    .provider_options = list()
-) {
+as_image_content <- function(..., .resize = "none", .converter = default_image_converter, .provider_options = list()) {
     inputs <- list(...)
     processed <- purrr::map(inputs, \(input) {
         if (is.character(input)) {
@@ -328,22 +323,21 @@ resize_image <- function(image_path, resize) {
 #' @noRd
 default_image_converter <- function(input) {
     mime_type <- guess_input_type(input)
-    
+
     if (stringr::str_detect(mime_type, "pdf")) {
         if (!requireNamespace("magick", quietly = TRUE)) {
             cli::cli_abort("Package 'magick' is required to convert PDF to image.")
         }
         output_file_path <- tempfile(fileext = ".png")
 
-        output <- magick::image_read_pdf(input, density = 70) |> 
-            magick::image_append(stack = TRUE)
-        
+        output <- magick::image_read_pdf(input, density = 70) |> magick::image_append(stack = TRUE)
+
         magick::image_write(output, output_file_path)
 
         if (is_url(input)) {
             unlink(input)
         }
-        
+
         return(output_file_path)
     } else {
         return(input)
@@ -388,12 +382,7 @@ default_pdf_converter <- function(input) {
 
 #' @rdname content_converters
 #' @export
-as_json_content <- function(
-    ...,
-    .max_rows = 10,
-    .converter = default_json_converter,
-    .provider_options = list()
-) {
+as_json_content <- function(..., .max_rows = 10, .converter = default_json_converter, .provider_options = list()) {
     inputs <- rlang::enquos(...)
     processed <- purrr::map(inputs, \(input) {
         converted <- .converter(input, max_rows = .max_rows)
@@ -415,7 +404,7 @@ as_json_content <- function(
 default_json_converter <- function(input, max_rows = 10) {
     input_val <- rlang::eval_tidy(input)
     if (is_url(input_val) || is_file(input_val)) {
-        input_val <- read_file(input_val)        
+        input_val <- read_file(input_val)
     } else {
         if (is.data.frame(input_val)) {
             input_val <- utils::head(input_val, max_rows)
@@ -424,14 +413,17 @@ default_json_converter <- function(input, max_rows = 10) {
     # Update the quosure with the new value
     input <- rlang::new_quosure(input_val, rlang::quo_get_env(input))
 
-    tryCatch({
-        return(to_json_str(input))
-    }, error = function(e) {
-        cli::cli_abort(
-            "{.fn default_json_converter} failed to convert object to JSON: {e$message}",
-            "i" = "Please provide a custom JSON converter to the `.json_converter` argument of {.fn as_json_content}."
-        )
-    })  
+    tryCatch(
+        {
+            return(to_json_str(input))
+        },
+        error = function(e) {
+            cli::cli_abort(
+                "{.fn default_json_converter} failed to convert object to JSON: {e$message}",
+                "i" = "Provide a custom JSON converter to the `.json_converter` argument of {.fn as_json_content}."
+            )
+        }
+    )
 }
 
 #' Convert PDF to base64 data
@@ -455,11 +447,7 @@ pdf_to_base64 <- function(pdf_path) {
     encoded_pdf <- base64enc::base64encode(pdf_bytes)
     data_uri <- paste0("data:application/pdf;base64,", encoded_pdf)
 
-    return(list(
-        data = encoded_pdf,
-        mime_type = "application/pdf",
-        data_uri = data_uri
-    ))
+    return(list(data = encoded_pdf, mime_type = "application/pdf", data_uri = data_uri))
 }
 
 #' Convert PDF URL to base64 data
@@ -503,11 +491,7 @@ image_to_base64 <- function(image_path) {
     encoded_image <- base64enc::base64encode(image_bytes)
     data_uri <- paste0("data:", mime_type, ";base64,", encoded_image)
 
-    return(list(
-        data = encoded_image,
-        mime_type = mime_type,
-        data_uri = data_uri
-    ))
+    return(list(data = encoded_image, mime_type = mime_type, data_uri = data_uri))
 }
 
 #' Convert image URL to base64 data
@@ -543,12 +527,7 @@ format_output <- function(x, format) {
         return(x)
     }
     format <- match.arg(format, c("json", "yaml"))
-    switch(
-        format,
-        "json" = jsonlite::toJSON(x, pretty = TRUE, auto_unbox = TRUE),
-        "yaml" = yaml::as.yaml(x),
-        x
-    )
+    switch(format, "json" = jsonlite::toJSON(x, pretty = TRUE, auto_unbox = TRUE), "yaml" = yaml::as.yaml(x), x)
 }
 
 #' Guess MIME type of input
@@ -561,12 +540,7 @@ format_output <- function(x, format) {
 #' @keywords internal
 #' @noRd
 guess_input_type <- function(input) {
-    mime_extra <- c(
-        "qmd" = "text/x-markdown",
-        "rds" = "data/rds",
-        "lintr" = "text/plain",
-        "Rprofile" = "text/plain"
-    )
+    mime_extra <- c("qmd" = "text/x-markdown", "rds" = "data/rds", "lintr" = "text/plain", "Rprofile" = "text/plain")
 
     mime_type <- mime::guess_type(input, mime_extra = mime_extra)
     return(tolower(mime_type))
@@ -686,11 +660,7 @@ add_object_metadata <- function(input) {
         }
         # Only wrap with metadata if the quosure is a symbol (variable name)
         if (rlang::is_symbol(rlang::quo_get_expr(input))) {
-            return(list(
-                object_name = rlang::as_label(input),
-                object_classes = class(content),
-                content = content
-            ))
+            return(list(object_name = rlang::as_label(input), object_classes = class(content), content = content))
         } else {
             # For inline expressions, use the content directly
             return(content)
@@ -704,25 +674,26 @@ add_object_metadata <- function(input) {
 #' @keywords internal
 #' @noRd
 lol_to_df <- function(lol) {
-    
-    if (purrr::is_empty(lol)) return(data.frame())
-    
+    if (purrr::is_empty(lol)) {
+        return(data.frame())
+    }
+
     process_element <- function(elt) {
-        elt |> 
+        elt |>
             purrr::map(\(x) if (is.list(x) && purrr::is_empty(x)) NA else x) |>
             purrr::map(\(x) if (is.list(x) && length(x) == 1) x[[1]] else x) |>
             rectangularize() |>
             dplyr::mutate(dplyr::across(tidyselect::everything(), as.character))
     }
     process_elements <- \(x) purrr::map(x, process_element)
-    
+
     quiet_process_element <- purrr::quietly(process_elements)
-    
-    output <- quiet_process_element(lol) |> 
+
+    output <- quiet_process_element(lol) |>
         purrr::pluck("result") |>
         purrr::reduce(dplyr::bind_rows) |>
         utils::type.convert(as.is = TRUE)
-    
+
     return(output)
 }
 
@@ -750,11 +721,13 @@ silent_semi_join <- function(x, y) {
 #' @keywords internal
 #' @noRd
 get_all_names <- function(x) {
-    if (!is.list(x)) return(character(0))
-    
+    if (!is.list(x)) {
+        return(character(0))
+    }
+
     current_names <- names(x)
     nested_names <- unlist(lapply(x, get_all_names))
-    
+
     unique(c(current_names, nested_names))
 }
 
@@ -767,19 +740,21 @@ get_all_names <- function(x) {
 #' @keywords internal
 #' @noRd
 find_in_list <- function(x, name) {
-    if (!is.list(x)) return(NULL)
-    
+    if (!is.list(x)) {
+        return(NULL)
+    }
+
     if (name %in% names(x)) {
         return(x[[name]])
     }
-    
+
     for (elem in x) {
         if (is.list(elem)) {
             result <- find_in_list(elem, name)
             if (!is.null(result)) return(result)
         }
     }
-    
+
     return(NULL)
 }
 
@@ -805,8 +780,10 @@ flatten_singles <- function(x) {
 #' @keywords internal
 #' @noRd
 is_transient_http_error <- function(resp) {
-    if (!httr2::resp_has_body(resp)) return(TRUE)
-    
+    if (!httr2::resp_has_body(resp)) {
+        return(TRUE)
+    }
+
     status <- httr2::resp_status(resp)
     # Retry on 429 (rate limit), 500+ (server errors), and some 400s
     status %in% c(408, 429, 500, 502, 503, 504)
@@ -820,12 +797,12 @@ is_transient_http_error <- function(resp) {
 #' @keywords internal
 #' @noRd
 clean_malformed_json <- function(content) {
-    if (purrr::is_empty(content)) return(content)
-    
+    if (purrr::is_empty(content)) {
+        return(content)
+    }
+
     if (stringr::str_detect(content, "\\}\\{")) {
-        content <- stringr::str_split_1(content, "\\}\\{") |>
-            dplyr::first() |>
-            paste0("}")
+        content <- stringr::str_split_1(content, "\\}\\{") |> dplyr::first() |> paste0("}")
     }
     return(content)
 }
@@ -844,7 +821,6 @@ clean_malformed_json <- function(content) {
 #' @keywords internal
 #' @noRd
 resolve_download_path <- function(dest_path, filename) {
-
     # Resolve dest_path relative to project root
     dest_path <- here::here(dest_path)
 
@@ -886,14 +862,12 @@ resolve_download_path <- function(dest_path, filename) {
 #' @keywords internal
 #' @noRd
 generate_history_path <- function(base_name = "provider") {
-    history_dir <- getOption("argent.history_dir", "data/history/") |> 
-        stringr::str_remove("^/")
-    
+    history_dir <- getOption("argent.history_dir", "data/history/") |> stringr::str_remove("^/")
+
     timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-    formatted_base_name <- tolower(base_name) |> 
-        stringr::str_replace_all("\\s+", "_")
+    formatted_base_name <- tolower(base_name) |> stringr::str_replace_all("\\s+", "_")
     path <- here::here(history_dir, formatted_base_name, paste0(timestamp, ".json"))
-    
+
     # Normalize to remove double slashes
     fs::path_norm(path)
 }
@@ -958,7 +932,7 @@ format_tool_result <- function(identifier, content) {
             if (!is.null(parsed)) {
                 yaml::as.yaml(parsed)
             } else {
-                content[[1]]  # Return the string as-is if not JSON
+                content[[1]] # Return the string as-is if not JSON
             }
         } else {
             # Regular list object
@@ -975,10 +949,7 @@ format_tool_result <- function(identifier, content) {
         }
     }
 
-    list(
-        header = sprintf("Result from {.strong %s}:", identifier),
-        content = content_str
-    )
+    list(header = sprintf("Result from {.strong %s}:", identifier), content = content_str)
 }
 
 #' Format code block for display

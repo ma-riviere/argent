@@ -129,14 +129,20 @@ reference:
   - as_tool
   - schema
 
-- subtitle: MCP Integration
-  desc: Functions for working with Model Context Protocol servers
+- subtitle: MCP Client
+  desc: Functions for connecting to external MCP servers
   contents:
   - mcp_integration
   - execute_mcp_tool
   - get_mcp_tool
   - read_mcp_resource
   - get_mcp_prompt
+
+- subtitle: MCP Server
+  desc: Functions for creating your own MCP servers
+  contents:
+  - mcp_serve_http
+  - mcp_serve_stdio
 
 - subtitle: Helpers
   desc: Helper functions

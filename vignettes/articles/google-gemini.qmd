@@ -14,8 +14,6 @@ This article covers using the Google Gemini provider with argent. Google Gemini 
 
 ```{r}
 library(argent)
-
-mirai::daemons(4) # To enable parallel tool calling
 ```
 
 ```{r gemini-init}

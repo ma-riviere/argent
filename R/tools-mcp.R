@@ -41,15 +41,7 @@
 #'
 #' @export
 #' @rdname mcp_integration
-mcp_connect <- function(
-    name,
-    type = "stdio",
-    command = NULL,
-    args = NULL,
-    env = NULL,
-    url = NULL,
-    headers = NULL
-) {
+mcp_connect <- function(name, type = "stdio", command = NULL, args = NULL, env = NULL, url = NULL, headers = NULL) {
     if (!is.character(name) || length(name) != 1 || nchar(name) == 0) {
         cli::cli_abort("{.arg name} must be a non-empty string")
     }
@@ -65,11 +57,10 @@ mcp_connect <- function(
         if (!is.null(headers) && !is.list(headers)) {
             cli::cli_abort("{.arg headers} must be a named list")
         }
-        
+
         client <- McpClientHttp$new(url = url, headers = headers)
         client$name <- name
         return(client)
-        
     } else {
         if (is.null(command) || !is.character(command) || length(command) != 1) {
             cli::cli_abort("For stdio servers, {.arg command} is required")
@@ -80,7 +71,7 @@ mcp_connect <- function(
         if (!is.null(env) && !is.list(env)) {
             cli::cli_abort("{.arg env} must be a named list")
         }
-        
+
         client <- McpClientStdio$new(command = command, args = args, env = env)
         client$name <- name
         return(client)
@@ -95,15 +86,9 @@ mcp_tools <- function(client, tools = NULL) {
     }
 
     # Fetch tools from client
-    server_tools <- tryCatch(
-        client$list_tools(),
-        error = function(e) {
-            cli::cli_abort(c(
-                "Failed to retrieve tools from MCP server {.val {client$name}}",
-                "i" = "Error: {e$message}"
-            ))
-        }
-    )
+    server_tools <- tryCatch(client$list_tools(), error = function(e) {
+        cli::cli_abort(c("Failed to retrieve tools from MCP server {.val {client$name}}", "i" = "Error: {e$message}"))
+    })
 
     # Filter specific tools if requested
     if (!is.null(tools)) {
@@ -115,10 +100,7 @@ mcp_tools <- function(client, tools = NULL) {
 
     # Convert to argent format
     argent_tools <- purrr::map(server_tools, \(tool) {
-        argent_tool <- list(
-            name = tool$name,
-            description = tool$description %||% ""
-        )
+        argent_tool <- list(name = tool$name, description = tool$description %||% "")
 
         # Map inputSchema to args_schema
         if (!is.null(tool$inputSchema)) {
@@ -128,11 +110,7 @@ mcp_tools <- function(client, tools = NULL) {
         }
 
         # Add metadata
-        argent_tool[[".mcp"]] <- list(
-            type = "tool",
-            client = client,
-            server_name = client$name
-        )
+        argent_tool[[".mcp"]] <- list(type = "tool", client = client, server_name = client$name)
         return(argent_tool)
     })
     return(argent_tools)
@@ -161,19 +139,10 @@ execute_mcp_tool <- function(tool_def, arguments = list()) {
         cli::cli_abort("No active MCP client found for tool {.val {tool_name}}")
     }
 
-    result <- tryCatch(
-        client$call_tool(tool_name, arguments),
-        error = function(e) {
-            # Return R-level errors (connection issues, etc.) as error results
-            return(list(
-                isError = TRUE,
-                error = list(
-                    code = "R_ERROR",
-                    message = e$message
-                )
-            ))
-        }
-    )
+    result <- tryCatch(client$call_tool(tool_name, arguments), error = function(e) {
+        # Return R-level errors (connection issues, etc.) as error results
+        return(list(isError = TRUE, error = list(code = "R_ERROR", message = e$message)))
+    })
 
     # MCP errors are already in the correct format (isError = TRUE, error = ...)
     # Return them as-is so LLMs can see and respond to the error message
@@ -226,19 +195,10 @@ read_mcp_resource <- function(resource_def) {
         cli::cli_abort("No active MCP client found for resource {.val {resource_uri}}")
     }
 
-    result <- tryCatch(
-        client$read_resource(resource_uri),
-        error = function(e) {
-            # Return R-level errors as error results
-            return(list(
-                isError = TRUE,
-                error = list(
-                    code = "R_ERROR",
-                    message = e$message
-                )
-            ))
-        }
-    )
+    result <- tryCatch(client$read_resource(resource_uri), error = function(e) {
+        # Return R-level errors as error results
+        return(list(isError = TRUE, error = list(code = "R_ERROR", message = e$message)))
+    })
 
     # MCP errors are already in the correct format
     # Return them as-is so LLMs can see and respond to the error message
@@ -268,19 +228,10 @@ get_mcp_prompt <- function(prompt_def, arguments = NULL) {
         cli::cli_abort("No active MCP client found for prompt {.val {prompt_name}}")
     }
 
-    result <- tryCatch(
-        client$get_prompt(prompt_name, arguments),
-        error = function(e) {
-            # Return R-level errors as error results
-            return(list(
-                isError = TRUE,
-                error = list(
-                    code = "R_ERROR",
-                    message = e$message
-                )
-            ))
-        }
-    )
+    result <- tryCatch(client$get_prompt(prompt_name, arguments), error = function(e) {
+        # Return R-level errors as error results
+        return(list(isError = TRUE, error = list(code = "R_ERROR", message = e$message)))
+    })
 
     # MCP errors are already in the correct format
     # Return them as-is so LLMs can see and respond to the error message
@@ -295,21 +246,18 @@ mcp_resources <- function(client, resources = NULL) {
     }
 
     # Fetch resources from client
-    server_resources <- tryCatch(
-        client$list_resources(),
-        error = function(e) {
-            if (grepl("Method not found|not implemented", e$message, ignore.case = TRUE)) {
-                cli::cli_abort(c(
-                    "MCP server {.val {client$name}} does not support resources",
-                    "i" = "This server only advertises support for: tools"
-                ))
-            }
+    server_resources <- tryCatch(client$list_resources(), error = function(e) {
+        if (grepl("Method not found|not implemented", e$message, ignore.case = TRUE)) {
             cli::cli_abort(c(
-                "Failed to retrieve resources from MCP server {.val {client$name}}",
-                "i" = "Error: {e$message}"
+                "MCP server {.val {client$name}} does not support resources",
+                "i" = "This server only advertises support for: tools"
             ))
         }
-    )
+        cli::cli_abort(c(
+            "Failed to retrieve resources from MCP server {.val {client$name}}",
+            "i" = "Error: {e$message}"
+        ))
+    })
 
     # Filter specific resources if requested
     if (!is.null(resources)) {
@@ -329,11 +277,7 @@ mcp_resources <- function(client, resources = NULL) {
         )
 
         # Add metadata
-        argent_resource[[".mcp"]] <- list(
-            type = "resource",
-            client = client,
-            server_name = client$name
-        )
+        argent_resource[[".mcp"]] <- list(type = "resource", client = client, server_name = client$name)
         return(argent_resource)
     })
     return(argent_resources)
@@ -347,21 +291,15 @@ mcp_prompts <- function(client, prompts = NULL) {
     }
 
     # Fetch prompts from client
-    server_prompts <- tryCatch(
-        client$list_prompts(),
-        error = function(e) {
-            if (grepl("Method not found|not implemented", e$message, ignore.case = TRUE)) {
-                cli::cli_abort(c(
-                    "MCP server {.val {client$name}} does not support prompts",
-                    "i" = "This server only advertises support for: tools"
-                ))
-            }
+    server_prompts <- tryCatch(client$list_prompts(), error = function(e) {
+        if (grepl("Method not found|not implemented", e$message, ignore.case = TRUE)) {
             cli::cli_abort(c(
-                "Failed to retrieve prompts from MCP server {.val {client$name}}",
-                "i" = "Error: {e$message}"
+                "MCP server {.val {client$name}} does not support prompts",
+                "i" = "This server only advertises support for: tools"
             ))
         }
-    )
+        cli::cli_abort(c("Failed to retrieve prompts from MCP server {.val {client$name}}", "i" = "Error: {e$message}"))
+    })
 
     # Filter specific prompts if requested
     if (!is.null(prompts)) {
@@ -380,11 +318,7 @@ mcp_prompts <- function(client, prompts = NULL) {
         )
 
         # Add metadata
-        argent_prompt[[".mcp"]] <- list(
-            type = "prompt",
-            client = client,
-            server_name = client$name
-        )
+        argent_prompt[[".mcp"]] <- list(type = "prompt", client = client, server_name = client$name)
         return(argent_prompt)
     })
     return(argent_prompts)

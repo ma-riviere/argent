@@ -32,29 +32,29 @@
 #'   structured outputs, requiring an additional API query with full chat history (incurs extra cost).
 #'
 #' @field default_beta_features Character vector. Default beta features to use for API requests
-#' 
+#'
 #' @export
 #' @examples
 #' \dontrun{
 #' # Initialize with API key from environment
 #' anthropic <- Anthropic$new()
-#' 
+#'
 #' # Or provide API key explicitly
 #' anthropic <- Anthropic$new(api_key = "your-api-key")
-#' 
+#'
 #' # Simple chat completion
 #' response <- anthropic$chat(
 #'   prompt = "What is R programming?",
 #'   model = "claude-sonnet-4-5-20250929"
 #' )
-#' 
+#'
 #' # With prompt caching
 #' response <- anthropic$chat(
 #'   prompt = "Analyze this data",
 #'   cache_prompt = TRUE,
 #'   cache_system = TRUE
 #' )
-#' 
+#'
 #' # With extended thinking (10k token budget)
 #' response <- anthropic$chat(
 #'   prompt = "Solve this complex math problem: ...",
@@ -67,7 +67,8 @@
 #'   thinking_budget = 16000
 #' )
 #' }
-Anthropic <- R6::R6Class( # nolint
+Anthropic <- R6::R6Class(
+    # nolint
     classname = "Anthropic",
     inherit = Provider,
     public = list(
@@ -122,18 +123,18 @@ Anthropic <- R6::R6Class( # nolint
         #' @return Data frame. Available models with their specifications
         list_models = function() {
             endpoint <- paste0(self$base_url, "/v1/models")
-            
+
             resp <- private$request(endpoint)
-            
+
             if (is.null(resp)) {
                 return(NULL)
             }
-            
+
             if (is.null(resp$data) || purrr::is_empty(resp$data)) {
                 cli::cli_alert_danger("[{self$provider_name}] Error: Failed to retrieve model list")
                 return(NULL)
             }
-            
+
             # Convert list of models to data frame
             models_df <- purrr::map(resp$data, \(model) {
                 data.frame(
@@ -141,11 +142,12 @@ Anthropic <- R6::R6Class( # nolint
                     display_name = model$display_name %||% NA_character_,
                     created_at = model$created_at %||% NA_character_
                 )
-            }) |> purrr::list_rbind()
-            
+            }) |>
+                purrr::list_rbind()
+
             return(models_df)
         },
-        
+
         #' @description
         #' Get information about a specific Anthropic model
         #' @param model_id Character. Model ID (e.g., "claude-sonnet-4-5-20250929")
@@ -184,7 +186,7 @@ Anthropic <- R6::R6Class( # nolint
             endpoint <- paste0(self$base_url, "/v1/files")
 
             req <- private$base_request(
-                endpoint, 
+                endpoint,
                 headers = list(`Content-Type` = "multipart/form-data"),
                 beta_features = "files-api-2025-04-14"
             ) |>
@@ -298,9 +300,7 @@ Anthropic <- R6::R6Class( # nolint
                 req <- httr2::req_url_query(req, after_id = after_id)
             }
 
-            res <- req |>
-                httr2::req_perform() |>
-                httr2::resp_body_json()
+            res <- req |> httr2::req_perform() |> httr2::resp_body_json()
 
             if ("error" %in% names(res)) {
                 cli::cli_alert_danger("[{self$provider_name}] Failed to list files: {res$error$message}")
@@ -330,8 +330,7 @@ Anthropic <- R6::R6Class( # nolint
         delete_file = function(file_id) {
             endpoint <- paste0(self$base_url, "/v1/files/", file_id)
 
-            req <- private$base_request(endpoint, beta_features = "files-api-2025-04-14") |>
-                httr2::req_method("DELETE")
+            req <- private$base_request(endpoint, beta_features = "files-api-2025-04-14") |> httr2::req_method("DELETE")
 
             res <- httr2::req_perform(req)
 
@@ -358,9 +357,7 @@ Anthropic <- R6::R6Class( # nolint
         #' @param ... Arguments (not used, included for method signature consistency)
         #' @return This method always throws an error
         embeddings = function(...) {
-            cli::cli_abort(
-                "[{self$provider_name}] Anthropic does not provide a native embeddings API."
-            )
+            cli::cli_abort("[{self$provider_name}] Anthropic does not provide a native embeddings API.")
         },
 
         # ------🔺 RESPONSE HELPERS --------------------------------------------
@@ -412,14 +409,10 @@ Anthropic <- R6::R6Class( # nolint
             output_schema = NULL,
             thinking_budget = 0
         ) {
-
             # Count how many cache breakpoints are in the chat history already
-            n_cache_breakpoints <- sum(
-                purrr::map_lgl(
-                    self$chat_history, 
-                    \(msg) is.list(msg$content[[1]]) && "cache_control" %in% names(msg$content[[1]])
-                )
-            )
+            n_cache_breakpoints <- sum(purrr::map_lgl(self$chat_history, \(msg) {
+                is.list(msg$content[[1]]) && "cache_control" %in% names(msg$content[[1]])
+            }))
 
             # ---- Validate parameters ----
 
@@ -437,13 +430,11 @@ Anthropic <- R6::R6Class( # nolint
                 # Check tool_choice compatibility
                 if (!is.null(tools) && !is.null(tool_choice)) {
                     if (tool_choice$type %in% c("any", "tool")) {
-                        cli::cli_alert_warning(
-                            c(
-                                "[{self$provider_name}] Extended thinking is not compatible with forced tool use. ",
-                                "i" = "Only tool_choice = list(type = 'auto') or NULL are supported with thinking. ",
-                                "i" = "Setting tool_choice to list(type = 'auto')."
-                            )
-                        )
+                        cli::cli_alert_warning(c(
+                            "[{self$provider_name}] Extended thinking is not compatible with forced tool use. ",
+                            "i" = "Only tool_choice = list(type = 'auto') or NULL are supported with thinking. ",
+                            "i" = "Setting tool_choice to list(type = 'auto')."
+                        ))
                         tool_choice <- list(type = "auto")
                     }
                 }
@@ -472,12 +463,13 @@ Anthropic <- R6::R6Class( # nolint
 
             # Capture prompt inputs as quosures
             inputs <- rlang::enquos(...)
-            
+
             prompt_length <- 0
             if (length(inputs) == 1) {
                 # Check if single input is a tool_result (from previous tool use)
                 first_input <- rlang::eval_tidy(inputs[[1]])
-                if (is.list(first_input) &&
+                if (
+                    is.list(first_input) &&
                         !is.null(purrr::pluck(first_input, 1, "type")) &&
                         purrr::pluck(first_input, 1, "type") == "tool_result"
                 ) {
@@ -538,13 +530,11 @@ Anthropic <- R6::R6Class( # nolint
 
                         # We add the original tool because the converted one no longer has the .mcp metadata
                         private$add_active_tool(type = "mcp", tool = tool)
-
                     } else if (is_client_tool(tool)) {
                         converted_tool <- as_tool_anthropic(tool)
                         tool_list <- append(tool_list, list(converted_tool))
 
                         private$add_active_tool(type = "client", tool = tool)
-
                     } else if (is_server_tool(tool, self$server_tools)) {
                         tool_name <- get_server_tool_name(tool)
 
@@ -610,7 +600,8 @@ Anthropic <- R6::R6Class( # nolint
 
                 # Apply cache control to last tool if enabled
                 if (
-                    cache_tools && length(tool_list) > 0 &&
+                    cache_tools &&
+                        length(tool_list) > 0 &&
                         "cache_control" %ni% names(tool_list[[length(tool_list)]]) &&
                         n_cache_breakpoints < 4
                 ) {
@@ -624,7 +615,7 @@ Anthropic <- R6::R6Class( # nolint
             }
 
             # Check if code_execution server tool is present (incompatible with native structured output)
-            code_execution_present <- !is.null(tool_list) && 
+            code_execution_present <- !is.null(tool_list) &&
                 purrr::some(tool_list, is_server_tool, names = "code_execution")
 
             # ---- Build API request ----
@@ -667,8 +658,8 @@ Anthropic <- R6::R6Class( # nolint
 
             # ---- Handle response ----
 
-            if (purrr::is_empty(private$extract_root(res))) {
-                cli::cli_abort("[{self$provider_name}] Error: API request failed or returned no content")
+            if (purrr::is_empty(res) || purrr::is_empty(private$extract_root(res))) {
+                cli::cli_abort("[{self$provider_name}] Error: API request failed or returned no choices")
             }
 
             # Save to session history and add response to chat history
@@ -678,7 +669,6 @@ Anthropic <- R6::R6Class( # nolint
             # ---- Process response ----
 
             if (private$is_tool_call(res)) {
-
                 # Final round of forced JSON output: extract the tool call as is without executing it
                 if (isTRUE(output_schema)) {
                     tool_result <- private$extract_root(res) |>
@@ -686,7 +676,7 @@ Anthropic <- R6::R6Class( # nolint
                         purrr::pluck(1) |>
                         private$extract_tool_call_args()
 
-                    # Hack: Convert tool_use to text for both histories, 
+                    # Hack: Convert tool_use to text for both histories,
                     #  as if it was the return of a native structured output of the API.
                     json_text <- jsonlite::toJSON(tool_result, auto_unbox = TRUE, pretty = TRUE)
                     text_content <- list(private$text_input(json_text))
@@ -704,30 +694,27 @@ Anthropic <- R6::R6Class( # nolint
                 private$tool_results_to_chat_history(private$use_tools(res))
 
                 # Recursive call
-                return(
-                    self$chat(
-                        cache_prompt = cache_prompt,
-                        model = model,
-                        system = system,
-                        cache_system = cache_system,
-                        max_tokens = max_tokens,
-                        temperature = temperature,
-                        top_p = top_p,
-                        top_k = top_k,
-                        tools = tools,
-                        tool_choice = list(type = "auto"),
-                        cache_tools = cache_tools,
-                        output_schema = output_schema,
-                        thinking_budget = thinking_budget
-                    )
-                )
+                return(self$chat(
+                    cache_prompt = cache_prompt,
+                    model = model,
+                    system = system,
+                    cache_system = cache_system,
+                    max_tokens = max_tokens,
+                    temperature = temperature,
+                    top_p = top_p,
+                    top_k = top_k,
+                    tools = tools,
+                    tool_choice = list(type = "auto"),
+                    cache_tools = cache_tools,
+                    output_schema = output_schema,
+                    thinking_budget = thinking_budget
+                ))
             }
 
             # ---- Final response ----
 
             # Handle structured output
             if (is.list(output_schema)) {
-
                 # Use native structured output if model supports it and code_execution is not present
                 if (private$supports_native_structured_output(model) && !code_execution_present) {
                     text_output <- self$get_content_text(res)
@@ -738,22 +725,20 @@ Anthropic <- R6::R6Class( # nolint
                 format_tool <- response_schema_to_tool_anthropic(output_schema)
                 format_prompt <- make_format_prompt(format_tool$name)
 
-                return(
-                    self$chat(
-                        format_prompt,
-                        cache_prompt = cache_prompt,
-                        model = model,
-                        system = system,
-                        cache_system = cache_system,
-                        max_tokens = max_tokens,
-                        temperature = 0, # Use deterministic sampling for formatting task
-                        tools = list(format_tool),
-                        tool_choice = list(type = "tool", name = format_tool$name),
-                        cache_tools = FALSE,
-                        thinking_budget = 0,
-                        output_schema = TRUE
-                    )
-                )
+                return(self$chat(
+                    format_prompt,
+                    cache_prompt = cache_prompt,
+                    model = model,
+                    system = system,
+                    cache_system = cache_system,
+                    max_tokens = max_tokens,
+                    temperature = 0, # Use deterministic sampling for formatting task
+                    tools = list(format_tool),
+                    tool_choice = list(type = "tool", name = format_tool$name),
+                    cache_tools = FALSE,
+                    thinking_budget = 0,
+                    output_schema = TRUE
+                ))
             }
 
             # No output schema: return the response text
@@ -767,8 +752,12 @@ Anthropic <- R6::R6Class( # nolint
 
         supports_native_structured_output = function(model) {
             model_lower <- tolower(model)
-            if (grepl("haiku", model_lower)) return(FALSE)
-            if (grepl("sonnet", model_lower) || grepl("opus", model_lower)) return(TRUE)
+            if (grepl("haiku", model_lower)) {
+                return(FALSE)
+            }
+            if (grepl("sonnet", model_lower) || grepl("opus", model_lower)) {
+                return(TRUE)
+            }
             return(FALSE)
         },
 
@@ -815,8 +804,7 @@ Anthropic <- R6::R6Class( # nolint
         },
 
         extract_content_text = function(root) {
-            answer_text <- private$extract_content(root) |>
-                purrr::map_chr("text")
+            answer_text <- private$extract_content(root) |> purrr::map_chr("text")
             if (is.null(answer_text) || purrr::is_empty(answer_text)) {
                 return(NULL)
             }
@@ -969,7 +957,8 @@ Anthropic <- R6::R6Class( # nolint
                     }
                     return(list(language = "python", code = contents))
                 }
-            }) |> purrr::compact()
+            }) |>
+                purrr::compact()
         },
 
         extract_generated_files = function(root) {
@@ -983,10 +972,12 @@ Anthropic <- R6::R6Class( # nolint
             file_ids <- purrr::map(exec_results, \(result) {
                 content_blocks <- purrr::pluck(result, "content", "content")
                 if (!is.null(content_blocks)) {
-                    output_blocks <- purrr::keep(content_blocks, \(x) purrr::pluck(x, "type") == "bash_code_execution_output")
+                    output_blocks <- purrr::keep(content_blocks, \(x) {
+                        purrr::pluck(x, "type") == "bash_code_execution_output"
+                    })
                     purrr::map_chr(output_blocks, "file_id")
                 }
-            }) |> 
+            }) |>
                 purrr::compact() |>
                 unlist()
 
@@ -1051,17 +1042,13 @@ Anthropic <- R6::R6Class( # nolint
                     ))
                 } else if (is_server_tool(tool, self$server_tools)) {
                     tool_name <- get_server_tool_name(tool)
-                    return(list(
-                        name = tool_name,
-                        description = NULL,
-                        type = "server",
-                        parameters = character(0)
-                    ))
+                    return(list(name = tool_name, description = NULL, type = "server", parameters = character(0)))
                 } else {
                     cli::cli_alert_danger("[{self$provider_name}] Invalid tool: {.field {tool}}")
                     return(NULL)
                 }
-            }) |> purrr::compact()
+            }) |>
+                purrr::compact()
 
             if (purrr::is_empty(normalized_tools)) {
                 return(NULL)
@@ -1096,12 +1083,10 @@ Anthropic <- R6::R6Class( # nolint
                             citation$encrypted_index <- NULL
                             return(citation)
                         })
-                        list(
-                            text = purrr::pluck(block, "text"),
-                            citations = block_contents
-                        )
+                        list(text = purrr::pluck(block, "text"), citations = block_contents)
                     }
-                }) |> purrr::compact()
+                }) |>
+                    purrr::compact()
 
                 if (purrr::is_empty(citations)) {
                     return(NULL)
@@ -1129,7 +1114,8 @@ Anthropic <- R6::R6Class( # nolint
                             input = purrr::pluck(block, "input")
                         )
                     }
-                }) |> purrr::compact()
+                }) |>
+                    purrr::compact()
 
                 if (purrr::is_empty(server_tools)) {
                     return(NULL)
@@ -1157,16 +1143,17 @@ Anthropic <- R6::R6Class( # nolint
                             type = block_type,
                             content = purrr::pluck(block, "content")
                         )
-                        
+
                         # For web_fetch, simplify the nested structure
                         if (block_type == "web_fetch_tool_result") {
                             result$url <- purrr::pluck(block, "content", "url")
                             result$retrieved_at <- purrr::pluck(block, "content", "retrieved_at")
                         }
-                        
+
                         return(result)
                     }
-                }) |> purrr::compact()
+                }) |>
+                    purrr::compact()
 
                 if (purrr::is_empty(server_results)) {
                     return(NULL)
@@ -1263,11 +1250,7 @@ Anthropic <- R6::R6Class( # nolint
         },
 
         # Override base_request to add Anthropic-specific headers
-        base_request = function(
-            endpoint,
-            headers = list(),
-            beta_features = self$default_beta_features
-        ) {
+        base_request = function(endpoint, headers = list(), beta_features = self$default_beta_features) {
             # Merge Anthropic-specific headers with passed headers
             # Passed headers come last so they can override defaults
             anthropic_headers <- list(
@@ -1280,12 +1263,7 @@ Anthropic <- R6::R6Class( # nolint
         },
 
         # Override request to accept beta_features parameter
-        request = function(
-            endpoint,
-            query_data = NULL,
-            headers = list(),
-            beta_features = self$default_beta_features
-        ) {
+        request = function(endpoint, query_data = NULL, headers = list(), beta_features = self$default_beta_features) {
             anthropic_headers <- list(
                 `Content-Type` = "application/json",
                 `anthropic-version` = "2023-06-01",
@@ -1330,13 +1308,11 @@ Anthropic <- R6::R6Class( # nolint
 #' @noRd
 as_tool_anthropic <- function(tool_schema) {
     # Anthropic requires a non-empty input_schema even if it has no properties
-    tool_args <- tool_schema$args_schema %||% tool_schema$parameters %||% tool_schema$input_schema %||% 
+    tool_args <- tool_schema$args_schema %||%
+        tool_schema$parameters %||%
+        tool_schema$input_schema %||%
         list(type = "object")
-    list3(
-        name = tool_schema$name,
-        description = tool_schema$description,
-        input_schema = tool_args
-    )
+    list3(name = tool_schema$name, description = tool_schema$description, input_schema = tool_args)
 }
 
 #' Convert schema to native output_format parameter for Anthropic (internal)

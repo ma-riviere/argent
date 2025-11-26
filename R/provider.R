@@ -27,7 +27,8 @@
 #' Manual save/load available via `dump_history()` and `load_history()`.
 #'
 #' @keywords internal
-Provider <- R6::R6Class( # nolint
+Provider <- R6::R6Class(
+    # nolint
     classname = "Provider",
     public = list(
         base_url = NULL,
@@ -202,7 +203,7 @@ Provider <- R6::R6Class( # nolint
                 # It's a path, resolve it relative to project root
                 file_path <- here::here(file_path)
             }
-            
+
             if (!is_file(file_path)) {
                 cli::cli_abort("File not found: {.path {file_path}}")
             }
@@ -288,8 +289,7 @@ Provider <- R6::R6Class( # nolint
         #' @param api_res List. API response object (defaults to last response)
         #' @return Character. Text content from response
         get_content_text = function(api_res = self$get_last_response()) {
-            private$extract_root(api_res) |>
-                private$extract_content_text()
+            private$extract_root(api_res) |> private$extract_content_text()
         },
 
         #' @description
@@ -297,8 +297,7 @@ Provider <- R6::R6Class( # nolint
         #' @param api_res List. API response object (defaults to last response)
         #' @return Character or List. Text content from reasoning in response
         get_reasoning_text = function(api_res = self$get_last_response()) {
-            reasoning_text <- private$extract_root(api_res) |>
-                private$extract_reasoning_text()
+            reasoning_text <- private$extract_root(api_res) |> private$extract_reasoning_text()
             if (purrr::is_empty(reasoning_text) || reasoning_text %in% c("\n", "")) {
                 return(NULL)
             }
@@ -312,18 +311,16 @@ Provider <- R6::R6Class( # nolint
         #' @param as_chunks Logical. Whether to return the code as a list of chunks (default: FALSE)
         #' @return Character or List. Code content from response as list of chunks or as single string
         get_generated_code = function(api_res = self$get_last_response(), langs = NULL, as_chunks = FALSE) {
-            code_parts <- private$extract_root(api_res) |>
-                private$extract_generated_code()
-            
+            code_parts <- private$extract_root(api_res) |> private$extract_generated_code()
+
             if (!is.null(langs)) {
                 code_parts <- purrr::keep(code_parts, \(code_elt) code_elt$language %in% tolower(langs))
             }
 
             if (as_chunks) {
-                code_chunks <- purrr::map_chr(
-                    code_parts, 
-                    \(code_elt) format_code_block(code_elt$code, language = code_elt$language)
-                )
+                code_chunks <- purrr::map_chr(code_parts, \(code_elt) {
+                    format_code_block(code_elt$code, language = code_elt$language)
+                })
                 return(paste(code_chunks, collapse = "\n\n"))
             }
 
@@ -335,8 +332,7 @@ Provider <- R6::R6Class( # nolint
         #' @param api_res List. API response object (defaults to last response)
         #' @return List. Files from response (each with mime_type and data), or NULL if none found
         get_generated_files = function(api_res = self$get_last_response()) {
-            private$extract_root(api_res) |> 
-                private$extract_generated_files()
+            private$extract_root(api_res) |> private$extract_generated_files()
         },
 
         #' @description
@@ -466,7 +462,7 @@ Provider <- R6::R6Class( # nolint
         get_session_history_last_query = function() {
             return(last(purrr::keep(self$session_history, \(x) x$type == "query")))
         },
-        
+
         get_session_history_last_response = function() {
             return(last(purrr::keep(self$session_history, \(x) x$type == "response")))
         },
@@ -551,10 +547,7 @@ Provider <- R6::R6Class( # nolint
                 return(invisible(NULL))
             }
 
-            history_data <- list(
-                provider = self$provider_name,
-                session_history = self$session_history
-            )
+            history_data <- list(provider = self$provider_name, session_history = self$session_history)
 
             dir_path <- dirname(file_path)
             if (!dir.exists(dir_path)) {
@@ -583,18 +576,10 @@ Provider <- R6::R6Class( # nolint
             input_tokens <- private$extract_input_token_count(api_resp) %|e|% 0
             output_tokens <- private$extract_output_token_count(api_resp) %|e|% 0
             current_output_tokens <- input_tokens + output_tokens
-            
-            private$append_to_session_history(
-                type = "query",
-                data = query_data,
-                tokens = input_tokens
-            )
 
-            private$append_to_session_history(
-                type = "response",
-                data = api_resp,
-                tokens = current_output_tokens
-            )
+            private$append_to_session_history(type = "query", data = query_data, tokens = input_tokens)
+
+            private$append_to_session_history(type = "response", data = api_resp, tokens = current_output_tokens)
 
             invisible(TRUE)
         },
@@ -613,7 +598,7 @@ Provider <- R6::R6Class( # nolint
             if (is.list(inputs) && length(inputs) == 1 && rlang::is_quosure(inputs[[1]])) {
                 content <- rlang::eval_tidy(inputs[[1]])
                 if (
-                    is.list(content) && 
+                    is.list(content) &&
                         !is.data.frame(content) &&
                         length(content) > 1 &&
                         purrr::some(purrr::list_flatten(content), \(x) !is.null(attr(x, "argent_input_type")))
@@ -627,13 +612,13 @@ Provider <- R6::R6Class( # nolint
                     ))
                 }
             }
-            
+
             # Step 1: Evaluate quosures that result in character strings, keep others as quosures
             inputs <- purrr::map(inputs, \(input) {
                 if (rlang::is_quosure(input)) {
                     content <- rlang::eval_tidy(input)
-                    if (is.character(content) || 
-                            (is.list(content) && !is.null(attr(content[[1]], "argent_input_type")))
+                    if (
+                        is.character(content) || (is.list(content) && !is.null(attr(content[[1]], "argent_input_type")))
                     ) {
                         return(content)
                     }
@@ -643,10 +628,10 @@ Provider <- R6::R6Class( # nolint
                 # Keep non-quosures as-is
                 return(input)
             })
-            
+
             # Step 2: Flatten list structures (after removing no-longer-necessary quosures)
             inputs <- purrr::list_flatten(inputs)
-            
+
             # Step 3: Process each item
             parts <- purrr::map(inputs, \(input) private$process_multipart_input(input))
 
@@ -654,7 +639,7 @@ Provider <- R6::R6Class( # nolint
             return(unname(parts))
         },
 
-        process_multipart_input = function(input) {            
+        process_multipart_input = function(input) {
             if (!is.null(attr(input, "argent_input_type"))) {
                 return(private$process_argent_input(input))
             } else if ("character" %ni% class(input)) {
@@ -686,20 +671,25 @@ Provider <- R6::R6Class( # nolint
         },
 
         process_r_object_input = function(input) {
-            tryCatch({
-                return(private$text_input(to_json_str(input)))
-            },
-            error = function(e) {
-                # If JSON conversion fails, try to_str() as fallback
-                tryCatch({
-                    return(private$text_input(to_str(input)))
-                }, error = function(e2) {
-                    cli::cli_abort(
-                        "Unsupported input object. Could not convert to JSON or str().",
-                        "i" = "Use {.fn as_text_content} or {.fn as_json_content} to convert, or do it manually."
+            tryCatch(
+                {
+                    return(private$text_input(to_json_str(input)))
+                },
+                error = function(e) {
+                    # If JSON conversion fails, try to_str() as fallback
+                    tryCatch(
+                        {
+                            return(private$text_input(to_str(input)))
+                        },
+                        error = function(e2) {
+                            cli::cli_abort(
+                                "Unsupported input object. Could not convert to JSON or str().",
+                                "i" = "Use {.fn as_text_content} or {.fn as_json_content} to convert, or do it manually."
+                            )
+                        }
                     )
-                })
-            })
+                }
+            )
         },
 
         process_file_or_url_input = function(input) {
@@ -772,8 +762,7 @@ Provider <- R6::R6Class( # nolint
         },
 
         use_tools = function(api_resp) {
-            tool_calls <- private$extract_root(api_resp) |>
-                private$extract_tool_calls()
+            tool_calls <- private$extract_root(api_resp) |> private$extract_tool_calls()
 
             if (is.null(tool_calls) || purrr::is_empty(tool_calls)) {
                 return(NULL)
@@ -833,11 +822,7 @@ Provider <- R6::R6Class( # nolint
                 output <- "The tool returned nothing."
             }
 
-            output_tagged <- list(
-                name = fn_name,
-                arguments = arguments,
-                result = output
-            )
+            output_tagged <- list(name = fn_name, arguments = arguments, result = output)
 
             return(output_tagged)
         },
@@ -880,9 +865,7 @@ Provider <- R6::R6Class( # nolint
                 )
 
                 # Format error as a result that the LLM can read and respond to
-                output <- paste0(
-                    "Error calling ", fn_name, " (code ", error_code, "): ", error_msg
-                )
+                output <- paste0("Error calling ", fn_name, " (code ", error_code, "): ", error_msg)
             }
 
             if (purrr::is_empty(output)) {
@@ -890,11 +873,7 @@ Provider <- R6::R6Class( # nolint
             }
 
             # Return in same format as use_client_tool
-            output_tagged <- list(
-                name = fn_name,
-                arguments = arguments,
-                result = output
-            )
+            output_tagged <- list(name = fn_name, arguments = arguments, result = output)
 
             return(output_tagged)
         },
@@ -1095,7 +1074,7 @@ Provider <- R6::R6Class( # nolint
             turn_tokens <- purrr::pluck(entry, "tokens", .default = 0)
             cumulative_tokens <- self$get_session_cumulative_token_count(up_to_index = index + 1)
             entry_data <- purrr::pluck(entry, "data")
-            
+
             turn_contents <- private$extract_root(entry_data)
             if (type == "query") {
                 # Since queries/API calls keep a history of the turns, we only need the last input.
@@ -1117,7 +1096,9 @@ Provider <- R6::R6Class( # nolint
                 }
             }
 
-            if (role == "user") cat("\n")
+            if (role == "user") {
+                cat("\n")
+            }
             cli::cli_h1("{color_role(role)} [{.val {turn_tokens}} / {.val {cumulative_tokens}}]")
 
             if (type == "query") {
@@ -1219,20 +1200,14 @@ Provider <- R6::R6Class( # nolint
         display_tool_calls = function(tool_calls) {
             cli::cli_h2(cli::col_yellow("Tool Calls"))
             formatted_calls <- purrr::map_chr(tool_calls, \(tc) {
-                format_tool_call(
-                    private$extract_tool_call_name(tc),
-                    private$extract_tool_call_args(tc)
-                )
+                format_tool_call(private$extract_tool_call_name(tc), private$extract_tool_call_args(tc))
             })
             purrr::walk(formatted_calls, \(tool) cli::cli_bullets_raw(c("*" = cli::col_yellow(tool))))
         },
 
         display_tool_results = function(tool_results, max_content_length = NULL) {
             formatted_results <- purrr::map(tool_results, \(tr) {
-                format_tool_result(
-                    private$extract_tool_result_name(tr),
-                    private$extract_tool_result_content(tr)
-                )
+                format_tool_result(private$extract_tool_result_name(tr), private$extract_tool_result_content(tr))
             })
             purrr::walk(formatted_results, \(result) {
                 content <- result$content

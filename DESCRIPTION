@@ -44,7 +44,7 @@ Suggests:
     rvest,
     pdftools,
     magick,
-    testthat (>= 3.0.0)
+    testthat (>= 3.3.0)
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 Config/Needs/website: here, quarto

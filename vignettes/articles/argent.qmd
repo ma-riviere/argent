@@ -155,7 +155,7 @@ You can pass any R object to `chat()` as is:
 
 lm_obj <- lm(body_mass ~ species + sex, data = datasets::penguins)
 
-google_gemini$chat(
+gemini$chat(
     "What can we deduct from this regression model ?",
     lm_obj,
     model = "gemini-2.5-flash"
@@ -238,7 +238,7 @@ Guides for OpenAI's three different APIs:
 
 - [RAG](articles/advanced-rag.html) - How to use `argent` & `ragnar` for RAG
 - [MCP Servers & Tools](articles/advanced-mcp.html) - How to use MCP server tools with `argent`
-
+- [Argentic Workflow](articles/advanced-argentic-workflow.html) - How to use `argent` for an advanced Agentic Workflows
 
 ## Other Topics
 
@@ -256,15 +256,15 @@ The chat history maintains a list of messages exchanged between the user and the
 ```{r chat-history}
 #| eval: false
 
-google_gemini <- Google$new()
+gemini <- Google$new()
 
-google_gemini$chat(
+gemini$chat(
     prompt = "My name is Alice",
     model = "gemini-2.5-flash"
 )
-#> [1] "Hello Alice! It's nice to meet you. How can I assist you today?"
+#> [1] "Hello Alice. It's nice to meet you."
 
-google_gemini$chat(
+gemini$chat(
     prompt = "What's my name?",
     model = "gemini-2.5-flash"
 )
@@ -276,44 +276,22 @@ Check the chat history:
 ```{r}
 #| eval: false
 
-cat(yaml::as.yaml(google_gemini$get_chat_history()))
+cat(yaml::as.yaml(gemini$get_chat_history()))
 ```
 
-```json
-[
-  {
-    "role": "user",
-    "parts": [
-      {
-        "text": "My name is Alice"
-      }
-    ]
-  },
-  {
-    "parts": [
-      {
-        "text": "Hello Alice! It's nice to meet you. How can I assist you today?"
-      }
-    ],
-    "role": "model"
-  },
-  {
-    "role": "user",
-    "parts": [
-      {
-        "text": "What's my name?"
-      }
-    ]
-  },
-  {
-    "parts": [
-      {
-        "text": "Your name is Alice."
-      }
-    ],
-    "role": "model"
-  }
-]
+```yaml
+- role: user
+  parts:
+  - text: My name is Alice
+- parts:
+  - text: Hello Alice. It's nice to meet you.
+  role: model
+- role: user
+  parts:
+  - text: What's my name?
+- parts:
+  - text: Your name is Alice.
+  role: model
 ```
 
 See the total tokens used at last API call:
@@ -321,8 +299,8 @@ See the total tokens used at last API call:
 ```{r}
 #| eval: false
 
-google_gemini$get_session_last_token_count() # Total (input + output) tokens used at last API call
-google_gemini$get_session_cumulative_token_count() # Cumulative tokens used in this chat session
+gemini$get_session_last_token_count() # Total (input + output) tokens used at last API call
+gemini$get_session_cumulative_token_count() # Cumulative tokens used in this chat session
 ```
 
 Reset the object's history:
@@ -330,7 +308,7 @@ Reset the object's history:
 ```{r}
 #| eval: false
 
-google_gemini$reset_history()
+gemini$reset_history()
 ```
 
 #### Automatic History Persistence
@@ -349,9 +327,7 @@ options(
     argent.history_dir = "data/history/"  # Default
 )
 
-google_gemini <- Google$new(
-    auto_save_history = FALSE  # Disable automatic saving
-)
+gemini <- Google$new(auto_save_history = FALSE)
 ```
 
 ::: {.callout-note appearance="simple"}
@@ -363,11 +339,11 @@ Resetting the history dumps the current history (if non-empty) into the current 
 ```{r}
 #| eval: false
 
-current_history_file_path <- google_gemini$get_history_file_path()
+current_history_file_path <- gemini$get_history_file_path()
 
-google_gemini <- Google$new() # Equivalent of resetting the provider object
+gemini <- Google$new() # Equivalent of resetting the provider object
 
-google_gemini$load_history(current_history_file_path)
+gemini$load_history(current_history_file_path)
 ```
 
 **A neater way to visualize the chat history is to print the provider object:**
@@ -375,7 +351,7 @@ google_gemini$load_history(current_history_file_path)
 ```{r}
 #| eval: false
 
-print(google_gemini)
+print(gemini)
 ```
 
 
@@ -394,7 +370,7 @@ response_schema <- schema(
     field2 = "number Optional numeric field"
 )
 
-result <- provider$chat(
+result <- gemini$chat(
     "Your question here",
     output_schema = response_schema
 )

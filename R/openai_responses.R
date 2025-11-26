@@ -3,7 +3,7 @@
 #' @description
 #' R6 class for interacting with OpenAI's Responses API (v1/responses).
 #' Inherits file management and vector store methods from OpenAI_Base.
-#' 
+#'
 #' @section Features:
 #' - Client-side conversation state management
 #' - Server-side conversation state management via previous_response_id & response forking
@@ -63,11 +63,11 @@
 #'   tools = list(list(type = "file_search", store_ids = list(store$id)))
 #' )
 #' }
-OpenAI_Responses <- R6::R6Class( # nolint
+OpenAI_Responses <- R6::R6Class(
+    # nolint
     classname = "OpenAI_Responses",
     inherit = OpenAI,
     public = list(
-
         # ------🔺 INIT --------------------------------------------------------
 
         #' @description
@@ -219,7 +219,6 @@ OpenAI_Responses <- R6::R6Class( # nolint
             private$request(paste0(self$base_url, "/v1/containers/", container_id, "/files/", file_id))
         },
 
-
         #' @description
         #' Get file content from container
         #' @param container_id Character. Container ID.
@@ -233,17 +232,8 @@ OpenAI_Responses <- R6::R6Class( # nolint
         #' content <- responses$get_container_file_content("container-123", file_id)
         #' }
         get_container_file_content = function(container_id, file_id) {
-            url <- paste0(
-                self$base_url,
-                "/v1/containers/",
-                container_id,
-                "/files/",
-                file_id,
-                "/content"
-            )
-            private$base_request(url, headers = list()) |>
-                httr2::req_perform() |>
-                httr2::resp_body_raw()
+            url <- paste0(self$base_url, "/v1/containers/", container_id, "/files/", file_id, "/content")
+            private$base_request(url, headers = list()) |> httr2::req_perform() |> httr2::resp_body_raw()
         },
 
         #' @description
@@ -297,7 +287,7 @@ OpenAI_Responses <- R6::R6Class( # nolint
             }
 
             final_path <- resolve_download_path(dest_path, filename)
-            
+
             content <- self$get_container_file_content(container_id, file_id)
 
             if (is_file(final_path) && !overwrite) {
@@ -378,7 +368,6 @@ OpenAI_Responses <- R6::R6Class( # nolint
             reasoning_effort = NULL, # minimal, low, medium, or high
             reasoning_summary = NULL # auto, concise, or detailed
         ) {
-
             # ---- Build input ----
 
             # Capture prompt inputs as quosures
@@ -410,7 +399,6 @@ OpenAI_Responses <- R6::R6Class( # nolint
                 } else {
                     list()
                 }
-
             } else {
                 # MANUAL HISTORY MODE (default)
                 # Client maintains full conversation state in chat_history
@@ -442,13 +430,11 @@ OpenAI_Responses <- R6::R6Class( # nolint
 
                         # We add the original tool because the converted one no longer has the .mcp metadata
                         private$add_active_tool(type = "mcp", tool = tool)
-
                     } else if (is_client_tool(tool)) {
                         converted_tool <- as_tool_openai(tool)
                         tool_list <- append(tool_list, list(converted_tool))
 
                         private$add_active_tool(type = "client", tool = tool)
-
                     } else if (is_server_tool(tool, self$server_tools)) {
                         tool_name <- get_server_tool_name(tool)
 
@@ -483,7 +469,7 @@ OpenAI_Responses <- R6::R6Class( # nolint
                                     max_num_results = purrr::pluck(tool, "max_num_results"),
                                     filters = purrr::pluck(tool, "filters")
                                 )
-                                
+
                                 tool_list <- append(tool_list, list(tool_def))
                             } else {
                                 # For string-form, just add the tool
@@ -522,12 +508,10 @@ OpenAI_Responses <- R6::R6Class( # nolint
             if (!is.null(reasoning_effort)) {
                 is_reasoning_model <- stringr::str_detect(tolower(model), "o1|o3|o4|gpt-5")
                 if (!is_reasoning_model) {
-                    cli::cli_alert_warning(
-                        c(
-                            "[{self$provider_name}] {.arg reasoning_effort} is only applicable to reasoning models.",
-                            "i" = "Removing {.arg reasoning_effort} parameter."
-                        )
-                    )
+                    cli::cli_alert_warning(c(
+                        "[{self$provider_name}] {.arg reasoning_effort} is only applicable to reasoning models.",
+                        "i" = "Removing {.arg reasoning_effort} parameter."
+                    ))
                     reasoning_effort <- NULL
                 }
             }
@@ -607,8 +591,8 @@ OpenAI_Responses <- R6::R6Class( # nolint
             # ---- Handle response ----
 
             # Handle API errors
-            if (purrr::is_empty(private$extract_root(res))) {
-                cli::cli_abort("[{self$provider_name}] API request failed or returned no choices.")
+            if (purrr::is_empty(res) || purrr::is_empty(private$extract_root(res))) {
+                cli::cli_abort("[{self$provider_name}] Error: API request failed or returned no choices")
             }
 
             # Save to session history and add response to chat history
@@ -618,32 +602,29 @@ OpenAI_Responses <- R6::R6Class( # nolint
             # ---- Tool calls ----
 
             if (private$is_tool_call(res)) {
-
                 private$tool_results_to_chat_history(private$use_tools(res))
 
                 # Recursive call to continue conversation
-                return(
-                    self$chat(
-                        model = model,
-                        system = system,
-                        temperature = temperature,
-                        max_tokens = max_tokens,
-                        top_p = top_p,
-                        top_logprobs = top_logprobs,
-                        input_truncation = input_truncation,
-                        previous_response_id = previous_response_id,
-                        store = store,
-                        include = include,
-                        tools = tools,
-                        tool_choice = tool_choice,
-                        max_tool_calls = max_tool_calls,
-                        parallel_tool_calls = parallel_tool_calls,
-                        output_schema = output_schema,
-                        output_verbosity = output_verbosity,
-                        reasoning_effort = reasoning_effort,
-                        reasoning_summary = reasoning_summary
-                    )
-                )
+                return(self$chat(
+                    model = model,
+                    system = system,
+                    temperature = temperature,
+                    max_tokens = max_tokens,
+                    top_p = top_p,
+                    top_logprobs = top_logprobs,
+                    input_truncation = input_truncation,
+                    previous_response_id = previous_response_id,
+                    store = store,
+                    include = include,
+                    tools = tools,
+                    tool_choice = tool_choice,
+                    max_tool_calls = max_tool_calls,
+                    parallel_tool_calls = parallel_tool_calls,
+                    output_schema = output_schema,
+                    output_verbosity = output_verbosity,
+                    reasoning_effort = reasoning_effort,
+                    reasoning_summary = reasoning_summary
+                ))
             }
 
             # ---- Final response (i.e. no more tool calls) ----
@@ -659,7 +640,6 @@ OpenAI_Responses <- R6::R6Class( # nolint
     ),
 
     private = list(
-
         # ------🔺 EXTRACTION --------------------------------------------------
 
         is_root = function(input) {
@@ -676,7 +656,7 @@ OpenAI_Responses <- R6::R6Class( # nolint
             } else {
                 cli::cli_abort("[{self$provider_name}] Cannot extract root, from list({.field {input}}).")
             }
-            
+
             if (purrr::is_empty(root)) {
                 return(NULL)
             }
@@ -688,26 +668,23 @@ OpenAI_Responses <- R6::R6Class( # nolint
                 return(purrr::pluck(root, "role", .default = "unknown"))
             } else {
                 # root is an array of output items - extract role from the message item
-                message_items <- purrr::keep(
-                    root, 
-                    \(item) purrr::pluck(item, "type", .default = "<unknown>") == "message"
-                )
+                message_items <- purrr::keep(root, \(item) {
+                    purrr::pluck(item, "type", .default = "<unknown>") == "message"
+                })
                 if (!purrr::is_empty(message_items)) {
                     return(purrr::pluck(message_items, 1, "role", .default = "unknown"))
                 }
 
-                function_call_items <- purrr::keep(
-                    root, 
-                    \(item) purrr::pluck(item, "type", .default = "<unknown>") == "function_call"
-                )
+                function_call_items <- purrr::keep(root, \(item) {
+                    purrr::pluck(item, "type", .default = "<unknown>") == "function_call"
+                })
                 if (!purrr::is_empty(function_call_items)) {
                     return("assistant")
                 }
 
-                function_output_items <- purrr::keep(
-                    root, 
-                    \(item) purrr::pluck(item, "type", .default = "<unknown>") == "function_call_output"
-                )
+                function_output_items <- purrr::keep(root, \(item) {
+                    purrr::pluck(item, "type", .default = "<unknown>") == "function_call_output"
+                })
                 if (!purrr::is_empty(function_output_items)) {
                     return("tool")
                 }
@@ -725,7 +702,7 @@ OpenAI_Responses <- R6::R6Class( # nolint
                 if (!purrr::is_empty(message_item)) {
                     contents <- purrr::pluck(message_item, 1, "content") |>
                         purrr::keep(\(item) purrr::pluck(item, "type") %in% c("input_text", "output_text"))
-                    
+
                     if (purrr::is_empty(contents)) {
                         return(NULL)
                     }
@@ -737,10 +714,14 @@ OpenAI_Responses <- R6::R6Class( # nolint
 
         extract_content_text = function(root) {
             contents <- private$extract_content(root)
-            if (purrr::is_empty(contents)) return(NULL)
+            if (purrr::is_empty(contents)) {
+                return(NULL)
+            }
 
             contents_text <- purrr::map_chr(contents, "text")
-            if (purrr::is_empty(contents_text)) return(NULL)
+            if (purrr::is_empty(contents_text)) {
+                return(NULL)
+            }
 
             return(paste0(contents_text, collapse = ""))
         },
@@ -757,7 +738,7 @@ OpenAI_Responses <- R6::R6Class( # nolint
                 if (!purrr::is_empty(reasoning_items)) {
                     reasoning <- purrr::pluck(reasoning_items, 1, "summary") |>
                         purrr::keep(\(item) purrr::pluck(item, "type") %in% c("summary_text"))
-                    
+
                     if (purrr::is_empty(reasoning)) {
                         return(NULL)
                     }
@@ -769,10 +750,14 @@ OpenAI_Responses <- R6::R6Class( # nolint
 
         extract_reasoning_text = function(root) {
             reasoning <- private$extract_reasoning(root)
-            if (purrr::is_empty(reasoning)) return(NULL)
+            if (purrr::is_empty(reasoning)) {
+                return(NULL)
+            }
 
             reasoning_text <- purrr::map_chr(reasoning, "text")
-            if (purrr::is_empty(reasoning_text)) return(NULL)
+            if (purrr::is_empty(reasoning_text)) {
+                return(NULL)
+            }
 
             return(paste0(reasoning_text, collapse = ""))
         },
@@ -784,10 +769,9 @@ OpenAI_Responses <- R6::R6Class( # nolint
                 return(NULL)
             }
 
-            tool_calls <- purrr::keep(
-                root, 
-                \(item) purrr::pluck(item, "type", .default = "<unknown>") == "function_call"
-            )
+            tool_calls <- purrr::keep(root, \(item) {
+                purrr::pluck(item, "type", .default = "<unknown>") == "function_call"
+            })
             if (purrr::is_empty(tool_calls)) {
                 return(NULL)
             }
@@ -800,7 +784,9 @@ OpenAI_Responses <- R6::R6Class( # nolint
 
         extract_tool_call_args = function(tool_call) {
             args <- purrr::pluck(tool_call, "arguments")
-            if (is.null(args) || purrr::is_empty(args)) return(NULL)
+            if (is.null(args) || purrr::is_empty(args)) {
+                return(NULL)
+            }
 
             jsonlite::fromJSON(args, simplifyDataFrame = FALSE)
         },
@@ -810,12 +796,16 @@ OpenAI_Responses <- R6::R6Class( # nolint
                 return(root)
             }
 
-            purrr::keep(root, \(item) !is.null(purrr::pluck(item, "type")) && purrr::pluck(item, "type") == "function_call_output")
+            purrr::keep(root, \(item) {
+                !is.null(purrr::pluck(item, "type")) && purrr::pluck(item, "type") == "function_call_output"
+            })
         },
 
         extract_tool_result_content = function(tool_result) {
             content <- purrr::pluck(tool_result, "output")
-            if (is.null(content) || purrr::is_empty(content)) return(NULL)
+            if (is.null(content) || purrr::is_empty(content)) {
+                return(NULL)
+            }
 
             jsonlite::fromJSON(content, simplifyVector = FALSE)
         },
@@ -831,13 +821,12 @@ OpenAI_Responses <- R6::R6Class( # nolint
 
         extract_generated_code = function(root) {
             code_items <- purrr::keep(root, \(item) purrr::pluck(item, "type") == "code_interpreter_call")
-            if (purrr::is_empty(code_items)) return(NULL)
+            if (purrr::is_empty(code_items)) {
+                return(NULL)
+            }
 
             purrr::map(code_items, \(item) {
-                list(
-                    code = purrr::pluck(item, "code"),
-                    language = "python"
-                )
+                list(code = purrr::pluck(item, "code"), language = "python")
             })
         },
 
@@ -918,11 +907,7 @@ OpenAI_Responses <- R6::R6Class( # nolint
             file_citations <- private$extract_file_citations(root)
             web_sources <- private$extract_web_sources(root)
 
-            return(list3(
-                annotations = annotations, 
-                file_citations = file_citations,
-                web_sources = web_sources
-            ))
+            return(list3(annotations = annotations, file_citations = file_citations, web_sources = web_sources))
         },
 
         extract_generated_files = function(root) {
@@ -955,12 +940,7 @@ OpenAI_Responses <- R6::R6Class( # nolint
             }
 
             saved_paths <- purrr::map_chr(files, \(file_meta) {
-                self$download_container_file(
-                    file_meta$container_id,
-                    file_meta$file_id,
-                    dest_path,
-                    overwrite
-                )
+                self$download_container_file(file_meta$container_id, file_meta$file_id, dest_path, overwrite)
             })
 
             invisible(saved_paths)
@@ -981,7 +961,9 @@ OpenAI_Responses <- R6::R6Class( # nolint
         extract_tool_definitions = function(entry_data) {
             # entry_data is query_data from session_history
             tools <- purrr::pluck(entry_data, "tools")
-            if (is.null(tools) || purrr::is_empty(tools)) return(NULL)
+            if (is.null(tools) || purrr::is_empty(tools)) {
+                return(NULL)
+            }
 
             normalized_tools <- purrr::map(tools, \(tool) {
                 # Check client tools first (precedence over server-side tools)
@@ -997,19 +979,17 @@ OpenAI_Responses <- R6::R6Class( # nolint
                     ))
                 } else if (is_server_tool(tool, self$server_tools)) {
                     tool_name <- get_server_tool_name(tool)
-                    return(list(
-                        name = tool_name,
-                        description = NULL,
-                        type = "server",
-                        parameters = character(0)
-                    ))
+                    return(list(name = tool_name, description = NULL, type = "server", parameters = character(0)))
                 } else {
                     cli::cli_alert_danger("[{self$provider_name}] Invalid tool: {.field {tool}}")
                     return(NULL)
                 }
-            }) |> purrr::compact()
+            }) |>
+                purrr::compact()
 
-            if (purrr::is_empty(normalized_tools)) return(NULL)
+            if (purrr::is_empty(normalized_tools)) {
+                return(NULL)
+            }
 
             return(normalized_tools)
         },

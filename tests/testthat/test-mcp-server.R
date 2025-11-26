@@ -52,31 +52,17 @@ test_that("McpServer can add tools with .fn field", {
 test_that("McpServer validates handler is a function", {
     server <- argent:::McpServer$new(name = "test", version = "1.0.0")
 
-    tool_def <- tool(
-        name = "test_tool",
-        description = "Test",
-        x = "string* Input"
-    )
+    tool_def <- tool(name = "test_tool", description = "Test", x = "string* Input")
 
-    expect_error(
-        server$add_tool(tool_def, handler = "not_a_function"),
-        "must be a function"
-    )
+    expect_error(server$add_tool(tool_def, handler = "not_a_function"), "must be a function")
 })
 
 test_that("McpServer requires handler if .fn not in tool_def", {
     server <- argent:::McpServer$new(name = "test", version = "1.0.0")
 
-    tool_def <- tool(
-        name = "test_tool",
-        description = "Test",
-        x = "string* Input"
-    )
+    tool_def <- tool(name = "test_tool", description = "Test", x = "string* Input")
 
-    expect_error(
-        server$add_tool(tool_def),
-        "handler.*must be provided"
-    )
+    expect_error(server$add_tool(tool_def), "handler.*must be provided")
 })
 
 test_that("McpServer tools can be executed manually", {
@@ -121,10 +107,7 @@ test_that("mcp_error creates structured error response", {
 })
 
 test_that("mcp_success creates structured success response", {
-    success <- argent:::mcp_success(
-        data = list(result = "OK"),
-        warning = "This is a deprecation warning"
-    )
+    success <- argent:::mcp_success(data = list(result = "OK"), warning = "This is a deprecation warning")
 
     expect_s3_class(success, "mcp_success")
     expect_true(success$.success)

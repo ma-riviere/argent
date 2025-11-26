@@ -1,19 +1,19 @@
 #' Parent class for OpenAI API clients (Responses, Chat Completions, Assistants)
 #'
 #' @description
-#' Parent class for OpenAI API clients (Responses, Chat Completions, Assistants). 
+#' Parent class for OpenAI API clients (Responses, Chat Completions, Assistants).
 #' Provides shared infrastructure for file management, vector stores, and API requests.
-#' This class is inherited by OpenAI_Chat, OpenAI_Responses, and OpenAI_Assistant 
+#' This class is inherited by OpenAI_Chat, OpenAI_Responses, and OpenAI_Assistant
 #' to provide consistent interfaces across different OpenAI API clients.
 #'
 #' @keywords internal
-OpenAI <- R6::R6Class( # nolint
+OpenAI <- R6::R6Class(
+    # nolint
     classname = "OpenAI",
     inherit = Provider,
     public = list(
-
         # ------🔺 INIT --------------------------------------------------------
-        
+
         #' @description
         #' Initialize a new OpenAI base client
         #' @param base_url Character. Base URL for API (default: "https://api.openai.com")
@@ -167,7 +167,7 @@ OpenAI <- R6::R6Class( # nolint
         #' @return A data frame of assistants.
         list_assistants = function() {
             private$list(paste0(self$base_url, "/v1/assistants")) |>
-                dplyr::mutate(created_at = lubridate::as_datetime(created_at)) |> 
+                dplyr::mutate(created_at = lubridate::as_datetime(created_at)) |>
                 dplyr::arrange(dplyr::desc(created_at), id)
         },
 
@@ -245,21 +245,16 @@ OpenAI <- R6::R6Class( # nolint
                 paste0(self$base_url, "/v1/files"),
                 headers = list(`Content-Type` = "multipart/form-data")
             ) |>
-                httr2::req_body_multipart(
-                    purpose = purpose,
-                    file = curl::form_file(file_path, name = file_name)
-                ) |>
+                httr2::req_body_multipart(purpose = purpose, file = curl::form_file(file_path, name = file_name)) |>
                 httr2::req_perform() |>
                 httr2::resp_body_json()
 
             # Check for API errors in response
             if ("error" %in% names(result)) {
-                cli::cli_abort(
-                    c(
-                        "[OpenAI] File upload failed: {result$error$message}",
-                        "i" = "Error type: {result$error$type}"
-                    )
-                )
+                cli::cli_abort(c(
+                    "[OpenAI] File upload failed: {result$error$message}",
+                    "i" = "Error type: {result$error$type}"
+                ))
             }
 
             cli::cli_alert_success("[OpenAI] File uploaded: {result$id}")
@@ -339,7 +334,7 @@ OpenAI <- R6::R6Class( # nolint
             }
 
             private$list(endpoint) |>
-                dplyr::mutate(created_at = lubridate::as_datetime(created_at)) |> 
+                dplyr::mutate(created_at = lubridate::as_datetime(created_at)) |>
                 dplyr::arrange(dplyr::desc(created_at), id)
         },
 
@@ -422,15 +417,13 @@ OpenAI <- R6::R6Class( # nolint
             file_data <- self$get_file(file_id)
 
             if (file_data$purpose == "assistants") {
-                cli::cli_abort(
-                    "[OpenAI] Files with purpose 'assistants' cannot be retrieved. File ID: {file_id}"
-                )
+                cli::cli_abort("[OpenAI] Files with purpose 'assistants' cannot be retrieved. File ID: {file_id}")
             }
 
             return(
-                private$base_request(paste0(self$base_url, "/v1/files/", file_id, "/content"))
-                |> httr2::req_perform()
-                |> httr2::resp_body_string()
+                private$base_request(paste0(self$base_url, "/v1/files/", file_id, "/content")) |>
+                    httr2::req_perform() |>
+                    httr2::resp_body_string()
             )
         },
 
@@ -465,9 +458,7 @@ OpenAI <- R6::R6Class( # nolint
             file_data <- self$get_file(file_id)
 
             if (file_data$purpose == "assistants") {
-                cli::cli_abort(
-                    "[OpenAI] Files with purpose 'assistants' cannot be downloaded. File ID: {file_id}"
-                )
+                cli::cli_abort("[OpenAI] Files with purpose 'assistants' cannot be downloaded. File ID: {file_id}")
             }
 
             # Code interpreter files may have paths like "sandbox:/mnt/data/file.csv" or "/mnt/data/file.csv"
@@ -544,8 +535,7 @@ OpenAI <- R6::R6Class( # nolint
                 return(data.frame())
             }
 
-            purrr::map(file_ids, self$delete_file) |> 
-                purrr::list_rbind()
+            purrr::map(file_ids, self$delete_file) |> purrr::list_rbind()
         },
 
         #' @description
@@ -579,7 +569,6 @@ OpenAI <- R6::R6Class( # nolint
 
             counter <- 1
             while (store$status != "completed") {
-
                 counter <- counter + 1
                 Sys.sleep(1)
 
@@ -610,11 +599,11 @@ OpenAI <- R6::R6Class( # nolint
         #' List all vector stores.
         #' @return A data frame of vector stores.
         list_stores = function() {
-            private$list(paste0(self$base_url, "/v1/vector_stores")) |> 
-                dplyr::mutate(created_at = lubridate::as_datetime(created_at)) |> 
+            private$list(paste0(self$base_url, "/v1/vector_stores")) |>
+                dplyr::mutate(created_at = lubridate::as_datetime(created_at)) |>
                 dplyr::arrange(dplyr::desc(created_at), id)
         },
-        
+
         #' @description
         #' Find a vector store matching criteria.
         #' @param ... Named arguments for filtering.
@@ -630,10 +619,7 @@ OpenAI <- R6::R6Class( # nolint
         #' @param new_name Character. The new name of the vector store.
         #' @return A list containing information about the updated vector store.
         update_store = function(store_id, new_name) {
-            private$request(
-                paste0(self$base_url, "/v1/vector_stores/", store_id),
-                list(name = new_name)
-            )
+            private$request(paste0(self$base_url, "/v1/vector_stores/", store_id), list(name = new_name))
         },
 
         #' @description
@@ -658,8 +644,7 @@ OpenAI <- R6::R6Class( # nolint
                 return(data.frame())
             }
 
-            purrr::map(store_ids, self$delete_store) |>
-                purrr::list_rbind()
+            purrr::map(store_ids, self$delete_store) |> purrr::list_rbind()
         },
 
         #' @description
@@ -678,10 +663,7 @@ OpenAI <- R6::R6Class( # nolint
             files_deletion_res <- self$delete_all_files_from_store(store_id)
             store_deletion_res <- self$delete_store(store_id)
 
-            return(list(
-                files = files_deletion_res,
-                store = store_deletion_res
-            ))
+            return(list(files = files_deletion_res, store = store_deletion_res))
         },
 
         # ------🔺 FILES IN STORES ---------------------------------------------
@@ -692,12 +674,10 @@ OpenAI <- R6::R6Class( # nolint
         #' @param file_id Character. The ID of the file.
         #' @return A list containing information about the file in the vector store.
         add_file_to_store = function(store_id, file_id) {
-
             file_in_store <- private$add_file_to_store_(store_id, file_id)
 
             counter <- 0
             while (file_in_store$status != "completed") {
-
                 counter <- counter + 1
                 Sys.sleep(1)
 
@@ -727,8 +707,8 @@ OpenAI <- R6::R6Class( # nolint
         #' @param store_id Character. The ID of the vector store.
         #' @return A data frame of files in the vector store.
         list_files_in_store = function(store_id) {
-            private$list(paste0(self$base_url, "/v1/vector_stores/", store_id, "/files")) |> 
-                dplyr::mutate(created_at = lubridate::as_datetime(created_at)) |> 
+            private$list(paste0(self$base_url, "/v1/vector_stores/", store_id, "/files")) |>
+                dplyr::mutate(created_at = lubridate::as_datetime(created_at)) |>
                 dplyr::arrange(dplyr::desc(created_at), id)
         },
 
@@ -859,10 +839,7 @@ OpenAI <- R6::R6Class( # nolint
 
         # Add a file to a vector store (internal method without polling)
         add_file_to_store_ = function(store_id, file_id) {
-            private$request(
-                paste0(self$base_url, "/v1/vector_stores/", store_id, "/files"),
-                list(file_id = file_id)
-            )
+            private$request(paste0(self$base_url, "/v1/vector_stores/", store_id, "/files"), list(file_id = file_id))
         }
     )
 )
@@ -902,9 +879,7 @@ as_schema_openai <- function(output_schema) {
     } else if (!is.null(output_schema$schema)) {
         schema_to_use <- output_schema$schema
     } else {
-        cli::cli_abort(
-            "[{self$provider_name}] output_schema needs one of {.field {c('args_schema', 'schema')}}"
-        )
+        cli::cli_abort("[{self$provider_name}] output_schema needs one of {.field {c('args_schema', 'schema')}}")
     }
 
     list3(

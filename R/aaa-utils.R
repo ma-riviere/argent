@@ -72,7 +72,7 @@ named_list <- function(...) {
 flat_list <- function(...) {
     dots <- rlang::list2(...)
     result <- list()
-    
+
     for (el in dots) {
         if (is.list(el) && is.null(names(el))) {
             result <- c(result, flat_list(!!!el))
@@ -80,7 +80,7 @@ flat_list <- function(...) {
             result <- c(result, list(el))
         }
     }
-    
+
     return(result)
 }
 
