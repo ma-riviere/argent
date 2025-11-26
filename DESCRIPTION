@@ -41,6 +41,7 @@ Imports:
     xml2,
     yaml
 Suggests:
+    callr,
     rvest,
     pdftools,
     magick,

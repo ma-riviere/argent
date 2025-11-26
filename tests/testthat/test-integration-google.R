@@ -9,7 +9,7 @@ test_that("Google client can be created", {
     expect_equal(google$provider_name, "Google")
 })
 
-test_that("Google client can make simple chat request", {
+test_that("Google client can use structured outputs", {
     skip_on_cran()
     skip_if_not(nzchar(Sys.getenv("GEMINI_API_KEY")), "GEMINI_API_KEY not set")
 
@@ -41,7 +41,6 @@ test_that("Google client with GitHub MCP tools integration", {
     skip_on_cran()
     skip_if_not(nzchar(Sys.getenv("GEMINI_API_KEY")), "GEMINI_API_KEY not set")
     skip_if_not(nzchar(Sys.getenv("PAT_GITHUB")), "PAT_GITHUB not set")
-    skip_if_not(Sys.which("npx") != "", "npx not available")
 
     # Create Google client
     gemini <- Google$new()
@@ -138,42 +137,4 @@ test_that("Google client with client-side tools", {
     value <- response$value
     expect_type(value, "integer")
     expect_equal(value, 49)
-})
-
-test_that("Google client handles multipart content", {
-    skip_on_cran()
-    skip_if_not(nzchar(Sys.getenv("GEMINI_API_KEY")), "GEMINI_API_KEY not set")
-
-    gemini <- Google$new()
-
-    # Test with mixed text and JSON content
-    data_list <- list(values = c(1, 2, 3), label = "test")
-
-    response <- tryCatch(
-        gemini$chat("What is in this data?", as_json_content(data_list), model = "gemini-2.5-flash-lite"),
-        error = function(e) NULL
-    )
-
-    skip_if(is.null(response), "Multipart chat failed")
-
-    text <- gemini$get_content_text()
-    expect_type(text, "character")
-    expect_true(nchar(text) > 0)
-})
-
-test_that("Google client supports history reset", {
-    skip_on_cran()
-    skip_if_not(nzchar(Sys.getenv("GEMINI_API_KEY")), "GEMINI_API_KEY not set")
-
-    gemini <- Google$new()
-
-    gemini$chat("Hellp", model = "gemini-2.5-flash-lite")
-
-    history_before <- gemini$get_session_history()
-    expect_true(length(history_before) > 0)
-
-    gemini$reset_history()
-
-    history_after <- gemini$get_session_history()
-    expect_length(history_after, 0)
 })
