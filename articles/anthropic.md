@@ -79,14 +79,16 @@ web_fetch <- function(url) {
     #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.
     #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
 
-    trafilatura_installed <- tryCatch({
-        system("which trafilatura", intern = TRUE, ignore.stderr = TRUE)
-        return(TRUE)
-    },
-    warning = function(e) {
-        cli::cli_alert_warning("trafilatura is not installed. Install with: {.code pip install trafilatura}")
-        return(FALSE)
-    })
+    trafilatura_installed <- tryCatch(
+        {
+            system("which trafilatura", intern = TRUE, ignore.stderr = TRUE)
+            return(TRUE)
+        },
+        warning = function(e) {
+            cli::cli_alert_warning("trafilatura is not installed. Install with: {.code pip install trafilatura}")
+            return(FALSE)
+        }
+    )
 
     if (trafilatura_installed) {
         res <- web_fetch_trafilatura(url)
@@ -97,8 +99,12 @@ web_fetch <- function(url) {
             "There was an error while loading",
             "404"
         )
-        if (is.null(res) || is.na(res) || nchar(res) == 0 ||
-                any(stringr::str_detect(res, stringr::fixed(could_not_fetch, ignore_case = TRUE)))) {
+        if (
+            is.null(res) ||
+                is.na(res) ||
+                nchar(res) == 0 ||
+                any(stringr::str_detect(res, stringr::fixed(could_not_fetch, ignore_case = TRUE)))
+        ) {
             return(web_fetch_rvest(url))
         }
         return(res)
@@ -108,42 +114,106 @@ web_fetch <- function(url) {
 }
 
 web_fetch_trafilatura <- function(url) {
-    tryCatch({
-        res <- paste0("trafilatura -u ", url, " --markdown --no-comments --links ") |>
-            system(intern = TRUE) |>
-            purrr::keep(nzchar) |>
-            paste0(collapse = "\n")
+    tryCatch(
+        {
+            res <- paste0("trafilatura -u ", url, " --markdown --no-comments --links ") |>
+                system(intern = TRUE) |>
+                purrr::keep(nzchar) |>
+                paste0(collapse = "\n")
 
-        return(res)
-    },
-    error = function(e) {
-        return("Impossible to fetch the contents of this web page. It might not allow scraping")
-    })
+            return(res)
+        },
+        error = function(e) {
+            return("Impossible to fetch the contents of this web page. It might not allow scraping")
+        }
+    )
 }
 
 web_fetch_rvest <- function(url) {
     # We lose quite a bit of information with this approach, but properly extracting all this content would be a pain.
     tags_to_ignore <- c(
-        "a", "script", "code", "img", "svg", "footer", "g", "path", "polygon", "label", "button", "form", "input",
-        "select", "option", "optgroup", "datalist", "textarea", "fieldset", "legend", "output", "progress", "meter",
-        "time", "details", "summary", "dialog", "menu", "menuitem", "command", "keygen", "embed", "object", "param",
-        "video", "audio", "track", "source", "style", "link", "meta", "noscript", "iframe", "canvas", "map", "area",
-        "math", "col", "colgroup", "dl", "dt", "dd", "hr", "pre", "address", "figure", "figcaption",
-        "dfn", "em", "kbd", "samp", "var", "del", "ins", "mark", "circle"
+        "a",
+        "script",
+        "code",
+        "img",
+        "svg",
+        "footer",
+        "g",
+        "path",
+        "polygon",
+        "label",
+        "button",
+        "form",
+        "input",
+        "select",
+        "option",
+        "optgroup",
+        "datalist",
+        "textarea",
+        "fieldset",
+        "legend",
+        "output",
+        "progress",
+        "meter",
+        "time",
+        "details",
+        "summary",
+        "dialog",
+        "menu",
+        "menuitem",
+        "command",
+        "keygen",
+        "embed",
+        "object",
+        "param",
+        "video",
+        "audio",
+        "track",
+        "source",
+        "style",
+        "link",
+        "meta",
+        "noscript",
+        "iframe",
+        "canvas",
+        "map",
+        "area",
+        "math",
+        "col",
+        "colgroup",
+        "dl",
+        "dt",
+        "dd",
+        "hr",
+        "pre",
+        "address",
+        "figure",
+        "figcaption",
+        "dfn",
+        "em",
+        "kbd",
+        "samp",
+        "var",
+        "del",
+        "ins",
+        "mark",
+        "circle"
     )
 
     remove_tags <- function(xml, tags) {
-        purrr::walk(tags, \(tag) purrr::walk(xml2::xml_find_all(xml, paste0(".//", tag)), \(node) xml2::xml_remove(node)))
+        purrr::walk(tags, \(tag) {
+            purrr::walk(xml2::xml_find_all(xml, paste0(".//", tag)), \(node) xml2::xml_remove(node))
+        })
         return(xml)
     }
     cleaned_contents <- tryCatch(
-        rvest::read_html(url)
-        |> rvest::html_element("body")
-        |> remove_tags(tags_to_ignore)
-        |> rvest::html_children()
-        |> rvest::html_text2()
-        |> purrr::discard(\(x) x == "")
-        |> paste0(collapse = "\n\n"),
+        rvest::read_html(url) |>
+            rvest::html_element("body") |>
+            remove_tags(tags_to_ignore) |>
+            rvest::html_children() |>
+            rvest::html_text2() |>
+            purrr::discard(\(x) x == "") |>
+            paste0(collapse = "\n\n"),
         error = \(e) return("")
     )
     return(cleaned_contents)
@@ -155,29 +225,36 @@ web_crawl <- function(url) {
     #' @description Crawl a website/page to discover all available pages and their URLs. Returns a list of URLs found on the website by following sitemaps and internal links. Use this to explore the structure of a website or find specific pages before fetching their content. This method will only return internal links (matching the domain name of the base URL).
     #' @param url:string* The base URL of the website to crawl (e.g., "https://example.com"). Must be a valid HTTP/HTTPS URL. Clean it first if it's not a proper URL (e.g. 'https://github.com/tidyverse/ellmer/releases"}' -> https://github.com/tidyverse/ellmer/releases)
 
-    trafilatura_installed <- tryCatch({
-        system("which trafilatura", intern = TRUE, ignore.stderr = TRUE)
-        return(TRUE)
-    },
-    warning = function(e) {
-        cli::cli_alert_warning("trafilatura is not installed. Install with: {.code pip install trafilatura}")
-        return(FALSE)
-    })
+    trafilatura_installed <- tryCatch(
+        {
+            system("which trafilatura", intern = TRUE, ignore.stderr = TRUE)
+            return(TRUE)
+        },
+        warning = function(e) {
+            cli::cli_alert_warning("trafilatura is not installed. Install with: {.code pip install trafilatura}")
+            return(FALSE)
+        }
+    )
 
     if (!trafilatura_installed) {
-        return("Impossible to crawl the website. trafilatura is not installed. Install with: {.code pip install trafilatura}")
+        return(
+            "Impossible to crawl the website. trafilatura is not installed. Install with: {.code pip install trafilatura}"
+        )
     }
 
     get_domain_name <- \(x) sub("^(?:https?://)?(?:www\\.)?([^/]+).*$", "\\1", x, perl = TRUE)
 
-    tryCatch({
-        res <- paste0("trafilatura --sitemap '", url, "' --url-filter '", get_domain_name(url), "' --list") |>
-            system(intern = TRUE) |>
-            jsonlite::toJSON(pretty = FALSE, auto_unbox = TRUE)
-        return(res)
-    }, error = function(e) {
-        return("Impossible to fetch the contents of this web page. It might not allow scraping")
-    })
+    tryCatch(
+        {
+            res <- paste0("trafilatura --sitemap '", url, "' --url-filter '", get_domain_name(url), "' --list") |>
+                system(intern = TRUE) |>
+                jsonlite::toJSON(pretty = FALSE, auto_unbox = TRUE)
+            return(res)
+        },
+        error = function(e) {
+            return("Impossible to fetch the contents of this web page. It might not allow scraping")
+        }
+    )
 }
 ```
 

@@ -31,9 +31,13 @@
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-advanced-use" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Advanced Use</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-advanced-use"><li><a class="dropdown-item" href="../articles/advanced-rag.html">RAG with `ragnar`</a></li>
-    <li><a class="dropdown-item" href="../articles/advanced-mcp.html">Using MCP Servers</a></li>
-    <li><a class="dropdown-item" href="../articles/advanced-argentic-workflow.html">Advanced Argentic Workflow</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-advanced-use"><li><a class="dropdown-item" href="../articles/basic-rag.html">RAG with `ragnar`</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>MCP Servers</h6></li>
+    <li><a class="dropdown-item" href="../articles/mcp-client.html">Connecting to MCP Servers</a></li>
+    <li><a class="dropdown-item" href="../articles/mcp-server.html">Creating MCP Servers</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/argentic-workflow.html">Advanced Argentic Workflow</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -168,14 +172,21 @@
 
       <dl><dt>
 
-          <code><a href="tool_definitions.html">as_tool()</a></code> <code><a href="tool_definitions.html">tool()</a></code> <code><a href="tool_definitions.html">schema()</a></code>
+          <code><a href="tool_definitions.html">tool()</a></code> <code><a href="tool_definitions.html">schema()</a></code>
 
         </dt>
-        <dd>Generate tools and schemas definitions from functions annotations, or direct specification</dd>
+        <dd>Generate tools and schemas definitions from direct specification</dd>
+
+        <dt>
+
+          <code><a href="as_tool.html">as_tool()</a></code>
+
+        </dt>
+        <dd>Generate tools and schemas definitions from functions annotations</dd>
       </dl></div><div class="section level2">
 
-      <h3 id="mcp-integration">MCP Integration<a class="anchor" aria-label="anchor" href="#mcp-integration"></a></h3>
-      <div class="section-desc"><p>Functions for working with Model Context Protocol servers</p></div>
+      <h3 id="mcp-client">MCP Client<a class="anchor" aria-label="anchor" href="#mcp-client"></a></h3>
+      <div class="section-desc"><p>Functions for connecting to external MCP servers</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -216,6 +227,29 @@
 
         </dt>
         <dd>Get an MCP prompt</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="mcp-server">MCP Server<a class="anchor" aria-label="anchor" href="#mcp-server"></a></h3>
+      <div class="section-desc"><p>Functions for creating your own MCP servers</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="mcp_serve_http.html">mcp_serve_http()</a></code>
+
+        </dt>
+        <dd>Create and serve MCP server from file over HTTP</dd>
+
+        <dt>
+
+          <code><a href="mcp_serve_stdio.html">mcp_serve_stdio()</a></code>
+
+        </dt>
+        <dd>Create and serve MCP server from file over stdio</dd>
       </dl></div><div class="section level2">
 
       <h3 id="helpers">Helpers<a class="anchor" aria-label="anchor" href="#helpers"></a></h3>

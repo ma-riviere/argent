@@ -173,8 +173,7 @@ blocks, listening for JSON-RPC requests on POST /.
 
 - `silent`:
 
-  Logical. Whether to suppress startup messages (default: FALSE) Format
-  a JSON-RPC response
+  Logical. Whether to suppress startup messages (default: FALSE)
 
 ------------------------------------------------------------------------
 

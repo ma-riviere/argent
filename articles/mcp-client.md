@@ -1,0 +1,236 @@
+# MCP: Connecting to MCP Servers
+
+## Introduction
+
+The Model Context Protocol (MCP) enables LLMs to securely interact with
+external tools and data sources. This vignette demonstrates how to
+connect to MCP servers with argent to extend your AI agent’s
+capabilities.
+
+MCP (Model Context Protocol) is an open protocol that standardizes how
+applications provide context to LLMs. MCP servers expose three main
+primitives:
+
+- **Tools**: Executable functions the LLM can call
+- **Resources**: File-like structured data the LLM can access
+- **Prompts**: Predefined templates for interactions
+
+There are two main types of MCP servers: *HTTP* and *stdio*. HTTP
+servers are typically used for cloud-based services like GitHub, while
+stdio servers are typically used for local services like Docker or npx.
+Both types of MCP servers can be used with `argent`.
+
+## Setup
+
+``` r
+library(argent)
+```
+
+## Basic Usage
+
+### Using an ‘HTTP’ MCP Server
+
+Let’s look at the GitHub MCP server as an example. It is a HTTP server
+that can be used to interact with the GitHub API.
+
+``` r
+github_mcp_client <- mcp_connect(
+    name = "github",
+    type = "http",
+    url = "https://api.githubcopilot.com/mcp",
+    headers = list(Authorization = paste("Bearer", Sys.getenv("GITHUB_PAT")))
+)
+```
+
+Then, we can get the tools we want from the GitHub MCP server:
+
+``` r
+github_mcp_tools <- mcp_tools(github_mcp_client, tools = c("get_file_contents", "search_code"))
+```
+
+Finally, we can call the `get_file_contents` tool manually to see if it
+works:
+
+``` r
+execute_mcp_tool(
+    tool_def = get_mcp_tool(github_mcp_tools, "get_file_contents"),
+    arguments = list(owner = "tidyverse", repo = "ellmer", path = "/", ref = "main")
+)
+```
+
+### Using a ‘stdio’ MCP Server
+
+Let’s look at the BTW MCP server as an example (which requires the
+[`btw`](https://github.com/posit-dev/btw) package to be installed). It
+is a stdio server that can be used to interact with the `btw` package.
+
+``` r
+btw_mcp_client <- mcp_connect(
+    name = "btw",
+    type = "stdio",
+    command = "Rscript",
+    args = c("-e", "btw::btw_mcp_server(tools = btw::btw_tools(c('docs', 'env', 'ide', 'search', 'session')))")
+)
+```
+
+Then, we can get the tools we want from the `btw` MCP server:
+
+``` r
+btw_mcp_tools <- mcp_tools(
+    btw_mcp_client,
+    tools = c(
+        "btw_tool_session_check_package_installed",
+        "btw_tool_docs_available_vignettes",
+        "btw_tool_docs_package_help_topics",
+        "btw_tool_docs_help_page",
+        "btw_tool_docs_vignette",
+        "btw_tool_session_package_info",
+        "btw_tool_docs_package_help_topics"
+    )
+)
+```
+
+Finally, we can call the `help_topics` tool manually to see if it works:
+
+``` r
+execute_mcp_tool(
+    tool_def = get_mcp_tool(btw_mcp_tools, "btw_tool_docs_package_help_topics"),
+    arguments = list(package_name = "argent", `_intent` = "Vignettes explaining how to use MCP servers with argent")
+)
+```
+
+## Argent + MCP Servers
+
+Let’s use the GitHub MCP server and the BTW MCP server to ask a complex
+question about the `mcptools` and `ellmer` packages.
+
+``` r
+google <- Google$new()
+
+google$chat(
+    "Has 'posit-dev/mcptools' implemented the ability to use HTTP MCP servers with 'ellmer' ?",
+    "Use the `get_file_contents` tool to list the contents of GitHub subdirectories, e.g. with path = '/' or 'dir/'.",
+    "Use the `btw` tools to explore the help pages and vignettes of the local installation of the `mcptools` package.",
+    model = "gemini-2.5-flash",
+    tools = flat_list(github_mcp_tools, btw_mcp_tools)
+)
+```
+
+``` default
+`posit-dev/mcptools` does not directly implement the ability to use HTTP MCP servers with `ellmer`. When `mcptools` acts as an MCP *client* via `ellmer`, it only supports the local (stdio) protocol.
+To connect to remote (HTTP) MCP servers, the `mcptools` documentation recommends using `mcp-remote`, an external tool (a local stdio MCP server) that converts remote HTTP servers to `mcptools`-compatible local ones. This allows `ellmer` (using the stdio protocol) to interact with remote HTTP MCP servers through `mcp-remote`.
+```
+
+`print(google, show_tools = TRUE)`
+
+``` default
+── [ <Google> turns: 8 | Current context: 3786 | Cumulated tokens: 10034 ] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+── user [1611 / 2155] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+Has 'posit-dev/mcptools' implemented the ability to use HTTP MCP servers with 'ellmer' ? Use the `get_file_contents` tool to list the contents of GitHub subdirectories, e.g. with path = '/' or 'dir/'. Use the `btw` tools to explore the help pages and vignettes of the local installation of the `mcptools` package.
+
+── System ──
+
+You are a helpful AI assistant. Use your knowledge, the files you have access to, and the tools at your disposal to answer the user's query. You can use your tools multiple times, but use them sparingly. Make parallel tool calls if relevant to the user's query. Answer the user's query as soon as you have the information necessary to answer. Self-reflect and double-check your answer before responding. If you don't know the answer even after using your tools, say 'I don't know'. If you do not have all the information necessary to use a provided tool, use NA for required arguments. Today's date is 2025-11-24
+
+── Tool Definitions ──
+
+• get_file_contents(owner, path, ref, repo, sha): Get the contents of a file or directory from a GitHub repository
+• search_code(order, page, perPage, query, sort): Fast and precise code search across ALL GitHub repositories using GitHub's native search engine. Best for finding exact symbols, functions,
+  classes, or specific code patterns.
+• btw_tool_docs_package_help_topics(package_name, _intent): Get available help topics for an R package.
+• btw_tool_docs_help_page(package_name, topic, _intent): Get help page from package.
+• btw_tool_docs_available_vignettes(package_name, _intent): List available vignettes for an R package. Vignettes are articles describing key concepts or features of an R package. Returns the
+  listing as a JSON array of `vignette` and `title`. To read a vignette, use `btw_tool_docs_vignette(package_name, vignette)`.
+• btw_tool_docs_vignette(package_name, vignette, _intent): Get a package vignette in plain text.
+• btw_tool_session_check_package_installed(package_name, _intent): Check if a package is installed in the current session.
+• btw_tool_session_package_info(packages, dependencies, _intent): Verify that a specific package is installed, or find out which packages are in use in the current session. As a last resort, this
+  function can also list all installed packages.
+
+── assistant [2155 / 2155] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+── Tool Calls ──
+
+• btw_tool_session_check_package_installed(package_name = "mcptools", _intent = "Check if mcptools is installed locally to access its documentation.")
+
+── tool [1757 / 4021] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• Result from btw_tool_session_check_package_installed:
+
+name: btw_tool_session_check_package_installed
+arguments:
+  package_name: mcptools
+  _intent: Check if mcptools is installed locally to access its documentation.
+result: Package `mcptools` version 0.2.0 is installed.
+
+
+── assistant [1866 / 4021] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+── Tool Calls ──
+
+• btw_tool_docs_package_help_topics(_intent = "List all help topics for mcptools to find relevant documentation on HTTP MCP servers and ellmer.", package_name = "mcptools")
+
+── tool [2040 / 6248] ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• Result from btw_tool_docs_package_help_topics:
+
+name: btw_tool_docs_package_help_topics
+arguments:
+  _intent: List all help topics for mcptools to find relevant documentation on HTTP
+    MCP servers and ellmer.
+  package_name: mcptools
+result: |-
+  [
+    {"topic_id":"client","title":"R as a client: Define ellmer tools from MCP servers","aliases":["client","mcp_tools","mcp_client"]},
+    {"topic_id":"mcptools-package","title":"mcptools: Model Context Protocol Servers and Clients","aliases":["mcptools","mcptools-package"]},
+    {"topic_id":"server","title":"R as a server: Configure R-based tools with LLM-enabled apps","aliases":["server","mcp_server","mcp_session","server"]}
+  ]
+
+
+── assistant [2227 / 6248] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+── Tool Calls ──
+
+• btw_tool_docs_help_page(package_name = "mcptools", _intent = "Get the help page for the 'client' topic in mcptools to understand its functionality with ellmer and MCP servers.", topic = "client")
+
+── tool [3359 / 10034] ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• Result from btw_tool_docs_help_page:
+
+name: btw_tool_docs_help_page
+arguments:
+  package_name: mcptools
+  _intent: Get the help page for the 'client' topic in mcptools to understand its
+    functionality with ellmer and MCP servers.
+  topic: client
+result: |-
+  ## `help(package = "mcptools", "client")`
+
+  ### R as a client: Define ellmer tools from MCP servers
+
+  #### Description
+
+  These functions implement R as an MCP *client*, so that ellmer chats can
+  register functionality from third-party MCP servers such as those listed
+  here: <https://github.com/modelcontextprotocol/servers>.
+
+  `mcp_tools()` fetches tools from MCP servers configured in the mcptools
+  server config file and converts them to a list of tools compatible with
+  the `⁠$set_tools()⁠` method of ellmer::Chat objects.
+
+  #### Usage
+
+  mcp_tools(config = NULL)
+
+  #### Arguments
+
+  |  |  |
+  |----|----|
+  | `config` | A single string indicating the path to the mcptools MCP servers configuration file. If one is not supplied, mcptools will look...
+
+── assistant [3786 / 10034] ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+No, `posit-dev/mcptools` itself does not directly implement the ability to use HTTP MCP servers with 'ellmer'. The `mcp_tools()` function within `mcptools`, which allows R to act as an MCP client via 'ellmer', only implements the local (stdio) protocol. However, `mcptools` recommends using `mcp-remote` (an external tool) as an intermediary. `mcp-remote` is a local (stdio) MCP server that can connect to remote (http) servers, converting them to an `mcptools`-compatible local protocol. This allows `mcptools` to indirectly utilize HTTP MCP servers through `mcp-remote`.
+```

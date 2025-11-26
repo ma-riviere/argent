@@ -51,15 +51,15 @@ Helper functions for processing different types of inputs
 Helper functions to define tools and schemas for structured outputs
 using annotations or direct specification
 
-- [`as_tool()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md)
-  [`tool()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md)
+- [`tool()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md)
   [`schema()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md)
-  : Generate tools and schemas definitions from functions annotations,
-  or direct specification
+  : Generate tools and schemas definitions from direct specification
+- [`as_tool()`](https://ma-riviere.github.io/argent/reference/as_tool.md)
+  : Generate tools and schemas definitions from functions annotations
 
-### MCP Integration
+### MCP Client
 
-Functions for working with Model Context Protocol servers
+Functions for connecting to external MCP servers
 
 - [`mcp_connect()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)
   [`mcp_tools()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)
@@ -75,6 +75,15 @@ Functions for working with Model Context Protocol servers
   : Read an MCP resource
 - [`get_mcp_prompt()`](https://ma-riviere.github.io/argent/reference/get_mcp_prompt.md)
   : Get an MCP prompt
+
+### MCP Server
+
+Functions for creating your own MCP servers
+
+- [`mcp_serve_http()`](https://ma-riviere.github.io/argent/reference/mcp_serve_http.md)
+  : Create and serve MCP server from file over HTTP
+- [`mcp_serve_stdio()`](https://ma-riviere.github.io/argent/reference/mcp_serve_stdio.md)
+  : Create and serve MCP server from file over stdio
 
 ### Helpers
 

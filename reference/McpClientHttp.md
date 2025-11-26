@@ -31,6 +31,8 @@ A client for interacting with remote MCP servers via HTTP.
 
 - [`McpClientHttp$send_request()`](#method-McpClientHttp-send_request)
 
+- [`McpClientHttp$terminate_session()`](#method-McpClientHttp-terminate_session)
+
 - [`McpClientHttp$clone()`](#method-McpClientHttp-clone)
 
 Inherited methods
@@ -91,6 +93,16 @@ Send request via HTTP
 - `is_init`:
 
   Boolean, if TRUE, captures session ID
+
+------------------------------------------------------------------------
+
+### Method `terminate_session()`
+
+Terminate the HTTP session
+
+#### Usage
+
+    McpClientHttp$terminate_session()
 
 ------------------------------------------------------------------------
 

@@ -166,7 +166,7 @@ get_user_info <- function(user_name) {
 ```
 
 We can then call
-[`as_tool()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md)
+[`as_tool()`](https://ma-riviere.github.io/argent/reference/as_tool.md)
 on the function to convert it to a tool using the annotations added
 inside the function’s body (plumber2-style annotations):
 
@@ -378,7 +378,7 @@ gemini$chat(
     model = "gemini-2.5-pro",
     tools = list("google_search"),
     thinking_budget = -1, # Unlimited thinking budget
-    include_thoughts = TRUE, # Google-specific parameter
+    include_thoughts = TRUE,
     output_schema = schema(
         name = "package_info",
         description = "Information about an R package release",
@@ -465,10 +465,7 @@ file_metadata <- gemini$upload_file("https://ma-riviere.com/res/cv.pdf")
 ```
 
 ``` r
-multipart_prompt <- list(
-    "What is my favorite programming language?",
-    as_file_content(file_metadata$name)
-)
+multipart_prompt <- list("What is my favorite programming language?", as_file_content(file_metadata$name))
 
 gemini$chat(!!!multipart_prompt, model = "gemini-2.5-flash")
 ```
@@ -533,11 +530,17 @@ Guides for OpenAI’s three different APIs:
 
 ### Advanced Topics
 
-- [RAG](https://ma-riviere.github.io/argent/articles/advanced-rag.html) -
+- [RAG](https://ma-riviere.github.io/argent/articles/basic-rag.html) -
   How to use `argent` & `ragnar` for RAG
-- [MCP Servers &
-  Tools](https://ma-riviere.github.io/argent/articles/advanced-mcp.html) -
-  How to use MCP server tools with `argent`
+- [MCP: Connecting to MCP
+  Servers](https://ma-riviere.github.io/argent/articles/mcp-client.html) -
+  How to connect to MCP servers with `argent`
+- [MCP: Creating MCP
+  Servers](https://ma-riviere.github.io/argent/articles/mcp-server.html) -
+  How to create your own MCP servers with `argent`
+- [Argentic
+  Workflow](https://ma-riviere.github.io/argent/articles/argentic-workflow.html) -
+  How to use `argent` for an advanced Agentic Workflows
 
 ## Contributing
 

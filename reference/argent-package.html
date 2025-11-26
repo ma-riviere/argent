@@ -43,9 +43,13 @@ and MCP tools, server-side tools, multimodal inputs, and universal structured ou
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-advanced-use" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Advanced Use</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-advanced-use"><li><a class="dropdown-item" href="../articles/advanced-rag.html">RAG with `ragnar`</a></li>
-    <li><a class="dropdown-item" href="../articles/advanced-mcp.html">Using MCP Servers</a></li>
-    <li><a class="dropdown-item" href="../articles/advanced-argentic-workflow.html">Advanced Argentic Workflow</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-advanced-use"><li><a class="dropdown-item" href="../articles/basic-rag.html">RAG with `ragnar`</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>MCP Servers</h6></li>
+    <li><a class="dropdown-item" href="../articles/mcp-client.html">Connecting to MCP Servers</a></li>
+    <li><a class="dropdown-item" href="../articles/mcp-server.html">Creating MCP Servers</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/argentic-workflow.html">Advanced Argentic Workflow</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -181,7 +185,7 @@ providers through a unified interface</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">google</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="st">"What's the weather in Paris, London, and Tokyo?"</span>,</span></span>
-<span class="r-in"><span>  tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">get_weather</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="as_tool.html">as_tool</a></span><span class="op">(</span><span class="va">get_weather</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>

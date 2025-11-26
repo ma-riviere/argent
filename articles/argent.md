@@ -72,14 +72,16 @@ web_fetch <- function(url) {
     #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.
     #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
 
-    trafilatura_installed <- tryCatch({
-        system("which trafilatura", intern = TRUE, ignore.stderr = TRUE)
-        return(TRUE)
-    },
-    warning = function(e) {
-        cli::cli_alert_warning("trafilatura is not installed. Install with: {.code pip install trafilatura}")
-        return(FALSE)
-    })
+    trafilatura_installed <- tryCatch(
+        {
+            system("which trafilatura", intern = TRUE, ignore.stderr = TRUE)
+            return(TRUE)
+        },
+        warning = function(e) {
+            cli::cli_alert_warning("trafilatura is not installed. Install with: {.code pip install trafilatura}")
+            return(FALSE)
+        }
+    )
 
     if (trafilatura_installed) {
         res <- web_fetch_trafilatura(url)
@@ -90,8 +92,12 @@ web_fetch <- function(url) {
             "There was an error while loading",
             "404"
         )
-        if (is.null(res) || is.na(res) || nchar(res) == 0 ||
-                any(stringr::str_detect(res, stringr::fixed(could_not_fetch, ignore_case = TRUE)))) {
+        if (
+            is.null(res) ||
+                is.na(res) ||
+                nchar(res) == 0 ||
+                any(stringr::str_detect(res, stringr::fixed(could_not_fetch, ignore_case = TRUE)))
+        ) {
             return(web_fetch_rvest(url))
         }
         return(res)
@@ -101,42 +107,106 @@ web_fetch <- function(url) {
 }
 
 web_fetch_trafilatura <- function(url) {
-    tryCatch({
-        res <- paste0("trafilatura -u ", url, " --markdown --no-comments --links ") |>
-            system(intern = TRUE) |>
-            purrr::keep(nzchar) |>
-            paste0(collapse = "\n")
+    tryCatch(
+        {
+            res <- paste0("trafilatura -u ", url, " --markdown --no-comments --links ") |>
+                system(intern = TRUE) |>
+                purrr::keep(nzchar) |>
+                paste0(collapse = "\n")
 
-        return(res)
-    },
-    error = function(e) {
-        return("Impossible to fetch the contents of this web page. It might not allow scraping")
-    })
+            return(res)
+        },
+        error = function(e) {
+            return("Impossible to fetch the contents of this web page. It might not allow scraping")
+        }
+    )
 }
 
 web_fetch_rvest <- function(url) {
     # We lose quite a bit of information with this approach, but properly extracting all this content would be a pain.
     tags_to_ignore <- c(
-        "a", "script", "code", "img", "svg", "footer", "g", "path", "polygon", "label", "button", "form", "input",
-        "select", "option", "optgroup", "datalist", "textarea", "fieldset", "legend", "output", "progress", "meter",
-        "time", "details", "summary", "dialog", "menu", "menuitem", "command", "keygen", "embed", "object", "param",
-        "video", "audio", "track", "source", "style", "link", "meta", "noscript", "iframe", "canvas", "map", "area",
-        "math", "col", "colgroup", "dl", "dt", "dd", "hr", "pre", "address", "figure", "figcaption",
-        "dfn", "em", "kbd", "samp", "var", "del", "ins", "mark", "circle"
+        "a",
+        "script",
+        "code",
+        "img",
+        "svg",
+        "footer",
+        "g",
+        "path",
+        "polygon",
+        "label",
+        "button",
+        "form",
+        "input",
+        "select",
+        "option",
+        "optgroup",
+        "datalist",
+        "textarea",
+        "fieldset",
+        "legend",
+        "output",
+        "progress",
+        "meter",
+        "time",
+        "details",
+        "summary",
+        "dialog",
+        "menu",
+        "menuitem",
+        "command",
+        "keygen",
+        "embed",
+        "object",
+        "param",
+        "video",
+        "audio",
+        "track",
+        "source",
+        "style",
+        "link",
+        "meta",
+        "noscript",
+        "iframe",
+        "canvas",
+        "map",
+        "area",
+        "math",
+        "col",
+        "colgroup",
+        "dl",
+        "dt",
+        "dd",
+        "hr",
+        "pre",
+        "address",
+        "figure",
+        "figcaption",
+        "dfn",
+        "em",
+        "kbd",
+        "samp",
+        "var",
+        "del",
+        "ins",
+        "mark",
+        "circle"
     )
 
     remove_tags <- function(xml, tags) {
-        purrr::walk(tags, \(tag) purrr::walk(xml2::xml_find_all(xml, paste0(".//", tag)), \(node) xml2::xml_remove(node)))
+        purrr::walk(tags, \(tag) {
+            purrr::walk(xml2::xml_find_all(xml, paste0(".//", tag)), \(node) xml2::xml_remove(node))
+        })
         return(xml)
     }
     cleaned_contents <- tryCatch(
-        rvest::read_html(url)
-        |> rvest::html_element("body")
-        |> remove_tags(tags_to_ignore)
-        |> rvest::html_children()
-        |> rvest::html_text2()
-        |> purrr::discard(\(x) x == "")
-        |> paste0(collapse = "\n\n"),
+        rvest::read_html(url) |>
+            rvest::html_element("body") |>
+            remove_tags(tags_to_ignore) |>
+            rvest::html_children() |>
+            rvest::html_text2() |>
+            purrr::discard(\(x) x == "") |>
+            paste0(collapse = "\n\n"),
         error = \(e) return("")
     )
     return(cleaned_contents)
@@ -148,29 +218,36 @@ web_crawl <- function(url) {
     #' @description Crawl a website/page to discover all available pages and their URLs. Returns a list of URLs found on the website by following sitemaps and internal links. Use this to explore the structure of a website or find specific pages before fetching their content. This method will only return internal links (matching the domain name of the base URL).
     #' @param url:string* The base URL of the website to crawl (e.g., "https://example.com"). Must be a valid HTTP/HTTPS URL. Clean it first if it's not a proper URL (e.g. 'https://github.com/tidyverse/ellmer/releases"}' -> https://github.com/tidyverse/ellmer/releases)
 
-    trafilatura_installed <- tryCatch({
-        system("which trafilatura", intern = TRUE, ignore.stderr = TRUE)
-        return(TRUE)
-    },
-    warning = function(e) {
-        cli::cli_alert_warning("trafilatura is not installed. Install with: {.code pip install trafilatura}")
-        return(FALSE)
-    })
+    trafilatura_installed <- tryCatch(
+        {
+            system("which trafilatura", intern = TRUE, ignore.stderr = TRUE)
+            return(TRUE)
+        },
+        warning = function(e) {
+            cli::cli_alert_warning("trafilatura is not installed. Install with: {.code pip install trafilatura}")
+            return(FALSE)
+        }
+    )
 
     if (!trafilatura_installed) {
-        return("Impossible to crawl the website. trafilatura is not installed. Install with: {.code pip install trafilatura}")
+        return(
+            "Impossible to crawl the website. trafilatura is not installed. Install with: {.code pip install trafilatura}"
+        )
     }
 
     get_domain_name <- \(x) sub("^(?:https?://)?(?:www\\.)?([^/]+).*$", "\\1", x, perl = TRUE)
 
-    tryCatch({
-        res <- paste0("trafilatura --sitemap '", url, "' --url-filter '", get_domain_name(url), "' --list") |>
-            system(intern = TRUE) |>
-            jsonlite::toJSON(pretty = FALSE, auto_unbox = TRUE)
-        return(res)
-    }, error = function(e) {
-        return("Impossible to fetch the contents of this web page. It might not allow scraping")
-    })
+    tryCatch(
+        {
+            res <- paste0("trafilatura --sitemap '", url, "' --url-filter '", get_domain_name(url), "' --list") |>
+                system(intern = TRUE) |>
+                jsonlite::toJSON(pretty = FALSE, auto_unbox = TRUE)
+            return(res)
+        },
+        error = function(e) {
+            return("Impossible to fetch the contents of this web page. It might not allow scraping")
+        }
+    )
 }
 ```
 
@@ -288,11 +365,7 @@ You can pass any R object to `chat()` as is:
 ``` r
 lm_obj <- lm(body_mass ~ species + sex, data = datasets::penguins)
 
-google_gemini$chat(
-    "What can we deduct from this regression model ?",
-    lm_obj,
-    model = "gemini-2.5-flash"
-)
+gemini$chat("What can we deduct from this regression model ?", lm_obj, model = "gemini-2.5-flash")
 ```
 
 ``` default
@@ -319,10 +392,7 @@ Upload a file and reference it with
 ``` r
 file_metadata <- gemini$upload_file("https://ma-riviere.com/res/cv.pdf")
 
-multipart_prompt <- list(
-    "What are my two favorite frameworks/tools ?",
-    as_file_content(file_metadata$name)
-)
+multipart_prompt <- list("What are my two favorite frameworks/tools ?", as_file_content(file_metadata$name))
 
 gemini$chat(!!!multipart_prompt, model = "gemini-2.5-flash")
 
@@ -385,11 +455,17 @@ Guides for OpenAI’s three different APIs:
 
 #### Advanced Topics
 
-- [RAG](https://ma-riviere.github.io/argent/articles/articles/advanced-rag.md) -
+- [RAG](https://ma-riviere.github.io/argent/articles/articles/basic-rag.md) -
   How to use `argent` & `ragnar` for RAG
-- [MCP Servers &
-  Tools](https://ma-riviere.github.io/argent/articles/articles/advanced-mcp.md) -
-  How to use MCP server tools with `argent`
+- [MCP: Connecting to MCP
+  Servers](https://ma-riviere.github.io/argent/articles/articles/mcp-client.md) -
+  How to connect to MCP servers with `argent`
+- [MCP: Creating MCP
+  Servers](https://ma-riviere.github.io/argent/articles/articles/mcp-server.md) -
+  How to create your own MCP servers with `argent`
+- [Argentic
+  Workflow](https://ma-riviere.github.io/argent/articles/articles/argentic-workflow.md) -
+  How to use `argent` for an advanced Agentic Workflows
 
 ### Other Topics
 
@@ -410,75 +486,47 @@ The chat history maintains a list of messages exchanged between the user
 and the model to be resent at each successive API call.
 
 ``` r
-google_gemini <- Google$new()
+gemini <- Google$new()
 
-google_gemini$chat(
-    prompt = "My name is Alice",
-    model = "gemini-2.5-flash"
-)
-#> [1] "Hello Alice! It's nice to meet you. How can I assist you today?"
+gemini$chat(prompt = "My name is Alice", model = "gemini-2.5-flash")
+#> [1] "Hello Alice. It's nice to meet you."
 
-google_gemini$chat(
-    prompt = "What's my name?",
-    model = "gemini-2.5-flash"
-)
+gemini$chat(prompt = "What's my name?", model = "gemini-2.5-flash")
 #> [1] "Your name is Alice."
 ```
 
 Check the chat history:
 
 ``` r
-cat(yaml::as.yaml(google_gemini$get_chat_history()))
+cat(yaml::as.yaml(gemini$get_chat_history()))
 ```
 
-``` json
-[
-  {
-    "role": "user",
-    "parts": [
-      {
-        "text": "My name is Alice"
-      }
-    ]
-  },
-  {
-    "parts": [
-      {
-        "text": "Hello Alice! It's nice to meet you. How can I assist you today?"
-      }
-    ],
-    "role": "model"
-  },
-  {
-    "role": "user",
-    "parts": [
-      {
-        "text": "What's my name?"
-      }
-    ]
-  },
-  {
-    "parts": [
-      {
-        "text": "Your name is Alice."
-      }
-    ],
-    "role": "model"
-  }
-]
+``` yaml
+- role: user
+  parts:
+  - text: My name is Alice
+- parts:
+  - text: Hello Alice. It's nice to meet you.
+  role: model
+- role: user
+  parts:
+  - text: What's my name?
+- parts:
+  - text: Your name is Alice.
+  role: model
 ```
 
 See the total tokens used at last API call:
 
 ``` r
-google_gemini$get_session_last_token_count() # Total (input + output) tokens used at last API call
-google_gemini$get_session_cumulative_token_count() # Cumulative tokens used in this chat session
+gemini$get_session_last_token_count() # Total (input + output) tokens used at last API call
+gemini$get_session_cumulative_token_count() # Cumulative tokens used in this chat session
 ```
 
 Reset the object’s history:
 
 ``` r
-google_gemini$reset_history()
+gemini$reset_history()
 ```
 
 ##### Automatic History Persistence
@@ -495,12 +543,10 @@ By default, history is automatically saved to timestamped JSON files in
 
 ``` r
 options(
-    argent.history_dir = "data/history/"  # Default
+    argent.history_dir = "data/history/" # Default
 )
 
-google_gemini <- Google$new(
-    auto_save_history = FALSE  # Disable automatic saving
-)
+gemini <- Google$new(auto_save_history = FALSE)
 ```
 
 > **Note**
@@ -512,18 +558,18 @@ google_gemini <- Google$new(
 ##### Loading Previous Conversations
 
 ``` r
-current_history_file_path <- google_gemini$get_history_file_path()
+current_history_file_path <- gemini$get_history_file_path()
 
-google_gemini <- Google$new() # Equivalent of resetting the provider object
+gemini <- Google$new() # Equivalent of resetting the provider object
 
-google_gemini$load_history(current_history_file_path)
+gemini$load_history(current_history_file_path)
 ```
 
 **A neater way to visualize the chat history is to print the provider
 object:**
 
 ``` r
-print(google_gemini)
+print(gemini)
 ```
 
 #### Structured Outputs
@@ -540,10 +586,7 @@ response_schema <- schema(
     field2 = "number Optional numeric field"
 )
 
-result <- provider$chat(
-    "Your question here",
-    output_schema = response_schema
-)
+result <- gemini$chat("Your question here", output_schema = response_schema)
 ```
 
 #### Tool Calling
@@ -561,7 +604,7 @@ my_tool <- tool(
     name = "my_function",
     description = "What the function does",
     arg1 = "string* Required string argument description",
-    fn = my_function  # Store the function with the tool definition
+    fn = my_function # Store the function with the tool definition
 )
 my_tool
 ```
@@ -591,14 +634,11 @@ my_function <- function(arg1) {
 
     return(arg1)
 }
-my_tool <- as_tool(my_function)  # Automatically stores the function in .fn
+my_tool <- as_tool(my_function) # Automatically stores the function in .fn
 ```
 
 And then, use the tool within a chat:
 
 ``` r
-gemini$chat(
-    "Use the tool to answer this",
-    tools = list(my_tool)
-)
+gemini$chat("Use the tool to answer this", tools = list(my_tool))
 ```

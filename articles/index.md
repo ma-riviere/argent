@@ -30,8 +30,10 @@ Guides for different OpenAI API interfaces
 Advanced features and techniques
 
 - [Use-case: RAG with \`argent\` and
-  \`ragnar\`](https://ma-riviere.github.io/argent/articles/advanced-rag.md):
-- [Using MCP Servers with
-  \`argent\`](https://ma-riviere.github.io/argent/articles/advanced-mcp.md):
+  \`ragnar\`](https://ma-riviere.github.io/argent/articles/basic-rag.md):
+- [MCP: Connecting to MCP
+  Servers](https://ma-riviere.github.io/argent/articles/mcp-client.md):
+- [MCP: Creating MCP
+  Servers](https://ma-riviere.github.io/argent/articles/mcp-server.md):
 - [Advanced Agentic
-  Workflows](https://ma-riviere.github.io/argent/articles/advanced-argentic-workflow.md):
+  Workflows](https://ma-riviere.github.io/argent/articles/argentic-workflow.md):

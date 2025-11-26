@@ -1,6 +1,7 @@
 # Execute an MCP tool
 
-Execute an MCP tool
+This is meant to test MCP tools manually, simulating a tool call from an
+LLM.
 
 ## Usage
 

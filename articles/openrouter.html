@@ -60,9 +60,13 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-advanced-use" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Advanced Use</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-advanced-use">
-<li><a class="dropdown-item" href="../articles/advanced-rag.html">RAG with `ragnar`</a></li>
-    <li><a class="dropdown-item" href="../articles/advanced-mcp.html">Using MCP Servers</a></li>
-    <li><a class="dropdown-item" href="../articles/advanced-argentic-workflow.html">Advanced Argentic Workflow</a></li>
+<li><a class="dropdown-item" href="../articles/basic-rag.html">RAG with `ragnar`</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>MCP Servers</h6></li>
+    <li><a class="dropdown-item" href="../articles/mcp-client.html">Connecting to MCP Servers</a></li>
+    <li><a class="dropdown-item" href="../articles/mcp-server.html">Creating MCP Servers</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/argentic-workflow.html">Advanced Argentic Workflow</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -174,14 +178,16 @@
 <span>    <span class="co">#' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.</span></span>
 <span>    <span class="co">#' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.</span></span>
 <span></span>
-<span>    <span class="va">trafilatura_installed</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span><span class="op">{</span></span>
-<span>        <span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"which trafilatura"</span>, intern <span class="op">=</span> <span class="cn">TRUE</span>, ignore.stderr <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span>    <span class="op">}</span>,</span>
-<span>    warning <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
-<span>        <span class="fu">cli</span><span class="fu">::</span><span class="fu"><a href="https://cli.r-lib.org/reference/cli_alert.html" class="external-link">cli_alert_warning</a></span><span class="op">(</span><span class="st">"trafilatura is not installed. Install with: {.code pip install trafilatura}"</span><span class="op">)</span></span>
-<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span>
-<span>    <span class="op">}</span><span class="op">)</span></span>
+<span>    <span class="va">trafilatura_installed</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
+<span>        <span class="op">{</span></span>
+<span>            <span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"which trafilatura"</span>, intern <span class="op">=</span> <span class="cn">TRUE</span>, ignore.stderr <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>            <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span>        <span class="op">}</span>,</span>
+<span>        warning <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="fu">cli</span><span class="fu">::</span><span class="fu"><a href="https://cli.r-lib.org/reference/cli_alert.html" class="external-link">cli_alert_warning</a></span><span class="op">(</span><span class="st">"trafilatura is not installed. Install with: {.code pip install trafilatura}"</span><span class="op">)</span></span>
+<span>            <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span>    <span class="op">)</span></span>
 <span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="va">trafilatura_installed</span><span class="op">)</span> <span class="op">{</span></span>
 <span>        <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">web_fetch_trafilatura</span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
@@ -192,8 +198,12 @@
 <span>            <span class="st">"There was an error while loading"</span>,</span>
 <span>            <span class="st">"404"</span></span>
 <span>        <span class="op">)</span></span>
-<span>        <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span> <span class="op">||</span></span>
-<span>                <span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">res</span>, <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/modifiers.html" class="external-link">fixed</a></span><span class="op">(</span><span class="va">could_not_fetch</span>, ignore_case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span></span>
+<span>            <span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">||</span></span>
+<span>                <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">||</span></span>
+<span>                <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span> <span class="op">||</span></span>
+<span>                <span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">res</span>, <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/modifiers.html" class="external-link">fixed</a></span><span class="op">(</span><span class="va">could_not_fetch</span>, ignore_case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>        <span class="op">)</span> <span class="op">{</span></span>
 <span>            <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">web_fetch_rvest</span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span></span>
 <span>        <span class="op">}</span></span>
 <span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
@@ -203,42 +213,106 @@
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="va">web_fetch_trafilatura</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">url</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span><span class="op">{</span></span>
-<span>        <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"trafilatura -u "</span>, <span class="va">url</span>, <span class="st">" --markdown --no-comments --links "</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>            <span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span>intern <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>            <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/keep.html" class="external-link">keep</a></span><span class="op">(</span><span class="va">nzchar</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>            <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span>collapse <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
+<span>        <span class="op">{</span></span>
+<span>            <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"trafilatura -u "</span>, <span class="va">url</span>, <span class="st">" --markdown --no-comments --links "</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>                <span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span>intern <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>                <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/keep.html" class="external-link">keep</a></span><span class="op">(</span><span class="va">nzchar</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>                <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span>collapse <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span></span>
 <span></span>
-<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
-<span>    <span class="op">}</span>,</span>
-<span>    error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
-<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"Impossible to fetch the contents of this web page. It might not allow scraping"</span><span class="op">)</span></span>
-<span>    <span class="op">}</span><span class="op">)</span></span>
+<span>            <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+<span>        <span class="op">}</span>,</span>
+<span>        error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"Impossible to fetch the contents of this web page. It might not allow scraping"</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span>    <span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="va">web_fetch_rvest</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">url</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="co"># We lose quite a bit of information with this approach, but properly extracting all this content would be a pain.</span></span>
 <span>    <span class="va">tags_to_ignore</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>        <span class="st">"a"</span>, <span class="st">"script"</span>, <span class="st">"code"</span>, <span class="st">"img"</span>, <span class="st">"svg"</span>, <span class="st">"footer"</span>, <span class="st">"g"</span>, <span class="st">"path"</span>, <span class="st">"polygon"</span>, <span class="st">"label"</span>, <span class="st">"button"</span>, <span class="st">"form"</span>, <span class="st">"input"</span>,</span>
-<span>        <span class="st">"select"</span>, <span class="st">"option"</span>, <span class="st">"optgroup"</span>, <span class="st">"datalist"</span>, <span class="st">"textarea"</span>, <span class="st">"fieldset"</span>, <span class="st">"legend"</span>, <span class="st">"output"</span>, <span class="st">"progress"</span>, <span class="st">"meter"</span>,</span>
-<span>        <span class="st">"time"</span>, <span class="st">"details"</span>, <span class="st">"summary"</span>, <span class="st">"dialog"</span>, <span class="st">"menu"</span>, <span class="st">"menuitem"</span>, <span class="st">"command"</span>, <span class="st">"keygen"</span>, <span class="st">"embed"</span>, <span class="st">"object"</span>, <span class="st">"param"</span>,</span>
-<span>        <span class="st">"video"</span>, <span class="st">"audio"</span>, <span class="st">"track"</span>, <span class="st">"source"</span>, <span class="st">"style"</span>, <span class="st">"link"</span>, <span class="st">"meta"</span>, <span class="st">"noscript"</span>, <span class="st">"iframe"</span>, <span class="st">"canvas"</span>, <span class="st">"map"</span>, <span class="st">"area"</span>,</span>
-<span>        <span class="st">"math"</span>, <span class="st">"col"</span>, <span class="st">"colgroup"</span>, <span class="st">"dl"</span>, <span class="st">"dt"</span>, <span class="st">"dd"</span>, <span class="st">"hr"</span>, <span class="st">"pre"</span>, <span class="st">"address"</span>, <span class="st">"figure"</span>, <span class="st">"figcaption"</span>,</span>
-<span>        <span class="st">"dfn"</span>, <span class="st">"em"</span>, <span class="st">"kbd"</span>, <span class="st">"samp"</span>, <span class="st">"var"</span>, <span class="st">"del"</span>, <span class="st">"ins"</span>, <span class="st">"mark"</span>, <span class="st">"circle"</span></span>
+<span>        <span class="st">"a"</span>,</span>
+<span>        <span class="st">"script"</span>,</span>
+<span>        <span class="st">"code"</span>,</span>
+<span>        <span class="st">"img"</span>,</span>
+<span>        <span class="st">"svg"</span>,</span>
+<span>        <span class="st">"footer"</span>,</span>
+<span>        <span class="st">"g"</span>,</span>
+<span>        <span class="st">"path"</span>,</span>
+<span>        <span class="st">"polygon"</span>,</span>
+<span>        <span class="st">"label"</span>,</span>
+<span>        <span class="st">"button"</span>,</span>
+<span>        <span class="st">"form"</span>,</span>
+<span>        <span class="st">"input"</span>,</span>
+<span>        <span class="st">"select"</span>,</span>
+<span>        <span class="st">"option"</span>,</span>
+<span>        <span class="st">"optgroup"</span>,</span>
+<span>        <span class="st">"datalist"</span>,</span>
+<span>        <span class="st">"textarea"</span>,</span>
+<span>        <span class="st">"fieldset"</span>,</span>
+<span>        <span class="st">"legend"</span>,</span>
+<span>        <span class="st">"output"</span>,</span>
+<span>        <span class="st">"progress"</span>,</span>
+<span>        <span class="st">"meter"</span>,</span>
+<span>        <span class="st">"time"</span>,</span>
+<span>        <span class="st">"details"</span>,</span>
+<span>        <span class="st">"summary"</span>,</span>
+<span>        <span class="st">"dialog"</span>,</span>
+<span>        <span class="st">"menu"</span>,</span>
+<span>        <span class="st">"menuitem"</span>,</span>
+<span>        <span class="st">"command"</span>,</span>
+<span>        <span class="st">"keygen"</span>,</span>
+<span>        <span class="st">"embed"</span>,</span>
+<span>        <span class="st">"object"</span>,</span>
+<span>        <span class="st">"param"</span>,</span>
+<span>        <span class="st">"video"</span>,</span>
+<span>        <span class="st">"audio"</span>,</span>
+<span>        <span class="st">"track"</span>,</span>
+<span>        <span class="st">"source"</span>,</span>
+<span>        <span class="st">"style"</span>,</span>
+<span>        <span class="st">"link"</span>,</span>
+<span>        <span class="st">"meta"</span>,</span>
+<span>        <span class="st">"noscript"</span>,</span>
+<span>        <span class="st">"iframe"</span>,</span>
+<span>        <span class="st">"canvas"</span>,</span>
+<span>        <span class="st">"map"</span>,</span>
+<span>        <span class="st">"area"</span>,</span>
+<span>        <span class="st">"math"</span>,</span>
+<span>        <span class="st">"col"</span>,</span>
+<span>        <span class="st">"colgroup"</span>,</span>
+<span>        <span class="st">"dl"</span>,</span>
+<span>        <span class="st">"dt"</span>,</span>
+<span>        <span class="st">"dd"</span>,</span>
+<span>        <span class="st">"hr"</span>,</span>
+<span>        <span class="st">"pre"</span>,</span>
+<span>        <span class="st">"address"</span>,</span>
+<span>        <span class="st">"figure"</span>,</span>
+<span>        <span class="st">"figcaption"</span>,</span>
+<span>        <span class="st">"dfn"</span>,</span>
+<span>        <span class="st">"em"</span>,</span>
+<span>        <span class="st">"kbd"</span>,</span>
+<span>        <span class="st">"samp"</span>,</span>
+<span>        <span class="st">"var"</span>,</span>
+<span>        <span class="st">"del"</span>,</span>
+<span>        <span class="st">"ins"</span>,</span>
+<span>        <span class="st">"mark"</span>,</span>
+<span>        <span class="st">"circle"</span></span>
 <span>    <span class="op">)</span></span>
 <span></span>
 <span>    <span class="va">remove_tags</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">xml</span>, <span class="va">tags</span><span class="op">)</span> <span class="op">{</span></span>
-<span>        <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">walk</a></span><span class="op">(</span><span class="va">tags</span>, \<span class="op">(</span><span class="va">tag</span><span class="op">)</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">walk</a></span><span class="op">(</span><span class="fu">xml2</span><span class="fu">::</span><span class="fu"><a href="http://xml2.r-lib.org/reference/xml_find_all.html" class="external-link">xml_find_all</a></span><span class="op">(</span><span class="va">xml</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">".//"</span>, <span class="va">tag</span><span class="op">)</span><span class="op">)</span>, \<span class="op">(</span><span class="va">node</span><span class="op">)</span> <span class="fu">xml2</span><span class="fu">::</span><span class="fu"><a href="http://xml2.r-lib.org/reference/xml_replace.html" class="external-link">xml_remove</a></span><span class="op">(</span><span class="va">node</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>        <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">walk</a></span><span class="op">(</span><span class="va">tags</span>, \<span class="op">(</span><span class="va">tag</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">walk</a></span><span class="op">(</span><span class="fu">xml2</span><span class="fu">::</span><span class="fu"><a href="http://xml2.r-lib.org/reference/xml_find_all.html" class="external-link">xml_find_all</a></span><span class="op">(</span><span class="va">xml</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">".//"</span>, <span class="va">tag</span><span class="op">)</span><span class="op">)</span>, \<span class="op">(</span><span class="va">node</span><span class="op">)</span> <span class="fu">xml2</span><span class="fu">::</span><span class="fu"><a href="http://xml2.r-lib.org/reference/xml_replace.html" class="external-link">xml_remove</a></span><span class="op">(</span><span class="va">node</span><span class="op">)</span><span class="op">)</span></span>
+<span>        <span class="op">}</span><span class="op">)</span></span>
 <span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">xml</span><span class="op">)</span></span>
 <span>    <span class="op">}</span></span>
 <span>    <span class="va">cleaned_contents</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
-<span>        <span class="fu">rvest</span><span class="fu">::</span><span class="fu"><a href="http://xml2.r-lib.org/reference/read_xml.html" class="external-link">read_html</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
-<span>        <span class="op">|&gt;</span> <span class="fu">rvest</span><span class="fu">::</span><span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html" class="external-link">html_element</a></span><span class="op">(</span><span class="st">"body"</span><span class="op">)</span></span>
-<span>        <span class="op">|&gt;</span> <span class="fu">remove_tags</span><span class="op">(</span><span class="va">tags_to_ignore</span><span class="op">)</span></span>
-<span>        <span class="op">|&gt;</span> <span class="fu">rvest</span><span class="fu">::</span><span class="fu"><a href="https://rvest.tidyverse.org/reference/html_children.html" class="external-link">html_children</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>        <span class="op">|&gt;</span> <span class="fu">rvest</span><span class="fu">::</span><span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html" class="external-link">html_text2</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>        <span class="op">|&gt;</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/keep.html" class="external-link">discard</a></span><span class="op">(</span>\<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span> <span class="op">==</span> <span class="st">""</span><span class="op">)</span></span>
-<span>        <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span>collapse <span class="op">=</span> <span class="st">"\n\n"</span><span class="op">)</span>,</span>
+<span>        <span class="fu">rvest</span><span class="fu">::</span><span class="fu"><a href="http://xml2.r-lib.org/reference/read_xml.html" class="external-link">read_html</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>            <span class="fu">rvest</span><span class="fu">::</span><span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html" class="external-link">html_element</a></span><span class="op">(</span><span class="st">"body"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>            <span class="fu">remove_tags</span><span class="op">(</span><span class="va">tags_to_ignore</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>            <span class="fu">rvest</span><span class="fu">::</span><span class="fu"><a href="https://rvest.tidyverse.org/reference/html_children.html" class="external-link">html_children</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>            <span class="fu">rvest</span><span class="fu">::</span><span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html" class="external-link">html_text2</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>            <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/keep.html" class="external-link">discard</a></span><span class="op">(</span>\<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span> <span class="op">==</span> <span class="st">""</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>            <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span>collapse <span class="op">=</span> <span class="st">"\n\n"</span><span class="op">)</span>,</span>
 <span>        error <span class="op">=</span> \<span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">""</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">cleaned_contents</span><span class="op">)</span></span>
@@ -248,29 +322,36 @@
 <span>    <span class="co">#' @description Crawl a website/page to discover all available pages and their URLs. Returns a list of URLs found on the website by following sitemaps and internal links. Use this to explore the structure of a website or find specific pages before fetching their content. This method will only return internal links (matching the domain name of the base URL).</span></span>
 <span>    <span class="co">#' @param url:string* The base URL of the website to crawl (e.g., "https://example.com"). Must be a valid HTTP/HTTPS URL. Clean it first if it's not a proper URL (e.g. 'https://github.com/tidyverse/ellmer/releases"}' -&gt; https://github.com/tidyverse/ellmer/releases)</span></span>
 <span></span>
-<span>    <span class="va">trafilatura_installed</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span><span class="op">{</span></span>
-<span>        <span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"which trafilatura"</span>, intern <span class="op">=</span> <span class="cn">TRUE</span>, ignore.stderr <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span>    <span class="op">}</span>,</span>
-<span>    warning <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
-<span>        <span class="fu">cli</span><span class="fu">::</span><span class="fu"><a href="https://cli.r-lib.org/reference/cli_alert.html" class="external-link">cli_alert_warning</a></span><span class="op">(</span><span class="st">"trafilatura is not installed. Install with: {.code pip install trafilatura}"</span><span class="op">)</span></span>
-<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span>
-<span>    <span class="op">}</span><span class="op">)</span></span>
+<span>    <span class="va">trafilatura_installed</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
+<span>        <span class="op">{</span></span>
+<span>            <span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"which trafilatura"</span>, intern <span class="op">=</span> <span class="cn">TRUE</span>, ignore.stderr <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>            <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span>        <span class="op">}</span>,</span>
+<span>        warning <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="fu">cli</span><span class="fu">::</span><span class="fu"><a href="https://cli.r-lib.org/reference/cli_alert.html" class="external-link">cli_alert_warning</a></span><span class="op">(</span><span class="st">"trafilatura is not installed. Install with: {.code pip install trafilatura}"</span><span class="op">)</span></span>
+<span>            <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span>    <span class="op">)</span></span>
 <span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="va">trafilatura_installed</span><span class="op">)</span> <span class="op">{</span></span>
-<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"Impossible to crawl the website. trafilatura is not installed. Install with: {.code pip install trafilatura}"</span><span class="op">)</span></span>
+<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span></span>
+<span>            <span class="st">"Impossible to crawl the website. trafilatura is not installed. Install with: {.code pip install trafilatura}"</span></span>
+<span>        <span class="op">)</span></span>
 <span>    <span class="op">}</span></span>
 <span></span>
 <span>    <span class="va">get_domain_name</span> <span class="op">&lt;-</span> \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^(?:https?://)?(?:www\\.)?([^/]+).*$"</span>, <span class="st">"\\1"</span>, <span class="va">x</span>, perl <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span>    <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span><span class="op">{</span></span>
-<span>        <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"trafilatura --sitemap '"</span>, <span class="va">url</span>, <span class="st">"' --url-filter '"</span>, <span class="fu">get_domain_name</span><span class="op">(</span><span class="va">url</span><span class="op">)</span>, <span class="st">"' --list"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>            <span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span>intern <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>            <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span>pretty <span class="op">=</span> <span class="cn">FALSE</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
-<span>    <span class="op">}</span>, error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
-<span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"Impossible to fetch the contents of this web page. It might not allow scraping"</span><span class="op">)</span></span>
-<span>    <span class="op">}</span><span class="op">)</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
+<span>        <span class="op">{</span></span>
+<span>            <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"trafilatura --sitemap '"</span>, <span class="va">url</span>, <span class="st">"' --url-filter '"</span>, <span class="fu">get_domain_name</span><span class="op">(</span><span class="va">url</span><span class="op">)</span>, <span class="st">"' --list"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>                <span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span>intern <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>                <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span>pretty <span class="op">=</span> <span class="cn">FALSE</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>            <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+<span>        <span class="op">}</span>,</span>
+<span>        error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="st">"Impossible to fetch the contents of this web page. It might not allow scraping"</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span>    <span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre>
 </details><p>Then, let’s define a JSON schema for the structured output using <code><a href="../reference/tool_definitions.html">schema()</a></code>:</p>
 <div class="cell">
@@ -290,7 +371,7 @@
 <span>    model <span class="op">=</span> <span class="st">"z-ai/glm-4.5-air:free"</span>,</span>
 <span>    provider_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>only <span class="op">=</span> <span class="st">"z-ai"</span><span class="op">)</span>,</span>
 <span>    thinking_budget <span class="op">=</span> <span class="fl">512</span>,</span>
-<span>    tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="../reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">web_search</span><span class="op">)</span>, <span class="fu"><a href="../reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">web_fetch</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="../reference/as_tool.html">as_tool</a></span><span class="op">(</span><span class="va">web_search</span><span class="op">)</span>, <span class="fu"><a href="../reference/as_tool.html">as_tool</a></span><span class="op">(</span><span class="va">web_fetch</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    output_schema <span class="op">=</span> <span class="va">package_info_schema</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>

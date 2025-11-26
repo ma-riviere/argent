@@ -60,9 +60,13 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-advanced-use" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Advanced Use</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-advanced-use">
-<li><a class="dropdown-item" href="articles/advanced-rag.html">RAG with `ragnar`</a></li>
-    <li><a class="dropdown-item" href="articles/advanced-mcp.html">Using MCP Servers</a></li>
-    <li><a class="dropdown-item" href="articles/advanced-argentic-workflow.html">Advanced Argentic Workflow</a></li>
+<li><a class="dropdown-item" href="articles/basic-rag.html">RAG with `ragnar`</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>MCP Servers</h6></li>
+    <li><a class="dropdown-item" href="articles/mcp-client.html">Connecting to MCP Servers</a></li>
+    <li><a class="dropdown-item" href="articles/mcp-server.html">Creating MCP Servers</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="articles/argentic-workflow.html">Advanced Argentic Workflow</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
@@ -583,9 +587,9 @@ Active
 <span>        .default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>favorite_language <span class="op">=</span> <span class="st">"unknown"</span>, favorite_framework <span class="op">=</span> <span class="st">"unknown"</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>We can then call <code><a href="reference/tool_definitions.html">as_tool()</a></code> on the function to convert it to a tool using the annotations added inside the function’s body (plumber2-style annotations):</p>
+<p>We can then call <code><a href="reference/as_tool.html">as_tool()</a></code> on the function to convert it to a tool using the annotations added inside the function’s body (plumber2-style annotations):</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">get_user_info</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/as_tool.html">as_tool</a></span><span class="op">(</span><span class="va">get_user_info</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb11"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> get_user_info</span></span>
 <span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Provides information about the user, like their favorite programming</span></span>
 <span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="at">  language</span></span>
@@ -633,7 +637,7 @@ Active
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>,</span>
 <span>    thinking_budget <span class="op">=</span> <span class="fl">512</span>,</span>
 <span>    include_thoughts <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># Google-specific parameter</span></span>
-<span>    tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="reference/tool_definitions.html">as_tool</a></span><span class="op">(</span><span class="va">get_user_info</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="reference/as_tool.html">as_tool</a></span><span class="op">(</span><span class="va">get_user_info</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    output_schema <span class="op">=</span> <span class="va">user_info_schema</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb15"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>$user_name</span>
@@ -751,7 +755,7 @@ Active
 <span>    model <span class="op">=</span> <span class="st">"gemini-2.5-pro"</span>,</span>
 <span>    tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"google_search"</span><span class="op">)</span>,</span>
 <span>    thinking_budget <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>, <span class="co"># Unlimited thinking budget</span></span>
-<span>    include_thoughts <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># Google-specific parameter</span></span>
+<span>    include_thoughts <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    output_schema <span class="op">=</span> <span class="fu"><a href="reference/tool_definitions.html">schema</a></span><span class="op">(</span></span>
 <span>        name <span class="op">=</span> <span class="st">"package_info"</span>,</span>
 <span>        description <span class="op">=</span> <span class="st">"Information about an R package release"</span>,</span>
@@ -811,10 +815,7 @@ Active
 <code class="sourceCode R"><span><span class="va">file_metadata</span> <span class="op">&lt;-</span> <span class="va">gemini</span><span class="op">$</span><span class="fu">upload_file</span><span class="op">(</span><span class="st">"https://ma-riviere.com/res/cv.pdf"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ✔ [Google] File uploaded: files/7xulp36j9jq1</span></span></code></pre></div>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">multipart_prompt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    <span class="st">"What is my favorite programming language?"</span>,</span>
-<span>    <span class="fu"><a href="reference/content_converters.html">as_file_content</a></span><span class="op">(</span><span class="va">file_metadata</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">multipart_prompt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"What is my favorite programming language?"</span>, <span class="fu"><a href="reference/content_converters.html">as_file_content</a></span><span class="op">(</span><span class="va">file_metadata</span><span class="op">$</span><span class="va">name</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="op">!</span><span class="op">!</span><span class="op">!</span><span class="va">multipart_prompt</span>, model <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb24"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>Based on your resume, your favorite programming language appears to be **R**.</span></code></pre></div>
@@ -873,10 +874,15 @@ Active
 </h3>
 <ul>
 <li>
-<a href="https://ma-riviere.github.io/argent/articles/advanced-rag.html">RAG</a> - How to use <code>argent</code> &amp; <code>ragnar</code> for RAG</li>
+<a href="https://ma-riviere.github.io/argent/articles/basic-rag.html">RAG</a> - How to use <code>argent</code> &amp; <code>ragnar</code> for RAG</li>
 <li>
-<a href="https://ma-riviere.github.io/argent/articles/advanced-mcp.html">MCP Servers &amp; Tools</a> - How to use MCP server tools with <code>argent</code>
+<a href="https://ma-riviere.github.io/argent/articles/mcp-client.html">MCP: Connecting to MCP Servers</a> - How to connect to MCP servers with <code>argent</code>
 </li>
+<li>
+<a href="https://ma-riviere.github.io/argent/articles/mcp-server.html">MCP: Creating MCP Servers</a> - How to create your own MCP servers with <code>argent</code>
+</li>
+<li>
+<a href="https://ma-riviere.github.io/argent/articles/argentic-workflow.html">Argentic Workflow</a> - How to use <code>argent</code> for an advanced Agentic Workflows</li>
 </ul>
 </div>
 </div>
