@@ -376,8 +376,8 @@ github_mcp_tools <- mcp_tools(github_mcp_server, tools = c("search_code", "get_f
 
 > **Note**
 >
-> See the [Using MCP Servers with
-> `argent`](https://ma-riviere.github.io/argent/articles/advanced-mcp)
+> See the [MCP: Connecting to MCP
+> Servers](https://ma-riviere.github.io/argent/articles/mcp-client)
 > article for more details on how to use MCP servers with `argent`.
 
 ## Creating our Agents
@@ -578,31 +578,7 @@ set_todos_llmr <- function(todos) {
     set_todos(todo_list_llmr, todos)
 }
 set_todos_llmr_tool <- as_tool(set_todos_llmr)
-```
 
-> **Alternative: Manual tool definition**
->
-> You can also define tools manually using
-> [`tool()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md)
-> with nested list structures:
->
-> ``` r
-> set_todos_llmr_tool <- tool(
->     name = "set_todos_llmr",
->     description = "Update your task list for planning and tracking multi-step work. This
->         replaces the entire TODO list. Always include all TODOs (completed, in_progress, and
->         pending) as a list of objects.",
->     todos = list(
->         type = "[object]*",
->         description = "List of TODO items, each with 'content' and 'status' sub-elements",
->         content = "string* Task description",
->         status = "string* One of: 'pending', 'in_progress', or 'completed'"
->     ),
->     fn = set_todos_llmr
-> )
-> ```
-
-``` r
 main_tools <- flat_list(as_tool(planning_subagent), as_tool(research_subagent), get_todos_llmr_tool, set_todos_llmr_tool)
 ```
 
@@ -617,8 +593,6 @@ main_agent$chat(
 )
 ```
 
-Finally, we can print the main agent’s output:
-
 ``` r
 print(main_agent, show_tools = TRUE) # Entirety of the chat history of the main agent
 ```
@@ -627,7 +601,7 @@ print(main_agent, show_tools = TRUE) # Entirety of the chat history of the main 
 cat(main_agent$get_content_text()) # Just the final answer of the main agent
 ```
 
-Code
+JSON output of the main agent’s answer
 
 ``` json
 {
