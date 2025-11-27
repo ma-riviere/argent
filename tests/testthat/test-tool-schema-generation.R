@@ -206,34 +206,14 @@ test_that("arrays of objects are supported", {
     expect_false("age" %in% items$required)
 })
 
-# -----🔺 as_tool() with inline nested type annotations ----------------------------
-# Note: as_tool() requires source references to extract annotations from comments.
-# Functions must be sourced from files with keep.source = TRUE to preserve these.
-# These tests use temp files to simulate the real-world use case.
-
-# Helper to create a temp file with function code and source it
-source_tool_fn <- function(code) {
-    tmp <- tempfile(fileext = ".R")
-    on.exit(unlink(tmp))
-    writeLines(code, tmp)
-    env <- new.env(parent = .GlobalEnv)
-    source(tmp, local = env, keep.source = TRUE)
-    # Return the first function defined in the environment
-    fn_names <- ls(env)
-    fn_names <- fn_names[sapply(fn_names, function(n) is.function(env[[n]]))]
-    env[[fn_names[1]]]
-}
+# -----🔺 as_tool() with inline nested type annotations ------------------------
 
 test_that("as_tool() parses inline object type annotations", {
-    create_user <- source_tool_fn(
-        "
-        create_user <- function(user) {
-            #\' @description Create a new user with nested object
-            #\' @param user:{name:string*, email:string*, age:integer}* User information
-            user
-        }
-    "
-    )
+    create_user <- function(user) {
+        #' @description Create a new user with nested object
+        #' @param user:{name:string*, email:string*, age:integer}* User information
+        user
+    }
 
     result <- as_tool(create_user)
 
@@ -259,15 +239,11 @@ test_that("as_tool() parses inline object type annotations", {
 })
 
 test_that("as_tool() parses inline array of objects annotations", {
-    process_items <- source_tool_fn(
-        "
-        process_items <- function(items) {
-            #\' @description Process a list of items
-            #\' @param items:[{id:string*, quantity:number*, price:number}]* List of items
-            items
-        }
-    "
-    )
+    process_items <- function(items) {
+        #' @description Process a list of items
+        #' @param items:[{id:string*, quantity:number*, price:number}]* List of items
+        items
+    }
 
     result <- as_tool(process_items)
 
@@ -295,15 +271,11 @@ test_that("as_tool() parses inline array of objects annotations", {
 })
 
 test_that("as_tool() parses deeply nested object structures", {
-    configure_app <- source_tool_fn(
-        "
-        configure_app <- function(config) {
-            #\' @description Configure application with nested settings
-            #\' @param config:{db:{host:string*, port:integer*, ssl:boolean}, cache:{enabled:boolean*, ttl:integer}}* App configuration
-            config
-        }
-    "
-    )
+    configure_app <- function(config) {
+        #' @description Configure application with nested settings
+        #' @param config:{db:{host:string*, port:integer*, ssl:boolean}, cache:{enabled:boolean*, ttl:integer}}* App configuration
+        config
+    }
 
     result <- as_tool(configure_app)
 
@@ -333,17 +305,13 @@ test_that("as_tool() parses deeply nested object structures", {
 })
 
 test_that("as_tool() parses mixed simple and complex parameters", {
-    search_products <- source_tool_fn(
-        "
-        search_products <- function(query, filters = NULL, pagination = NULL) {
-            #\' @description Search for products with filters
-            #\' @param query:string* Search query string
-            #\' @param filters:{category:string, minPrice:number, maxPrice:number, tags:[string]} Optional filters
-            #\' @param pagination:{page:integer, limit:integer} Pagination options
-            list(query = query, filters = filters, pagination = pagination)
-        }
-    "
-    )
+    search_products <- function(query, filters = NULL, pagination = NULL) {
+        #' @description Search for products with filters
+        #' @param query:string* Search query string
+        #' @param filters:{category:string, minPrice:number, maxPrice:number, tags:[string]} Optional filters
+        #' @param pagination:{page:integer, limit:integer} Pagination options
+        list(query = query, filters = filters, pagination = pagination)
+    }
 
     result <- as_tool(search_products)
 
@@ -371,15 +339,11 @@ test_that("as_tool() parses mixed simple and complex parameters", {
 })
 
 test_that("as_tool() parses array of objects with nested arrays", {
-    create_orders <- source_tool_fn(
-        "
-        create_orders <- function(orders) {
-            #\' @description Create multiple orders
-            #\' @param orders:[{customer:string*, items:[{sku:string*, qty:integer*}]*}]* Orders to create
-            orders
-        }
-    "
-    )
+    create_orders <- function(orders) {
+        #' @description Create multiple orders
+        #' @param orders:[{customer:string*, items:[{sku:string*, qty:integer*}]*}]* Orders to create
+        orders
+    }
 
     result <- as_tool(create_orders)
 
@@ -410,16 +374,12 @@ test_that("as_tool() parses array of objects with nested arrays", {
 })
 
 test_that("as_tool() handles optional nested objects correctly", {
-    update_profile <- source_tool_fn(
-        "
-        update_profile <- function(user_id, profile = NULL) {
-            #\' @description Update user profile
-            #\' @param user_id:string* User ID
-            #\' @param profile:{bio:string, avatar:string, social:{twitter:string, github:string}} Optional profile data
-            list(user_id = user_id, profile = profile)
-        }
-    "
-    )
+    update_profile <- function(user_id, profile = NULL) {
+        #' @description Update user profile
+        #' @param user_id:string* User ID
+        #' @param profile:{bio:string, avatar:string, social:{twitter:string, github:string}} Optional profile data
+        list(user_id = user_id, profile = profile)
+    }
 
     result <- as_tool(update_profile)
 
@@ -442,15 +402,11 @@ test_that("as_tool() handles optional nested objects correctly", {
 
 test_that("as_tool() validates MCP JSON Schema compliance for complex types", {
     # This test ensures the output structure matches MCP JSON Schema expectations
-    complex_fn <- source_tool_fn(
-        "
-        complex_fn <- function(data) {
-            #\' @description Complex data processing
-            #\' @param data:{items:[{name:string*, value:number*}]*, metadata:{version:integer*}}* Input data
-            data
-        }
-    "
-    )
+    complex_fn <- function(data) {
+        #' @description Complex data processing
+        #' @param data:{items:[{name:string*, value:number*}]*, metadata:{version:integer*}}* Input data
+        data
+    }
 
     result <- as_tool(complex_fn)
 

@@ -176,6 +176,30 @@ get_mcp_tool <- function(tool_defs, tool_name) {
     return(matching_tools[[1]])
 }
 
+#' Get an MCP resource from a list of resource definitions (convenience function)
+#'
+#' @param resource_defs List. A list of resource definitions
+#' @param resource_uri Character. The URI of the resource to get
+#'
+#' @return The resource definition
+#' @export
+get_mcp_resource <- function(resource_defs, resource_uri) {
+    if (!is.list(resource_defs)) {
+        cli::cli_abort("{.arg resource_defs} must be a list")
+    }
+
+    if (!is.character(resource_uri) || length(resource_uri) != 1 || nchar(resource_uri) == 0) {
+        cli::cli_abort("{.arg resource_uri} must be a non-empty string")
+    }
+
+    matching_resources <- purrr::keep(resource_defs, \(resource) resource$uri == resource_uri)
+    if (purrr::is_empty(matching_resources)) {
+        cli::cli_abort("Resource {.val {resource_uri}} not found in the provided resource definitions")
+    }
+
+    return(matching_resources[[1]])
+}
+
 #' Read an MCP resource
 #'
 #' @param resource_def List. The resource definition (e.g. one of the items returned by `mcp_resources()`).
@@ -188,6 +212,7 @@ read_mcp_resource <- function(resource_def) {
         cli::cli_abort("Resource definition has no URI")
     }
 
+    # TODO: use is_mcp_resource()
     mcp_metadata <- resource_def[[".mcp"]]
     if (purrr::is_empty(mcp_metadata)) {
         cli::cli_abort("Resource {.val {resource_uri}} is not an MCP resource")
@@ -208,14 +233,38 @@ read_mcp_resource <- function(resource_def) {
     return(result)
 }
 
-#' Get an MCP prompt
+#' Get an MCP prompt by name
+#'
+#' @param prompt_defs List. The prompt definitions (e.g. returned by `mcp_prompts()`).
+#' @param prompt_name Character. The name of the prompt to retrieve.
+#'
+#' @return The prompt definition
+#' @export
+get_mcp_prompt <- function(prompt_defs, prompt_name) {
+    if (!is.list(prompt_defs)) {
+        cli::cli_abort("{.arg prompt_defs} must be a list")
+    }
+
+    if (!is.character(prompt_name) || length(prompt_name) != 1 || nchar(prompt_name) == 0) {
+        cli::cli_abort("{.arg prompt_name} must be a non-empty string")
+    }
+
+    matching_prompts <- purrr::keep(prompt_defs, \(prompt) prompt$name == prompt_name)
+    if (purrr::is_empty(matching_prompts)) {
+        cli::cli_abort("Prompt {.val {prompt_name}} not found in the provided prompt definitions")
+    }
+
+    return(matching_prompts[[1]])
+}
+
+#' Build an MCP prompt with arguments
 #'
 #' @param prompt_def List. The prompt definition (e.g. one of the items returned by `mcp_prompts()`).
 #' @param arguments List. The arguments to pass to the prompt
 #'
 #' @return The prompt result with messages
 #' @export
-get_mcp_prompt <- function(prompt_def, arguments = NULL) {
+build_mcp_prompt <- function(prompt_def, arguments = NULL) {
     prompt_name <- prompt_def$name
     if (purrr::is_empty(prompt_name)) {
         cli::cli_abort("Prompt definition has no name")

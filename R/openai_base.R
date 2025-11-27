@@ -53,7 +53,7 @@ OpenAI <- R6::R6Class(
         #' @return Data frame. Available models
         list_models = function() {
             private$list(paste0(self$base_url, "/v1/models")) |>
-                dplyr::mutate(created = lubridate::as_datetime(created)) |>
+                dplyr::mutate(created = as_datetime(created)) |>
                 dplyr::arrange(dplyr::desc(created), id)
         },
 
@@ -63,7 +63,7 @@ OpenAI <- R6::R6Class(
         #' @return Data frame. Filtered models
         find_models = function(...) {
             private$find(paste0(self$base_url, "/v1/models"), ..., as_df = TRUE) |>
-                dplyr::mutate(created = lubridate::as_datetime(created)) |>
+                dplyr::mutate(created = as_datetime(created)) |>
                 dplyr::arrange(dplyr::desc(created), id)
         },
 
@@ -72,8 +72,7 @@ OpenAI <- R6::R6Class(
         #' @param model_id Character. The ID of the model to get information about.
         #' @return A list containing information about the model.
         get_model_info = function(model_id) {
-            private$request(paste0(self$base_url, "/v1/models/", model_id)) |>
-                purrr::modify_at("created", lubridate::as_datetime)
+            private$request(paste0(self$base_url, "/v1/models/", model_id)) |> purrr::modify_at("created", as_datetime)
         },
 
         # ------🔺 EMBEDDINGS --------------------------------------------------
@@ -167,7 +166,7 @@ OpenAI <- R6::R6Class(
         #' @return A data frame of assistants.
         list_assistants = function() {
             private$list(paste0(self$base_url, "/v1/assistants")) |>
-                dplyr::mutate(created_at = lubridate::as_datetime(created_at)) |>
+                dplyr::mutate(created_at = as_datetime(created_at)) |>
                 dplyr::arrange(dplyr::desc(created_at), id)
         },
 
@@ -334,7 +333,7 @@ OpenAI <- R6::R6Class(
             }
 
             private$list(endpoint) |>
-                dplyr::mutate(created_at = lubridate::as_datetime(created_at)) |>
+                dplyr::mutate(created_at = as_datetime(created_at)) |>
                 dplyr::arrange(dplyr::desc(created_at), id)
         },
 
@@ -600,7 +599,7 @@ OpenAI <- R6::R6Class(
         #' @return A data frame of vector stores.
         list_stores = function() {
             private$list(paste0(self$base_url, "/v1/vector_stores")) |>
-                dplyr::mutate(created_at = lubridate::as_datetime(created_at)) |>
+                dplyr::mutate(created_at = as_datetime(created_at)) |>
                 dplyr::arrange(dplyr::desc(created_at), id)
         },
 
@@ -708,7 +707,7 @@ OpenAI <- R6::R6Class(
         #' @return A data frame of files in the vector store.
         list_files_in_store = function(store_id) {
             private$list(paste0(self$base_url, "/v1/vector_stores/", store_id, "/files")) |>
-                dplyr::mutate(created_at = lubridate::as_datetime(created_at)) |>
+                dplyr::mutate(created_at = as_datetime(created_at)) |>
                 dplyr::arrange(dplyr::desc(created_at), id)
         },
 

@@ -13,7 +13,6 @@
 #' @importFrom httr2 request resp_body_json resp_body_raw resp_body_string resp_content_type resp_has_body
 #' @importFrom httr2 resp_header resp_is_error resp_status
 #' @importFrom jsonlite fromJSON toJSON
-#' @importFrom lubridate as_datetime today ymd_hms
 #' @importFrom mime guess_type mimemap
 #' @importFrom purrr compact detect discard discard_at imap imap_chr is_empty iwalk keep list_c
 #' @importFrom purrr list_flatten list_modify list_rbind map map_chr map_dfr map_if map_int map_lgl modify_at

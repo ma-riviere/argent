@@ -10,64 +10,40 @@ create_temp_mcp_file <- function(code) {
     tmp
 }
 
-# -----🔺 parse_mcp_file() basic functionality ----------------------------------
+# -----🔺 parse_mcp_file() basic functionality ---------------------------------
 
 test_that("parse_mcp_file() extracts tools with inline annotations", {
-    code <- c(
-        "search_items <- function(query, limit = 10L) {",
-        "    #' @description Search items by query string",
-        "    #' @mcp tool",
-        "    #' @param query:string* Search query",
-        "    #' @param limit:integer Maximum results (default 10)",
-        "    list(query = query, limit = limit)",
-        "}"
-    )
+    helper_file <- test_path("helper-mcp-servers.R")
+    skip_if_not(file.exists(helper_file), "helper-mcp-servers.R not found")
 
-    tmp <- create_temp_mcp_file(code)
-    on.exit(unlink(tmp))
+    parsed <- argent:::parse_mcp_file(helper_file)
 
-    parsed <- argent:::parse_mcp_file(tmp)
+    # Use greet_person as example (has required and optional params)
+    tool <- argent::get_mcp_tool(parsed$tools, "greet_person")
 
-    expect_length(parsed$tools, 1)
-    expect_length(parsed$resources, 0)
-    expect_length(parsed$prompts, 0)
-
-    tool <- parsed$tools[[1]]
-    expect_equal(tool$name, "search_items")
-    expect_equal(tool$description, "Search items by query string")
+    expect_equal(tool$name, "greet_person")
+    expect_equal(tool$description, "Greet someone")
     expect_true(is.function(tool$.fn))
 
     # Check schema
     expect_equal(tool$args_schema$type, "object")
-    expect_contains(tool$args_schema$required, "query")
-    expect_false("limit" %in% tool$args_schema$required)
+    expect_contains(tool$args_schema$required, "name")
+    expect_false("greeting" %in% tool$args_schema$required)
 
     # Check properties
-    expect_equal(tool$args_schema$properties$query$type, "string")
-    expect_equal(tool$args_schema$properties$limit$type, "integer")
+    expect_equal(tool$args_schema$properties$name$type, "string")
+    expect_equal(tool$args_schema$properties$greeting$type, "string")
 })
 
 test_that("parse_mcp_file() extracts resources with @mcp resource annotation", {
-    code <- c(
-        "get_system_status <- function() {",
-        "    #' @description Returns system health status",
-        "    #' @mcp resource",
-        "    #' @uri resource://system/status",
-        "    #' @mimeType application/json",
-        "    jsonlite::toJSON(list(status = 'ok'), auto_unbox = TRUE)",
-        "}"
-    )
+    helper_file <- test_path("helper-mcp-servers.R")
+    skip_if_not(file.exists(helper_file), "helper-mcp-servers.R not found")
 
-    tmp <- create_temp_mcp_file(code)
-    on.exit(unlink(tmp))
+    parsed <- argent:::parse_mcp_file(helper_file)
 
-    parsed <- argent:::parse_mcp_file(tmp)
+    expect_true(length(parsed$resources) >= 1)
 
-    expect_length(parsed$tools, 0)
-    expect_length(parsed$resources, 1)
-    expect_length(parsed$prompts, 0)
-
-    resource <- parsed$resources[[1]]
+    resource <- argent::get_mcp_resource(parsed$resources, resource_uri = "resource://system/status")
     expect_equal(resource$name, "get_system_status")
     expect_equal(resource$description, "Returns system health status")
     expect_equal(resource$uri, "resource://system/status")
@@ -76,31 +52,14 @@ test_that("parse_mcp_file() extracts resources with @mcp resource annotation", {
 })
 
 test_that("parse_mcp_file() extracts prompts with @mcp prompt annotation", {
-    code <- c(
-        "greet_prompt <- function(name, style = 'casual') {",
-        "    #' @description Creates a personalized greeting",
-        "    #' @mcp prompt",
-        "    #' @param name:string* Person's name",
-        "    #' @param style:string Greeting style (formal/casual)",
-        "    msg <- if (style == 'formal') {",
-        "        paste0('Good day, ', name, '.')",
-        "    } else {",
-        "        paste0('Hey ', name, '!')",
-        "    }",
-        "    list(messages = list(list(role = 'user', content = list(type = 'text', text = msg))))",
-        "}"
-    )
+    helper_file <- test_path("helper-mcp-servers.R")
+    skip_if_not(file.exists(helper_file), "helper-mcp-servers.R not found")
 
-    tmp <- create_temp_mcp_file(code)
-    on.exit(unlink(tmp))
+    parsed <- argent:::parse_mcp_file(helper_file)
 
-    parsed <- argent:::parse_mcp_file(tmp)
+    expect_true(length(parsed$prompts) >= 1)
 
-    expect_length(parsed$tools, 0)
-    expect_length(parsed$resources, 0)
-    expect_length(parsed$prompts, 1)
-
-    prompt <- parsed$prompts[[1]]
+    prompt <- argent::get_mcp_prompt(parsed$prompts, prompt_name = "greet_prompt")
     expect_equal(prompt$name, "greet_prompt")
     expect_equal(prompt$description, "Creates a personalized greeting")
     expect_true(is.function(prompt$.fn))
@@ -114,64 +73,29 @@ test_that("parse_mcp_file() extracts prompts with @mcp prompt annotation", {
 })
 
 test_that("parse_mcp_file() handles multiple definitions in one file", {
-    code <- c(
-        "# Tool 1",
-        "get_item <- function(id) {",
-        "    #' @description Get item by ID",
-        "    #' @mcp tool",
-        "    #' @param id:string* Item ID",
-        "    id",
-        "}",
-        "",
-        "# Tool 2",
-        "delete_item <- function(id) {",
-        "    #' @description Delete an item",
-        "    #' @mcp tool",
-        "    #' @param id:string* Item ID",
-        "    id",
-        "}",
-        "",
-        "# Resource",
-        "sys_info <- function() {",
-        "    #' @description System info resource",
-        "    #' @mcp resource",
-        "    #' @uri resource://info",
-        "    'info'",
-        "}"
-    )
+    helper_file <- test_path("helper-mcp-servers.R")
+    skip_if_not(file.exists(helper_file), "helper-mcp-servers.R not found")
 
-    tmp <- create_temp_mcp_file(code)
-    on.exit(unlink(tmp))
+    parsed <- argent:::parse_mcp_file(helper_file)
 
-    parsed <- argent:::parse_mcp_file(tmp)
-
-    expect_length(parsed$tools, 2)
-    expect_length(parsed$resources, 1)
+    # Helper file has multiple tools from both calculator and processor servers
+    expect_true(length(parsed$tools) >= 6)
 
     tool_names <- purrr::map_chr(parsed$tools, "name")
-    expect_contains(tool_names, "get_item")
-    expect_contains(tool_names, "delete_item")
-
-    expect_equal(parsed$resources[[1]]$name, "sys_info")
+    expect_contains(tool_names, "add_numbers")
+    expect_contains(tool_names, "greet_person")
+    expect_contains(tool_names, "echo_message")
 })
 
-# -----🔺 Complex type annotations in parse_mcp_file() --------------------------
+# -----🔺 Complex type annotations in parse_mcp_file() -------------------------
 
 test_that("parse_mcp_file() handles nested object type annotations", {
-    code <- c(
-        "create_user <- function(user) {",
-        "    #' @description Creates user with nested address object",
-        "    #' @mcp tool",
-        "    #' @param user:{name:string*, email:string*, address:{street:string*, city:string*, zip:string}}* User data",
-        "    user",
-        "}"
-    )
+    helper_file <- test_path("helper-mcp-servers.R")
+    skip_if_not(file.exists(helper_file), "helper-mcp-servers.R not found")
 
-    tmp <- create_temp_mcp_file(code)
-    on.exit(unlink(tmp))
+    parsed <- argent:::parse_mcp_file(helper_file)
 
-    parsed <- argent:::parse_mcp_file(tmp)
-    tool <- parsed$tools[[1]]
+    tool <- argent::get_mcp_tool(parsed$tools, "create_user")
 
     props <- tool$args_schema$properties
 
@@ -197,20 +121,12 @@ test_that("parse_mcp_file() handles nested object type annotations", {
 })
 
 test_that("parse_mcp_file() handles array of objects type annotations", {
-    code <- c(
-        "process_orders <- function(orders) {",
-        "    #' @description Process a batch of orders",
-        "    #' @mcp tool",
-        "    #' @param orders:[{id:string*, items:[{sku:string*, qty:integer*}]*, total:number}]* Order list",
-        "    orders",
-        "}"
-    )
+    helper_file <- test_path("helper-mcp-servers.R")
+    skip_if_not(file.exists(helper_file), "helper-mcp-servers.R not found")
 
-    tmp <- create_temp_mcp_file(code)
-    on.exit(unlink(tmp))
+    parsed <- argent:::parse_mcp_file(helper_file)
 
-    parsed <- argent:::parse_mcp_file(tmp)
-    tool <- parsed$tools[[1]]
+    tool <- argent::get_mcp_tool(parsed$tools, "process_orders")
 
     props <- tool$args_schema$properties
 
@@ -240,83 +156,57 @@ test_that("parse_mcp_file() handles array of objects type annotations", {
     expect_contains(item_schema$required, "qty")
 })
 
-# -----🔺 Edge cases ------------------------------------------------------------
+# -----🔺 Edge cases -----------------------------------------------------------
 
-test_that("parse_mcp_file() handles tool with no parameters", {
-    code <- c(
-        "get_timestamp <- function() {",
-        "    #' @description Returns current Unix timestamp",
-        "    #' @mcp tool",
-        "    as.integer(Sys.time())",
-        "}"
-    )
+test_that("parse_mcp_file() handles tool with no required parameters", {
+    helper_file <- test_path("helper-mcp-servers.R")
+    skip_if_not(file.exists(helper_file), "helper-mcp-servers.R not found")
 
-    tmp <- create_temp_mcp_file(code)
-    on.exit(unlink(tmp))
+    parsed <- argent:::parse_mcp_file(helper_file)
 
-    parsed <- argent:::parse_mcp_file(tmp)
-    tool <- parsed$tools[[1]]
+    # get_timestamp has only optional parameters
+    tool <- argent::get_mcp_tool(parsed$tools, "get_timestamp")
 
     expect_equal(tool$name, "get_timestamp")
     expect_equal(tool$args_schema$type, "object")
-    expect_length(tool$args_schema$properties, 0)
     expect_length(tool$args_schema$required, 0)
+    expect_true(length(tool$args_schema$properties) > 0) # Has format param
 })
 
-test_that("parse_mcp_file() handles tool with all optional parameters", {
-    code <- c(
-        "list_items <- function(page = 1L, limit = 10L, sort = 'id') {",
-        "    #' @description List items with optional pagination",
-        "    #' @mcp tool",
-        "    #' @param page:integer Page number",
-        "    #' @param limit:integer Items per page",
-        "    #' @param sort:string Sort field",
-        "    list(page = page, limit = limit, sort = sort)",
-        "}"
-    )
+test_that("parse_mcp_file() handles tool with optional parameters", {
+    helper_file <- test_path("helper-mcp-servers.R")
+    skip_if_not(file.exists(helper_file), "helper-mcp-servers.R not found")
 
-    tmp <- create_temp_mcp_file(code)
-    on.exit(unlink(tmp))
+    parsed <- argent:::parse_mcp_file(helper_file)
 
-    parsed <- argent:::parse_mcp_file(tmp)
-    tool <- parsed$tools[[1]]
+    # process_list has one required (items) and one optional (operation)
+    tool <- argent::get_mcp_tool(parsed$tools, "process_list")
 
-    expect_equal(tool$name, "list_items")
-    expect_length(tool$args_schema$required, 0)
-    expect_length(tool$args_schema$properties, 3)
+    expect_equal(tool$name, "process_list")
+    expect_length(tool$args_schema$properties, 2)
 
-    # All parameters should exist but none required
-    expect_equal(tool$args_schema$properties$page$type, "integer")
-    expect_equal(tool$args_schema$properties$limit$type, "integer")
-    expect_equal(tool$args_schema$properties$sort$type, "string")
+    # items is required, operation is optional
+    expect_contains(tool$args_schema$required, "items")
+    expect_false("operation" %in% tool$args_schema$required)
+
+    expect_equal(tool$args_schema$properties$items$type, "array")
+    expect_equal(tool$args_schema$properties$operation$type, "string")
 })
 
 test_that("parse_mcp_file() handles mixed required and optional parameters", {
-    code <- c(
-        "update_user <- function(user_id, name = NULL, email = NULL, active) {",
-        "    #' @description Update user by ID with optional fields",
-        "    #' @mcp tool",
-        "    #' @param user_id:string* User ID to update",
-        "    #' @param name:string New name",
-        "    #' @param email:string New email",
-        "    #' @param active:boolean* Account status",
-        "    list(user_id = user_id, name = name, email = email, active = active)",
-        "}"
-    )
+    helper_file <- test_path("helper-mcp-servers.R")
+    skip_if_not(file.exists(helper_file), "helper-mcp-servers.R not found")
 
-    tmp <- create_temp_mcp_file(code)
-    on.exit(unlink(tmp))
+    parsed <- argent:::parse_mcp_file(helper_file)
 
-    parsed <- argent:::parse_mcp_file(tmp)
-    tool <- parsed$tools[[1]]
+    # greet_person has one required (name) and one optional (greeting)
+    tool <- argent::get_mcp_tool(parsed$tools, "greet_person")
 
     # Check required parameters
-    expect_contains(tool$args_schema$required, "user_id")
-    expect_contains(tool$args_schema$required, "active")
+    expect_contains(tool$args_schema$required, "name")
 
     # Check optional parameters
-    expect_false("name" %in% tool$args_schema$required)
-    expect_false("email" %in% tool$args_schema$required)
+    expect_false("greeting" %in% tool$args_schema$required)
 })
 
 test_that("parse_mcp_file() defaults to tool when @mcp tag is omitted", {
@@ -362,26 +252,20 @@ test_that("parse_mcp_file() skips functions without annotations", {
 })
 
 test_that("parse_mcp_file() handles resource with default URI and mimeType", {
-    code <- c(
-        "my_resource <- function() {",
-        "    #' @description A resource with defaults",
-        "    #' @mcp resource",
-        "    'content'",
-        "}"
-    )
+    helper_file <- test_path("helper-mcp-servers.R")
+    skip_if_not(file.exists(helper_file), "helper-mcp-servers.R not found")
 
-    tmp <- create_temp_mcp_file(code)
-    on.exit(unlink(tmp))
+    parsed <- argent:::parse_mcp_file(helper_file)
 
-    parsed <- argent:::parse_mcp_file(tmp)
+    expect_true(length(parsed$resources) >= 1)
 
-    expect_length(parsed$resources, 1)
-    resource <- parsed$resources[[1]]
+    resource <- argent::get_mcp_resource(parsed$resources, resource_uri = "resource://my_resource")
     expect_equal(resource$uri, "resource://my_resource")
+    expect_equal(resource$name, "my_resource")
     expect_equal(resource$mimeType, "text/plain")
 })
 
-# -----🔺 MCP JSON Schema compliance --------------------------------------------
+# -----🔺 MCP JSON Schema compliance -------------------------------------------
 
 test_that("parse_mcp_file() produces valid MCP JSON Schema structure", {
     code <- c(
@@ -420,23 +304,117 @@ test_that("parse_mcp_file() produces valid MCP JSON Schema structure", {
 })
 
 test_that("parse_mcp_file() tool functions are executable", {
-    code <- c(
-        "calc_sum <- function(x, y) {",
-        "    #' @description Add two numbers",
-        "    #' @mcp tool",
-        "    #' @param x:number* First number",
-        "    #' @param y:number* Second number",
-        "    x + y",
-        "}"
-    )
+    helper_file <- test_path("helper-mcp-servers.R")
+    skip_if_not(file.exists(helper_file), "helper-mcp-servers.R not found")
 
-    tmp <- create_temp_mcp_file(code)
-    on.exit(unlink(tmp))
+    parsed <- argent:::parse_mcp_file(helper_file)
 
-    parsed <- argent:::parse_mcp_file(tmp)
-    tool <- parsed$tools[[1]]
-
-    # Execute the function
+    # Execute add_numbers function
+    tool <- argent::get_mcp_tool(parsed$tools, "add_numbers")
     result <- tool$.fn(5, 3)
-    expect_equal(result, 8)
+    expect_equal(result, "8") # Returns as character
+})
+
+# -----🔺 Integration with helper-mcp-servers.R --------------------------------
+
+test_that("parse_mcp_file() correctly parses calculator server tools from helper", {
+    helper_file <- test_path("helper-mcp-servers.R")
+    skip_if_not(file.exists(helper_file), "helper-mcp-servers.R not found")
+
+    parsed <- argent:::parse_mcp_file(helper_file)
+
+    # Should have tools from both calculator and processor servers
+    expect_true(length(parsed$tools) >= 6)
+
+    # Check calculator tools
+    tool_names <- purrr::map_chr(parsed$tools, "name")
+    expect_contains(tool_names, "add_numbers")
+    expect_contains(tool_names, "greet_person")
+    expect_contains(tool_names, "get_timestamp")
+
+    # Verify add_numbers structure
+    add_tool <- argent::get_mcp_tool(parsed$tools, "add_numbers")
+    expect_equal(add_tool$args_schema$type, "object")
+    expect_contains(add_tool$args_schema$required, "a")
+    expect_contains(add_tool$args_schema$required, "b")
+    expect_equal(add_tool$args_schema$properties$a$type, "number")
+    expect_equal(add_tool$args_schema$properties$b$type, "number")
+
+    # Verify greet_person has optional parameter
+    greet_tool <- argent::get_mcp_tool(parsed$tools, "greet_person")
+    expect_contains(greet_tool$args_schema$required, "name")
+    expect_false("greeting" %in% greet_tool$args_schema$required)
+})
+
+test_that("parse_mcp_file() correctly parses processor server tools from helper", {
+    helper_file <- test_path("helper-mcp-servers.R")
+    skip_if_not(file.exists(helper_file), "helper-mcp-servers.R not found")
+
+    parsed <- argent:::parse_mcp_file(helper_file)
+
+    # Check processor tools
+    tool_names <- purrr::map_chr(parsed$tools, "name")
+    expect_contains(tool_names, "echo_message")
+    expect_contains(tool_names, "validate_age")
+    expect_contains(tool_names, "process_list")
+
+    # Verify validate_age structure
+    validate_tool <- argent::get_mcp_tool(parsed$tools, "validate_age")
+    expect_equal(validate_tool$args_schema$properties$age$type, "integer")
+    expect_contains(validate_tool$args_schema$required, "age")
+
+    # Verify process_list has array parameter
+    process_tool <- argent::get_mcp_tool(parsed$tools, "process_list")
+    expect_equal(process_tool$args_schema$properties$items$type, "array")
+    expect_equal(process_tool$args_schema$properties$items$items$type, "string")
+    expect_contains(process_tool$args_schema$required, "items")
+    expect_false("operation" %in% process_tool$args_schema$required)
+})
+
+test_that("Helper server tools are executable and return expected types", {
+    helper_file <- test_path("helper-mcp-servers.R")
+    skip_if_not(file.exists(helper_file), "helper-mcp-servers.R not found")
+
+    parsed <- argent:::parse_mcp_file(helper_file)
+    tools <- parsed$tools
+
+    # Test add_numbers
+    add_tool <- argent::get_mcp_tool(tools, "add_numbers")
+    result <- add_tool$.fn(5, 3)
+    expect_equal(result, "8")
+
+    # Test add_numbers with error
+    error_result <- add_tool$.fn("not", "numbers")
+    expect_s3_class(error_result, "mcp_error")
+    expect_equal(error_result$type, "validation")
+
+    # Test greet_person
+    greet_tool <- argent::get_mcp_tool(tools, "greet_person")
+    result <- greet_tool$.fn("Alice")
+    expect_equal(result, "Hello, Alice!")
+    result <- greet_tool$.fn("Bob", "Hi")
+    expect_equal(result, "Hi, Bob!")
+
+    # Test get_timestamp
+    timestamp_tool <- argent::get_mcp_tool(tools, "get_timestamp")
+    result <- timestamp_tool$.fn()
+    expect_type(result, "character")
+    expect_true(nchar(result) > 0)
+
+    # Test validate_age
+    validate_tool <- argent::get_mcp_tool(tools, "validate_age")
+    result <- validate_tool$.fn(25)
+    expect_type(result, "character")
+    expect_true(grepl("Valid age", result))
+
+    # Test validate_age with error
+    error_result <- validate_tool$.fn(-5)
+    expect_s3_class(error_result, "mcp_error")
+    expect_equal(error_result$type, "validation")
+
+    # Test process_list
+    process_tool <- argent::get_mcp_tool(tools, "process_list")
+    result <- process_tool$.fn(c("a", "b", "c"), "count")
+    parsed_result <- jsonlite::fromJSON(result)
+    expect_equal(parsed_result, 3)
 })

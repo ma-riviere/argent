@@ -26,6 +26,8 @@ jobs:
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      PAT_GITHUB: ${{ secrets.PAT_GITHUB }}
       R_KEEP_PKG_SOURCE: yes
 
     steps:

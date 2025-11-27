@@ -141,8 +141,10 @@ reference:
   - mcp_integration
   - execute_mcp_tool
   - get_mcp_tool
+  - get_mcp_resource
   - read_mcp_resource
   - get_mcp_prompt
+  - build_mcp_prompt
 
 - subtitle: MCP Server
   desc: Functions for creating your own MCP servers

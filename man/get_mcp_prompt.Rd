@@ -2,18 +2,18 @@
 % Please edit documentation in R/tools-mcp.R
 \name{get_mcp_prompt}
 \alias{get_mcp_prompt}
-\title{Get an MCP prompt}
+\title{Get an MCP prompt by name}
 \usage{
-get_mcp_prompt(prompt_def, arguments = NULL)
+get_mcp_prompt(prompt_defs, prompt_name)
 }
 \arguments{
-\item{prompt_def}{List. The prompt definition (e.g. one of the items returned by \code{mcp_prompts()}).}
+\item{prompt_defs}{List. The prompt definitions (e.g. returned by \code{mcp_prompts()}).}
 
-\item{arguments}{List. The arguments to pass to the prompt}
+\item{prompt_name}{Character. The name of the prompt to retrieve.}
 }
 \value{
-The prompt result with messages
+The prompt definition
 }
 \description{
-Get an MCP prompt
+Get an MCP prompt by name
 }

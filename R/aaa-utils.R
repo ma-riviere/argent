@@ -1,3 +1,21 @@
+#' Convert Unix timestamp to POSIXct datetime
+#' @param x Numeric Unix timestamp(s)
+#' @return POSIXct datetime object(s) in UTC
+#' @keywords internal
+#' @noRd
+as_datetime <- function(x) {
+    as.POSIXct(x, origin = "1970-01-01", tz = "UTC")
+}
+
+#' Get today's date
+#' @return Today's date as a Date object
+#' @keywords internal
+#' @noRd
+today <- function() {
+    Sys.Date()
+}
+
+
 #' Default system prompt for all models
 #' @keywords internal
 #' @noRd
@@ -10,7 +28,7 @@
     "Self-reflect and double-check your answer before responding.",
     "If you don't know the answer even after using your tools, say 'I don't know'.",
     "If you do not have all the information necessary to use a provided tool, use NA for required arguments.",
-    "Today's date is {lubridate::today()}",
+    "Today's date is {today()}",
     .sep = " "
 )
 

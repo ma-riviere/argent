@@ -158,8 +158,6 @@ Unlike stdio servers that communicate via standard input/output, HTTP servers ex
 We can start the server **in a separate R session or terminal** with:
 
 ```{r}
-#| eval: false
-
 mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "argent"), port = 8080)
 #> ✔ Starting semantic_scholar_mcp_server MCP server on <http://127.0.0.1:8080>
 ```

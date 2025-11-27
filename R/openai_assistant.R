@@ -440,7 +440,7 @@ OpenAI_Assistant <- R6::R6Class(
         #' @return The assistant object.
         read_assistant = function(assistant_id = self$assistant$id) {
             res <- private$request(paste0(self$base_url, "/v1/assistants/", assistant_id))
-            res$created_at <- lubridate::as_datetime(res$created_at)
+            res$created_at <- as_datetime(res$created_at)
             return(res)
         },
 

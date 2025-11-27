@@ -128,7 +128,7 @@ LocalLLM <- R6::R6Class(
         #' @return Data frame. Available models
         list_models = function() {
             private$list(paste0(self$base_url, "/v1/models")) |>
-                dplyr::mutate(created = lubridate::as_datetime(created)) |>
+                dplyr::mutate(created = as_datetime(created)) |>
                 dplyr::arrange(dplyr::desc(created), id)
         },
 

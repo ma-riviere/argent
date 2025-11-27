@@ -118,7 +118,7 @@ planning_subagent <- function(task) {
         1. ANALYZE: Use `web_search` to understand the domain and identify key components.
         2. THINK: Reflect on the necessary steps to achieve the user's goal.
         3. PLAN: Use `set_todos_llmr` to create a comprehensive plan.
-        4. SUMMARIZE: Return a concise 'Handoff Summary' explaining the strategy, 
+        4. SUMMARIZE: Return a concise 'Handoff Summary' explaining the strategy,
             that the main will use to interpret the generated TODO list.
         </process>
 
@@ -129,7 +129,7 @@ planning_subagent <- function(task) {
         - Do not attempt to execute the research yourself, only plan it.
         </guidelines>
 
-        The current date is {lubridate::today()}."
+        The current date is {Sys.Date()}."
     )
 
     planning_prompt <- stringr::str_glue(
@@ -172,7 +172,7 @@ research_subagent <- function(subtask) {
         - Use `web_search` to get an overview of the topic.
         - Use `web_fetch` to read full content of promising pages.
         - Use GitHub MCP tools to explore code examples where relevant.
-            - You can use the `get_file_contents` tool to list the contents of subdirs, 
+            - You can use the `get_file_contents` tool to list the contents of subdirs,
               using the 'path' argument (e.g. path = '/' or 'dir/'). The method needs a path parameter.
         </tools>
 
@@ -195,7 +195,7 @@ research_subagent <- function(subtask) {
         (List of all URLs and repos visited)
         </output_format>
 
-        The current date is {lubridate::today()}."
+        The current date is {Sys.Date()}."
     )
 
     prompt <- stringr::str_glue("Here is the task to research:\\n\\n<subtask>\\n{subtask}\\n</subtask>")

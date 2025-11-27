@@ -212,7 +212,7 @@ OpenRouter <- R6::R6Class(
 
             if (!is.null(models_df$created)) {
                 models_df <- models_df |>
-                    dplyr::mutate(created = lubridate::as_datetime(created)) |>
+                    dplyr::mutate(created = as_datetime(created)) |>
                     dplyr::arrange(dplyr::desc(created), id)
             }
 

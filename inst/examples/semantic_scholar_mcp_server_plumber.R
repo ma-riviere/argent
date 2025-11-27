@@ -27,9 +27,7 @@
 #   }
 # }
 
-# ==============================================================================
-# SETUP
-# ==============================================================================
+# ----- SETUP ------------------------------------------------------------------
 
 suppressPackageStartupMessages({
     library(plumber2)
@@ -66,9 +64,7 @@ SERVER_INFO <- list(name = "semantic-scholar", version = "1.0.0")
 # Session storage - each session tracks initialization state
 SESSION_STORE <- new.env(parent = emptyenv())
 
-# ==============================================================================
-# SEMANTIC SCHOLAR API FUNCTIONS
-# ==============================================================================
+# ----- SEMANTIC SCHOLAR API FUNCTIONS -----------------------------------------
 
 semantic_scholar_request <- function(endpoint, query = list()) {
     base_url <- "https://api.semanticscholar.org/graph/v1"
@@ -301,9 +297,7 @@ get_paper_references <- function(paper_id, limit = 10, fields = NULL) {
     return(references)
 }
 
-# ==============================================================================
-# JSON-RPC 2.0 HELPERS
-# ==============================================================================
+# ----- JSON-RPC 2.0 HELPERS ---------------------------------------------------
 
 jsonrpc_success <- function(id, result) {
     list(jsonrpc = "2.0", id = id, result = result)
@@ -330,9 +324,7 @@ mcp_tool_result <- function(content, is_error = FALSE) {
     list(content = list(list(type = "text", text = text_content)), isError = is_error)
 }
 
-# ==============================================================================
-# MCP TOOL DEFINITIONS
-# ==============================================================================
+# ----- MCP TOOL DEFINITIONS ---------------------------------------------------
 
 MCP_TOOLS <- list(
     list(
@@ -420,9 +412,7 @@ MCP_TOOLS <- list(
 MCP_RESOURCES <- list()
 MCP_PROMPTS <- list()
 
-# ==============================================================================
-# MCP METHOD HANDLERS
-# ==============================================================================
+# ----- MCP METHOD HANDLERS ----------------------------------------------------
 
 handle_initialize <- function(params) {
     list(
@@ -546,9 +536,7 @@ handle_prompts_get <- function(params) {
     list(description = prompt$description, messages = list())
 }
 
-# ==============================================================================
-# MCP REQUEST PROCESSING
-# ==============================================================================
+# ----- MCP REQUEST PROCESSING -------------------------------------------------
 
 validate_jsonrpc <- function(body) {
     if (is.null(body) || length(body) == 0) {
@@ -619,9 +607,7 @@ process_mcp_request <- function(body, session_id) {
     list(result = result, method = method, id = id, is_notification = is.null(id))
 }
 
-# ==============================================================================
-# PLUMBER2 HANDLERS (ANNOTATION-BASED)
-# ==============================================================================
+# ----- PLUMBER2 HANDLERS (ANNOTATION-BASED) -----------------------------------
 
 #* MCP Streamable HTTP endpoint - POST handler
 #*
