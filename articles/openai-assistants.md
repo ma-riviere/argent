@@ -62,8 +62,7 @@ during creation and applies to all subsequent `chat()` calls.
 >
 > ``` r
 > # Find assistant by name
-> assistant_id <- openai_assistant$find_assistants(name = "My Assistant") |>
->     purrr::pluck("id", 1)
+> assistant_id <- openai_assistant$find_assistants(name = "My Assistant") |> purrr::pluck("id", 1)
 >
 > # Load in a new client instance
 > existing_assistant <- OpenAI_Assistant$new()$load_assistant(id = assistant_id)
@@ -72,8 +71,7 @@ during creation and applies to all subsequent `chat()` calls.
 ## Discovering Models
 
 ``` r
-openai_assistant$list_models() |>
-    dplyr::filter(stringr::str_detect(id, "-4o-|-4.1-"))
+openai_assistant$list_models() |> dplyr::filter(stringr::str_detect(id, "-4o-|-4.1-"))
 ```
 
 > **Note**
@@ -383,7 +381,7 @@ openai_assistant$chat(
     "When was the first release of the R 'ellmer' package on GitHub?",
     output_schema = package_info_schema
 )
-6#> ✔ [OpenAI Assistant] Thread created: thread_leVxekjFQnO8vUES62HBJuLc
+6 #> ✔ [OpenAI Assistant] Thread created: thread_leVxekjFQnO8vUES62HBJuLc
 ```
 
 ``` default
@@ -433,9 +431,7 @@ data_analyst <- OpenAI_Assistant$new()$create_assistant(
     tools = list(list(type = "code_interpreter", file_ids = list(penguins_file_metadata$id)))
 )
 
-data_analyst$chat(
-    "Create a summary table showing average body_mass grouped by species, sex, and year. Save as CSV."
-)
+data_analyst$chat("Create a summary table showing average body_mass grouped by species, sex, and year. Save as CSV.")
 ```
 
 Download generated files:
@@ -629,10 +625,7 @@ pdf_assistant <- OpenAI_Assistant$new()$create_assistant(
 **Sending a local PDF:**
 
 ``` r
-pdf_assistant$chat(
-    "What's my favorite programming language?",
-    my_cv_pdf_path
-)
+pdf_assistant$chat("What's my favorite programming language?", my_cv_pdf_path)
 ```
 
 ``` default
@@ -683,11 +676,7 @@ You can pass any R object to `chat()` as is:
 ``` r
 lm_obj <- lm(body_mass ~ species + sex, data = datasets::penguins)
 
-openai_assistant$chat(
-    "What can we deduct from this regression model?",
-    lm_obj,
-    in_new_thread = TRUE
-)
+openai_assistant$chat("What can we deduct from this regression model?", lm_obj, in_new_thread = TRUE)
 ```
 
 > **Note**
@@ -738,10 +727,7 @@ Use
 to reference uploaded files:
 
 ``` r
-file_assistant$chat(
-    "What are my two favorite frameworks/tools ?",
-    as_file_content(file_metadata$id)
-)
+file_assistant$chat("What are my two favorite frameworks/tools ?", as_file_content(file_metadata$id))
 ```
 
 ``` default
@@ -783,10 +769,7 @@ First, a quick overview of available methods to manage vector stores:
 **Creating a Vector Store**
 
 ``` r
-store <- file_assistant$create_store(
-    name = "my_docs",
-    file_ids = list("file-123", "file-456")
-)
+store <- file_assistant$create_store(name = "my_docs", file_ids = list("file-123", "file-456"))
 ```
 
 **Listing Vector Stores**
@@ -853,11 +836,7 @@ output:
 rag_assistant <- OpenAI_Assistant$new(rate_limit = 3 / 60)$create_assistant(
     name = "R OOP Expert",
     model = "gpt-4.1",
-    tools = list(
-        list(type = "file_search", store_ids = list(r_oop_store$id)),
-        as_tool(web_search),
-        as_tool(web_fetch)
-    )
+    tools = list(list(type = "file_search", store_ids = list(r_oop_store$id)), as_tool(web_search), as_tool(web_fetch))
 )
 ```
 
@@ -896,40 +875,44 @@ achieve similar behavior.
 
 ``` r
 library(R6)
-Person <- R6Class("Person",
-  private = list(age = 30),
-  active = list(
-    age = function(value) {
-      if (missing(value)) private$age      # Getter
-      else private$age <- value            # Setter
-    }
-  )
+Person <- R6Class(
+    "Person",
+    private = list(age = 30),
+    active = list(age = function(value) {
+        if (missing(value)) {
+            # Getter
+            private$age
+        } else {
+            private$age <- value
+        } # Setter
+    })
 )
 
 p <- Person$new()
-p$age           # get age
-p$age <- 35     # set age
-p$age           # get new age
+p$age # get age
+p$age <- 35 # set age
+p$age # get new age
 ```
 
 ``` r
 library(S7)
-Person <- new_class("Person",
-  properties = list(age = class_double),
-  methods = list(
-    age = function(self) {
-      self@age     # Getter equivalent
-    },
-    set_age = function(self, value) {
-      self@age <- value   # Setter equivalent
-    }
-  )
+Person <- new_class(
+    "Person",
+    properties = list(age = class_double),
+    methods = list(
+        age = function(self) {
+            self@age # Getter equivalent
+        },
+        set_age = function(self, value) {
+            self@age <- value # Setter equivalent
+        }
+    )
 )
 
 p <- Person(age = 30)
-p$age()          # get age
-p$set_age(35)    # set age
-p$age()          # get new age
+p$age() # get age
+p$set_age(35) # set age
+p$age() # get new age
 ```
 
 View citations and supplementary information:

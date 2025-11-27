@@ -1101,13 +1101,11 @@
 <span><span class="co">#       "httpUrl": "http://127.0.0.1:8080/mcp"</span></span>
 <span><span class="co">#     }</span></span>
 <span><span class="co">#   }</span></span>
-<span><span class="co"># }</span></span>
-<span></span>
-<span><span class="co"># ==============================================================================</span></span>
-<span><span class="co"># SETUP</span></span>
-<span><span class="co"># ==============================================================================</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span></span>
+<span><span class="co"># }</span></span></code></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://plumber2.posit.co/" class="external-link">plumber2</a></span><span class="op">)</span></span>
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://httr2.r-lib.org" class="external-link">httr2</a></span><span class="op">)</span></span>
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jeroen.r-universe.dev/jsonlite" class="external-link">jsonlite</a></span><span class="op">)</span></span>
@@ -1140,13 +1138,11 @@
 <span><span class="va">SERVER_INFO</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"semantic-scholar"</span>, version <span class="op">=</span> <span class="st">"1.0.0"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Session storage - each session tracks initialization state</span></span>
-<span><span class="va">SESSION_STORE</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">new.env</a></span><span class="op">(</span>parent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">emptyenv</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># ==============================================================================</span></span>
-<span><span class="co"># SEMANTIC SCHOLAR API FUNCTIONS</span></span>
-<span><span class="co"># ==============================================================================</span></span>
-<span></span>
-<span><span class="va">semantic_scholar_request</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">endpoint</span>, <span class="va">query</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">SESSION_STORE</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">new.env</a></span><span class="op">(</span>parent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">emptyenv</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">semantic_scholar_request</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">endpoint</span>, <span class="va">query</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">base_url</span> <span class="op">&lt;-</span> <span class="st">"https://api.semanticscholar.org/graph/v1"</span></span>
 <span>    <span class="va">url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">base_url</span>, <span class="va">endpoint</span><span class="op">)</span></span>
 <span></span>
@@ -1375,13 +1371,11 @@
 <span>    <span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">references</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># ==============================================================================</span></span>
-<span><span class="co"># JSON-RPC 2.0 HELPERS</span></span>
-<span><span class="co"># ==============================================================================</span></span>
-<span></span>
-<span><span class="va">jsonrpc_success</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">id</span>, <span class="va">result</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">jsonrpc_success</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">id</span>, <span class="va">result</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>jsonrpc <span class="op">=</span> <span class="st">"2.0"</span>, id <span class="op">=</span> <span class="va">id</span>, result <span class="op">=</span> <span class="va">result</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
@@ -1404,13 +1398,11 @@
 <span>    <span class="op">}</span></span>
 <span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>content <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"text"</span>, text <span class="op">=</span> <span class="va">text_content</span><span class="op">)</span><span class="op">)</span>, isError <span class="op">=</span> <span class="va">is_error</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># ==============================================================================</span></span>
-<span><span class="co"># MCP TOOL DEFINITIONS</span></span>
-<span><span class="co"># ==============================================================================</span></span>
-<span></span>
-<span><span class="va">MCP_TOOLS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">MCP_TOOLS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>        name <span class="op">=</span> <span class="st">"search_papers"</span>,</span>
 <span>        description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
@@ -1494,13 +1486,11 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">MCP_RESOURCES</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">MCP_PROMPTS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># ==============================================================================</span></span>
-<span><span class="co"># MCP METHOD HANDLERS</span></span>
-<span><span class="co"># ==============================================================================</span></span>
-<span></span>
-<span><span class="va">handle_initialize</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">params</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">MCP_PROMPTS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">handle_initialize</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">params</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>        protocolVersion <span class="op">=</span> <span class="va">MCP_PROTOCOL_VERSION</span>,</span>
 <span>        capabilities <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -1620,13 +1610,11 @@
 <span>    <span class="op">}</span></span>
 <span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>description <span class="op">=</span> <span class="va">prompt</span><span class="op">$</span><span class="va">description</span>, messages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># ==============================================================================</span></span>
-<span><span class="co"># MCP REQUEST PROCESSING</span></span>
-<span><span class="co"># ==============================================================================</span></span>
-<span></span>
-<span><span class="va">validate_jsonrpc</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">body</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">validate_jsonrpc</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">body</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">body</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">body</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
 <span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>code <span class="op">=</span> <span class="op">-</span><span class="fl">32700</span>, message <span class="op">=</span> <span class="st">"Empty or null request body"</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="op">}</span></span>
@@ -1693,13 +1681,11 @@
 <span>    <span class="op">)</span></span>
 <span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>result <span class="op">=</span> <span class="va">result</span>, method <span class="op">=</span> <span class="va">method</span>, id <span class="op">=</span> <span class="va">id</span>, is_notification <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># ==============================================================================</span></span>
-<span><span class="co"># PLUMBER2 HANDLERS (ANNOTATION-BASED)</span></span>
-<span><span class="co"># ==============================================================================</span></span>
-<span></span>
-<span><span class="co">#* MCP Streamable HTTP endpoint - POST handler</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#* MCP Streamable HTTP endpoint - POST handler</span></span>
 <span><span class="co">#*</span></span>
 <span><span class="co">#* Handles all MCP JSON-RPC requests.</span></span>
 <span><span class="co">#*</span></span>
@@ -1875,7 +1861,7 @@
 </div>
 <p>Which we can run <strong>in a separate R session or terminal</strong> with:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">plumber2</span><span class="fu">::</span><span class="fu">api</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples/semantic_scholar_mcp_server_plumber.R"</span>, package <span class="op">=</span> <span class="st">"argent"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">plumber2</span><span class="fu">::</span><span class="fu">api_run</span><span class="op">(</span>host <span class="op">=</span> <span class="st">"127.0.0.1"</span>, port <span class="op">=</span> <span class="fl">8080</span>, block <span class="op">=</span> <span class="cn">TRUE</span>, silent <span class="op">=</span> <span class="cn">FALSE</span>, showcase <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -1884,14 +1870,14 @@
 </div>
 <p>Then, we can connect to it from our main session:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">semantic_scholar_client</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_connect</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"semantic-scholar"</span>, type <span class="op">=</span> <span class="st">"http"</span>, url <span class="op">=</span> <span class="st">"http://127.0.0.1:8080/mcp"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">semantic_scholar_tools</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mcp_integration.html">mcp_tools</a></span><span class="op">(</span><span class="va">semantic_scholar_client</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>Test the server manually:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">papers</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/execute_mcp_tool.html">execute_mcp_tool</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="../reference/get_mcp_tool.html">get_mcp_tool</a></span><span class="op">(</span><span class="va">semantic_scholar_tools</span>, <span class="st">"search_papers"</span><span class="op">)</span>,</span>
 <span>    arguments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -1914,7 +1900,7 @@
 </div>
 <p>Now use it with an LLM agent:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gemini</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Google.html">Google</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">gemini</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
@@ -1956,13 +1942,13 @@
 <p><strong>Tip</strong></p>
 <p>We can use our new Semantic Scholar MCP server (either the standalone <code>plumber2</code> implementation or the <code>argent</code> implementation) with other MCP clients with:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"mcpServers"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"semantic-scholar"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"httpUrl"</span><span class="fu">:</span> <span class="st">"http://127.0.0.1:8080/mcp"</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"mcpServers"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"semantic-scholar"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"httpUrl"</span><span class="fu">:</span> <span class="st">"http://127.0.0.1:8080/mcp"</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 </div>
 </blockquote>
 </div>

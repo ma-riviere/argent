@@ -154,8 +154,7 @@
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Find assistant by name</span></span>
-<span><span class="va">assistant_id</span> <span class="op">&lt;-</span> <span class="va">openai_assistant</span><span class="op">$</span><span class="fu">find_assistants</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"My Assistant"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/pluck.html" class="external-link">pluck</a></span><span class="op">(</span><span class="st">"id"</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">assistant_id</span> <span class="op">&lt;-</span> <span class="va">openai_assistant</span><span class="op">$</span><span class="fu">find_assistants</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"My Assistant"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/pluck.html" class="external-link">pluck</a></span><span class="op">(</span><span class="st">"id"</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load in a new client instance</span></span>
 <span><span class="va">existing_assistant</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/OpenAI_Assistant.html">OpenAI_Assistant</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">load_assistant</span><span class="op">(</span>id <span class="op">=</span> <span class="va">assistant_id</span><span class="op">)</span></span></code></pre></div>
@@ -166,8 +165,7 @@
 </h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">openai_assistant</span><span class="op">$</span><span class="fu">list_models</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">id</span>, <span class="st">"-4o-|-4.1-"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">openai_assistant</span><span class="op">$</span><span class="fu">list_models</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">id</span>, <span class="st">"-4o-|-4.1-"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div>
 <blockquote>
@@ -460,7 +458,7 @@
 <span>    <span class="st">"When was the first release of the R 'ellmer' package on GitHub?"</span>,</span>
 <span>    output_schema <span class="op">=</span> <span class="va">package_info_schema</span></span>
 <span><span class="op">)</span></span>
-<span><span class="fl">6</span><span class="co">#&gt; ✔ [OpenAI Assistant] Thread created: thread_leVxekjFQnO8vUES62HBJuLc</span></span></code></pre></div>
+<span><span class="fl">6</span> <span class="co">#&gt; ✔ [OpenAI Assistant] Thread created: thread_leVxekjFQnO8vUES62HBJuLc</span></span></code></pre></div>
 </div>
 <div class="sourceCode" id="cb18"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>$release_version</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>[1] "0.1.0"</span>
@@ -499,9 +497,7 @@
 <span>    tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"code_interpreter"</span>, file_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">penguins_file_metadata</span><span class="op">$</span><span class="va">id</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">data_analyst</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
-<span>    <span class="st">"Create a summary table showing average body_mass grouped by species, sex, and year. Save as CSV."</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">data_analyst</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="st">"Create a summary table showing average body_mass grouped by species, sex, and year. Save as CSV."</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>Download generated files:</p>
 <div class="cell">
@@ -658,10 +654,7 @@
 <p><strong>Sending a local PDF:</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pdf_assistant</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
-<span>    <span class="st">"What's my favorite programming language?"</span>,</span>
-<span>    <span class="va">my_cv_pdf_path</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">pdf_assistant</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="st">"What's my favorite programming language?"</span>, <span class="va">my_cv_pdf_path</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="sourceCode" id="cb32"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>Your favorite programming language appears to be **R**, as indicated by your extensive experience and focus on R and Shiny in your work and projects【4:0†source】.</span></code></pre></div>
 <p><em>Damn right!</em></p>
@@ -696,11 +689,7 @@
 <div class="sourceCode cell-code" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lm_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">body_mass</span> <span class="op">~</span> <span class="va">species</span> <span class="op">+</span> <span class="va">sex</span>, data <span class="op">=</span> <span class="fu">datasets</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/datasets/penguins.html" class="external-link">penguins</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">openai_assistant</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
-<span>    <span class="st">"What can we deduct from this regression model?"</span>,</span>
-<span>    <span class="va">lm_obj</span>,</span>
-<span>    in_new_thread <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">openai_assistant</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="st">"What can we deduct from this regression model?"</span>, <span class="va">lm_obj</span>, in_new_thread <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div>
 <blockquote>
@@ -738,10 +727,7 @@
 <p>Use <code><a href="../reference/content_converters.html">as_file_content()</a></code> to reference uploaded files:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb40"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">file_assistant</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
-<span>    <span class="st">"What are my two favorite frameworks/tools ?"</span>,</span>
-<span>    <span class="fu"><a href="../reference/content_converters.html">as_file_content</a></span><span class="op">(</span><span class="va">file_metadata</span><span class="op">$</span><span class="va">id</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">file_assistant</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="st">"What are my two favorite frameworks/tools ?"</span>, <span class="fu"><a href="../reference/content_converters.html">as_file_content</a></span><span class="op">(</span><span class="va">file_metadata</span><span class="op">$</span><span class="va">id</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="sourceCode" id="cb41"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>Your two favorite frameworks/tools are **Shiny** and **Quarto**【4:0†source】.</span></code></pre></div>
 <div>
@@ -772,10 +758,7 @@
 <p><strong>Creating a Vector Store</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb43"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">store</span> <span class="op">&lt;-</span> <span class="va">file_assistant</span><span class="op">$</span><span class="fu">create_store</span><span class="op">(</span></span>
-<span>    name <span class="op">=</span> <span class="st">"my_docs"</span>,</span>
-<span>    file_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"file-123"</span>, <span class="st">"file-456"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">store</span> <span class="op">&lt;-</span> <span class="va">file_assistant</span><span class="op">$</span><span class="fu">create_store</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"my_docs"</span>, file_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"file-123"</span>, <span class="st">"file-456"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p><strong>Listing Vector Stores</strong></p>
 <div class="cell">
@@ -833,11 +816,7 @@
 <code class="sourceCode R"><span><span class="va">rag_assistant</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/OpenAI_Assistant.html">OpenAI_Assistant</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>rate_limit <span class="op">=</span> <span class="fl">3</span> <span class="op">/</span> <span class="fl">60</span><span class="op">)</span><span class="op">$</span><span class="fu">create_assistant</span><span class="op">(</span></span>
 <span>    name <span class="op">=</span> <span class="st">"R OOP Expert"</span>,</span>
 <span>    model <span class="op">=</span> <span class="st">"gpt-4.1"</span>,</span>
-<span>    tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>        <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"file_search"</span>, store_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">r_oop_store</span><span class="op">$</span><span class="va">id</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>        <span class="fu"><a href="../reference/as_tool.html">as_tool</a></span><span class="op">(</span><span class="va">web_search</span><span class="op">)</span>,</span>
-<span>        <span class="fu"><a href="../reference/as_tool.html">as_tool</a></span><span class="op">(</span><span class="va">web_fetch</span><span class="op">)</span></span>
-<span>    <span class="op">)</span></span>
+<span>    tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"file_search"</span>, store_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">r_oop_store</span><span class="op">$</span><span class="va">id</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="../reference/as_tool.html">as_tool</a></span><span class="op">(</span><span class="va">web_search</span><span class="op">)</span>, <span class="fu"><a href="../reference/as_tool.html">as_tool</a></span><span class="op">(</span><span class="va">web_fetch</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div>
@@ -869,40 +848,44 @@
 <div class="cell">
 <div class="sourceCode cell-code" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r6.r-lib.org" class="external-link">R6</a></span><span class="op">)</span></span>
-<span><span class="va">Person</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://r6.r-lib.org/reference/R6Class.html" class="external-link">R6Class</a></span><span class="op">(</span><span class="st">"Person"</span>,</span>
-<span>  private <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>age <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>,</span>
-<span>  active <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    age <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">value</span><span class="op">)</span> <span class="op">{</span></span>
-<span>      <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/missing.html" class="external-link">missing</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="va">private</span><span class="op">$</span><span class="va">age</span>      <span class="co"># Getter</span></span>
-<span>      <span class="kw">else</span> <span class="va">private</span><span class="op">$</span><span class="va">age</span> <span class="op">&lt;-</span> <span class="va">value</span>            <span class="co"># Setter</span></span>
-<span>    <span class="op">}</span></span>
-<span>  <span class="op">)</span></span>
+<span><span class="va">Person</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://r6.r-lib.org/reference/R6Class.html" class="external-link">R6Class</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Person"</span>,</span>
+<span>    private <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>age <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>,</span>
+<span>    active <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>age <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">value</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/missing.html" class="external-link">missing</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="co"># Getter</span></span>
+<span>            <span class="va">private</span><span class="op">$</span><span class="va">age</span></span>
+<span>        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>            <span class="va">private</span><span class="op">$</span><span class="va">age</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span>        <span class="op">}</span> <span class="co"># Setter</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">p</span> <span class="op">&lt;-</span> <span class="va">Person</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">p</span><span class="op">$</span><span class="va">age</span>           <span class="co"># get age</span></span>
-<span><span class="va">p</span><span class="op">$</span><span class="va">age</span> <span class="op">&lt;-</span> <span class="fl">35</span>     <span class="co"># set age</span></span>
-<span><span class="va">p</span><span class="op">$</span><span class="va">age</span>           <span class="co"># get new age</span></span></code></pre></div>
+<span><span class="va">p</span><span class="op">$</span><span class="va">age</span> <span class="co"># get age</span></span>
+<span><span class="va">p</span><span class="op">$</span><span class="va">age</span> <span class="op">&lt;-</span> <span class="fl">35</span> <span class="co"># set age</span></span>
+<span><span class="va">p</span><span class="op">$</span><span class="va">age</span> <span class="co"># get new age</span></span></code></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rconsortium.github.io/S7/" class="external-link">S7</a></span><span class="op">)</span></span>
-<span><span class="va">Person</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rconsortium.github.io/S7/reference/new_class.html" class="external-link">new_class</a></span><span class="op">(</span><span class="st">"Person"</span>,</span>
-<span>  properties <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>age <span class="op">=</span> <span class="va">class_double</span><span class="op">)</span>,</span>
-<span>  methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    age <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">self</span><span class="op">)</span> <span class="op">{</span></span>
-<span>      <span class="va">self</span><span class="op">@</span><span class="va">age</span>     <span class="co"># Getter equivalent</span></span>
-<span>    <span class="op">}</span>,</span>
-<span>    set_age <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">self</span>, <span class="va">value</span><span class="op">)</span> <span class="op">{</span></span>
-<span>      <span class="va">self</span><span class="op">@</span><span class="va">age</span> <span class="op">&lt;-</span> <span class="va">value</span>   <span class="co"># Setter equivalent</span></span>
-<span>    <span class="op">}</span></span>
-<span>  <span class="op">)</span></span>
+<span><span class="va">Person</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rconsortium.github.io/S7/reference/new_class.html" class="external-link">new_class</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Person"</span>,</span>
+<span>    properties <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>age <span class="op">=</span> <span class="va">class_double</span><span class="op">)</span>,</span>
+<span>    methods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        age <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">self</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="va">self</span><span class="op">@</span><span class="va">age</span> <span class="co"># Getter equivalent</span></span>
+<span>        <span class="op">}</span>,</span>
+<span>        set_age <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">self</span>, <span class="va">value</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="va">self</span><span class="op">@</span><span class="va">age</span> <span class="op">&lt;-</span> <span class="va">value</span> <span class="co"># Setter equivalent</span></span>
+<span>        <span class="op">}</span></span>
+<span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">Person</span><span class="op">(</span>age <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
-<span><span class="va">p</span><span class="op">$</span><span class="fu">age</span><span class="op">(</span><span class="op">)</span>          <span class="co"># get age</span></span>
-<span><span class="va">p</span><span class="op">$</span><span class="fu">set_age</span><span class="op">(</span><span class="fl">35</span><span class="op">)</span>    <span class="co"># set age</span></span>
-<span><span class="va">p</span><span class="op">$</span><span class="fu">age</span><span class="op">(</span><span class="op">)</span>          <span class="co"># get new age</span></span></code></pre></div>
+<span><span class="va">p</span><span class="op">$</span><span class="fu">age</span><span class="op">(</span><span class="op">)</span> <span class="co"># get age</span></span>
+<span><span class="va">p</span><span class="op">$</span><span class="fu">set_age</span><span class="op">(</span><span class="fl">35</span><span class="op">)</span> <span class="co"># set age</span></span>
+<span><span class="va">p</span><span class="op">$</span><span class="fu">age</span><span class="op">(</span><span class="op">)</span> <span class="co"># get new age</span></span></code></pre></div>
 </div>
 </details><p>View citations and supplementary information:</p>
 <div class="cell">

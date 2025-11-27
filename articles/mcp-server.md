@@ -1055,11 +1055,9 @@ mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "
 > #     }
 > #   }
 > # }
+> ```
 >
-> # ==============================================================================
-> # SETUP
-> # ==============================================================================
->
+> ``` r
 > suppressPackageStartupMessages({
 >     library(plumber2)
 >     library(httr2)
@@ -1094,11 +1092,9 @@ mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "
 >
 > # Session storage - each session tracks initialization state
 > SESSION_STORE <- new.env(parent = emptyenv())
+> ```
 >
-> # ==============================================================================
-> # SEMANTIC SCHOLAR API FUNCTIONS
-> # ==============================================================================
->
+> ``` r
 > semantic_scholar_request <- function(endpoint, query = list()) {
 >     base_url <- "https://api.semanticscholar.org/graph/v1"
 >     url <- paste0(base_url, endpoint)
@@ -1329,11 +1325,9 @@ mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "
 >
 >     return(references)
 > }
+> ```
 >
-> # ==============================================================================
-> # JSON-RPC 2.0 HELPERS
-> # ==============================================================================
->
+> ``` r
 > jsonrpc_success <- function(id, result) {
 >     list(jsonrpc = "2.0", id = id, result = result)
 > }
@@ -1358,11 +1352,9 @@ mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "
 >
 >     list(content = list(list(type = "text", text = text_content)), isError = is_error)
 > }
+> ```
 >
-> # ==============================================================================
-> # MCP TOOL DEFINITIONS
-> # ==============================================================================
->
+> ``` r
 > MCP_TOOLS <- list(
 >     list(
 >         name = "search_papers",
@@ -1448,11 +1440,9 @@ mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "
 >
 > MCP_RESOURCES <- list()
 > MCP_PROMPTS <- list()
+> ```
 >
-> # ==============================================================================
-> # MCP METHOD HANDLERS
-> # ==============================================================================
->
+> ``` r
 > handle_initialize <- function(params) {
 >     list(
 >         protocolVersion = MCP_PROTOCOL_VERSION,
@@ -1574,11 +1564,9 @@ mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "
 >
 >     list(description = prompt$description, messages = list())
 > }
+> ```
 >
-> # ==============================================================================
-> # MCP REQUEST PROCESSING
-> # ==============================================================================
->
+> ``` r
 > validate_jsonrpc <- function(body) {
 >     if (is.null(body) || length(body) == 0) {
 >         return(list(code = -32700, message = "Empty or null request body"))
@@ -1647,11 +1635,9 @@ mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "
 >
 >     list(result = result, method = method, id = id, is_notification = is.null(id))
 > }
+> ```
 >
-> # ==============================================================================
-> # PLUMBER2 HANDLERS (ANNOTATION-BASED)
-> # ==============================================================================
->
+> ``` r
 > #* MCP Streamable HTTP endpoint - POST handler
 > #*
 > #* Handles all MCP JSON-RPC requests.

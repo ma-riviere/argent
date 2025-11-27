@@ -1,24 +1,24 @@
-# Get an MCP prompt
+# Get an MCP prompt by name
 
-Get an MCP prompt
+Get an MCP prompt by name
 
 ## Usage
 
 ``` r
-get_mcp_prompt(prompt_def, arguments = NULL)
+get_mcp_prompt(prompt_defs, prompt_name)
 ```
 
 ## Arguments
 
-- prompt_def:
+- prompt_defs:
 
-  List. The prompt definition (e.g. one of the items returned by
+  List. The prompt definitions (e.g. returned by
   [`mcp_prompts()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)).
 
-- arguments:
+- prompt_name:
 
-  List. The arguments to pass to the prompt
+  Character. The name of the prompt to retrieve.
 
 ## Value
 
-The prompt result with messages
+The prompt definition
