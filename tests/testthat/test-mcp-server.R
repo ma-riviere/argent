@@ -121,14 +121,12 @@ test_that("mcp_success creates structured success response", {
 test_that("STDIO server can be served and connected to", {
     skip_on_cran()
 
-    server_file <- test_path("helper-mcp-servers.R")
-
     # Connect to calculator server (spawns subprocess)
     client <- mcp_connect(
         name = "calculator",
         type = "stdio",
-        command = "Rscript",
-        args = c("-e", sprintf("source('%s'); serve_calculator_stdio('%s')", server_file, server_file))
+        command = rscript_binary(),
+        args = c("--vanilla", test_path("serve-calculator.R"), test_path("helper-mcp-servers.R"))
     )
 
     expect_s3_class(client, "McpClientStdio")
@@ -148,14 +146,12 @@ test_that("STDIO server can be served and connected to", {
 test_that("STDIO server tools can be executed via client", {
     skip_on_cran()
 
-    server_file <- test_path("helper-mcp-servers.R")
-
     # Connect to calculator server
     client <- mcp_connect(
         name = "calculator",
         type = "stdio",
-        command = "Rscript",
-        args = c("-e", sprintf("source('%s'); serve_calculator_stdio('%s')", server_file, server_file))
+        command = rscript_binary(),
+        args = c("--vanilla", test_path("serve-calculator.R"), test_path("helper-mcp-servers.R"))
     )
 
     # Get tools

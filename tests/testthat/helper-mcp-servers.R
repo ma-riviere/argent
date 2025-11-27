@@ -1,6 +1,19 @@
 # Mock MCP Servers for Testing
 # These servers are used across multiple test files to ensure consistency
 
+# ----- HELPER FUNCTIONS -------------------------------------------------------
+
+#' Get the full path to Rscript binary
+#'
+#' This ensures we use the correct Rscript binary on all platforms,
+#' avoiding PATH resolution issues on CI systems.
+rscript_binary <- function() {
+    if (isTRUE(Sys.info()[["sysname"]] == "Windows")) {
+        return(file.path(R.home("bin"), "Rscript.exe"))
+    }
+    file.path(R.home("bin"), "Rscript")
+}
+
 # ----- CALCULATOR SERVER (STDIO) ----------------------------------------------
 
 add_numbers <- function(a, b) {
