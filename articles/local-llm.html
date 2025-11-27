@@ -100,18 +100,8 @@
 
     <section class="section level2"><h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>This article covers using local LLM servers with argent. The <code>LocalLLM</code> provider works with any OpenAI-compatible local server, including llama.cpp, Ollama, vLLM, and others.</p>
-</section><section class="section level2"><h2 id="supported-servers">Supported Servers<a class="anchor" aria-label="anchor" href="#supported-servers"></a>
-</h2>
-<ul>
-<li>
-<strong>llama.cpp</strong> (llama-server)</li>
-<li><strong>Ollama</strong></li>
-<li><strong>vLLM</strong></li>
-<li><strong>LM Studio</strong></li>
-<li><strong>text-generation-webui</strong></li>
-<li>Any other OpenAI-compatible server</li>
-</ul></section><section class="section level2"><h2 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
+<p>This article covers using local LLM servers with argent. The <code>LocalLLM</code> provider was tested with llama.cpp (llama-server), but it should work with any OpenAI-compatible local server.</p>
+</section><section class="section level2"><h2 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
 </h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
@@ -124,16 +114,16 @@
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--host</span> 127.0.0.1 <span class="dt">\</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--port</span> 5000 <span class="dt">\</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--flash-attn</span> 1 <span class="dt">\</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--n-gpu-layers</span> 999 <span class="at">--n-gpu-layers-draft</span> 999 <span class="dt">\</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--model</span> gemma-3-27b-it-IQ4_XS.gguf <span class="dt">\</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--model-draft</span> gemma-3-4b-it-IQ4_XS.gguf <span class="dt">\</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--cache-type-k</span> q8_0 <span class="at">--cache-type-v</span> q8_0 <span class="dt">\</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--n-gpu-layers</span> 999 <span class="at">--n-gpu-layers-draft</span> 999 <span class="dt">\ </span>  <span class="co"># Use only VRAM</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--model</span> gemma-3-27b-it-IQ4_XS.gguf <span class="dt">\</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--model-draft</span> gemma-3-4b-it-IQ4_XS.gguf <span class="dt">\ </span>      <span class="co"># For faster outputs</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--cache-type-k</span> q8_0 <span class="at">--cache-type-v</span> q8_0 <span class="dt">\</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--ctx-size</span> 64000 <span class="at">--ctx-size-draft</span> 64000 <span class="dt">\</span></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--draft-max</span> 8 <span class="at">--draft-min</span> 4 <span class="dt">\</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">--jinja</span> <span class="dt">\</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">--reasoning-format</span> deepseek <span class="dt">\</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">--reasoning-budget</span> <span class="at">-1</span> <span class="dt">\</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">--mmproj</span> mmproj-BF16.gguf</span></code></pre></div>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">--jinja</span> <span class="dt">\ </span>                                      <span class="co"># For tool calling</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--reasoning-format</span> deepseek <span class="dt">\ </span>                  <span class="co"># For reasoning/thinking</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--reasoning-budget</span> <span class="at">-1</span> <span class="dt">\</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">--mmproj</span> mmproj-BF16.gguf                       <span class="co"># For vision capabilities</span></span></code></pre></div>
 </div>
 </section><section class="level2"><h3 id="connecting-to-the-server">Connecting to the Server<a class="anchor" aria-label="anchor" href="#connecting-to-the-server"></a>
 </h3>
@@ -388,7 +378,7 @@
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>$release_date</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>[1] "2025-05-01"</span></code></pre></div>
-<p><em>Wrong answer, but it used the tools and returned a structured output. Not too bad for a small local model.</em></p>
+<p><em>Wrong answer, but it used the tools and returned a structured output. Not too bad for a ~1 year old small local model.</em></p>
 <div>
 <blockquote>
 <p><strong>Note</strong></p>
@@ -447,7 +437,7 @@
 <p>When providing a path to a local image, it will automatically be converted to base64 before being sent to the server.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">local_llama</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span>    </span>
+<code class="sourceCode R"><span><span class="va">local_llama</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span></span>
 <span>    <span class="st">"Who are the characters in this image, and what show is it from?"</span>,</span>
 <span>    <span class="va">bsg04_cast_image_path</span></span>
 <span><span class="op">)</span></span></code></pre></div>

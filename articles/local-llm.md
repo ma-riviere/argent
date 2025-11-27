@@ -3,17 +3,8 @@
 ## Introduction
 
 This article covers using local LLM servers with argent. The `LocalLLM`
-provider works with any OpenAI-compatible local server, including
-llama.cpp, Ollama, vLLM, and others.
-
-## Supported Servers
-
-- **llama.cpp** (llama-server)
-- **Ollama**
-- **vLLM**
-- **LM Studio**
-- **text-generation-webui**
-- Any other OpenAI-compatible server
+provider was tested with llama.cpp (llama-server), but it should work
+with any OpenAI-compatible local server.
 
 ## Setup
 
@@ -28,16 +19,16 @@ llama.cpp/build/bin/llama-server \
   --host 127.0.0.1 \
   --port 5000 \
   --flash-attn 1 \
-  --n-gpu-layers 999 --n-gpu-layers-draft 999 \
+  --n-gpu-layers 999 --n-gpu-layers-draft 999 \   # Use only VRAM
   --model gemma-3-27b-it-IQ4_XS.gguf \
-  --model-draft gemma-3-4b-it-IQ4_XS.gguf \
+  --model-draft gemma-3-4b-it-IQ4_XS.gguf \       # For faster outputs
   --cache-type-k q8_0 --cache-type-v q8_0 \
   --ctx-size 64000 --ctx-size-draft 64000 \
   --draft-max 8 --draft-min 4 \
-  --jinja \
-  --reasoning-format deepseek \
+  --jinja \                                       # For tool calling
+  --reasoning-format deepseek \                   # For reasoning/thinking
   --reasoning-budget -1 \
-  --mmproj mmproj-BF16.gguf
+  --mmproj mmproj-BF16.gguf                       # For vision capabilities
 ```
 
 ### Connecting to the Server
@@ -312,7 +303,7 @@ $release_date
 ```
 
 *Wrong answer, but it used the tools and returned a structured output.
-Not too bad for a small local model.*
+Not too bad for a ~1 year old small local model.*
 
 > **Note**
 >
@@ -383,7 +374,7 @@ When providing a path to a local image, it will automatically be
 converted to base64 before being sent to the server.
 
 ``` r
-local_llama$chat(    
+local_llama$chat(
     "Who are the characters in this image, and what show is it from?",
     bsg04_cast_image_path
 )

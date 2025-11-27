@@ -1,6 +1,7 @@
-# Get an MCP prompt by name
+# Get an MCP prompt by name from a list of prompt definitions (convenience function)
 
-Get an MCP prompt by name
+Get an MCP prompt by name from a list of prompt definitions (convenience
+function)
 
 ## Usage
 

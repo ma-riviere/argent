@@ -526,8 +526,11 @@
 <span><span class="op">}</span></span></code></pre>
 <pre class="{r🔺 MCP RESOURCES}"><code><span><span class="co"># Resources provide read-only data that can be attached to context.</span></span>
 <span><span class="co"># Unlike tools (model-controlled), resources are application/user-controlled.</span></span>
+<span><span class="co">#</span></span>
+<span><span class="co"># NOTE: Per MCP spec, resource handlers MUST accept a 'uri' parameter, even if</span></span>
+<span><span class="co"># not used. The server calls handler(uri) when processing resources/read requests.</span></span>
 <span></span>
-<span><span class="va">zotero_library_stats</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">zotero_library_stats</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">uri</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="co">#' @mcp resource</span></span>
 <span>    <span class="co">#' @group overview</span></span>
 <span>    <span class="co">#' @description Overview statistics of your Zotero library including total</span></span>

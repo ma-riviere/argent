@@ -1,11 +1,11 @@
-# Build an MCP prompt with arguments
+# Apply arguments to an MCP prompt
 
-Build an MCP prompt with arguments
+Apply arguments to an MCP prompt
 
 ## Usage
 
 ``` r
-build_mcp_prompt(prompt_def, arguments = NULL)
+apply_mcp_prompt(prompt_def, arguments = NULL)
 ```
 
 ## Arguments

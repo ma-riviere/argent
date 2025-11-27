@@ -468,6 +468,7 @@ research_subagent <- function(subtask) {
         - Use GitHub MCP tools to explore code examples where relevant.
             - You can use the `get_file_contents` tool to list the contents of subdirs,
               using the 'path' argument (e.g. path = '/' or 'dir/'). The method needs a path parameter.
+            - get_file_contents requires a path 'parameter', even if the tool's definition doesn't mention it.
         </tools>
 
         <guidelines>

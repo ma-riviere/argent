@@ -77,9 +77,10 @@ Functions for connecting to external MCP servers
 - [`read_mcp_resource()`](https://ma-riviere.github.io/argent/reference/read_mcp_resource.md)
   : Read an MCP resource
 - [`get_mcp_prompt()`](https://ma-riviere.github.io/argent/reference/get_mcp_prompt.md)
-  : Get an MCP prompt by name
-- [`build_mcp_prompt()`](https://ma-riviere.github.io/argent/reference/build_mcp_prompt.md)
-  : Build an MCP prompt with arguments
+  : Get an MCP prompt by name from a list of prompt definitions
+  (convenience function)
+- [`apply_mcp_prompt()`](https://ma-riviere.github.io/argent/reference/apply_mcp_prompt.md)
+  : Apply arguments to an MCP prompt
 
 ### MCP Server
 
