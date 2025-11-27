@@ -233,7 +233,7 @@ read_mcp_resource <- function(resource_def) {
     return(result)
 }
 
-#' Get an MCP prompt by name
+#' Get an MCP prompt by name from a list of prompt definitions (convenience function)
 #'
 #' @param prompt_defs List. The prompt definitions (e.g. returned by `mcp_prompts()`).
 #' @param prompt_name Character. The name of the prompt to retrieve.
