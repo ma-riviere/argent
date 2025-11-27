@@ -11,12 +11,12 @@ Source:
 [`DESCRIPTION`](https://github.com/ma-riviere/argent/blob/main/DESCRIPTION)
 
 Rivière M (2025). *argent: Argent: LLM Agents in R*. R package version
-0.0.0.9000, <https://ma-riviere.github.io/argent>.
+0.1.0, <https://ma-riviere.github.io/argent>.
 
     @Manual{,
       title = {argent: Argent: LLM Agents in R},
       author = {Marc-Aurèle Rivière},
       year = {2025},
-      note = {R package version 0.0.0.9000},
+      note = {R package version 0.1.0},
       url = {https://ma-riviere.github.io/argent},
     }
