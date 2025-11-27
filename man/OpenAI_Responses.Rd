@@ -180,7 +180,7 @@ path <- responses$download_container_file(
 }
 }
 \section{Super classes}{
-\code{argent::Provider} -> \code{argent::OpenAI} -> \code{OpenAI_Responses}
+\code{\link[argent:Provider]{argent::Provider}} -> \code{\link[argent:OpenAI]{argent::OpenAI}} -> \code{OpenAI_Responses}
 }
 \section{Methods}{
 \subsection{Public methods}{

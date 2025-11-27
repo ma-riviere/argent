@@ -8,7 +8,7 @@ A client for interacting with local MCP servers via stdio.
 }
 \keyword{internal}
 \section{Super class}{
-\code{argent::McpClient} -> \code{McpClientStdio}
+\code{\link[argent:McpClient]{argent::McpClient}} -> \code{McpClientStdio}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
