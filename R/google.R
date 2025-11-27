@@ -1695,9 +1695,12 @@ Google <- R6::R6Class(
 #' @noRd
 as_tool_google <- function(tool_schema) {
     tool_args <- tool_schema$args_schema %||% tool_schema$parameters %||% tool_schema$input_schema %||% NULL
-    tool_args$additionalProperties <- NULL
+    parameters <- list(type = "object", properties = tool_args$properties, required = tool_args$required)
 
-    list3(name = tool_schema$name, description = tool_schema$description, parameters = tool_args)
+    # Remove additionalProperties recursively from parameters
+    parameters <- purrr::modify_tree(parameters, post = \(x) x[!names(x) %in% "additionalProperties"])
+
+    list3(name = tool_schema$name, description = tool_schema$description, parameters = parameters)
 }
 
 #' Convert schema to Google's native responseSchema format (internal)

@@ -807,8 +807,8 @@ LocalLLM <- R6::R6Class(
 #' @keywords internal
 #' @noRd
 as_tool_local <- function(tool_schema) {
-    tool_args <- tool_schema$args_schema %||% tool_schema$parameters %||% tool_schema$input_schema %||% NULL
-    list3(name = tool_schema$name, description = tool_schema$description, parameters = tool_args)
+    parameters <- tool_schema$args_schema %||% tool_schema$parameters %||% tool_schema$input_schema %||% NULL
+    list3(name = tool_schema$name, description = tool_schema$description, parameters = parameters)
 }
 
 #' Convert schema to structured output format for local LLM (internal)

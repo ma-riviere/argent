@@ -851,16 +851,8 @@ OpenAI <- R6::R6Class(
 #' @keywords internal
 #' @noRd
 as_tool_openai <- function(tool_schema) {
-    if (!is.null(tool_schema$parameters) && !is.null(tool_schema$type)) {
-        return(tool_schema)
-    }
-
-    list3(
-        type = "function",
-        name = tool_schema$name,
-        description = tool_schema$description,
-        parameters = tool_schema$args_schema
-    )
+    parameters <- tool_schema$args_schema %||% tool_schema$parameters %||% tool_schema$input_schema %||% NULL
+    list3(type = "function", name = tool_schema$name, description = tool_schema$description, parameters = parameters)
 }
 
 #' Convert schema to structured output format for Responses API (internal)

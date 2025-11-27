@@ -416,8 +416,11 @@ zotero_get_item_types <- function() {
 # ------🔺 MCP RESOURCES ---------------------------------------------------------
 # Resources provide read-only data that can be attached to context.
 # Unlike tools (model-controlled), resources are application/user-controlled.
+#
+# NOTE: Per MCP spec, resource handlers MUST accept a 'uri' parameter, even if
+# not used. The server calls handler(uri) when processing resources/read requests.
 
-zotero_library_stats <- function() {
+zotero_library_stats <- function(uri) {
     #' @mcp resource
     #' @group overview
     #' @description Overview statistics of your Zotero library including total
