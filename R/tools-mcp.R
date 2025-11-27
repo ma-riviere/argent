@@ -127,20 +127,13 @@ mcp_tools <- function(client, tools = NULL) {
 #' @return The result of the tool execution
 #' @export
 execute_mcp_tool <- function(tool_def, arguments = list()) {
-    tool_name <- tool_def$name
-    if (purrr::is_empty(tool_name)) {
-        cli::cli_abort("Tool definition has no name")
+    if (!is_mcp_tool(tool_def)) {
+        tool_name <- purrr::pluck(tool_def, "name", .default = "unknown")
+        cli::cli_abort("Tool {.val {tool_name}} is not a valid MCP tool")
     }
 
-    mcp_metadata <- tool_def[[".mcp"]]
-    if (purrr::is_empty(mcp_metadata)) {
-        cli::cli_abort("Tool {.val {tool_name}} is not an MCP tool")
-    }
-
-    client <- mcp_metadata$client
-    if (is.null(client) || !inherits(client, "McpClient")) {
-        cli::cli_abort("No active MCP client found for tool {.val {tool_name}}")
-    }
+    tool_name <- purrr::pluck(tool_def, "name")
+    client <- purrr::pluck(tool_def, ".mcp", "client")
 
     result <- tryCatch(client$call_tool(tool_name, arguments), error = function(e) {
         # Return R-level errors (connection issues, etc.) as error results
@@ -200,6 +193,75 @@ get_mcp_resource <- function(resource_defs, resource_uri) {
     return(matching_resources[[1]])
 }
 
+#' @keywords internal
+#' @noRd
+is_mcp_tool <- function(x) {
+    if (!is.list(x)) {
+        return(FALSE)
+    }
+    if (purrr::is_empty(x[[".mcp"]])) {
+        return(FALSE)
+    }
+    if (!identical(x[[".mcp"]][["type"]], "tool")) {
+        return(FALSE)
+    }
+    if (purrr::is_empty(x[["name"]])) {
+        return(FALSE)
+    }
+    if (purrr::is_empty(x[["args_schema"]])) {
+        return(FALSE)
+    }
+    if (!inherits(x[[".mcp"]][["client"]], "McpClient")) {
+        return(FALSE)
+    }
+    return(TRUE)
+}
+
+#' @keywords internal
+#' @noRd
+is_mcp_resource <- function(x) {
+    if (!is.list(x)) {
+        return(FALSE)
+    }
+    if (purrr::is_empty(x[[".mcp"]])) {
+        return(FALSE)
+    }
+    if (!identical(x[[".mcp"]][["type"]], "resource")) {
+        return(FALSE)
+    }
+    if (purrr::is_empty(x[["name"]])) {
+        return(FALSE)
+    }
+    if (purrr::is_empty(x[["uri"]])) {
+        return(FALSE)
+    }
+    if (!inherits(x[[".mcp"]][["client"]], "McpClient")) {
+        return(FALSE)
+    }
+    return(TRUE)
+}
+
+#' @keywords internal
+#' @noRd
+is_mcp_prompt <- function(x) {
+    if (!is.list(x)) {
+        return(FALSE)
+    }
+    if (purrr::is_empty(x[[".mcp"]])) {
+        return(FALSE)
+    }
+    if (!identical(x[[".mcp"]][["type"]], "prompt")) {
+        return(FALSE)
+    }
+    if (purrr::is_empty(x[["name"]])) {
+        return(FALSE)
+    }
+    if (!inherits(x[[".mcp"]][["client"]], "McpClient")) {
+        return(FALSE)
+    }
+    return(TRUE)
+}
+
 #' Read an MCP resource
 #'
 #' @param resource_def List. The resource definition (e.g. one of the items returned by `mcp_resources()`).
@@ -207,21 +269,13 @@ get_mcp_resource <- function(resource_defs, resource_uri) {
 #' @return The content of the resource
 #' @export
 read_mcp_resource <- function(resource_def) {
-    resource_uri <- resource_def$uri
-    if (purrr::is_empty(resource_uri)) {
-        cli::cli_abort("Resource definition has no URI")
+    if (!is_mcp_resource(resource_def)) {
+        resource_uri <- purrr::pluck(resource_def, "uri", .default = "unknown")
+        cli::cli_abort("Resource {.val {resource_uri}} is not a valid MCP resource")
     }
 
-    # TODO: use is_mcp_resource()
-    mcp_metadata <- resource_def[[".mcp"]]
-    if (purrr::is_empty(mcp_metadata)) {
-        cli::cli_abort("Resource {.val {resource_uri}} is not an MCP resource")
-    }
-
-    client <- mcp_metadata$client
-    if (is.null(client) || !inherits(client, "McpClient")) {
-        cli::cli_abort("No active MCP client found for resource {.val {resource_uri}}")
-    }
+    resource_uri <- purrr::pluck(resource_def, "uri")
+    client <- purrr::pluck(resource_def, ".mcp", "client")
 
     result <- tryCatch(client$read_resource(resource_uri), error = function(e) {
         # Return R-level errors as error results
@@ -257,28 +311,21 @@ get_mcp_prompt <- function(prompt_defs, prompt_name) {
     return(matching_prompts[[1]])
 }
 
-#' Build an MCP prompt with arguments
+#' Apply arguments to an MCP prompt
 #'
 #' @param prompt_def List. The prompt definition (e.g. one of the items returned by `mcp_prompts()`).
 #' @param arguments List. The arguments to pass to the prompt
 #'
 #' @return The prompt result with messages
 #' @export
-build_mcp_prompt <- function(prompt_def, arguments = NULL) {
-    prompt_name <- prompt_def$name
-    if (purrr::is_empty(prompt_name)) {
-        cli::cli_abort("Prompt definition has no name")
+apply_mcp_prompt <- function(prompt_def, arguments = NULL) {
+    if (!is_mcp_prompt(prompt_def)) {
+        prompt_name <- purrr::pluck(prompt_def, "name", .default = "unknown")
+        cli::cli_abort("Prompt {.val {prompt_name}} is not a valid MCP prompt")
     }
 
-    mcp_metadata <- prompt_def[[".mcp"]]
-    if (purrr::is_empty(mcp_metadata)) {
-        cli::cli_abort("Prompt {.val {prompt_name}} is not an MCP prompt")
-    }
-
-    client <- mcp_metadata$client
-    if (is.null(client) || !inherits(client, "McpClient")) {
-        cli::cli_abort("No active MCP client found for prompt {.val {prompt_name}}")
-    }
+    prompt_name <- purrr::pluck(prompt_def, "name")
+    client <- purrr::pluck(prompt_def, ".mcp", "client")
 
     result <- tryCatch(client$get_prompt(prompt_name, arguments), error = function(e) {
         # Return R-level errors as error results

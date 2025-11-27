@@ -144,7 +144,7 @@ reference:
   - get_mcp_resource
   - read_mcp_resource
   - get_mcp_prompt
-  - build_mcp_prompt
+  - apply_mcp_prompt
 
 - subtitle: MCP Server
   desc: Functions for creating your own MCP servers

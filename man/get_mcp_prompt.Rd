@@ -2,7 +2,7 @@
 % Please edit documentation in R/tools-mcp.R
 \name{get_mcp_prompt}
 \alias{get_mcp_prompt}
-\title{Get an MCP prompt by name}
+\title{Get an MCP prompt by name from a list of prompt definitions (convenience function)}
 \usage{
 get_mcp_prompt(prompt_defs, prompt_name)
 }
@@ -15,5 +15,5 @@ get_mcp_prompt(prompt_defs, prompt_name)
 The prompt definition
 }
 \description{
-Get an MCP prompt by name
+Get an MCP prompt by name from a list of prompt definitions (convenience function)
 }
