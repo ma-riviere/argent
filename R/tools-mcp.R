@@ -72,7 +72,7 @@ mcp_connect <- function(name, type = "stdio", command = NULL, args = NULL, env =
             cli::cli_abort("{.arg env} must be a named list")
         }
 
-        client <- McpClientStdio$new(command = command, args = args, env = env)
+        client <- McpClientStdio$new(command = command, args = args %||% character(), env = env)
         client$name <- name
         return(client)
     }

@@ -3,10 +3,14 @@ NOTES.*
 .env
 .Rprofile
 CLAUDE.md
+.mcp.json
 .claude/
 .cursor/
 data
 .playwright-mcp
 _TODO/
+TODO.md
 docs
 node_modules/
+renv/
+renv.lock
