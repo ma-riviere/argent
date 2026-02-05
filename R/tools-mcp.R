@@ -135,6 +135,9 @@ execute_mcp_tool <- function(tool_def, arguments = list()) {
     tool_name <- purrr::pluck(tool_def, "name")
     client <- purrr::pluck(tool_def, ".mcp", "client")
 
+    # Apply schema defaults for missing arguments
+    arguments <- apply_mcp_defaults(tool_def, arguments)
+
     result <- tryCatch(client$call_tool(tool_name, arguments), error = function(e) {
         # Return R-level errors (connection issues, etc.) as error results
         return(list(isError = TRUE, error = list(code = "R_ERROR", message = e$message)))
@@ -421,4 +424,25 @@ mcp_prompts <- function(client, prompts = NULL) {
         return(argent_prompt)
     })
     return(argent_prompts)
+}
+
+#' Apply default values from MCP tool schema to arguments
+#' @keywords internal
+#' @noRd
+apply_mcp_defaults <- function(tool_def, arguments) {
+    properties <- purrr::pluck(tool_def, "args_schema", "properties")
+    if (purrr::is_empty(properties)) {
+        return(arguments)
+    }
+
+    for (param_name in names(properties)) {
+        if (is.null(arguments[[param_name]])) {
+            default_val <- purrr::pluck(properties, param_name, "default")
+            if (!is.null(default_val)) {
+                arguments[[param_name]] <- default_val
+            }
+        }
+    }
+
+    return(arguments)
 }

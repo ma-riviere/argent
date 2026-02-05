@@ -223,14 +223,7 @@ parse_resource_from_annotations <- function(fn, fn_name, description, annotation
         "text/plain"
     }
 
-    return(list(
-        uri = uri,
-        name = fn_name,
-        description = description,
-        group = group,
-        mimeType = mime_type,
-        .fn = fn
-    ))
+    return(list(uri = uri, name = fn_name, description = description, group = group, mimeType = mime_type, .fn = fn))
 }
 
 #' Parse prompt from inline annotations
