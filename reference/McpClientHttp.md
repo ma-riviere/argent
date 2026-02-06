@@ -33,12 +33,15 @@ A client for interacting with remote MCP servers via HTTP.
 
 - [`McpClientHttp$terminate_session()`](#method-McpClientHttp-terminate_session)
 
+- [`McpClientHttp$close()`](#method-McpClientHttp-close)
+
 - [`McpClientHttp$clone()`](#method-McpClientHttp-clone)
 
 Inherited methods
 
 - [`argent::McpClient$call_tool()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-call_tool)
 - [`argent::McpClient$get_prompt()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-get_prompt)
+- [`argent::McpClient$is_closed()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-is_closed)
 - [`argent::McpClient$list_prompts()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-list_prompts)
 - [`argent::McpClient$list_resources()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-list_resources)
 - [`argent::McpClient$list_tools()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-list_tools)
@@ -103,6 +106,16 @@ Terminate the HTTP session
 #### Usage
 
     McpClientHttp$terminate_session()
+
+------------------------------------------------------------------------
+
+### Method [`close()`](https://rdrr.io/r/base/connections.html)
+
+Close the client connection and terminate the HTTP session.
+
+#### Usage
+
+    McpClientHttp$close()
 
 ------------------------------------------------------------------------
 

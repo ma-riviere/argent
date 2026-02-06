@@ -62,6 +62,7 @@ using annotations or direct specification
 Functions for connecting to external MCP servers
 
 - [`mcp_connect()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)
+  [`mcp_close()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)
   [`mcp_tools()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)
   [`mcp_resources()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)
   [`mcp_prompts()`](https://ma-riviere.github.io/argent/reference/mcp_integration.md)

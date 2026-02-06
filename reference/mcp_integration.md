@@ -24,6 +24,10 @@ tools, resources, and prompts that LLMs can use during conversations.
   client. Prompts are pre-defined message templates with optional
   arguments.
 
+`mcp_close()` closes an MCP client connection and releases resources.
+For stdio clients, this terminates the spawned process. For HTTP
+clients, this terminates the remote session.
+
 ## Usage
 
 ``` r
@@ -36,6 +40,8 @@ mcp_connect(
   url = NULL,
   headers = NULL
 )
+
+mcp_close(client)
 
 mcp_tools(client, tools = NULL)
 

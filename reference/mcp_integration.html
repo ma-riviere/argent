@@ -24,7 +24,10 @@ Prompts are pre-defined message templates with optional arguments.
 
 
 
-"><meta property="og:description" content="Functions for integrating MCP servers with argent. MCP servers provide tools,
+
+mcp_close() closes an MCP client connection and releases resources.
+For stdio clients, this terminates the spawned process. For HTTP clients,
+this terminates the remote session."><meta property="og:description" content="Functions for integrating MCP servers with argent. MCP servers provide tools,
 resources, and prompts that LLMs can use during conversations.
 MCP Server Connection
 
@@ -49,7 +52,10 @@ Prompts are pre-defined message templates with optional arguments.
 
 
 
-"><meta property="og:image" content="https://ma-riviere.github.io/argent/reference/figures/logo.png"><meta property="og:image:alt" content="Creating AI Agents in R"><meta name="twitter:card" content="summary"><meta name="twitter:creator" content="@mariviere1"><meta name="twitter:site" content="@mariviere1"></head><body>
+
+mcp_close() closes an MCP client connection and releases resources.
+For stdio clients, this terminates the spawned process. For HTTP clients,
+this terminates the remote session."><meta property="og:image" content="https://ma-riviere.github.io/argent/reference/figures/logo.png"><meta property="og:image:alt" content="Creating AI Agents in R"><meta name="twitter:card" content="summary"><meta name="twitter:creator" content="@mariviere1"><meta name="twitter:site" content="@mariviere1"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -126,6 +132,9 @@ Resources expose data/content via URIs (files, datasets, documentation, etc.).</
 Prompts are pre-defined message templates with optional arguments.</p></li>
 </ul></div>
 
+<p><code>mcp_close()</code> closes an MCP client connection and releases resources.
+For stdio clients, this terminates the spawned process. For HTTP clients,
+this terminates the remote session.</p>
     </div>
 
     <div class="section level2">
@@ -139,6 +148,8 @@ Prompts are pre-defined message templates with optional arguments.</p></li>
 <span>  url <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  headers <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">mcp_close</span><span class="op">(</span><span class="va">client</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">mcp_tools</span><span class="op">(</span><span class="va">client</span>, tools <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>

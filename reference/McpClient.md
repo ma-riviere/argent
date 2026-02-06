@@ -29,6 +29,10 @@ both stdio (local process) and HTTP transports.
 
 - [`McpClient$send_request()`](#method-McpClient-send_request)
 
+- [`McpClient$close()`](#method-McpClient-close)
+
+- [`McpClient$is_closed()`](#method-McpClient-is_closed)
+
 - [`McpClient$clone()`](#method-McpClient-clone)
 
 ------------------------------------------------------------------------
@@ -142,6 +146,31 @@ Send a JSON-RPC request
 - `req`:
 
   List containing method and params
+
+------------------------------------------------------------------------
+
+### Method [`close()`](https://rdrr.io/r/base/connections.html)
+
+Close the client connection and release resources. Subclasses override
+this with transport-specific cleanup.
+
+#### Usage
+
+    McpClient$close()
+
+------------------------------------------------------------------------
+
+### Method `is_closed()`
+
+Check if the client connection is closed
+
+#### Usage
+
+    McpClient$is_closed()
+
+#### Returns
+
+Logical
 
 ------------------------------------------------------------------------
 

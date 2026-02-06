@@ -25,12 +25,17 @@ A client for interacting with local MCP servers via stdio.
 
 - [`McpClientStdio$send_notification()`](#method-McpClientStdio-send_notification)
 
+- [`McpClientStdio$close()`](#method-McpClientStdio-close)
+
+- [`McpClientStdio$is_alive()`](#method-McpClientStdio-is_alive)
+
 - [`McpClientStdio$clone()`](#method-McpClientStdio-clone)
 
 Inherited methods
 
 - [`argent::McpClient$call_tool()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-call_tool)
 - [`argent::McpClient$get_prompt()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-get_prompt)
+- [`argent::McpClient$is_closed()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-is_closed)
 - [`argent::McpClient$list_prompts()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-list_prompts)
 - [`argent::McpClient$list_resources()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-list_resources)
 - [`argent::McpClient$list_tools()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-list_tools)
@@ -101,6 +106,31 @@ Send notification (no ID, no response expected)
 - `req`:
 
   Request list
+
+------------------------------------------------------------------------
+
+### Method [`close()`](https://rdrr.io/r/base/connections.html)
+
+Close the connection and terminate the server process. Attempts graceful
+interrupt first, then force-kills if needed.
+
+#### Usage
+
+    McpClientStdio$close()
+
+------------------------------------------------------------------------
+
+### Method `is_alive()`
+
+Check if the server process is alive
+
+#### Usage
+
+    McpClientStdio$is_alive()
+
+#### Returns
+
+Logical
 
 ------------------------------------------------------------------------
 
