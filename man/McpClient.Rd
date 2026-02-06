@@ -26,6 +26,8 @@ Supports both stdio (local process) and HTTP transports.
 \item \href{#method-McpClient-list_prompts}{\code{McpClient$list_prompts()}}
 \item \href{#method-McpClient-get_prompt}{\code{McpClient$get_prompt()}}
 \item \href{#method-McpClient-send_request}{\code{McpClient$send_request()}}
+\item \href{#method-McpClient-close}{\code{McpClient$close()}}
+\item \href{#method-McpClient-is_closed}{\code{McpClient$is_closed()}}
 \item \href{#method-McpClient-clone}{\code{McpClient$clone()}}
 }
 }
@@ -139,6 +141,30 @@ Send a JSON-RPC request
 \item{\code{req}}{List containing method and params}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-McpClient-close"></a>}}
+\if{latex}{\out{\hypertarget{method-McpClient-close}{}}}
+\subsection{Method \code{close()}}{
+Close the client connection and release resources.
+Subclasses override this with transport-specific cleanup.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{McpClient$close()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-McpClient-is_closed"></a>}}
+\if{latex}{\out{\hypertarget{method-McpClient-is_closed}{}}}
+\subsection{Method \code{is_closed()}}{
+Check if the client connection is closed
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{McpClient$is_closed()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Logical
 }
 }
 \if{html}{\out{<hr>}}

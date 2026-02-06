@@ -3,6 +3,7 @@
 \name{mcp_integration}
 \alias{mcp_integration}
 \alias{mcp_connect}
+\alias{mcp_close}
 \alias{mcp_tools}
 \alias{mcp_resources}
 \alias{mcp_prompts}
@@ -17,6 +18,8 @@ mcp_connect(
   url = NULL,
   headers = NULL
 )
+
+mcp_close(client)
 
 mcp_tools(client, tools = NULL)
 
@@ -77,4 +80,8 @@ Resources expose data/content via URIs (files, datasets, documentation, etc.).
 Prompts are pre-defined message templates with optional arguments.
 }
 }
+
+\code{mcp_close()} closes an MCP client connection and releases resources.
+For stdio clients, this terminates the spawned process. For HTTP clients,
+this terminates the remote session.
 }

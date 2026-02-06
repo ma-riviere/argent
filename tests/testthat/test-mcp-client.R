@@ -213,3 +213,96 @@ test_that("execute_mcp_tool() works with BTW MCP tools", {
     expect_true(nchar(result) > 0)
     expect_true(grepl("testthat", result, ignore.case = TRUE))
 })
+
+# ----- CLOSE / CLEANUP --------------------------------------------------------
+
+test_that("McpClientStdio close() terminates process", {
+    skip_on_cran()
+    skip_if_not_installed("btw")
+
+    client <- tryCatch(
+        mcp_connect(
+            name = "btw",
+            type = "stdio",
+            command = "Rscript",
+            args = c("-e", "btw::btw_mcp_server(tools = btw::btw_tools('session'))")
+        ),
+        error = function(e) NULL
+    )
+    skip_if(is.null(client), "Could not connect to BTW MCP server")
+
+    expect_true(client$is_alive())
+    expect_false(client$is_closed())
+
+    client$close()
+    Sys.sleep(0.5)
+
+    expect_false(client$is_alive())
+    expect_true(client$is_closed())
+})
+
+test_that("McpClientStdio close() is idempotent", {
+    skip_on_cran()
+    skip_if_not_installed("btw")
+
+    client <- tryCatch(
+        mcp_connect(
+            name = "btw",
+            type = "stdio",
+            command = "Rscript",
+            args = c("-e", "btw::btw_mcp_server(tools = btw::btw_tools('session'))")
+        ),
+        error = function(e) NULL
+    )
+    skip_if(is.null(client), "Could not connect to BTW MCP server")
+
+    client$close()
+    # Second close should not error
+    expect_no_error(client$close())
+    expect_true(client$is_closed())
+})
+
+test_that("McpClientStdio send_request() errors after close", {
+    skip_on_cran()
+    skip_if_not_installed("btw")
+
+    client <- tryCatch(
+        mcp_connect(
+            name = "btw",
+            type = "stdio",
+            command = "Rscript",
+            args = c("-e", "btw::btw_mcp_server(tools = btw::btw_tools('session'))")
+        ),
+        error = function(e) NULL
+    )
+    skip_if(is.null(client), "Could not connect to BTW MCP server")
+
+    client$close()
+    expect_error(client$list_tools(), "closed")
+})
+
+test_that("mcp_close() works for stdio clients", {
+    skip_on_cran()
+    skip_if_not_installed("btw")
+
+    client <- tryCatch(
+        mcp_connect(
+            name = "btw",
+            type = "stdio",
+            command = "Rscript",
+            args = c("-e", "btw::btw_mcp_server(tools = btw::btw_tools('session'))")
+        ),
+        error = function(e) NULL
+    )
+    skip_if(is.null(client), "Could not connect to BTW MCP server")
+
+    expect_true(client$is_alive())
+    mcp_close(client)
+    Sys.sleep(0.5)
+    expect_false(client$is_alive())
+    expect_true(client$is_closed())
+})
+
+test_that("mcp_close() validates input", {
+    expect_error(mcp_close("not_a_client"), "must be an McpClient")
+})

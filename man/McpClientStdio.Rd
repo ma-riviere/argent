@@ -24,6 +24,8 @@ A client for interacting with local MCP servers via stdio.
 \item \href{#method-McpClientStdio-initialize_connection}{\code{McpClientStdio$initialize_connection()}}
 \item \href{#method-McpClientStdio-send_request}{\code{McpClientStdio$send_request()}}
 \item \href{#method-McpClientStdio-send_notification}{\code{McpClientStdio$send_notification()}}
+\item \href{#method-McpClientStdio-close}{\code{McpClientStdio$close()}}
+\item \href{#method-McpClientStdio-is_alive}{\code{McpClientStdio$is_alive()}}
 \item \href{#method-McpClientStdio-clone}{\code{McpClientStdio$clone()}}
 }
 }
@@ -32,6 +34,7 @@ A client for interacting with local MCP servers via stdio.
 <ul>
 <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="call_tool"><a href='../../argent/html/McpClient.html#method-McpClient-call_tool'><code>argent::McpClient$call_tool()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="get_prompt"><a href='../../argent/html/McpClient.html#method-McpClient-get_prompt'><code>argent::McpClient$get_prompt()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="is_closed"><a href='../../argent/html/McpClient.html#method-McpClient-is_closed'><code>argent::McpClient$is_closed()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="list_prompts"><a href='../../argent/html/McpClient.html#method-McpClient-list_prompts'><code>argent::McpClient$list_prompts()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="list_resources"><a href='../../argent/html/McpClient.html#method-McpClient-list_resources'><code>argent::McpClient$list_resources()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="list_tools"><a href='../../argent/html/McpClient.html#method-McpClient-list_tools'><code>argent::McpClient$list_tools()</code></a></span></li>
@@ -102,6 +105,30 @@ Send notification (no ID, no response expected)
 \item{\code{req}}{Request list}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-McpClientStdio-close"></a>}}
+\if{latex}{\out{\hypertarget{method-McpClientStdio-close}{}}}
+\subsection{Method \code{close()}}{
+Close the connection and terminate the server process.
+Attempts graceful interrupt first, then force-kills if needed.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{McpClientStdio$close()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-McpClientStdio-is_alive"></a>}}
+\if{latex}{\out{\hypertarget{method-McpClientStdio-is_alive}{}}}
+\subsection{Method \code{is_alive()}}{
+Check if the server process is alive
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{McpClientStdio$is_alive()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Logical
 }
 }
 \if{html}{\out{<hr>}}

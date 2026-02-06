@@ -78,6 +78,21 @@ mcp_connect <- function(name, type = "stdio", command = NULL, args = NULL, env =
     }
 }
 
+#' @description
+#' `mcp_close()` closes an MCP client connection and releases resources.
+#' For stdio clients, this terminates the spawned process. For HTTP clients,
+#' this terminates the remote session.
+#'
+#' @export
+#' @rdname mcp_integration
+mcp_close <- function(client) {
+    if (!inherits(client, "McpClient")) {
+        cli::cli_abort("{.arg client} must be an McpClient object returned by {.fun mcp_connect}")
+    }
+    client$close()
+    invisible(NULL)
+}
+
 #' @export
 #' @rdname mcp_integration
 mcp_tools <- function(client, tools = NULL) {

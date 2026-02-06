@@ -28,6 +28,7 @@ A client for interacting with remote MCP servers via HTTP.
 \item \href{#method-McpClientHttp-initialize_connection}{\code{McpClientHttp$initialize_connection()}}
 \item \href{#method-McpClientHttp-send_request}{\code{McpClientHttp$send_request()}}
 \item \href{#method-McpClientHttp-terminate_session}{\code{McpClientHttp$terminate_session()}}
+\item \href{#method-McpClientHttp-close}{\code{McpClientHttp$close()}}
 \item \href{#method-McpClientHttp-clone}{\code{McpClientHttp$clone()}}
 }
 }
@@ -36,6 +37,7 @@ A client for interacting with remote MCP servers via HTTP.
 <ul>
 <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="call_tool"><a href='../../argent/html/McpClient.html#method-McpClient-call_tool'><code>argent::McpClient$call_tool()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="get_prompt"><a href='../../argent/html/McpClient.html#method-McpClient-get_prompt'><code>argent::McpClient$get_prompt()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="is_closed"><a href='../../argent/html/McpClient.html#method-McpClient-is_closed'><code>argent::McpClient$is_closed()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="list_prompts"><a href='../../argent/html/McpClient.html#method-McpClient-list_prompts'><code>argent::McpClient$list_prompts()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="list_resources"><a href='../../argent/html/McpClient.html#method-McpClient-list_resources'><code>argent::McpClient$list_resources()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="list_tools"><a href='../../argent/html/McpClient.html#method-McpClient-list_tools'><code>argent::McpClient$list_tools()</code></a></span></li>
@@ -98,6 +100,16 @@ Send request via HTTP
 Terminate the HTTP session
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{McpClientHttp$terminate_session()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-McpClientHttp-close"></a>}}
+\if{latex}{\out{\hypertarget{method-McpClientHttp-close}{}}}
+\subsection{Method \code{close()}}{
+Close the client connection and terminate the HTTP session.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{McpClientHttp$close()}\if{html}{\out{</div>}}
 }
 
 }

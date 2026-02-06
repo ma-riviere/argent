@@ -124,8 +124,25 @@ McpClient <- R6::R6Class(
         #' @param req List containing method and params
         send_request = function(req) {
             cli::cli_abort("Abstract method called")
+        },
+
+        #' @description
+        #' Close the client connection and release resources.
+        #' Subclasses override this with transport-specific cleanup.
+        close = function() {
+            invisible(self)
+        },
+
+        #' @description
+        #' Check if the client connection is closed
+        #' @return Logical
+        is_closed = function() {
+            return(private$.closed)
         }
-    )
+    ),
+    private = list(.closed = FALSE, finalize = function() {
+        tryCatch(self$close(), error = \(e) NULL)
+    })
 )
 
 #' @title Standard IO MCP Client
@@ -153,7 +170,8 @@ McpClientStdio <- R6::R6Class(
                 env = env,
                 stdin = "|",
                 stdout = "|",
-                stderr = "|" # Capture stderr to avoid polluting console
+                stderr = "|", # Capture stderr to avoid polluting console
+                supervise = TRUE
             )
 
             # Perform handshake
@@ -186,6 +204,9 @@ McpClientStdio <- R6::R6Class(
         #' Send request to stdio process
         #' @param req Request list
         send_request = function(req) {
+            if (private$.closed) {
+                cli::cli_abort("Cannot send request: client connection is closed")
+            }
             # Add JSON-RPC 2.0 fields
             req$jsonrpc <- "2.0"
             req$id <- as.integer(runif(1, 1, 1000000))
@@ -236,6 +257,31 @@ McpClientStdio <- R6::R6Class(
             req$jsonrpc <- "2.0"
             json <- jsonlite::toJSON(req, auto_unbox = TRUE)
             self$process$write_input(paste0(json, "\n"))
+        },
+
+        #' @description
+        #' Close the connection and terminate the server process.
+        #' Attempts graceful interrupt first, then force-kills if needed.
+        close = function() {
+            if (private$.closed) {
+                return(invisible(self))
+            }
+            if (!is.null(self$process) && self$process$is_alive()) {
+                self$process$interrupt()
+                tryCatch(self$process$wait(timeout = 2000), error = \(e) NULL)
+                if (self$process$is_alive()) {
+                    self$process$kill()
+                }
+            }
+            private$.closed <- TRUE
+            invisible(self)
+        },
+
+        #' @description
+        #' Check if the server process is alive
+        #' @return Logical
+        is_alive = function() {
+            !is.null(self$process) && self$process$is_alive()
         }
     )
 )
@@ -289,6 +335,9 @@ McpClientHttp <- R6::R6Class(
         #' @param req Request list
         #' @param is_init Boolean, if TRUE, captures session ID
         send_request = function(req, is_init = FALSE) {
+            if (private$.closed) {
+                cli::cli_abort("Cannot send request: client connection is closed")
+            }
             req$jsonrpc <- "2.0"
             req$id <- as.integer(runif(1, 1, 1000000))
 
@@ -339,6 +388,17 @@ McpClientHttp <- R6::R6Class(
 
             self$session_id <- NULL
             invisible(NULL)
+        },
+
+        #' @description
+        #' Close the client connection and terminate the HTTP session.
+        close = function() {
+            if (private$.closed) {
+                return(invisible(self))
+            }
+            self$terminate_session()
+            private$.closed <- TRUE
+            invisible(self)
         }
     )
 )
