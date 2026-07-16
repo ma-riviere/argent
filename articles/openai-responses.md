@@ -10,16 +10,19 @@ for building agentic applications.
 ## Setup
 
 ``` r
+
 library(argent)
 ```
 
 ``` r
+
 openai_responses <- OpenAI_Responses$new(api_key = Sys.getenv("OPENAI_API_KEY"))
 ```
 
 ## Discovering Models
 
 ``` r
+
 openai_responses$list_models() |>
     dplyr::filter(stringr::str_detect(id, "-5|5.1-"))
 ```
@@ -27,6 +30,7 @@ openai_responses$list_models() |>
 ## Basic Completion
 
 ``` r
+
 openai_responses$chat(
     "What's the R programming language? Answer in three sentences.",
     model = "gpt-5-mini"
@@ -40,6 +44,7 @@ First, define some web-related tools (search & fetch):
 Web Tools Implementation
 
 ``` {r🔺
+
 web_search <- function(query) {
     #' @description Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or any data not in your training data.
     #' @param query:string* The search query string. Be specific and use keywords that will yield the most relevant results.
@@ -73,6 +78,7 @@ web_search_tavily <- function(query) {
 ```
 
 ``` {r🔺
+
 web_fetch <- function(url) {
     #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.
     #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
@@ -219,6 +225,7 @@ web_fetch_rvest <- function(url) {
 ```
 
 ``` {r🔺
+
 web_crawl <- function(url) {
     #' @description Crawl a website/page to discover all available pages and their URLs. Returns a list of URLs found on the website by following sitemaps and internal links. Use this to explore the structure of a website or find specific pages before fetching their content. This method will only return internal links (matching the domain name of the base URL).
     #' @param url:string* The base URL of the website to crawl (e.g., "https://example.com"). Must be a valid HTTP/HTTPS URL. Clean it first if it's not a proper URL (e.g. 'https://github.com/tidyverse/ellmer/releases"}' -> https://github.com/tidyverse/ellmer/releases)
@@ -260,6 +267,7 @@ Then, let’s define a JSON schema for the structured output using
 [`schema()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md):
 
 ``` r
+
 package_info_schema <- schema(
     name = "package_info",
     description = "Information about an R package release",
@@ -271,6 +279,7 @@ package_info_schema <- schema(
 Then, run the agent:
 
 ``` r
+
 openai_responses$chat(
     "When was the first release of the R 'ellmer' package on GitHub?",
     model = "gpt-5-mini",
@@ -297,6 +306,7 @@ Unlike Chat Completions, the Responses API supports extracting reasoning
 content:
 
 ``` r
+
 cat(openai_responses$get_reasoning_text())
 ```
 
@@ -334,6 +344,7 @@ Docs:
 https://platform.openai.com/docs/guides/tools-web-search?api-mode=responses
 
 ``` r
+
 openai_responses$chat(
     "What's the latest version of the R 'ellmer' package?",
     model = "gpt-5-mini",
@@ -372,6 +383,7 @@ execute Python code.
 **Example: Analyzing the Penguins Dataset**
 
 ``` r
+
 penguins_url <- "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/refs/heads/main/inst/extdata/penguins.csv"
 penguins_file_metadata <- openai_responses$upload_file(penguins_url, purpose = "assistants")
 
@@ -385,12 +397,14 @@ openai_responses$chat(
 Inspect the generated code:
 
 ``` r
+
 cat(openai_responses$get_generated_code(langs = c("python"), as_chunks = TRUE))
 ```
 
 Generated Code
 
 ``` python
+
 # Read the uploaded CSV, compute average body_mass grouped by species, sex, and year,
 # then save the result to a CSV file and display the first few rows.
 
@@ -482,11 +496,13 @@ summary.head(20)
 Download the generated files:
 
 ``` r
+
 downloaded_path <- openai_responses$download_generated_files(dest_path = "data")
 #> ✔ [OpenAI Responses] Downloaded file to: data/summary_body_mass_by_species_sex_year.csv
 ```
 
 ``` r
+
 read.csv(downloaded_path, na.strings = c("", "NA"))
 ```
 
@@ -519,6 +535,7 @@ read.csv(downloaded_path, na.strings = c("", "NA"))
 Continue asking questions in the same context:
 
 ``` r
+
 penguin_output_schema <- schema(
     name = "penguin_output",
     description = "Schema for the penguin output",
@@ -554,24 +571,28 @@ $year
 List containers:
 
 ``` r
+
 openai_responses$list_containers()
 ```
 
 Get container information:
 
 ``` r
+
 container <- openai_responses$get_container("cntr_690fb998d170819089fc6176eaa19ab90f300882b8d201ca")
 ```
 
 List files in a container:
 
 ``` r
+
 openai_responses$list_container_files("cntr_690fb998d170819089fc6176eaa19ab90f300882b8d201ca")
 ```
 
 Download a specific file from a container:
 
 ``` r
+
 openai_responses$download_container_file(
     container_id = "cntr_690fb998d170819089fc6176eaa19ab90f300882b8d201ca",
     file_id = "cfile_690fb9b692d88191b77427d736671fcd",
@@ -582,6 +603,7 @@ openai_responses$download_container_file(
 Delete a container:
 
 ``` r
+
 openai_responses$delete_container("cntr_690fb998d170819089fc6176eaa19ab90f300882b8d201ca")
 #> ✔ [OpenAI Responses] Container deleted: cntr_690fb998d170819089fc6176eaa19ab90f300882b8d201ca
 ```
@@ -604,6 +626,7 @@ OpenAI Responses API supports sending:
 Downloading an example image
 
 ``` r
+
 bsg04_cast_image_url <- "https://upload.wikimedia.org/wikipedia/en/1/1a/Battlestar_Galactica_%282004%29_cast.jpg"
 bsg04_cast_image_path <- download_temp_file(bsg04_cast_image_url)
 ```
@@ -614,6 +637,7 @@ When providing a path to a local image, it will automatically be
 converted to base64 before being sent to the server.
 
 ``` r
+
 openai_responses$chat(
     "Who are the characters in this image, and what show is it from?",
     bsg04_cast_image_path,
@@ -639,6 +663,7 @@ This is a promotional image for the reimagined TV series Battlestar Galactica (t
 OpenAI supports sending image URLs directly:
 
 ``` r
+
 openai_responses$chat(
     "Who are the characters in this image, and what show is it from?",
     bsg04_cast_image_url,
@@ -668,6 +693,7 @@ openai_responses$chat(
 Downloading an example PDF (my CV)
 
 ``` r
+
 my_cv_url <- "https://ma-riviere.com/res/cv.pdf"
 my_cv_pdf_path <- download_temp_file(my_cv_url)
 ```
@@ -675,6 +701,7 @@ my_cv_pdf_path <- download_temp_file(my_cv_url)
 **Sending a local PDF:**
 
 ``` r
+
 openai_responses$chat(
     "What's my favorite programming language?",
     my_cv_pdf_path,
@@ -705,6 +732,7 @@ helper to have
 parse the PDFs and pass their text contents to the model instead.
 
 ``` r
+
 r6_pdf_url <- "https://cran.r-project.org/web/packages/R6/R6.pdf"
 s7_pdf_url <- "https://cran.r-project.org/web/packages/S7/S7.pdf"
 
@@ -729,6 +757,7 @@ Current versions — S7: 0.2.0; R6: 2.6.1.
 You can pass any R object to `chat()` as is:
 
 ``` r
+
 lm_obj <- lm(body_mass ~ species + sex, data = datasets::penguins)
 
 openai_responses$chat(
@@ -759,12 +788,14 @@ e can also send files directly to the model.
 **Uploading Files**
 
 ``` r
+
 file_metadata <- openai_responses$upload_file(my_cv_url)
 ```
 
 **Listing Files**
 
 ``` r
+
 openai_responses$list_files()
 ```
 
@@ -782,6 +813,7 @@ Use
 to reference uploaded files:
 
 ``` r
+
 openai_responses$chat(
     "What are my two favorite frameworks/tools ?",
     as_file_content(file_metadata$id),
@@ -800,6 +832,7 @@ Reason: your résumé explicitly highlights a focus on R & Shiny and lists Shiny
 **Downloading Files**
 
 ``` r
+
 openai_responses$download_file(file_metadata$id, dest_path = "data")  # Downloads to data/ by default
 #> ✔ [OpenAI] File downloaded to: data/file92917bdad4ff.pdf
 ```
@@ -807,6 +840,7 @@ openai_responses$download_file(file_metadata$id, dest_path = "data")  # Download
 **Deleting Files**
 
 ``` r
+
 openai_responses$delete_file(file_metadata$id)
 #> ✔ [OpenAI] File deleted: file-C6FSoAhHoAkyxV61djbB6D
 ```
@@ -827,6 +861,7 @@ First, a quick overview of available methods to manage vector stores:
 **Creating a Vector Store**
 
 ``` r
+
 store <- openai_responses$create_store(
     name = "my_docs",
     file_ids = list("file-123", "file-456")
@@ -836,24 +871,28 @@ store <- openai_responses$create_store(
 **Listing Vector Stores**
 
 ``` r
+
 openai_responses$list_stores()
 ```
 
 **Adding Files to a Vector Store**
 
 ``` r
+
 openai_responses$add_file_to_store(store$id, "file-789")
 ```
 
 **Listing Files in a Vector Store**
 
 ``` r
+
 openai_responses$list_files_in_store(store$id)
 ```
 
 **Deleting a Vector Store**
 
 ``` r
+
 openai_responses$delete_store(store$id)
 ```
 
@@ -869,6 +908,7 @@ First, let’s upload the files we want to search through and create a
 vector store with them:
 
 ``` r
+
 r6_file_metadata <- openai_responses$upload_file(r6_pdf_url)
 s7_file_metadata <- openai_responses$upload_file(s7_pdf_url)
 
@@ -882,6 +922,7 @@ r_oop_store <- openai_responses$create_store(
 Then, let’s make an output schema for the response:
 
 ``` r
+
 oop_output_schema <- schema(
     name = "oop_output",
     description = "Explanation of the R6 and S7 active bindings mechanism",
@@ -894,6 +935,7 @@ oop_output_schema <- schema(
 Use file_search with the vector store:
 
 ``` r
+
 openai_file_search_tool <- list(type = "file_search", store_ids = list(r_oop_store$id))
 
 openai_responses$chat(
@@ -912,6 +954,7 @@ openai_responses$chat(
 Response
 
 ``` r
+
 jsonlite::fromJSON(openai_responses$get_content_text()) |> 
     purrr::walk(\(x) cat(x, "\n\n", sep = ""))
 ```
@@ -923,6 +966,7 @@ a setter (accessed with @). R6 active bindings docs: S7 properties/docs:
 https://rconsortium.github.io/S7/reference/new_property.html).
 
 ``` r
+
 # R6 example: active bindings (reads call function with no arg; writes pass value)
 library(R6)
 Numbers <- R6Class("Numbers",
@@ -944,6 +988,7 @@ n$x2 <- 1000  # -> sets x to 500 via setter
 ```
 
 ``` r
+
 # S7 equivalent: dynamic properties via new_property(getter=, setter=)
 # getter receives self and should return the value; setter receives self and value and must return modified self
 library(S7)
@@ -973,6 +1018,7 @@ We can check the annotations `openai_responses$get_supplementary()` or
 `print(openai_responses, show_supplementary = TRUE)`:
 
 ``` r
+
 print(openai_responses, show_tools = TRUE, show_supplementary = TRUE) # Also show tool calls for the client tools
 ```
 
@@ -986,6 +1032,7 @@ print(openai_responses, show_tools = TRUE, show_supplementary = TRUE) # Also sho
 **Cleaning:**
 
 ``` r
+
 openai_responses$delete_store(r_oop_store$id)
 openai_responses$delete_file(r6_file_metadata$id)
 openai_responses$delete_file(s7_file_metadata$id)
@@ -997,6 +1044,7 @@ openai_responses$delete_file(s7_file_metadata$id)
 > with:
 >
 > ``` r
+>
 > openai_responses$delete_store_and_files(r_oop_store$id)
 > ```
 
@@ -1006,6 +1054,7 @@ The Responses API supports server-side state management via
 `previous_response_id`.
 
 ``` r
+
 openai_responses$chat("Tell me a joke about R programming")
 ```
 
@@ -1015,6 +1064,7 @@ There were too many NAs — he just couldn't find her complete.cases().
 ```
 
 ``` r
+
 openai_responses$chat(
     "Explain why it's funny",
     previous_response_id = openai_responses$get_last_response_id()

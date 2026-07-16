@@ -9,6 +9,7 @@ with any OpenAI-compatible local server.
 ## Setup
 
 ``` r
+
 library(argent)
 ```
 
@@ -34,6 +35,7 @@ llama.cpp/build/bin/llama-server \
 ### Connecting to the Server
 
 ``` r
+
 local_llama <- LocalLLM$new(
     base_url = "http://localhost:5000",
     default_model = "gemma-3-27b-it-IQ4_XS.gguf"
@@ -48,6 +50,7 @@ model from the server and set it as the default model for all future
 ## Basic Completion
 
 ``` r
+
 local_llama$chat("What's the R programming language? Answer in three sentences.")
 ```
 
@@ -58,6 +61,7 @@ First, define some web-related tools (search & fetch):
 Web Tools Implementation
 
 ``` {r🔺
+
 web_search <- function(query) {
     #' @description Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or any data not in your training data.
     #' @param query:string* The search query string. Be specific and use keywords that will yield the most relevant results.
@@ -91,6 +95,7 @@ web_search_tavily <- function(query) {
 ```
 
 ``` {r🔺
+
 web_fetch <- function(url) {
     #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.
     #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
@@ -237,6 +242,7 @@ web_fetch_rvest <- function(url) {
 ```
 
 ``` {r🔺
+
 web_crawl <- function(url) {
     #' @description Crawl a website/page to discover all available pages and their URLs. Returns a list of URLs found on the website by following sitemaps and internal links. Use this to explore the structure of a website or find specific pages before fetching their content. This method will only return internal links (matching the domain name of the base URL).
     #' @param url:string* The base URL of the website to crawl (e.g., "https://example.com"). Must be a valid HTTP/HTTPS URL. Clean it first if it's not a proper URL (e.g. 'https://github.com/tidyverse/ellmer/releases"}' -> https://github.com/tidyverse/ellmer/releases)
@@ -278,6 +284,7 @@ Then, let’s define a JSON schema for the structured output using
 [`schema()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md):
 
 ``` r
+
 package_info_schema <- schema(
     name = "package_info",
     description = "Information about an R package release",
@@ -287,6 +294,7 @@ package_info_schema <- schema(
 ```
 
 ``` r
+
 local_llama$chat(
     "When was the first release of the R 'ellmer' package on GitHub?",
     tools = list(as_tool(web_search), as_tool(web_fetch)),
@@ -318,6 +326,7 @@ Not too bad for a ~1 year old small local model.*
 > by setting the `argent.timeout` option:
 >
 > ``` r
+>
 > options(argent.timeout = 120)
 > ```
 
@@ -327,6 +336,7 @@ If available, you can extract reasoning from the response using
 `get_reasoning_text()`:
 
 ``` r
+
 cat(local_llama$get_reasoning_text())
 ```
 
@@ -364,6 +374,7 @@ PDFs. Some models will need you to convert the PDF to an image first
 Downloading an example image
 
 ``` r
+
 bsg04_cast_image_url <- "https://upload.wikimedia.org/wikipedia/en/1/1a/Battlestar_Galactica_%282004%29_cast.jpg"
 bsg04_cast_image_path <- download_temp_file(bsg04_cast_image_url)
 ```
@@ -374,6 +385,7 @@ When providing a path to a local image, it will automatically be
 converted to base64 before being sent to the server.
 
 ``` r
+
 local_llama$chat(
     "Who are the characters in this image, and what show is it from?",
     bsg04_cast_image_path
@@ -401,6 +413,7 @@ I am confident in this identification, as the image is a promotional photo assoc
 **Sending an image URL:**
 
 ``` r
+
 local_llama$chat(
     "Who are the characters in this image, and what show is it from?",
     bsg04_cast_image_url
@@ -429,6 +442,7 @@ parse the PDFs and pass the text content to the model instead of passing
 base64.
 
 ``` r
+
 r6_pdf_url <- "https://cran.r-project.org/web/packages/R6/R6.pdf"
 s7_pdf_url <- "https://cran.r-project.org/web/packages/S7/S7.pdf"
 
@@ -460,6 +474,7 @@ According to the provided documentation:
 You can pass any R object to `chat()` as is:
 
 ``` r
+
 lm_obj <- lm(body_mass ~ species + sex, data = datasets::penguins)
 
 local_llama$chat(

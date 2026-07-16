@@ -38,24 +38,25 @@ whatever other tools/functions are used.
 
 ## Supported Providers & Features
 
-| Feature                  | Google      | Anthropic   | OpenAI Chat   | OpenAI Responses | OpenAI Assistants         | OpenRouter    | Local LLM     |
-|--------------------------|-------------|-------------|---------------|------------------|---------------------------|---------------|---------------|
-| **Function & MCP tools** | ✅          | ✅          | ✅            | ✅               | ✅                        | ⚠️[¹](#fn1)   | ⚠️[²](#fn2)   |
-| **Structured outputs**   | ✅          | ✅          | ✅            | ✅               | ✅                        | ✅[³](#fn3)   | ✅[⁴](#fn4)   |
-| **Multimodal inputs**    | ✅          | ✅          | ✅            | ✅               | ✅                        | ✅            | ⚠️[⁵](#fn5)   |
-| **Server-side tools**    | ✅[⁶](#fn6) | ✅[⁷](#fn7) | ⚠️[⁸](#fn8)   | ✅[⁹](#fn9)      | ✅[¹⁰](#fn10)             | ⚠️[¹¹](#fn11) | ❌            |
-| **Code execution**       | ✅          | ✅          | ❌            | ✅               | ✅                        | ❌            | ❌            |
-| **File upload**          | ✅          | ✅          | ✅            | ✅               | ✅                        | ❌            | ❌            |
-| **Server-side RAG**      | ✅          | ❌          | ❌            | ✅               | ✅                        | ❌            | ❌            |
-| **Reasoning / thinking** | ✅          | ✅          | ⚠️            | ✅               | ❌                        | ⚠️[¹²](#fn12) | ⚠️[¹³](#fn13) |
-| **Server-side state**    | ❌          | ❌          | ❌            | ✅[¹⁴](#fn14)    | ✅                        | ❌            | ❌            |
-| **Prompt caching**       | ✅          | ✅          | ✅[¹⁵](#fn15) | ✅[¹⁶](#fn16)    | ✅[¹⁷](#fn17)             | ⚠️[¹⁸](#fn18) | ❌            |
-| **Embeddings**           | ✅          | ❌          | ✅            | ✅               | ✅                        | ✅            | ⚠️[¹⁹](#fn19) |
-| **Status**               | Active      | Active      | Active        | Active           | **Deprecated**[²⁰](#fn20) | Active        | Active        |
+| Feature | Google | Anthropic | OpenAI Chat | OpenAI Responses | OpenAI Assistants | OpenRouter | Local LLM |
+|----|----|----|----|----|----|----|----|
+| **Function & MCP tools** | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️[^1] | ⚠️[^2] |
+| **Structured outputs** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅[^3] | ✅[^4] |
+| **Multimodal inputs** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️[^5] |
+| **Server-side tools** | ✅[^6] | ✅[^7] | ⚠️[^8] | ✅[^9] | ✅[^10] | ⚠️[^11] | ❌ |
+| **Code execution** | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ | ❌ |
+| **File upload** | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| **Server-side RAG** | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
+| **Reasoning / thinking** | ✅ | ✅ | ⚠️ | ✅ | ❌ | ⚠️[^12] | ⚠️[^13] |
+| **Server-side state** | ❌ | ❌ | ❌ | ✅[^14] | ✅ | ❌ | ❌ |
+| **Prompt caching** | ✅ | ✅ | ✅[^15] | ✅[^16] | ✅[^17] | ⚠️[^18] | ❌ |
+| **Embeddings** | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ⚠️[^19] |
+| **Status** | Active | Active | Active | Active | **Deprecated**[^20] | Active | Active |
 
 ## Installation
 
 ``` r
+
 remotes::install_github("ma-riviere/argent")
 ```
 
@@ -64,6 +65,7 @@ remotes::install_github("ma-riviere/argent")
 Set the API keys for the providers you want to use in your `.Renviron`:
 
 ``` r
+
 GEMINI_API_KEY="your-google-gemini-key"
 ANTHROPIC_API_KEY="your-anthropic-key"
 OPENAI_API_KEY="your-openai-key"
@@ -74,6 +76,7 @@ OPENAI_API_KEY="your-openai-key"
 Here is a quick example using Google Gemini:
 
 ``` r
+
 gemini <- Google$new(api_key = Sys.getenv("GEMINI_API_KEY"))
 ```
 
@@ -84,6 +87,7 @@ parameter, and the default model with the `default_model` parameter
 ### Basic Completion
 
 ``` r
+
 gemini$chat(
     "What is the R programming language? Answer in two sentences.",
     model = "gemini-2.5-flash" # Not necessary, it's the default model for Google
@@ -95,12 +99,14 @@ meaning that when using `$chat()` a second time, the model will have
 access to the previous exchanges:
 
 ``` r
+
 gemini$chat("Tell me more about its statistical modeling capabilities.")
 ```
 
 The chat history can be visualized by printing the provider object:
 
 ``` r
+
 print(gemini)
 ```
 
@@ -143,6 +149,7 @@ R offers extensive statistical modeling capabilities, encompassing a broad range
 The chat history can be reset with `reset_history()`:
 
 ``` r
+
 gemini$reset_history()
 ```
 
@@ -152,6 +159,7 @@ First, let’s define a mock function for the LLM, that returns some
 information about the user for a given name:
 
 ``` r
+
 get_user_info <- function(user_name) {
     #' @description Provides information about the user, like their favorite programming language
     #' @param user_name:string* The name of the user
@@ -171,6 +179,7 @@ on the function to convert it to a tool using the annotations added
 inside the function’s body (plumber2-style annotations):
 
 ``` r
+
 as_tool(get_user_info)
 ```
 
@@ -192,6 +201,7 @@ Then, let’s define the schema for the structured output using
 [`schema()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md):
 
 ``` r
+
 user_info_schema <- schema(
     name = "user_info",
     description = "Information about the user",
@@ -227,6 +237,7 @@ args_schema:
 Run the agent:
 
 ``` r
+
 gemini$chat(
     "The user's name is Marc. Give me the information about the user.",
     model = "gemini-2.5-flash",
@@ -262,6 +273,7 @@ To see more, we can print the provider object with `show_tools = TRUE`
 to show to tool definitions, calls, and results:
 
 ``` r
+
 print(gemini, show_tools = TRUE)
 ```
 
@@ -373,6 +385,7 @@ For example, Google Gemini has a server-side `google_search` which
 combines searching & fetching web pages:
 
 ``` r
+
 gemini$chat(
     "When was the first release of the R 'ellmer' package on GitHub?",
     model = "gemini-2.5-pro",
@@ -407,6 +420,7 @@ model in a single request.
 Example with an URL to a PDF file:
 
 ``` r
+
 bsg04_cast_image_url <- "https://upload.wikimedia.org/wikipedia/en/1/1a/Battlestar_Galactica_%282004%29_cast.jpg"
 
 gemini$chat(
@@ -460,11 +474,13 @@ system (see [server-side
 RAG](https://ma-riviere.github.io/argent/articles/google-gemini.html#server-side-rag)).
 
 ``` r
+
 file_metadata <- gemini$upload_file("https://ma-riviere.com/res/cv.pdf")
 #> ✔ [Google] File uploaded: files/7xulp36j9jq1
 ```
 
 ``` r
+
 multipart_prompt <- list("What is my favorite programming language?", as_file_content(file_metadata$name))
 
 gemini$chat(!!!multipart_prompt, model = "gemini-2.5-flash")
@@ -477,6 +493,7 @@ Based on your resume, your favorite programming language appears to be **R**.
 *Damn right!*
 
 ``` r
+
 gemini$delete_file(file_metadata$name)
 #> ✔ [Google] File deleted: files/7xulp36j9jq1
 ```
@@ -551,50 +568,52 @@ You should probably contribute to
 
 MIT License
 
-------------------------------------------------------------------------
+[^1]: Depends on model capabilities. Not all models support tool
+    calling.
 
-1.  Depends on model capabilities. Not all models support tool calling.
+[^2]: Depends on model capabilities. Not all models support tool
+    calling.
 
-2.  Depends on model capabilities. Not all models support tool calling.
-
-3.  Works on any model supporting tool calling. Works even if you
+[^3]: Works on any model supporting tool calling. Works even if you
     provide other tools, client-side or server-side, to the model at the
     same time.
 
-4.  Works on any model supporting tool calling. Works even if you
+[^4]: Works on any model supporting tool calling. Works even if you
     provide other tools, client-side or server-side, to the model at the
     same time.
 
-5.  Depends on model capabilities
+[^5]: Depends on model capabilities
 
-6.  google_search, google_maps, url_context, code_execution, file_search
+[^6]: google_search, google_maps, url_context, code_execution,
+    file_search
 
-7.  web_search, web_fetch, code_execution
+[^7]: web_search, web_fetch, code_execution
 
-8.  Only web search via specialized models (gpt-4o-mini-search-preview)
+[^8]: Only web search via specialized models
+    (gpt-4o-mini-search-preview)
 
-9.  web_search, file_search, code_interpreter
+[^9]: web_search, file_search, code_interpreter
 
-10. file_search, code_interpreter
+[^10]: file_search, code_interpreter
 
-11. web_search available on some models
+[^11]: web_search available on some models
 
-12. Depends on model, and on server configuration (e.g.,
+[^12]: Depends on model, and on server configuration (e.g.,
     `–reasoning-format` for llama.cpp)
 
-13. Depends on model, and on server configuration (e.g.,
+[^13]: Depends on model, and on server configuration (e.g.,
     `–reasoning-format` for llama.cpp)
 
-14. Optional via `previous_response_id` (30-day retention)
+[^14]: Optional via `previous_response_id` (30-day retention)
 
-15. Automatic prompt caching by OpenAI
+[^15]: Automatic prompt caching by OpenAI
 
-16. Automatic prompt caching by OpenAI
+[^16]: Automatic prompt caching by OpenAI
 
-17. Automatic prompt caching by OpenAI
+[^17]: Automatic prompt caching by OpenAI
 
-18. Depends on the underlying provider being used
+[^18]: Depends on the underlying provider being used
 
-19. Depends on model capabilities
+[^19]: Depends on model capabilities
 
-20. Shuts down August 26, 2026. Use Responses API instead.
+[^20]: Shuts down August 26, 2026. Use Responses API instead.

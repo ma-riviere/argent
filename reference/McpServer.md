@@ -29,7 +29,7 @@ this to expose R functions as tools to LLMs via the MCP protocol.
 
 ### Public methods
 
-- [`McpServer$new()`](#method-McpServer-new)
+- [`McpServer$new()`](#method-McpServer-initialize)
 
 - [`McpServer$add_tool()`](#method-McpServer-add_tool)
 
@@ -45,7 +45,7 @@ this to expose R functions as tools to LLMs via the MCP protocol.
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `McpServer$new()`
 
 Initialize a new MCP server
 
@@ -65,7 +65,7 @@ Initialize a new MCP server
 
 ------------------------------------------------------------------------
 
-### Method `add_tool()`
+### `McpServer$add_tool()`
 
 Add a tool to the server
 
@@ -88,7 +88,7 @@ Add a tool to the server
 
 ------------------------------------------------------------------------
 
-### Method `add_resource()`
+### `McpServer$add_resource()`
 
 Add a resource to the server
 
@@ -109,7 +109,7 @@ Add a resource to the server
 
 ------------------------------------------------------------------------
 
-### Method `add_prompt()`
+### `McpServer$add_prompt()`
 
 Add a prompt to the server
 
@@ -132,7 +132,7 @@ Add a prompt to the server
 
 ------------------------------------------------------------------------
 
-### Method `serve_stdio()`
+### `McpServer$serve_stdio()`
 
 Serve the MCP protocol over stdio This method blocks and listens for
 JSON-RPC requests on stdin.
@@ -143,7 +143,7 @@ JSON-RPC requests on stdin.
 
 ------------------------------------------------------------------------
 
-### Method `serve_http()`
+### `McpServer$serve_http()`
 
 Serve the MCP protocol over HTTP This method starts an HTTP server and
 blocks, listening for JSON-RPC requests on POST /.
@@ -177,7 +177,7 @@ blocks, listening for JSON-RPC requests on POST /.
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `McpServer$clone()`
 
 The objects of this class are cloneable with this method.
 

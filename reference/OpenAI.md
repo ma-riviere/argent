@@ -8,14 +8,14 @@ across different OpenAI API clients.
 
 ## Super class
 
-[`argent::Provider`](https://ma-riviere.github.io/argent/reference/Provider.md)
+[`Provider`](https://ma-riviere.github.io/argent/reference/Provider.md)
 -\> `OpenAI`
 
 ## Methods
 
 ### Public methods
 
-- [`OpenAI$new()`](#method-OpenAI-new)
+- [`OpenAI$new()`](#method-OpenAI-initialize)
 
 - [`OpenAI$list_models()`](#method-OpenAI-list_models)
 
@@ -85,32 +85,32 @@ across different OpenAI API clients.
 
 Inherited methods
 
-- [`argent::Provider$download_generated_files()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-download_generated_files)
-- [`argent::Provider$dump_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-dump_history)
-- [`argent::Provider$get_auto_save_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_auto_save_history)
-- [`argent::Provider$get_chat_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_chat_history)
-- [`argent::Provider$get_content_text()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_content_text)
-- [`argent::Provider$get_generated_code()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_generated_code)
-- [`argent::Provider$get_generated_files()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_generated_files)
-- [`argent::Provider$get_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_history)
-- [`argent::Provider$get_history_file_path()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_history_file_path)
-- [`argent::Provider$get_last_response()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_last_response)
-- [`argent::Provider$get_rate_limit()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_rate_limit)
-- [`argent::Provider$get_reasoning_text()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_reasoning_text)
-- [`argent::Provider$get_session_cumulative_token_count()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_cumulative_token_count)
-- [`argent::Provider$get_session_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_history)
-- [`argent::Provider$get_session_last_token_count()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_last_token_count)
-- [`argent::Provider$get_supplementary()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_supplementary)
-- [`argent::Provider$load_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-load_history)
-- [`argent::Provider$print()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-print)
-- [`argent::Provider$reset_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-reset_history)
-- [`argent::Provider$set_auto_save_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_auto_save_history)
-- [`argent::Provider$set_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_history)
-- [`argent::Provider$set_rate_limit()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_rate_limit)
+- [`Provider$download_generated_files()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-download_generated_files)
+- [`Provider$dump_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-dump_history)
+- [`Provider$get_auto_save_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_auto_save_history)
+- [`Provider$get_chat_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_chat_history)
+- [`Provider$get_content_text()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_content_text)
+- [`Provider$get_generated_code()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_generated_code)
+- [`Provider$get_generated_files()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_generated_files)
+- [`Provider$get_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_history)
+- [`Provider$get_history_file_path()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_history_file_path)
+- [`Provider$get_last_response()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_last_response)
+- [`Provider$get_rate_limit()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_rate_limit)
+- [`Provider$get_reasoning_text()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_reasoning_text)
+- [`Provider$get_session_cumulative_token_count()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_cumulative_token_count)
+- [`Provider$get_session_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_history)
+- [`Provider$get_session_last_token_count()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_last_token_count)
+- [`Provider$get_supplementary()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_supplementary)
+- [`Provider$load_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-load_history)
+- [`Provider$print()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-print)
+- [`Provider$reset_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-reset_history)
+- [`Provider$set_auto_save_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_auto_save_history)
+- [`Provider$set_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_history)
+- [`Provider$set_rate_limit()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_rate_limit)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `OpenAI$new()`
 
 Initialize a new OpenAI base client
 
@@ -164,7 +164,7 @@ Initialize a new OpenAI base client
 
 ------------------------------------------------------------------------
 
-### Method `list_models()`
+### `OpenAI$list_models()`
 
 List all available models
 
@@ -178,7 +178,7 @@ Data frame. Available models
 
 ------------------------------------------------------------------------
 
-### Method `find_models()`
+### `OpenAI$find_models()`
 
 Find models matching criteria
 
@@ -198,7 +198,7 @@ Data frame. Filtered models
 
 ------------------------------------------------------------------------
 
-### Method `get_model_info()`
+### `OpenAI$get_model_info()`
 
 Get information about a specific model
 
@@ -218,7 +218,7 @@ A list containing information about the model.
 
 ------------------------------------------------------------------------
 
-### Method `embeddings()`
+### `OpenAI$embeddings()`
 
 Generate embeddings for text input
 
@@ -263,7 +263,6 @@ one row per input text
 
 #### Examples
 
-    \dontrun{
     openai <- OpenAI_Chat$new()
 
     # Generate embeddings
@@ -278,11 +277,10 @@ one row per input text
       model = "text-embedding-3-large",
       dimensions = 256
     )
-    }
 
 ------------------------------------------------------------------------
 
-### Method `list_assistants()`
+### `OpenAI$list_assistants()`
 
 List all assistants.
 
@@ -296,7 +294,7 @@ A data frame of assistants.
 
 ------------------------------------------------------------------------
 
-### Method `find_assistants()`
+### `OpenAI$find_assistants()`
 
 Find assistants matching criteria.
 
@@ -320,7 +318,7 @@ A data frame of matching assistants.
 
 ------------------------------------------------------------------------
 
-### Method `upload_file()`
+### `OpenAI$upload_file()`
 
 Upload a file to OpenAI for use across various endpoints/features.
 
@@ -381,7 +379,6 @@ List. File object containing:
 
 #### Examples
 
-    \dontrun{
     openai <- OpenAI_Chat$new()
 
     # Upload a document for assistants
@@ -393,11 +390,10 @@ List. File object containing:
 
     # Upload for fine-tuning
     file <- openai$upload_file("training_data.jsonl", purpose = "fine-tune")
-    }
 
 ------------------------------------------------------------------------
 
-### Method `upload_file_from_df()`
+### `OpenAI$upload_file_from_df()`
 
 Upload a file from a data frame.
 
@@ -429,17 +425,15 @@ List. File object (see `upload_file()` for structure).
 
 #### Examples
 
-    \dontrun{
     openai <- OpenAI_Chat$new()
 
     # Upload a data frame
     df <- data.frame(x = 1:10, y = letters[1:10])
     file <- openai$upload_file_from_df(df, file_name = "my_data.txt")
-    }
 
 ------------------------------------------------------------------------
 
-### Method `list_files()`
+### `OpenAI$list_files()`
 
 List all files belonging to the organization.
 
@@ -480,7 +474,6 @@ Data frame with columns:
 
 #### Examples
 
-    \dontrun{
     openai <- OpenAI_Chat$new()
 
     # List all files
@@ -488,11 +481,10 @@ Data frame with columns:
 
     # List only assistant files
     assistant_files <- openai$list_files(purpose = "assistants")
-    }
 
 ------------------------------------------------------------------------
 
-### Method `find_file()`
+### `OpenAI$find_file()`
 
 Find files matching specific criteria.
 
@@ -521,7 +513,6 @@ Data frame (or list) of matching files.
 
 #### Examples
 
-    \dontrun{
     openai <- OpenAI_Chat$new()
 
     # Find files by name
@@ -529,11 +520,10 @@ Data frame (or list) of matching files.
 
     # Find assistant files
     files <- openai$find_file(purpose = "assistants")
-    }
 
 ------------------------------------------------------------------------
 
-### Method `get_file()`
+### `OpenAI$get_file()`
 
 Retrieve information about a specific file.
 
@@ -573,17 +563,15 @@ List. File object containing:
 
 #### Examples
 
-    \dontrun{
     openai <- OpenAI_Chat$new()
 
     # Get file info
     file_info <- openai$get_file(file_id = "file-abc123")
     cat("File:", file_info$filename, "Status:", file_info$status, "\n")
-    }
 
 ------------------------------------------------------------------------
 
-### Method `get_file_content()`
+### `OpenAI$get_file_content()`
 
 Retrieve the contents of a file.
 
@@ -606,17 +594,15 @@ Character. The file contents as a string.
 
 #### Examples
 
-    \dontrun{
     openai <- OpenAI_Chat$new()
 
     # Get file content
     content <- openai$get_file_content(file_id = "file-abc123")
     cat(content)
-    }
 
 ------------------------------------------------------------------------
 
-### Method `download_file()`
+### `OpenAI$download_file()`
 
 Download a file to disk.
 
@@ -650,7 +636,6 @@ Character. Path to the downloaded file (invisibly).
 
 #### Examples
 
-    \dontrun{
     openai <- OpenAI_Chat$new()
 
     # Download to a directory
@@ -658,11 +643,10 @@ Character. Path to the downloaded file (invisibly).
 
     # Download with specific filename
     path <- openai$download_file(file_id = "file-abc123", dest_path = "downloads/myfile.txt")
-    }
 
 ------------------------------------------------------------------------
 
-### Method `delete_file()`
+### `OpenAI$delete_file()`
 
 Delete a file from OpenAI.
 
@@ -690,17 +674,15 @@ List. Deletion confirmation containing:
 
 #### Examples
 
-    \dontrun{
     openai <- OpenAI_Chat$new()
 
     # Delete a file
     result <- openai$delete_file(file_id = "file-abc123")
     if (result$deleted) cat("File deleted successfully\n")
-    }
 
 ------------------------------------------------------------------------
 
-### Method `delete_files()`
+### `OpenAI$delete_files()`
 
 Delete multiple files from OpenAI.
 
@@ -723,16 +705,14 @@ Data frame. Deletion results for each file.
 
 #### Examples
 
-    \dontrun{
     openai <- OpenAI_Chat$new()
 
     # Delete multiple files
     results <- openai$delete_files(c("file-abc123", "file-def456"))
-    }
 
 ------------------------------------------------------------------------
 
-### Method `delete_all_files()`
+### `OpenAI$delete_all_files()`
 
 Delete all files from OpenAI.
 
@@ -749,16 +729,14 @@ Data frame. Deletion results for all files.
 
 #### Examples
 
-    \dontrun{
     openai <- OpenAI_Chat$new()
 
     # Delete all files (use with caution!)
     results <- openai$delete_all_files()
-    }
 
 ------------------------------------------------------------------------
 
-### Method `create_store()`
+### `OpenAI$create_store()`
 
 Create a vector store.
 
@@ -782,7 +760,7 @@ A list containing information about the vector store.
 
 ------------------------------------------------------------------------
 
-### Method `read_store()`
+### `OpenAI$read_store()`
 
 Read a vector store.
 
@@ -802,7 +780,7 @@ A list containing information about the vector store.
 
 ------------------------------------------------------------------------
 
-### Method `list_stores()`
+### `OpenAI$list_stores()`
 
 List all vector stores.
 
@@ -816,7 +794,7 @@ A data frame of vector stores.
 
 ------------------------------------------------------------------------
 
-### Method `find_store()`
+### `OpenAI$find_store()`
 
 Find a vector store matching criteria.
 
@@ -840,7 +818,7 @@ A data frame of matching vector stores.
 
 ------------------------------------------------------------------------
 
-### Method `update_store()`
+### `OpenAI$update_store()`
 
 Update a vector store.
 
@@ -864,7 +842,7 @@ A list containing information about the updated vector store.
 
 ------------------------------------------------------------------------
 
-### Method `delete_store()`
+### `OpenAI$delete_store()`
 
 Delete a vector store.
 
@@ -884,7 +862,7 @@ A list containing information about the deleted vector store.
 
 ------------------------------------------------------------------------
 
-### Method `delete_stores()`
+### `OpenAI$delete_stores()`
 
 Delete multiple vector stores.
 
@@ -904,7 +882,7 @@ A data frame of deleted vector stores.
 
 ------------------------------------------------------------------------
 
-### Method `delete_all_stores()`
+### `OpenAI$delete_all_stores()`
 
 Delete all vector stores.
 
@@ -918,7 +896,7 @@ A data frame of deleted vector stores.
 
 ------------------------------------------------------------------------
 
-### Method `delete_store_and_files()`
+### `OpenAI$delete_store_and_files()`
 
 Delete a vector store and its files.
 
@@ -938,7 +916,7 @@ A list containing information about the deleted vector store and files.
 
 ------------------------------------------------------------------------
 
-### Method `add_file_to_store()`
+### `OpenAI$add_file_to_store()`
 
 Add a file to a vector store.
 
@@ -962,7 +940,7 @@ A list containing information about the file in the vector store.
 
 ------------------------------------------------------------------------
 
-### Method `read_file_from_store()`
+### `OpenAI$read_file_from_store()`
 
 Read a file from a vector store.
 
@@ -986,7 +964,7 @@ A list containing information about the file in the vector store.
 
 ------------------------------------------------------------------------
 
-### Method `list_files_in_store()`
+### `OpenAI$list_files_in_store()`
 
 List all files in a vector store.
 
@@ -1006,7 +984,7 @@ A data frame of files in the vector store.
 
 ------------------------------------------------------------------------
 
-### Method `find_file_in_store()`
+### `OpenAI$find_file_in_store()`
 
 Find a file in a vector store matching criteria.
 
@@ -1034,7 +1012,7 @@ A data frame of matching files.
 
 ------------------------------------------------------------------------
 
-### Method `delete_file_from_store()`
+### `OpenAI$delete_file_from_store()`
 
 Delete a file from a vector store.
 
@@ -1058,7 +1036,7 @@ A list containing information about the deleted file.
 
 ------------------------------------------------------------------------
 
-### Method `delete_files_from_store()`
+### `OpenAI$delete_files_from_store()`
 
 Delete multiple files from a vector store.
 
@@ -1082,7 +1060,7 @@ A data frame of deleted files.
 
 ------------------------------------------------------------------------
 
-### Method `delete_all_files_from_store()`
+### `OpenAI$delete_all_files_from_store()`
 
 Delete all files from a vector store.
 
@@ -1102,7 +1080,7 @@ A data frame of deleted files.
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `OpenAI$clone()`
 
 The objects of this class are cloneable with this method.
 
@@ -1119,8 +1097,9 @@ The objects of this class are cloneable with this method.
 ## Examples
 
 ``` r
+
 ## ------------------------------------------------
-## Method `OpenAI$embeddings`
+## Method `OpenAI$embeddings()`
 ## ------------------------------------------------
 
 if (FALSE) { # \dontrun{
@@ -1141,7 +1120,7 @@ embeddings <- openai$embeddings(
 } # }
 
 ## ------------------------------------------------
-## Method `OpenAI$upload_file`
+## Method `OpenAI$upload_file()`
 ## ------------------------------------------------
 
 if (FALSE) { # \dontrun{
@@ -1159,7 +1138,7 @@ file <- openai$upload_file("training_data.jsonl", purpose = "fine-tune")
 } # }
 
 ## ------------------------------------------------
-## Method `OpenAI$upload_file_from_df`
+## Method `OpenAI$upload_file_from_df()`
 ## ------------------------------------------------
 
 if (FALSE) { # \dontrun{
@@ -1171,7 +1150,7 @@ file <- openai$upload_file_from_df(df, file_name = "my_data.txt")
 } # }
 
 ## ------------------------------------------------
-## Method `OpenAI$list_files`
+## Method `OpenAI$list_files()`
 ## ------------------------------------------------
 
 if (FALSE) { # \dontrun{
@@ -1185,7 +1164,7 @@ assistant_files <- openai$list_files(purpose = "assistants")
 } # }
 
 ## ------------------------------------------------
-## Method `OpenAI$find_file`
+## Method `OpenAI$find_file()`
 ## ------------------------------------------------
 
 if (FALSE) { # \dontrun{
@@ -1199,7 +1178,7 @@ files <- openai$find_file(purpose = "assistants")
 } # }
 
 ## ------------------------------------------------
-## Method `OpenAI$get_file`
+## Method `OpenAI$get_file()`
 ## ------------------------------------------------
 
 if (FALSE) { # \dontrun{
@@ -1211,7 +1190,7 @@ cat("File:", file_info$filename, "Status:", file_info$status, "\n")
 } # }
 
 ## ------------------------------------------------
-## Method `OpenAI$get_file_content`
+## Method `OpenAI$get_file_content()`
 ## ------------------------------------------------
 
 if (FALSE) { # \dontrun{
@@ -1223,7 +1202,7 @@ cat(content)
 } # }
 
 ## ------------------------------------------------
-## Method `OpenAI$download_file`
+## Method `OpenAI$download_file()`
 ## ------------------------------------------------
 
 if (FALSE) { # \dontrun{
@@ -1237,7 +1216,7 @@ path <- openai$download_file(file_id = "file-abc123", dest_path = "downloads/myf
 } # }
 
 ## ------------------------------------------------
-## Method `OpenAI$delete_file`
+## Method `OpenAI$delete_file()`
 ## ------------------------------------------------
 
 if (FALSE) { # \dontrun{
@@ -1249,7 +1228,7 @@ if (result$deleted) cat("File deleted successfully\n")
 } # }
 
 ## ------------------------------------------------
-## Method `OpenAI$delete_files`
+## Method `OpenAI$delete_files()`
 ## ------------------------------------------------
 
 if (FALSE) { # \dontrun{
@@ -1260,7 +1239,7 @@ results <- openai$delete_files(c("file-abc123", "file-def456"))
 } # }
 
 ## ------------------------------------------------
-## Method `OpenAI$delete_all_files`
+## Method `OpenAI$delete_all_files()`
 ## ------------------------------------------------
 
 if (FALSE) { # \dontrun{

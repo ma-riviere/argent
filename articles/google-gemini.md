@@ -9,16 +9,19 @@ extended thinking features.
 ## Setup
 
 ``` r
+
 library(argent)
 ```
 
 ``` r
+
 google_gemini <- Google$new(api_key = Sys.getenv("GEMINI_API_KEY"))
 ```
 
 ## Discovering Models
 
 ``` r
+
 google_gemini$list_models() |>
     dplyr::filter(stringr::str_detect(name, "2.5-flash|2.5-pro|3-pro")) |>
     dplyr::select(-description)
@@ -27,6 +30,7 @@ google_gemini$list_models() |>
 ## Basic Completion
 
 ``` r
+
 google_gemini$chat(
     "What's the R programming language? Answer in three sentences.",
     model = "gemini-2.5-flash" # Default model for Google
@@ -40,6 +44,7 @@ First, define some web-related tools (search & fetch):
 Web Tools Implementation
 
 ``` {r🔺
+
 web_search <- function(query) {
     #' @description Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or any data not in your training data.
     #' @param query:string* The search query string. Be specific and use keywords that will yield the most relevant results.
@@ -73,6 +78,7 @@ web_search_tavily <- function(query) {
 ```
 
 ``` {r🔺
+
 web_fetch <- function(url) {
     #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.
     #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
@@ -219,6 +225,7 @@ web_fetch_rvest <- function(url) {
 ```
 
 ``` {r🔺
+
 web_crawl <- function(url) {
     #' @description Crawl a website/page to discover all available pages and their URLs. Returns a list of URLs found on the website by following sitemaps and internal links. Use this to explore the structure of a website or find specific pages before fetching their content. This method will only return internal links (matching the domain name of the base URL).
     #' @param url:string* The base URL of the website to crawl (e.g., "https://example.com"). Must be a valid HTTP/HTTPS URL. Clean it first if it's not a proper URL (e.g. 'https://github.com/tidyverse/ellmer/releases"}' -> https://github.com/tidyverse/ellmer/releases)
@@ -260,6 +267,7 @@ Then, let’s define a JSON schema for the structured output using
 [`schema()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md):
 
 ``` r
+
 package_info_schema <- schema(
     name = "package_info",
     description = "Information about an R package release",
@@ -271,6 +279,7 @@ package_info_schema <- schema(
 Then, run the agent:
 
 ``` r
+
 google_gemini$chat(
     "When was the first release of the R 'ellmer' package on GitHub?",
     model = "gemini-2.5-flash",
@@ -295,6 +304,7 @@ answer the question.
 ### Extracting Reasoning
 
 ``` r
+
 cat(google_gemini$get_reasoning_text())
 ```
 
@@ -326,6 +336,7 @@ client-side tools:
 The server-side web search tool provides search results with citations:
 
 ``` r
+
 google_gemini$chat(
     "What's the latest version of the R 'ellmer' package?",
     model = "gemini-2.5-flash",
@@ -337,6 +348,7 @@ google_gemini$chat(
 **Extract grounding metadata** (citations and sources):
 
 ``` r
+
 google_gemini$get_supplementary() # Defaults to the last response
 ```
 
@@ -352,6 +364,7 @@ the prompt. It supports fetching text (HTML, JSON, XML), images (PNG,
 JPEG, WebP), and PDFs.
 
 ``` r
+
 google_gemini$chat(
     "Summarize the main changes in the current development version of the R 'ellmer' package in 2 sentences: https://raw.githubusercontent.com/tidyverse/ellmer/main/NEWS.md",
     model = "gemini-2.5-flash",
@@ -390,6 +403,7 @@ location-aware responses for geographical queries.
 #### Basic Usage
 
 ``` r
+
 google_gemini$chat(
     "What are the 5 best Italian restaurants within a 15-minute walk from Times Square?",
     model = "gemini-2.5-flash",
@@ -400,6 +414,7 @@ google_gemini$chat(
 We can also provide a specific location for more relevant results:
 
 ``` r
+
 google_gemini$chat(
     "Give me 5 good coffee shops with outdoor seating in a 1km radius from here.",
     model = "gemini-2.5-flash",
@@ -428,6 +443,7 @@ Here are 5 good coffee shops with outdoor seating near you:
 **Extract grounding metadata** (citations and sources):
 
 ``` r
+
 google_gemini$get_supplementary()
 ```
 
@@ -437,6 +453,7 @@ Enable the widget context token to render interactive Google Maps
 widgets using the Maps API:
 
 ``` r
+
 google_gemini$chat(
     "Plan a day in Trondheim. I want to see the Nidaros, swim in a lake, and have a beer by the river.",
     model = "gemini-2.5-flash",
@@ -466,6 +483,7 @@ In the evening, enjoy a beer by the Nidelva river at Den Gode Nabo AS. This high
 Extract the widget context token:
 
 ``` r
+
 google_gemini$get_supplementary() |>
     purrr::pluck("grounding_metadata", "googleMapsWidgetContextToken")
 ```
@@ -492,6 +510,7 @@ Let’s upload the penguins dataset as a remote file and use the code
 execution tool:
 
 ``` r
+
 penguins_url <- "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/refs/heads/main/inst/extdata/penguins.csv"
 penguins_file_metadata <- google_gemini$upload_file(penguins_url)
 
@@ -505,12 +524,14 @@ google_gemini$chat(
 Inspect the generated code:
 
 ``` r
+
 cat(google_gemini$get_generated_code(langs = c("python"), as_chunks = TRUE))
 ```
 
 Generated Code
 
 ``` python
+
 import pandas as pd
 
 # Load the CSV file
@@ -524,6 +545,7 @@ print(df.info())
 ```
 
 ``` python
+
 # Group by species, sex, and year and calculate the average body_mass_g
 summary_table = df.groupby(['species', 'sex', 'year'])['body_mass_g'].mean().reset_index()
 
@@ -542,11 +564,13 @@ print(summary_table.head())
 Download the generated files:
 
 ``` r
+
 downloaded_path <- google_gemini$download_generated_files(dest_path = "data")
 #> ✔ File saved: data/generated_file_9604db3d-57fc-4aab-bd60-bf4c194ab6e5.csv
 ```
 
 ``` r
+
 read.csv(downloaded_path)
 ```
 
@@ -575,6 +599,7 @@ read.csv(downloaded_path)
 Continue asking questions in the same context:
 
 ``` r
+
 penguin_output_schema <- schema(
     name = "penguin_output",
     description = "Schema for the penguin output",
@@ -622,6 +647,7 @@ Google Gemini supports sending:
 Downloading an example image
 
 ``` r
+
 bsg04_cast_image_url <- "https://upload.wikimedia.org/wikipedia/en/1/1a/Battlestar_Galactica_%282004%29_cast.jpg"
 bsg04_cast_image_path <- download_temp_file(bsg04_cast_image_url)
 ```
@@ -632,6 +658,7 @@ When providing a path to a local image, it will automatically be
 converted to base64 before being sent to the server.
 
 ``` r
+
 google_gemini$chat(
     "Who are the characters in this image, and what show is it from?",
     bsg04_cast_image_path
@@ -656,6 +683,7 @@ From left to right, the characters are:
 **Sending an image URL:**
 
 ``` r
+
 google_gemini$reset_history()
 
 google_gemini$chat(
@@ -683,6 +711,7 @@ google_gemini$chat(
 Downloading an example PDF (my CV)
 
 ``` r
+
 my_cv_url <- "https://ma-riviere.com/res/cv.pdf"
 my_cv_pdf_path <- download_temp_file(my_cv_url)
 ```
@@ -690,6 +719,7 @@ my_cv_pdf_path <- download_temp_file(my_cv_url)
 **Sending a local PDF:**
 
 ``` r
+
 google_gemini$chat(
     "What's my favorite programming language ?",
     my_cv_pdf_path
@@ -713,6 +743,7 @@ helper to have
 parse the PDFs and pass their text contents to the model instead.
 
 ``` r
+
 r6_pdf_url <- "https://cran.r-project.org/web/packages/R6/R6.pdf"
 s7_pdf_url <- "https://cran.r-project.org/web/packages/S7/S7.pdf"
 
@@ -739,6 +770,7 @@ The current versions of the packages are:
 You can pass any R object to `chat()` as is:
 
 ``` r
+
 lm_obj <- lm(body_mass ~ species + sex, data = datasets::penguins)
 
 google_gemini$chat(
@@ -770,6 +802,7 @@ Upload a file and reference it with
 [`as_file_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md):
 
 ``` r
+
 file_metadata <- google_gemini$upload_file(my_cv_url) # Pass an URL or a local file path
 
 multipart_prompt <- list(
@@ -814,6 +847,7 @@ managed solution for file search using vector embeddings.
 First, create a file search store to hold your files:
 
 ``` r
+
 store <- google_gemini$create_store(name = "R OOP Store")
 #> ✔ [Google] File search store created: fileSearchStores/r-oop-store-bkd207kkacou
 ```
@@ -825,6 +859,7 @@ You can either upload files directly or import existing File API files:
 **Direct upload:**
 
 ``` r
+
 r6_pdf_url <- "https://cran.r-project.org/web/packages/R6/R6.pdf"
 
 doc <- google_gemini$add_file_to_store(
@@ -841,6 +876,7 @@ Another way to upload files is to use the `upload_file()`, and then
 import the uploaded file into the store. The result will be the same.
 
 ``` r
+
 file_metadata <- google_gemini$upload_file(r6_pdf_url, name = "R6 Package Documentation 2")
 #> ✔ [Google] File uploaded: files/ie6e5jfpuwpf
 
@@ -856,6 +892,7 @@ doc <- google_gemini$import_file_to_store(
 Once files are uploaded, use the file_search tool in your chat requests:
 
 ``` r
+
 google_gemini$chat(
     "What are the key features of R6 classes compared to reference classes? In three sentences.",
     model = "gemini-2.5-flash",
@@ -868,6 +905,7 @@ google_gemini$chat(
 **Extract grounding metadata with citations:**
 
 ``` r
+
 cat(yaml::as.yaml(google_gemini$get_supplementary()))
 ```
 
@@ -918,6 +956,7 @@ grounding_metadata:
 Add custom metadata to files for filtering:
 
 ``` r
+
 s7_pdf_url <- "https://cran.r-project.org/web/packages/S7/S7.pdf"
 
 doc2 <- google_gemini$add_file_to_store(
@@ -950,6 +989,7 @@ google_gemini$chat(
 Control how files are chunked for better retrieval.
 
 ``` r
+
 doc3 <- google_gemini$add_file_to_store(
     file_path = s7_pdf_url,
     store_name = store$name,
@@ -967,6 +1007,7 @@ doc3 <- google_gemini$add_file_to_store(
 You can also query specific files without using the chat interface:
 
 ``` r
+
 google_gemini$query_file(
     file_name = doc$name,
     query = "What are active bindings?",
@@ -979,30 +1020,35 @@ google_gemini$query_file(
 **List all stores:**
 
 ``` r
+
 google_gemini$list_stores()
 ```
 
 **List files in a store:**
 
 ``` r
+
 google_gemini$list_files_in_store(store$name)
 ```
 
 **Get file details:**
 
 ``` r
+
 google_gemini$read_file_from_store(doc$name)
 ```
 
 **Delete a file:**
 
 ``` r
+
 google_gemini$delete_file_from_store(doc$name)
 ```
 
 **Delete a store:**
 
 ``` r
+
 google_gemini$delete_store(store$name, force = TRUE)
 ```
 

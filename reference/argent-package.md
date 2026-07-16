@@ -102,6 +102,11 @@ Useful links:
 **Maintainer**: Marc-Aurèle Rivière <marc.aurele.riviere@gmail.com>
 ([ORCID](https://orcid.org/0000-0002-5108-3382))
 
+Authors:
+
+- Marc-Aurèle Rivière <marc.aurele.riviere@gmail.com>
+  ([ORCID](https://orcid.org/0000-0002-5108-3382))
+
 ## Examples
 
 ``` r

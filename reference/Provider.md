@@ -67,7 +67,7 @@ Manual save/load available via `dump_history()` and `load_history()`.
 
 ### Public methods
 
-- [`Provider$new()`](#method-Provider-new)
+- [`Provider$new()`](#method-Provider-initialize)
 
 - [`Provider$get_rate_limit()`](#method-Provider-get_rate_limit)
 
@@ -117,7 +117,7 @@ Manual save/load available via `dump_history()` and `load_history()`.
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `Provider$new()`
 
 Initialize a new Provider instance
 
@@ -165,7 +165,7 @@ Initialize a new Provider instance
 
 ------------------------------------------------------------------------
 
-### Method `get_rate_limit()`
+### `Provider$get_rate_limit()`
 
 Get the rate limit
 
@@ -179,7 +179,7 @@ Numeric. Rate limit in requests per second
 
 ------------------------------------------------------------------------
 
-### Method `set_rate_limit()`
+### `Provider$set_rate_limit()`
 
 Set the rate limit
 
@@ -195,7 +195,7 @@ Set the rate limit
 
 ------------------------------------------------------------------------
 
-### Method `get_history()`
+### `Provider$get_history()`
 
 Get both chat and session history
 
@@ -209,7 +209,7 @@ List. History containing both chat_history and session_history
 
 ------------------------------------------------------------------------
 
-### Method `set_history()`
+### `Provider$set_history()`
 
 Set both chat and session history
 
@@ -230,7 +230,7 @@ Self (invisibly) for method chaining
 
 ------------------------------------------------------------------------
 
-### Method `get_chat_history()`
+### `Provider$get_chat_history()`
 
 Get the chat history. The chat history is the history of messages
 exchanged between the user and the model.
@@ -245,7 +245,7 @@ List. Chat history
 
 ------------------------------------------------------------------------
 
-### Method `get_session_history()`
+### `Provider$get_session_history()`
 
 Get the session history
 
@@ -259,7 +259,7 @@ List. Session history (alternating query_data and responses)
 
 ------------------------------------------------------------------------
 
-### Method `dump_history()`
+### `Provider$dump_history()`
 
 Dump both chat and session history to JSON file
 
@@ -279,7 +279,7 @@ Character. Path to saved file (invisibly)
 
 ------------------------------------------------------------------------
 
-### Method `reset_history()`
+### `Provider$reset_history()`
 
 Reset both chat and session history
 
@@ -294,7 +294,7 @@ history_file_path
 
 ------------------------------------------------------------------------
 
-### Method `get_history_file_path()`
+### `Provider$get_history_file_path()`
 
 Get the history file path
 
@@ -308,7 +308,7 @@ Character. History file path
 
 ------------------------------------------------------------------------
 
-### Method `load_history()`
+### `Provider$load_history()`
 
 Load both chat and session history from JSON file
 
@@ -329,7 +329,7 @@ Self (invisibly) for method chaining
 
 ------------------------------------------------------------------------
 
-### Method `get_auto_save_history()`
+### `Provider$get_auto_save_history()`
 
 Get the auto-save history setting
 
@@ -343,7 +343,7 @@ Logical. Auto-save history setting
 
 ------------------------------------------------------------------------
 
-### Method `set_auto_save_history()`
+### `Provider$set_auto_save_history()`
 
 Set the auto-save history setting
 
@@ -359,7 +359,7 @@ Set the auto-save history setting
 
 ------------------------------------------------------------------------
 
-### Method `get_session_last_token_count()`
+### `Provider$get_session_last_token_count()`
 
 Get the total tokens used from session_history
 
@@ -373,7 +373,7 @@ Integer. Total tokens used at last API call
 
 ------------------------------------------------------------------------
 
-### Method `get_session_cumulative_token_count()`
+### `Provider$get_session_cumulative_token_count()`
 
 Get the cumulative tokens used from session_history
 
@@ -395,7 +395,7 @@ specified index
 
 ------------------------------------------------------------------------
 
-### Method `get_last_response()`
+### `Provider$get_last_response()`
 
 Get the last API response
 
@@ -409,7 +409,7 @@ List. Last API response object, or NULL if no response has been stored
 
 ------------------------------------------------------------------------
 
-### Method `get_content_text()`
+### `Provider$get_content_text()`
 
 Get the text content from an API response
 
@@ -429,7 +429,7 @@ Character. Text content from response
 
 ------------------------------------------------------------------------
 
-### Method `get_reasoning_text()`
+### `Provider$get_reasoning_text()`
 
 Get the text content from reasoning in an API response
 
@@ -449,7 +449,7 @@ Character or List. Text content from reasoning in response
 
 ------------------------------------------------------------------------
 
-### Method `get_generated_code()`
+### `Provider$get_generated_code()`
 
 Get generated code from an API response (e.g. from code execution tools)
 
@@ -483,7 +483,7 @@ single string
 
 ------------------------------------------------------------------------
 
-### Method `get_generated_files()`
+### `Provider$get_generated_files()`
 
 Get generated files from an API response (e.g. from code execution
 tools)
@@ -505,7 +505,7 @@ none found
 
 ------------------------------------------------------------------------
 
-### Method `download_generated_files()`
+### `Provider$download_generated_files()`
 
 Download files generated by code execution from an API response (e.g.
 from code execution tools)
@@ -538,7 +538,7 @@ Character vector. Paths to saved files (invisibly)
 
 ------------------------------------------------------------------------
 
-### Method `get_supplementary()`
+### `Provider$get_supplementary()`
 
 Get supplementary data from an API response (annotations, citations,
 grounding metadata, etc.)
@@ -559,7 +559,7 @@ List. Supplementary data from response (provider-specific structure)
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `Provider$print()`
 
 Print chat history in a formatted view. Inspired by ellmer
 
@@ -612,7 +612,7 @@ Self (invisibly) for method chaining
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `Provider$clone()`
 
 The objects of this class are cloneable with this method.
 

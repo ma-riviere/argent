@@ -28,6 +28,7 @@ Minimax provides an Anthropic-compatible API. You can use argent’s
 `Anthropic` class by simply changing the base URL:
 
 ``` r
+
 minimax <- Anthropic$new(
     base_url = "https://api.minimax.io/anthropic",
     api_key = Sys.getenv("MINIMAX_API_KEY"),

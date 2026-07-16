@@ -23,6 +23,7 @@ Both types of MCP servers can be used with `argent`.
 ## Setup
 
 ``` r
+
 library(argent)
 ```
 
@@ -34,6 +35,7 @@ Let’s look at the GitHub MCP server as an example. It is a HTTP server
 that can be used to interact with the GitHub API.
 
 ``` r
+
 github_mcp_client <- mcp_connect(
     name = "github",
     type = "http",
@@ -45,6 +47,7 @@ github_mcp_client <- mcp_connect(
 Then, we can get the tools we want from the GitHub MCP server:
 
 ``` r
+
 github_mcp_tools <- mcp_tools(github_mcp_client, tools = c("get_file_contents", "search_code"))
 ```
 
@@ -52,6 +55,7 @@ Finally, we can call the `get_file_contents` tool manually to see if it
 works:
 
 ``` r
+
 execute_mcp_tool(
     tool_def = get_mcp_tool(github_mcp_tools, "get_file_contents"),
     arguments = list(owner = "tidyverse", repo = "ellmer", path = "/", ref = "main")
@@ -65,6 +69,7 @@ Let’s look at the BTW MCP server as an example (which requires the
 is a stdio server that can be used to interact with the `btw` package.
 
 ``` r
+
 btw_mcp_client <- mcp_connect(
     name = "btw",
     type = "stdio",
@@ -76,6 +81,7 @@ btw_mcp_client <- mcp_connect(
 Then, we can get the tools we want from the `btw` MCP server:
 
 ``` r
+
 btw_mcp_tools <- mcp_tools(
     btw_mcp_client,
     tools = c(
@@ -93,6 +99,7 @@ btw_mcp_tools <- mcp_tools(
 Finally, we can call the `help_topics` tool manually to see if it works:
 
 ``` r
+
 execute_mcp_tool(
     tool_def = get_mcp_tool(btw_mcp_tools, "btw_tool_docs_package_help_topics"),
     arguments = list(package_name = "argent", `_intent` = "Vignettes explaining how to use MCP servers with argent")
@@ -105,6 +112,7 @@ Let’s use the GitHub MCP server and the BTW MCP server to ask a complex
 question about the `mcptools` and `ellmer` packages.
 
 ``` r
+
 google <- Google$new()
 
 google$chat(

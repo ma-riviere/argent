@@ -57,14 +57,14 @@ Hybrid approach for structured outputs:
 
 ## Super class
 
-[`argent::Provider`](https://ma-riviere.github.io/argent/reference/Provider.md)
+[`Provider`](https://ma-riviere.github.io/argent/reference/Provider.md)
 -\> `Google`
 
 ## Methods
 
 ### Public methods
 
-- [`Google$new()`](#method-Google-new)
+- [`Google$new()`](#method-Google-initialize)
 
 - [`Google$list_models()`](#method-Google-list_models)
 
@@ -108,32 +108,32 @@ Hybrid approach for structured outputs:
 
 Inherited methods
 
-- [`argent::Provider$download_generated_files()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-download_generated_files)
-- [`argent::Provider$dump_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-dump_history)
-- [`argent::Provider$get_auto_save_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_auto_save_history)
-- [`argent::Provider$get_chat_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_chat_history)
-- [`argent::Provider$get_content_text()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_content_text)
-- [`argent::Provider$get_generated_code()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_generated_code)
-- [`argent::Provider$get_generated_files()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_generated_files)
-- [`argent::Provider$get_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_history)
-- [`argent::Provider$get_history_file_path()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_history_file_path)
-- [`argent::Provider$get_last_response()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_last_response)
-- [`argent::Provider$get_rate_limit()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_rate_limit)
-- [`argent::Provider$get_reasoning_text()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_reasoning_text)
-- [`argent::Provider$get_session_cumulative_token_count()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_cumulative_token_count)
-- [`argent::Provider$get_session_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_history)
-- [`argent::Provider$get_session_last_token_count()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_last_token_count)
-- [`argent::Provider$get_supplementary()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_supplementary)
-- [`argent::Provider$load_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-load_history)
-- [`argent::Provider$print()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-print)
-- [`argent::Provider$reset_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-reset_history)
-- [`argent::Provider$set_auto_save_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_auto_save_history)
-- [`argent::Provider$set_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_history)
-- [`argent::Provider$set_rate_limit()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_rate_limit)
+- [`Provider$download_generated_files()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-download_generated_files)
+- [`Provider$dump_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-dump_history)
+- [`Provider$get_auto_save_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_auto_save_history)
+- [`Provider$get_chat_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_chat_history)
+- [`Provider$get_content_text()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_content_text)
+- [`Provider$get_generated_code()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_generated_code)
+- [`Provider$get_generated_files()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_generated_files)
+- [`Provider$get_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_history)
+- [`Provider$get_history_file_path()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_history_file_path)
+- [`Provider$get_last_response()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_last_response)
+- [`Provider$get_rate_limit()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_rate_limit)
+- [`Provider$get_reasoning_text()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_reasoning_text)
+- [`Provider$get_session_cumulative_token_count()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_cumulative_token_count)
+- [`Provider$get_session_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_history)
+- [`Provider$get_session_last_token_count()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_last_token_count)
+- [`Provider$get_supplementary()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_supplementary)
+- [`Provider$load_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-load_history)
+- [`Provider$print()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-print)
+- [`Provider$reset_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-reset_history)
+- [`Provider$set_auto_save_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_auto_save_history)
+- [`Provider$set_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_history)
+- [`Provider$set_rate_limit()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_rate_limit)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `Google$new()`
 
 Initialize a new Google Gemini client
 
@@ -187,7 +187,7 @@ Initialize a new Google Gemini client
 
 ------------------------------------------------------------------------
 
-### Method `list_models()`
+### `Google$list_models()`
 
 List all available Google models
 
@@ -201,7 +201,7 @@ Data frame. Available models with their specifications
 
 ------------------------------------------------------------------------
 
-### Method `get_model_info()`
+### `Google$get_model_info()`
 
 Get information about a specific Google model
 
@@ -221,7 +221,7 @@ List. Model information
 
 ------------------------------------------------------------------------
 
-### Method `embeddings()`
+### `Google$embeddings()`
 
 Generate embeddings for text input using Google's embedding models
 
@@ -276,7 +276,6 @@ one row per input text
 
 #### Examples
 
-    \dontrun{
     google <- Google$new()
 
     # Generate embeddings
@@ -298,11 +297,10 @@ one row per input text
       model = "text-embedding-004",
       output_dimensionality = 256
     )
-    }
 
 ------------------------------------------------------------------------
 
-### Method `upload_file()`
+### `Google$upload_file()`
 
 Upload a file to Google Files API (uses resumable upload)
 
@@ -330,7 +328,7 @@ List. File metadata or NULL on error
 
 ------------------------------------------------------------------------
 
-### Method `get_file_metadata()`
+### `Google$get_file_metadata()`
 
 Get metadata for an uploaded file
 
@@ -350,7 +348,7 @@ List. File metadata or NULL on error
 
 ------------------------------------------------------------------------
 
-### Method `list_files()`
+### `Google$list_files()`
 
 List all uploaded files
 
@@ -380,7 +378,7 @@ page token (list only).
 
 ------------------------------------------------------------------------
 
-### Method `delete_file()`
+### `Google$delete_file()`
 
 Delete an uploaded file
 
@@ -400,7 +398,7 @@ Logical. TRUE if successful, FALSE otherwise
 
 ------------------------------------------------------------------------
 
-### Method `create_store()`
+### `Google$create_store()`
 
 Create a new file search store for RAG operations
 
@@ -420,7 +418,7 @@ List. File search store metadata or NULL on error
 
 ------------------------------------------------------------------------
 
-### Method `list_stores()`
+### `Google$list_stores()`
 
 List all file search stores
 
@@ -450,7 +448,7 @@ metadata.
 
 ------------------------------------------------------------------------
 
-### Method `read_store()`
+### `Google$read_store()`
 
 Get information about a specific file search store
 
@@ -470,7 +468,7 @@ List. File search store metadata or NULL on error
 
 ------------------------------------------------------------------------
 
-### Method `delete_store()`
+### `Google$delete_store()`
 
 Delete a file search store
 
@@ -495,7 +493,7 @@ Logical. TRUE if successful, FALSE otherwise
 
 ------------------------------------------------------------------------
 
-### Method `add_file_to_store()`
+### `Google$add_file_to_store()`
 
 Upload a file directly to a file search store using resumable upload.
 Supports custom chunking configuration and metadata.
@@ -539,7 +537,7 @@ List. Document metadata or NULL on error
 
 ------------------------------------------------------------------------
 
-### Method `import_file_to_store()`
+### `Google$import_file_to_store()`
 
 Import an existing File API file to a file search store. Note: The
 importFile endpoint does not support custom chunking configuration.
@@ -569,7 +567,7 @@ List. Document metadata or NULL on error
 
 ------------------------------------------------------------------------
 
-### Method `list_files_in_store()`
+### `Google$list_files_in_store()`
 
 List files in a file search store
 
@@ -607,7 +605,7 @@ Data frame (if as_df = TRUE) or list otherwise. Files metadata.
 
 ------------------------------------------------------------------------
 
-### Method `read_file_from_store()`
+### `Google$read_file_from_store()`
 
 Get information about a specific file in a store
 
@@ -627,7 +625,7 @@ List. File metadata or NULL on error
 
 ------------------------------------------------------------------------
 
-### Method `delete_file_from_store()`
+### `Google$delete_file_from_store()`
 
 Delete a file from a file search store
 
@@ -652,7 +650,7 @@ Logical. TRUE if successful, FALSE otherwise
 
 ------------------------------------------------------------------------
 
-### Method `query_file()`
+### `Google$query_file()`
 
 Query a specific file in a file search store
 
@@ -689,7 +687,7 @@ List. Query results or NULL on error
 
 ------------------------------------------------------------------------
 
-### Method `get_operation()`
+### `Google$get_operation()`
 
 Get the status of a long-running operation
 
@@ -710,7 +708,7 @@ List. Operation status or NULL on error
 
 ------------------------------------------------------------------------
 
-### Method `chat()`
+### `Google$chat()`
 
 Send a chat completion request to Google
 
@@ -862,7 +860,7 @@ Character. Text response from the model.
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `Google$clone()`
 
 The objects of this class are cloneable with this method.
 
@@ -915,7 +913,7 @@ cache_name <- google$create_cache(
 } # }
 
 ## ------------------------------------------------
-## Method `Google$embeddings`
+## Method `Google$embeddings()`
 ## ------------------------------------------------
 
 if (FALSE) { # \dontrun{

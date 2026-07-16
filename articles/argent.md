@@ -6,6 +6,7 @@ Here is a quick showcase of the various features of `argent` using the
 Google (Gemini) provider.
 
 ``` r
+
 gemini <- Google$new(api_key = Sys.getenv("GEMINI_API_KEY"))
 ```
 
@@ -16,6 +17,7 @@ parameter, and the default model with the `default_model` parameter
 ### Basic Completion
 
 ``` r
+
 gemini$chat(
     "What is the R programming language? Answer in two sentences.",
     model = "gemini-2.5-flash" # Not necessary, it's the default model for Google
@@ -25,6 +27,7 @@ gemini$chat(
 The chat history can be visualized by printing the provider object:
 
 ``` r
+
 print(gemini)
 ```
 
@@ -35,6 +38,7 @@ First, define some web-related tools (search & fetch):
 Web Tools Implementation
 
 ``` {r🔺
+
 web_search <- function(query) {
     #' @description Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or any data not in your training data.
     #' @param query:string* The search query string. Be specific and use keywords that will yield the most relevant results.
@@ -68,6 +72,7 @@ web_search_tavily <- function(query) {
 ```
 
 ``` {r🔺
+
 web_fetch <- function(url) {
     #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.
     #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
@@ -214,6 +219,7 @@ web_fetch_rvest <- function(url) {
 ```
 
 ``` {r🔺
+
 web_crawl <- function(url) {
     #' @description Crawl a website/page to discover all available pages and their URLs. Returns a list of URLs found on the website by following sitemaps and internal links. Use this to explore the structure of a website or find specific pages before fetching their content. This method will only return internal links (matching the domain name of the base URL).
     #' @param url:string* The base URL of the website to crawl (e.g., "https://example.com"). Must be a valid HTTP/HTTPS URL. Clean it first if it's not a proper URL (e.g. 'https://github.com/tidyverse/ellmer/releases"}' -> https://github.com/tidyverse/ellmer/releases)
@@ -255,6 +261,7 @@ Then, let’s define the schema for the output using
 [`schema()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md):
 
 ``` r
+
 package_info_schema <- schema(
     name = "package_info",
     description = "Information about an R package release",
@@ -271,6 +278,7 @@ package_info_schema <- schema(
 Run the agent:
 
 ``` r
+
 gemini$chat(
     "When was the first release of the R 'ellmer' package on GitHub?",
     model = "gemini-2.5-flash",
@@ -301,6 +309,7 @@ For example, Google Gemini has a server-side `google_search` tool that
 will offer similar capabilities as our client-side `web_search` tool.
 
 ``` r
+
 gemini$chat(
     "When was the last version of the R 'ragnar' package released on GitHub?",
     model = "gemini-2.5-flash",
@@ -328,6 +337,7 @@ model in a single request.
 Example with an URL to a PDF file:
 
 ``` r
+
 gemini$chat(
     "What's my favorite programming language ?",
     "https://ma-riviere.com/res/cv.pdf",
@@ -363,6 +373,7 @@ Based on your resume, your favorite programming language appears to be **R**.
 You can pass any R object to `chat()` as is:
 
 ``` r
+
 lm_obj <- lm(body_mass ~ species + sex, data = datasets::penguins)
 
 gemini$chat("What can we deduct from this regression model ?", lm_obj, model = "gemini-2.5-flash")
@@ -390,6 +401,7 @@ Upload a file and reference it with
 [`as_file_content()`](https://ma-riviere.github.io/argent/reference/content_converters.md):
 
 ``` r
+
 file_metadata <- gemini$upload_file("https://ma-riviere.com/res/cv.pdf")
 
 multipart_prompt <- list("What are my two favorite frameworks/tools ?", as_file_content(file_metadata$name))
@@ -486,6 +498,7 @@ The chat history maintains a list of messages exchanged between the user
 and the model to be resent at each successive API call.
 
 ``` r
+
 gemini <- Google$new()
 
 gemini$chat(prompt = "My name is Alice", model = "gemini-2.5-flash")
@@ -498,6 +511,7 @@ gemini$chat(prompt = "What's my name?", model = "gemini-2.5-flash")
 Check the chat history:
 
 ``` r
+
 cat(yaml::as.yaml(gemini$get_chat_history()))
 ```
 
@@ -519,6 +533,7 @@ cat(yaml::as.yaml(gemini$get_chat_history()))
 See the total tokens used at last API call:
 
 ``` r
+
 gemini$get_session_last_token_count() # Total (input + output) tokens used at last API call
 gemini$get_session_cumulative_token_count() # Cumulative tokens used in this chat session
 ```
@@ -526,6 +541,7 @@ gemini$get_session_cumulative_token_count() # Cumulative tokens used in this cha
 Reset the object’s history:
 
 ``` r
+
 gemini$reset_history()
 ```
 
@@ -542,6 +558,7 @@ By default, history is automatically saved to timestamped JSON files in
 - Check current setting via `get_auto_save_history()`
 
 ``` r
+
 options(
     argent.history_dir = "data/history/" # Default
 )
@@ -558,6 +575,7 @@ gemini <- Google$new(auto_save_history = FALSE)
 ##### Loading Previous Conversations
 
 ``` r
+
 current_history_file_path <- gemini$get_history_file_path()
 
 gemini <- Google$new() # Equivalent of resetting the provider object
@@ -569,6 +587,7 @@ gemini$load_history(current_history_file_path)
 object:**
 
 ``` r
+
 print(gemini)
 ```
 
@@ -578,6 +597,7 @@ print(gemini)
 without native support, using a “forced tool call” mechanism:
 
 ``` r
+
 # Define schema using direct specification
 response_schema <- schema(
     name = "response_format",
@@ -596,6 +616,7 @@ Define tools using direct specification or annotations:
 **Option 1:** Define the function and tool definition separately:
 
 ``` r
+
 my_function <- function(arg1) {
     return(arg1)
 }
@@ -628,6 +649,7 @@ my_tool
 by adding plumber-style annotations:
 
 ``` r
+
 my_function <- function(arg1) {
     #' @description What the function does
     #' @param arg1:string* Required string argument description
@@ -640,5 +662,6 @@ my_tool <- as_tool(my_function) # Automatically stores the function in .fn
 And then, use the tool within a chat:
 
 ``` r
+
 gemini$chat("Use the tool to answer this", tools = list(my_tool))
 ```

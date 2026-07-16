@@ -43,7 +43,7 @@ chat history (incurs extra cost).
 
 ## Super class
 
-[`argent::Provider`](https://ma-riviere.github.io/argent/reference/Provider.md)
+[`Provider`](https://ma-riviere.github.io/argent/reference/Provider.md)
 -\> `OpenRouter`
 
 ## Public fields
@@ -60,7 +60,7 @@ chat history (incurs extra cost).
 
 ### Public methods
 
-- [`OpenRouter$new()`](#method-OpenRouter-new)
+- [`OpenRouter$new()`](#method-OpenRouter-initialize)
 
 - [`OpenRouter$get_allowed_providers()`](#method-OpenRouter-get_allowed_providers)
 
@@ -84,32 +84,32 @@ chat history (incurs extra cost).
 
 Inherited methods
 
-- [`argent::Provider$download_generated_files()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-download_generated_files)
-- [`argent::Provider$dump_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-dump_history)
-- [`argent::Provider$get_auto_save_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_auto_save_history)
-- [`argent::Provider$get_chat_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_chat_history)
-- [`argent::Provider$get_content_text()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_content_text)
-- [`argent::Provider$get_generated_code()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_generated_code)
-- [`argent::Provider$get_generated_files()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_generated_files)
-- [`argent::Provider$get_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_history)
-- [`argent::Provider$get_history_file_path()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_history_file_path)
-- [`argent::Provider$get_last_response()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_last_response)
-- [`argent::Provider$get_rate_limit()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_rate_limit)
-- [`argent::Provider$get_reasoning_text()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_reasoning_text)
-- [`argent::Provider$get_session_cumulative_token_count()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_cumulative_token_count)
-- [`argent::Provider$get_session_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_history)
-- [`argent::Provider$get_session_last_token_count()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_last_token_count)
-- [`argent::Provider$get_supplementary()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_supplementary)
-- [`argent::Provider$load_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-load_history)
-- [`argent::Provider$print()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-print)
-- [`argent::Provider$reset_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-reset_history)
-- [`argent::Provider$set_auto_save_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_auto_save_history)
-- [`argent::Provider$set_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_history)
-- [`argent::Provider$set_rate_limit()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_rate_limit)
+- [`Provider$download_generated_files()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-download_generated_files)
+- [`Provider$dump_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-dump_history)
+- [`Provider$get_auto_save_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_auto_save_history)
+- [`Provider$get_chat_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_chat_history)
+- [`Provider$get_content_text()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_content_text)
+- [`Provider$get_generated_code()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_generated_code)
+- [`Provider$get_generated_files()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_generated_files)
+- [`Provider$get_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_history)
+- [`Provider$get_history_file_path()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_history_file_path)
+- [`Provider$get_last_response()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_last_response)
+- [`Provider$get_rate_limit()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_rate_limit)
+- [`Provider$get_reasoning_text()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_reasoning_text)
+- [`Provider$get_session_cumulative_token_count()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_cumulative_token_count)
+- [`Provider$get_session_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_history)
+- [`Provider$get_session_last_token_count()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_last_token_count)
+- [`Provider$get_supplementary()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_supplementary)
+- [`Provider$load_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-load_history)
+- [`Provider$print()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-print)
+- [`Provider$reset_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-reset_history)
+- [`Provider$set_auto_save_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_auto_save_history)
+- [`Provider$set_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_history)
+- [`Provider$set_rate_limit()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_rate_limit)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `OpenRouter$new()`
 
 Initialize a new OpenRouter client
 
@@ -169,7 +169,7 @@ Initialize a new OpenRouter client
 
 ------------------------------------------------------------------------
 
-### Method `get_allowed_providers()`
+### `OpenRouter$get_allowed_providers()`
 
 Get the list of allowed providers
 
@@ -183,7 +183,7 @@ Character vector. Allowed provider slugs, or NULL if none set
 
 ------------------------------------------------------------------------
 
-### Method `set_allowed_providers()`
+### `OpenRouter$set_allowed_providers()`
 
 Set the list of allowed providers for all requests
 
@@ -200,7 +200,7 @@ Set the list of allowed providers for all requests
 
 ------------------------------------------------------------------------
 
-### Method `get_blocked_providers()`
+### `OpenRouter$get_blocked_providers()`
 
 Get the list of blocked providers
 
@@ -214,7 +214,7 @@ Character vector. Blocked provider slugs, or NULL if none set
 
 ------------------------------------------------------------------------
 
-### Method `set_blocked_providers()`
+### `OpenRouter$set_blocked_providers()`
 
 Set the list of blocked providers for all requests
 
@@ -231,7 +231,7 @@ Set the list of blocked providers for all requests
 
 ------------------------------------------------------------------------
 
-### Method `list_providers()`
+### `OpenRouter$list_providers()`
 
 List all available providers from OpenRouter
 
@@ -245,7 +245,7 @@ Data frame. Available providers with their specifications
 
 ------------------------------------------------------------------------
 
-### Method `list_models()`
+### `OpenRouter$list_models()`
 
 List all available models from OpenRouter
 
@@ -272,7 +272,7 @@ Data frame. Available models with their specifications
 
 ------------------------------------------------------------------------
 
-### Method `get_model_info()`
+### `OpenRouter$get_model_info()`
 
 Get information about a specific model
 
@@ -292,7 +292,7 @@ List. Model information
 
 ------------------------------------------------------------------------
 
-### Method `embeddings()`
+### `OpenRouter$embeddings()`
 
 Generate embeddings for text input
 
@@ -343,7 +343,6 @@ one row per input text
 
 #### Examples
 
-    \dontrun{
     openrouter <- OpenRouter$new()
 
     # Generate embeddings
@@ -365,11 +364,10 @@ one row per input text
       model = "text-embedding-3-small",
       provider = "openai"
     )
-    }
 
 ------------------------------------------------------------------------
 
-### Method `chat()`
+### `OpenRouter$chat()`
 
 Send a chat completion request to OpenRouter
 
@@ -595,7 +593,7 @@ Character. OpenRouter API's response object.
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `OpenRouter$clone()`
 
 The objects of this class are cloneable with this method.
 
@@ -650,7 +648,7 @@ response <- openrouter$chat(
 } # }
 
 ## ------------------------------------------------
-## Method `OpenRouter$embeddings`
+## Method `OpenRouter$embeddings()`
 ## ------------------------------------------------
 
 if (FALSE) { # \dontrun{

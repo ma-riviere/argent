@@ -17,6 +17,7 @@ documentation](https://ragnar.tidyverse.org/).
 ## Setup
 
 ``` r
+
 library(argent)
 library(ragnar)
 library(cachem)
@@ -37,6 +38,7 @@ Here, let’s collect (part of) the Quarto documentation from the Quarto
 website.
 
 ``` r
+
 quarto_docs_url_filter <- function(urls) {
     str_subset(urls, "https://quarto.org/docs/") |> 
         str_subset(regex("\\.html$", ignore_case = FALSE))
@@ -52,6 +54,7 @@ paths <- ragnar::ragnar_find_links(
 #### Create Store with Embeddings
 
 ``` r
+
 gemini_embedding_fn <- \(text) ragnar::embed_google_gemini(text, model = "text-embedding-004")
 
 store <- ragnar::ragnar_store_create(
@@ -66,6 +69,7 @@ store <- ragnar::ragnar_store_create(
 > class and a local embedding model:
 >
 > ``` r
+>
 > local_embedding_fn <- function(text) {
 >     argent::LocalLLM$new(
 >         base_url = "http://127.0.0.1:5000",
@@ -85,6 +89,7 @@ store <- ragnar::ragnar_store_create(
 #### Process and Index Documents
 
 ``` r
+
 insert_chunk_into_store <- function(path) {
     ragnar::read_as_markdown(path) |>
         ragnar::markdown_chunk() |>
@@ -105,6 +110,7 @@ have already been retrieved. Since argent’s tools are stateless, we use
 to maintain state across tool calls.
 
 ``` r
+
 retrieve_state <- cachem::cache_mem()
 
 retrieve_docs <- function(query) {
@@ -136,6 +142,7 @@ Now you can use the retrieval tool in conversations. The LLM will
 automatically retrieve relevant documentation when needed.
 
 ``` r
+
 gemini <- Google$new()
 
 gemini$chat(

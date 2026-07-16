@@ -9,10 +9,12 @@ capabilities, fallback options, and access to a wide variety of models.
 ## Setup
 
 ``` r
+
 library(argent)
 ```
 
 ``` r
+
 openrouter <- OpenRouter$new(api_key = Sys.getenv("OPENROUTER_API_KEY"))
 ```
 
@@ -23,6 +25,7 @@ openrouter <- OpenRouter$new(api_key = Sys.getenv("OPENROUTER_API_KEY"))
 OpenRouter provides access to hundreds of models from various providers:
 
 ``` r
+
 openrouter$list_models(supported_parameters = c("tools")) |>
     dplyr::filter(
         stringr::str_detect(name, "free") & context_length > 100000 & stringr::str_detect(input_modalities, "image")
@@ -33,6 +36,7 @@ openrouter$list_models(supported_parameters = c("tools")) |>
 **Available Providers**
 
 ``` r
+
 openrouter$list_providers() |> 
     head(10)
 ```
@@ -40,6 +44,7 @@ openrouter$list_providers() |>
 ## Basic Completion
 
 ``` r
+
 openrouter$chat(
     "What's the R programming language? Answer in three sentences.",
     model = "z-ai/glm-4.5-air:free",
@@ -54,6 +59,7 @@ First, define some web-related tools (search & fetch):
 Web Tools Implementation
 
 ``` {r🔺
+
 web_search <- function(query) {
     #' @description Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or any data not in your training data.
     #' @param query:string* The search query string. Be specific and use keywords that will yield the most relevant results.
@@ -87,6 +93,7 @@ web_search_tavily <- function(query) {
 ```
 
 ``` {r🔺
+
 web_fetch <- function(url) {
     #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.
     #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
@@ -233,6 +240,7 @@ web_fetch_rvest <- function(url) {
 ```
 
 ``` {r🔺
+
 web_crawl <- function(url) {
     #' @description Crawl a website/page to discover all available pages and their URLs. Returns a list of URLs found on the website by following sitemaps and internal links. Use this to explore the structure of a website or find specific pages before fetching their content. This method will only return internal links (matching the domain name of the base URL).
     #' @param url:string* The base URL of the website to crawl (e.g., "https://example.com"). Must be a valid HTTP/HTTPS URL. Clean it first if it's not a proper URL (e.g. 'https://github.com/tidyverse/ellmer/releases"}' -> https://github.com/tidyverse/ellmer/releases)
@@ -274,6 +282,7 @@ Then, let’s define a JSON schema for the structured output using
 [`schema()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md):
 
 ``` r
+
 package_info_schema <- schema(
     name = "package_info",
     description = "Information about an R package release",
@@ -285,6 +294,7 @@ package_info_schema <- schema(
 Then, run the agent:
 
 ``` r
+
 openrouter$chat(
     "When was the first release of the R 'ellmer' package on GitHub?",
     model = "z-ai/glm-4.5-air:free",
@@ -312,6 +322,7 @@ $release_date
 ### Extracting Reasoning
 
 ``` r
+
 cat(openrouter$get_reasoning_text())
 ```
 
@@ -335,6 +346,7 @@ OpenRouter only supports one server-side tool:
 ### Web Search
 
 ``` r
+
 openrouter$chat(
     "When was the last version of the R 'ragnar' package released on GitHub?",
     model = "minimax/minimax-m2:free",
@@ -370,6 +382,7 @@ OpenRouter supports sending:
 Downloading an example image
 
 ``` r
+
 bsg04_cast_image_url <- "https://upload.wikimedia.org/wikipedia/en/1/1a/Battlestar_Galactica_%282004%29_cast.jpg"
 bsg04_cast_image_path <- download_temp_file(bsg04_cast_image_url)
 ```
@@ -380,6 +393,7 @@ When providing a path to a local image, it will automatically be
 converted to base64 before being sent to the server.
 
 ``` r
+
 openrouter$chat(
     "Who are the characters in this image, and what show is it from?",
     bsg04_cast_image_path,
@@ -406,6 +420,7 @@ The image you provided is from the TV show "Battlestar Galactica". The character
 OpenRouter supports sending image URLs directly:
 
 ``` r
+
 openrouter$chat(
     "Who are the characters in this image, and what show is it from?",
     bsg04_cast_image_url,
@@ -429,6 +444,7 @@ openrouter$chat(
 Downloading an example PDF (my CV)
 
 ``` r
+
 my_cv_url <- "https://ma-riviere.com/res/cv.pdf"
 my_cv_pdf_path <- download_temp_file(my_cv_url)
 ```
@@ -436,6 +452,7 @@ my_cv_pdf_path <- download_temp_file(my_cv_url)
 **Sending a local PDF:**
 
 ``` r
+
 openrouter$chat(
     "What's my favorite programming language?",
     my_cv_pdf_path,
@@ -464,6 +481,7 @@ Based on the document you provided, it appears that R is your favorite programmi
 > for more details.
 >
 > ``` r
+>
 > openrouter$chat(
 >     "What's my favorite programming language?",
 >     as_pdf_content(my_cv_url, .provider_options = list(pdf_parser = "mistral-ocr")),
@@ -490,6 +508,7 @@ helper to have
 parse the PDFs and pass their text contents to the model instead.
 
 ``` r
+
 r6_pdf_url <- "https://cran.r-project.org/web/packages/R6/R6.pdf"
 s7_pdf_url <- "https://cran.r-project.org/web/packages/S7/S7.pdf"
 
@@ -518,6 +537,7 @@ The current versions of both packages are:
 You can pass any R object to `chat()` as is:
 
 ``` r
+
 lm_obj <- lm(body_mass ~ species + sex, data = datasets::penguins)
 
 openrouter$chat(
@@ -567,6 +587,7 @@ You can specify multiple models to use, and the first one that succeeds
 will be used.
 
 ``` r
+
 openrouter$chat(
     "What's the R programming language? Answer in three sentences.",
     model = list("deepseek/deepseek-chat-v3-0324:free", "minimax/minimax-m2:free"),
@@ -585,6 +606,7 @@ full details.
 Control which providers are used and in what order:
 
 ``` r
+
 openrouter$chat(
     prompt = "Your question here",
     model = "z-ai/glm-4.5-air:free",
@@ -599,6 +621,7 @@ openrouter$chat(
 #### Advanced Routing Options
 
 ``` r
+
 openrouter$chat(
     prompt = "Your question here",
     model = "anthropic/claude-3.5-sonnet",

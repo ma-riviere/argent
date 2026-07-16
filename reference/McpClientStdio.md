@@ -4,7 +4,7 @@ A client for interacting with local MCP servers via stdio.
 
 ## Super class
 
-[`argent::McpClient`](https://ma-riviere.github.io/argent/reference/McpClient.md)
+[`McpClient`](https://ma-riviere.github.io/argent/reference/McpClient.md)
 -\> `McpClientStdio`
 
 ## Public fields
@@ -17,7 +17,7 @@ A client for interacting with local MCP servers via stdio.
 
 ### Public methods
 
-- [`McpClientStdio$new()`](#method-McpClientStdio-new)
+- [`McpClientStdio$new()`](#method-McpClientStdio-initialize)
 
 - [`McpClientStdio$initialize_connection()`](#method-McpClientStdio-initialize_connection)
 
@@ -33,17 +33,17 @@ A client for interacting with local MCP servers via stdio.
 
 Inherited methods
 
-- [`argent::McpClient$call_tool()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-call_tool)
-- [`argent::McpClient$get_prompt()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-get_prompt)
-- [`argent::McpClient$is_closed()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-is_closed)
-- [`argent::McpClient$list_prompts()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-list_prompts)
-- [`argent::McpClient$list_resources()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-list_resources)
-- [`argent::McpClient$list_tools()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-list_tools)
-- [`argent::McpClient$read_resource()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-read_resource)
+- [`McpClient$call_tool()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-call_tool)
+- [`McpClient$get_prompt()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-get_prompt)
+- [`McpClient$is_closed()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-is_closed)
+- [`McpClient$list_prompts()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-list_prompts)
+- [`McpClient$list_resources()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-list_resources)
+- [`McpClient$list_tools()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-list_tools)
+- [`McpClient$read_resource()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-read_resource)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `McpClientStdio$new()`
 
 Initialize stdio client
 
@@ -67,7 +67,7 @@ Initialize stdio client
 
 ------------------------------------------------------------------------
 
-### Method `initialize_connection()`
+### `McpClientStdio$initialize_connection()`
 
 Initialize MCP connection
 
@@ -77,7 +77,7 @@ Initialize MCP connection
 
 ------------------------------------------------------------------------
 
-### Method `send_request()`
+### `McpClientStdio$send_request()`
 
 Send request to stdio process
 
@@ -93,7 +93,7 @@ Send request to stdio process
 
 ------------------------------------------------------------------------
 
-### Method `send_notification()`
+### `McpClientStdio$send_notification()`
 
 Send notification (no ID, no response expected)
 
@@ -109,7 +109,7 @@ Send notification (no ID, no response expected)
 
 ------------------------------------------------------------------------
 
-### Method [`close()`](https://rdrr.io/r/base/connections.html)
+### `McpClientStdio$close()`
 
 Close the connection and terminate the server process. Attempts graceful
 interrupt first, then force-kills if needed.
@@ -120,7 +120,7 @@ interrupt first, then force-kills if needed.
 
 ------------------------------------------------------------------------
 
-### Method `is_alive()`
+### `McpClientStdio$is_alive()`
 
 Check if the server process is alive
 
@@ -134,7 +134,7 @@ Logical
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `McpClientStdio$clone()`
 
 The objects of this class are cloneable with this method.
 

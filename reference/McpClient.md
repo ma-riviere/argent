@@ -13,7 +13,7 @@ both stdio (local process) and HTTP transports.
 
 ### Public methods
 
-- [`McpClient$new()`](#method-McpClient-new)
+- [`McpClient$new()`](#method-McpClient-initialize)
 
 - [`McpClient$list_tools()`](#method-McpClient-list_tools)
 
@@ -37,7 +37,7 @@ both stdio (local process) and HTTP transports.
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `McpClient$new()`
 
 Initialize client
 
@@ -47,7 +47,7 @@ Initialize client
 
 ------------------------------------------------------------------------
 
-### Method `list_tools()`
+### `McpClient$list_tools()`
 
 List tools available on the server
 
@@ -57,7 +57,7 @@ List tools available on the server
 
 ------------------------------------------------------------------------
 
-### Method `call_tool()`
+### `McpClient$call_tool()`
 
 Call a tool on the server
 
@@ -77,7 +77,7 @@ Call a tool on the server
 
 ------------------------------------------------------------------------
 
-### Method `list_resources()`
+### `McpClient$list_resources()`
 
 List resources available on the server
 
@@ -87,7 +87,7 @@ List resources available on the server
 
 ------------------------------------------------------------------------
 
-### Method `read_resource()`
+### `McpClient$read_resource()`
 
 Read a resource from the server
 
@@ -103,7 +103,7 @@ Read a resource from the server
 
 ------------------------------------------------------------------------
 
-### Method `list_prompts()`
+### `McpClient$list_prompts()`
 
 List prompts available on the server
 
@@ -113,7 +113,7 @@ List prompts available on the server
 
 ------------------------------------------------------------------------
 
-### Method `get_prompt()`
+### `McpClient$get_prompt()`
 
 Get a prompt from the server
 
@@ -133,7 +133,7 @@ Get a prompt from the server
 
 ------------------------------------------------------------------------
 
-### Method `send_request()`
+### `McpClient$send_request()`
 
 Send a JSON-RPC request
 
@@ -149,7 +149,7 @@ Send a JSON-RPC request
 
 ------------------------------------------------------------------------
 
-### Method [`close()`](https://rdrr.io/r/base/connections.html)
+### `McpClient$close()`
 
 Close the client connection and release resources. Subclasses override
 this with transport-specific cleanup.
@@ -160,7 +160,7 @@ this with transport-specific cleanup.
 
 ------------------------------------------------------------------------
 
-### Method `is_closed()`
+### `McpClient$is_closed()`
 
 Check if the client connection is closed
 
@@ -174,7 +174,7 @@ Logical
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `McpClient$clone()`
 
 The objects of this class are cloneable with this method.
 

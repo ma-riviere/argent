@@ -14,6 +14,7 @@ sub-tasks to less expensive models.
 ## Setup
 
 ``` r
+
 library(argent)
 ```
 
@@ -28,6 +29,7 @@ First, define some web-related tools (search & fetch):
 Web Tools Implementation
 
 ``` {r🔺
+
 web_search <- function(query) {
     #' @description Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or any data not in your training data.
     #' @param query:string* The search query string. Be specific and use keywords that will yield the most relevant results.
@@ -61,6 +63,7 @@ web_search_tavily <- function(query) {
 ```
 
 ``` {r🔺
+
 web_fetch <- function(url) {
     #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.
     #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
@@ -207,6 +210,7 @@ web_fetch_rvest <- function(url) {
 ```
 
 ``` {r🔺
+
 web_crawl <- function(url) {
     #' @description Crawl a website/page to discover all available pages and their URLs. Returns a list of URLs found on the website by following sitemaps and internal links. Use this to explore the structure of a website or find specific pages before fetching their content. This method will only return internal links (matching the domain name of the base URL).
     #' @param url:string* The base URL of the website to crawl (e.g., "https://example.com"). Must be a valid HTTP/HTTPS URL. Clean it first if it's not a proper URL (e.g. 'https://github.com/tidyverse/ellmer/releases"}' -> https://github.com/tidyverse/ellmer/releases)
@@ -252,6 +256,7 @@ multi-step work.
 TODO-list Tools Implementation
 
 ``` r
+
 # Create a TODO-list
 create_todo_list <- function(name = "todos") {
     env <- new.env(parent = emptyenv())
@@ -307,6 +312,7 @@ set_todos <- function(todo_mgr, todos) {
 ```
 
 ``` {r🔺
+
 print.todo_list <- function(x, ...) {
     name <- x$name
     todos <- x$todos
@@ -341,6 +347,7 @@ print.todo_list <- function(x, ...) {
 > Here’s how those tools work:
 >
 > ``` r
+>
 > todo_test <- create_todo_list("Researching LLM-adjacent packages in R")
 >
 > set_todos(todo_test, list(
@@ -364,6 +371,7 @@ print.todo_list <- function(x, ...) {
 ### GitHub MCP Tools
 
 ``` r
+
 github_mcp_server <- mcp_connect(
     name = "github",
     type = "http",
@@ -393,6 +401,7 @@ understand the domain and creates a structured plan using a TODO-list
 tool.
 
 ``` r
+
 planning_subagent <- function(task) {
     #' @description Creates a planning sub-agent that analyzes a complex task and breaks it down
     #'   into structured sub-tasks. Use this tool FIRST to create a roadmap for complex requests.
@@ -446,6 +455,7 @@ The research sub-agent executes specific research tasks using web
 search, web fetch, and GitHub MCP tools.
 
 ``` r
+
 research_subagent <- function(subtask) {
     #' @description Creates a research sub-agent that executes a specific research task using
     #'   web search, web fetch, and GitHub tools. Use this for deep-dive information gathering.
@@ -511,6 +521,7 @@ tasks to researchers, and synthesizes results.
 Let’s define the main agent’s system prompt and prompt:
 
 ``` r
+
 main_agent <- OpenRouter$new(default_model = "x-ai/grok-4.1-fast")
 
 main_system <- "You are the Project Lead and Orchestrator.
@@ -550,6 +561,7 @@ Stop once you've found 20 packages.
 Then, let’s define the main agent’s output schema and tools:
 
 ``` r
+
 main_output_schema <- schema(
     name = "r_llm_packages",
     description = "A comprehensive list of LLM-adjacent R packages",
@@ -586,6 +598,7 @@ main_tools <- flat_list(as_tool(planning_subagent), as_tool(research_subagent), 
 Now, let’s run the main agent:
 
 ``` r
+
 main_agent$chat(
     main_prompt,
     system = main_system,
@@ -595,10 +608,12 @@ main_agent$chat(
 ```
 
 ``` r
+
 print(main_agent, show_tools = TRUE) # Entirety of the chat history of the main agent
 ```
 
 ``` r
+
 cat(main_agent$get_content_text()) # Just the final answer of the main agent
 ```
 

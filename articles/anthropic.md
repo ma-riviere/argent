@@ -9,22 +9,26 @@ tools, and prompt caching for cost optimization.
 ## Setup
 
 ``` r
+
 library(argent)
 ```
 
 ``` r
+
 anthropic <- Anthropic$new(api_key = Sys.getenv("ANTHROPIC_API_KEY"))
 ```
 
 ## Discovering Models
 
 ``` r
+
 anthropic$list_models()
 ```
 
 ## Basic Completion
 
 ``` r
+
 anthropic$chat(
     "What's the R programming language? Answer in three sentences.",
     model = "claude-haiku-4-5-20251001"
@@ -42,6 +46,7 @@ First, define some web-related tools (search & fetch):
 Web Tools Implementation
 
 ``` {r🔺
+
 web_search <- function(query) {
     #' @description Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or any data not in your training data.
     #' @param query:string* The search query string. Be specific and use keywords that will yield the most relevant results.
@@ -75,6 +80,7 @@ web_search_tavily <- function(query) {
 ```
 
 ``` {r🔺
+
 web_fetch <- function(url) {
     #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.
     #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
@@ -221,6 +227,7 @@ web_fetch_rvest <- function(url) {
 ```
 
 ``` {r🔺
+
 web_crawl <- function(url) {
     #' @description Crawl a website/page to discover all available pages and their URLs. Returns a list of URLs found on the website by following sitemaps and internal links. Use this to explore the structure of a website or find specific pages before fetching their content. This method will only return internal links (matching the domain name of the base URL).
     #' @param url:string* The base URL of the website to crawl (e.g., "https://example.com"). Must be a valid HTTP/HTTPS URL. Clean it first if it's not a proper URL (e.g. 'https://github.com/tidyverse/ellmer/releases"}' -> https://github.com/tidyverse/ellmer/releases)
@@ -262,6 +269,7 @@ Then, let’s define a JSON schema for the structured output using
 [`schema()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md):
 
 ``` r
+
 package_info_schema <- schema(
     name = "package_info",
     description = "Information about an R package release",
@@ -273,6 +281,7 @@ package_info_schema <- schema(
 Then, run the agent:
 
 ``` r
+
 anthropic$chat(
     "When was the first release of the R 'ellmer' package on GitHub?",
     model = "claude-haiku-4-5-20251001",
@@ -296,6 +305,7 @@ answer the question.
 ### Extracting Reasoning
 
 ``` r
+
 cat(anthropic$get_reasoning_text())
 ```
 
@@ -322,6 +332,7 @@ Anthropic provides three server-side tools:
 ### Server-side: Web Search
 
 ``` r
+
 anthropic$chat(
     "What's the latest version of the R 'ellmer' package?",
     model = "claude-haiku-4-5-20251001",
@@ -339,6 +350,7 @@ anthropic$chat(
 > for details.
 >
 > ``` r
+>
 > anthropic$chat(
 >     "What's the latest version of the R 'ellmer' package?",
 >     model = "claude-haiku-4-5-20251001",
@@ -362,6 +374,7 @@ This server tool lets the LLM fetch the contents of URLs given to it in
 the prompt.
 
 ``` r
+
 anthropic$chat(
     "Summarize the main changes in the current development version of the R 'ellmer' package from: https://raw.githubusercontent.com/tidyverse/ellmer/main/NEWS.md",
     model = "claude-haiku-4-5-20251001",
@@ -397,6 +410,7 @@ executing shell commands and file operations.
 **Example: Analyzing the Penguins Dataset**
 
 ``` r
+
 penguins_url <- "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/refs/heads/main/inst/extdata/penguins.csv"
 penguins_file <- anthropic$upload_file(penguins_url)
 
@@ -412,12 +426,14 @@ anthropic$chat(
 Inspect the generated code:
 
 ``` r
+
 cat(anthropic$get_generated_code(langs = c("python"), as_chunks = TRUE))
 ```
 
 Generated Code
 
 ``` python
+
 import pandas as pd
 import os
 
@@ -471,11 +487,13 @@ print(f"Summary exported to {output_export}")
 Download the generated output file to `/data`:
 
 ``` r
+
 downloaded_path <- anthropic$download_generated_files(dest_path = "data")
 #> ✔ [Anthropic] File downloaded to: data/body_mass_summary.csv
 ```
 
 ``` r
+
 read.csv(downloaded_path)
 ```
 
@@ -504,6 +522,7 @@ read.csv(downloaded_path)
 Continue asking questions in the same context:
 
 ``` r
+
 penguin_output_schema <- schema(
     name = "penguin_output",
     description = "Schema for the penguin output",
@@ -537,6 +556,7 @@ $average_body_mass
 Cleanup:
 
 ``` r
+
 anthropic$delete_file(penguins_file$id)
 ```
 
@@ -558,6 +578,7 @@ Anthropic Claude supports sending:
 Downloading an example image
 
 ``` r
+
 bsg04_cast_image_url <- "https://upload.wikimedia.org/wikipedia/en/1/1a/Battlestar_Galactica_%282004%29_cast.jpg"
 bsg04_cast_image_path <- download_temp_file(bsg04_cast_image_url)
 ```
@@ -568,6 +589,7 @@ When providing a path to a local image, it will automatically be
 converted to base64 before being sent to the server.
 
 ``` r
+
 anthropic$chat(
     "Who are the characters in this image, and what show is it from?",
     bsg04_cast_image_path,
@@ -586,6 +608,7 @@ anthropic$chat(
 > resize the image before sending it.
 
 ``` r
+
 anthropic$chat(
     "Who are the characters in this image, and what show is it from?",
     bsg04_cast_image_url,
@@ -616,6 +639,7 @@ The show follows the last surviving battleship and its fleet of civilian ships a
 Downloading an example PDF (my CV)
 
 ``` r
+
 my_cv_url <- "https://ma-riviere.com/res/cv.pdf"
 my_cv_pdf_path <- download_temp_file(my_cv_url)
 ```
@@ -626,6 +650,7 @@ When providing the prompt a path to a local PDF, it will automatically
 be converted to base64 before being sent to the server.
 
 ``` r
+
 anthropic$chat(
     "What's my favorite programming language?",
     my_cv_pdf_path,
@@ -650,6 +675,7 @@ helper to have
 parse the PDFs and pass their text contents to the model instead.
 
 ``` r
+
 r6_pdf_url <- "https://cran.r-project.org/web/packages/R6/R6.pdf"
 s7_pdf_url <- "https://cran.r-project.org/web/packages/S7/S7.pdf"
 
@@ -671,6 +697,7 @@ Thanks to the
 helper, we can pass further options to the provider:
 
 ``` r
+
 cv_metadata <- anthropic$upload_file(my_cv_url)
 
 cv_file_ref <- as_file_content(
@@ -700,6 +727,7 @@ Enable caching with the `cache_prompt`, `cache_system`, and
 `cache_tools` parameters:
 
 ``` r
+
 multimodal_prompt <- list(
     "Give a 3 sentences summary of the advantages of S7 over R6",
     as_text_content(r6_pdf_url),
@@ -712,6 +740,7 @@ anthropic$chat(!!!multimodal_prompt, model = "claude-haiku-4-5-20251001", cache_
 We can check that the content was indeed cached:
 
 ``` r
+
 purrr::pluck(anthropic$get_last_response(), "usage")
 ```
 

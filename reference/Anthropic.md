@@ -53,7 +53,7 @@ Hybrid approach for structured outputs:
 
 ## Super class
 
-[`argent::Provider`](https://ma-riviere.github.io/argent/reference/Provider.md)
+[`Provider`](https://ma-riviere.github.io/argent/reference/Provider.md)
 -\> `Anthropic`
 
 ## Public fields
@@ -66,7 +66,7 @@ Hybrid approach for structured outputs:
 
 ### Public methods
 
-- [`Anthropic$new()`](#method-Anthropic-new)
+- [`Anthropic$new()`](#method-Anthropic-initialize)
 
 - [`Anthropic$list_models()`](#method-Anthropic-list_models)
 
@@ -90,32 +90,32 @@ Hybrid approach for structured outputs:
 
 Inherited methods
 
-- [`argent::Provider$download_generated_files()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-download_generated_files)
-- [`argent::Provider$dump_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-dump_history)
-- [`argent::Provider$get_auto_save_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_auto_save_history)
-- [`argent::Provider$get_chat_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_chat_history)
-- [`argent::Provider$get_content_text()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_content_text)
-- [`argent::Provider$get_generated_code()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_generated_code)
-- [`argent::Provider$get_generated_files()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_generated_files)
-- [`argent::Provider$get_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_history)
-- [`argent::Provider$get_history_file_path()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_history_file_path)
-- [`argent::Provider$get_last_response()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_last_response)
-- [`argent::Provider$get_rate_limit()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_rate_limit)
-- [`argent::Provider$get_reasoning_text()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_reasoning_text)
-- [`argent::Provider$get_session_cumulative_token_count()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_cumulative_token_count)
-- [`argent::Provider$get_session_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_history)
-- [`argent::Provider$get_session_last_token_count()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_last_token_count)
-- [`argent::Provider$get_supplementary()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_supplementary)
-- [`argent::Provider$load_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-load_history)
-- [`argent::Provider$print()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-print)
-- [`argent::Provider$reset_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-reset_history)
-- [`argent::Provider$set_auto_save_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_auto_save_history)
-- [`argent::Provider$set_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_history)
-- [`argent::Provider$set_rate_limit()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_rate_limit)
+- [`Provider$download_generated_files()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-download_generated_files)
+- [`Provider$dump_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-dump_history)
+- [`Provider$get_auto_save_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_auto_save_history)
+- [`Provider$get_chat_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_chat_history)
+- [`Provider$get_content_text()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_content_text)
+- [`Provider$get_generated_code()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_generated_code)
+- [`Provider$get_generated_files()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_generated_files)
+- [`Provider$get_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_history)
+- [`Provider$get_history_file_path()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_history_file_path)
+- [`Provider$get_last_response()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_last_response)
+- [`Provider$get_rate_limit()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_rate_limit)
+- [`Provider$get_reasoning_text()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_reasoning_text)
+- [`Provider$get_session_cumulative_token_count()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_cumulative_token_count)
+- [`Provider$get_session_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_history)
+- [`Provider$get_session_last_token_count()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_session_last_token_count)
+- [`Provider$get_supplementary()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-get_supplementary)
+- [`Provider$load_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-load_history)
+- [`Provider$print()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-print)
+- [`Provider$reset_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-reset_history)
+- [`Provider$set_auto_save_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_auto_save_history)
+- [`Provider$set_history()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_history)
+- [`Provider$set_rate_limit()`](https://ma-riviere.github.io/argent/reference/Provider.html#method-set_rate_limit)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `Anthropic$new()`
 
 Initialize a new Anthropic client
 
@@ -165,7 +165,7 @@ Initialize a new Anthropic client
 
 ------------------------------------------------------------------------
 
-### Method `list_models()`
+### `Anthropic$list_models()`
 
 List all available Anthropic models
 
@@ -179,7 +179,7 @@ Data frame. Available models with their specifications
 
 ------------------------------------------------------------------------
 
-### Method `get_model_info()`
+### `Anthropic$get_model_info()`
 
 Get information about a specific Anthropic model
 
@@ -199,7 +199,7 @@ List. Model information
 
 ------------------------------------------------------------------------
 
-### Method `upload_file()`
+### `Anthropic$upload_file()`
 
 Upload a file to Anthropic Files API
 
@@ -224,7 +224,7 @@ List. File metadata or NULL on error
 
 ------------------------------------------------------------------------
 
-### Method `get_file_metadata()`
+### `Anthropic$get_file_metadata()`
 
 Get metadata for an uploaded file
 
@@ -244,7 +244,7 @@ List. File metadata or NULL on error
 
 ------------------------------------------------------------------------
 
-### Method `download_file()`
+### `Anthropic$download_file()`
 
 Download file content. Only files created by Anthropic's Code Execution
 tool can be downloaded.
@@ -281,7 +281,6 @@ Raw vector (if dest_path is NULL) or Character path to downloaded file
 
 #### Examples
 
-    \dontrun{
     anthropic <- Anthropic$new()
 
     # Download to a directory
@@ -292,11 +291,10 @@ Raw vector (if dest_path is NULL) or Character path to downloaded file
 
     # Get raw bytes without saving
     raw_content <- anthropic$download_file(file_id = "file-abc123", dest_path = NULL)
-    }
 
 ------------------------------------------------------------------------
 
-### Method `list_files()`
+### `Anthropic$list_files()`
 
 List all uploaded files
 
@@ -335,7 +333,7 @@ and pagination info.
 
 ------------------------------------------------------------------------
 
-### Method `delete_file()`
+### `Anthropic$delete_file()`
 
 Delete an uploaded file
 
@@ -355,7 +353,7 @@ Logical. TRUE if successful, FALSE otherwise
 
 ------------------------------------------------------------------------
 
-### Method `embeddings()`
+### `Anthropic$embeddings()`
 
 Generate embeddings for text input
 
@@ -386,7 +384,7 @@ This method always throws an error
 
 ------------------------------------------------------------------------
 
-### Method `chat()`
+### `Anthropic$chat()`
 
 Send a chat completion request to Anthropic
 
@@ -498,7 +496,7 @@ Character. Text response from the model.
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `Anthropic$clone()`
 
 The objects of this class are cloneable with this method.
 
@@ -549,7 +547,7 @@ response <- anthropic$chat(
 } # }
 
 ## ------------------------------------------------
-## Method `Anthropic$download_file`
+## Method `Anthropic$download_file()`
 ## ------------------------------------------------
 
 if (FALSE) { # \dontrun{

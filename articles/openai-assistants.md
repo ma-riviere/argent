@@ -29,10 +29,12 @@ code_interpreter.
 ## Setup
 
 ``` r
+
 library(argent)
 ```
 
 ``` r
+
 openai_assistant <- OpenAI_Assistant$new(api_key = Sys.getenv("OPENAI_API_KEY"))
 ```
 
@@ -44,6 +46,7 @@ openai_assistant <- OpenAI_Assistant$new(api_key = Sys.getenv("OPENAI_API_KEY"))
 > being able to call the `chat()` method.
 
 ``` r
+
 openai_assistant$create_assistant(name = "My Assistant", model = "gpt-4o-mini")
 ```
 
@@ -55,12 +58,14 @@ during creation and applies to all subsequent `chat()` calls.
 > We can check the assistant configuration with `get_assistant()`:
 >
 > ``` r
+>
 > openai_assistant$get_assistant()
 > ```
 >
 > We can also load an existing assistant with `load_assistant()`:
 >
 > ``` r
+>
 > # Find assistant by name
 > assistant_id <- openai_assistant$find_assistants(name = "My Assistant") |> purrr::pluck("id", 1)
 >
@@ -71,6 +76,7 @@ during creation and applies to all subsequent `chat()` calls.
 ## Discovering Models
 
 ``` r
+
 openai_assistant$list_models() |> dplyr::filter(stringr::str_detect(id, "-4o-|-4.1-"))
 ```
 
@@ -91,6 +97,7 @@ The Assistants API manages conversation state through threads:
   deleted
 
 ``` r
+
 openai_assistant$chat("What's the R programming language? Answer in three sentences.")
 #> ✔ [OpenAI Assistant] Thread created: thread_r4WVfgfBmPZ66WUpy4diT2gE
 ```
@@ -98,12 +105,14 @@ openai_assistant$chat("What's the R programming language? Answer in three senten
 Continue in the same thread:
 
 ``` r
+
 openai_assistant$chat("Tell me more about its history")
 ```
 
 Start a new thread:
 
 ``` r
+
 openai_assistant$chat("What were we just talking about?", in_new_thread = TRUE)
 #> ✔ [OpenAI Assistant] Thread created: thread_eVLlsNW3xGR2a0cUQSaoMX4G
 ```
@@ -119,6 +128,7 @@ Access the latest thread messages with `get_thread_msgs()` (to see the
 current ‘chat history’):
 
 ``` r
+
 openai_assistant$get_chat_history()
 ```
 
@@ -126,6 +136,7 @@ Or, simply print the `openai_assistant` object to see the current chat
 history:
 
 ``` r
+
 print(openai_assistant, show_tools = TRUE)
 ```
 
@@ -136,6 +147,7 @@ First, define web-related tools (search & fetch):
 Web Tools Implementation
 
 ``` {r🔺
+
 web_search <- function(query) {
     #' @description Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or any data not in your training data.
     #' @param query:string* The search query string. Be specific and use keywords that will yield the most relevant results.
@@ -169,6 +181,7 @@ web_search_tavily <- function(query) {
 ```
 
 ``` {r🔺
+
 web_fetch <- function(url) {
     #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.
     #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
@@ -315,6 +328,7 @@ web_fetch_rvest <- function(url) {
 ```
 
 ``` {r🔺
+
 web_crawl <- function(url) {
     #' @description Crawl a website/page to discover all available pages and their URLs. Returns a list of URLs found on the website by following sitemaps and internal links. Use this to explore the structure of a website or find specific pages before fetching their content. This method will only return internal links (matching the domain name of the base URL).
     #' @param url:string* The base URL of the website to crawl (e.g., "https://example.com"). Must be a valid HTTP/HTTPS URL. Clean it first if it's not a proper URL (e.g. 'https://github.com/tidyverse/ellmer/releases"}' -> https://github.com/tidyverse/ellmer/releases)
@@ -356,6 +370,7 @@ Then, define a JSON schema for structured output using
 [`schema()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md):
 
 ``` r
+
 package_info_schema <- schema(
     name = "package_info",
     description = "Information about an R package release",
@@ -367,6 +382,7 @@ package_info_schema <- schema(
 Create an assistant with client-side tools:
 
 ``` r
+
 openai_assistant <- OpenAI_Assistant$new()$create_assistant(
     name = "My Assistant",
     model = "gpt-4.1",
@@ -377,6 +393,7 @@ openai_assistant <- OpenAI_Assistant$new()$create_assistant(
 Ask a question with structured output:
 
 ``` r
+
 openai_assistant$chat(
     "When was the first release of the R 'ellmer' package on GitHub?",
     output_schema = package_info_schema
@@ -422,6 +439,7 @@ attaches files directly to the tool.
 **Example: Analyzing the Penguins Dataset**
 
 ``` r
+
 penguins_url <- "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/refs/heads/main/inst/extdata/penguins.csv"
 penguins_file_metadata <- openai_assistant$upload_file(penguins_url, purpose = "assistants")
 
@@ -437,10 +455,12 @@ data_analyst$chat("Create a summary table showing average body_mass grouped by s
 Download generated files:
 
 ``` r
+
 downloaded_paths <- data_analyst$download_generated_files(dest_path = "data")
 ```
 
 ``` r
+
 read.csv(downloaded_paths[1], na.strings = c("", "NA"))
 ```
 
@@ -469,6 +489,7 @@ read.csv(downloaded_paths[1], na.strings = c("", "NA"))
 Continue asking questions in the same thread:
 
 ``` r
+
 penguin_output_schema <- schema(
     name = "penguin_output",
     description = "Schema for the penguin output",
@@ -526,6 +547,7 @@ OpenAI Assistants API supports sending:
 Downloading an example image
 
 ``` r
+
 bsg04_cast_image_url <- "https://upload.wikimedia.org/wikipedia/en/1/1a/Battlestar_Galactica_%282004%29_cast.jpg"
 bsg04_cast_image_path <- download_temp_file(bsg04_cast_image_url)
 ```
@@ -536,6 +558,7 @@ When we provide a local image path, the image will be automatically
 uploaded to the server and the file_id will be passed to the model.
 
 ``` r
+
 openai_assistant$chat(
     "Who are the characters in this image, and what show is it from?",
     bsg04_cast_image_path,
@@ -571,6 +594,7 @@ These characters are central to the themes of survival, morality, and human iden
 OpenAI supports sending image URLs as-is:
 
 ``` r
+
 openai_assistant$chat(
     "Who are the characters in this image, and what show is it from?",
     bsg04_cast_image_url,
@@ -600,6 +624,7 @@ openai_assistant$chat(
 Downloading an example PDF (my CV)
 
 ``` r
+
 my_cv_url <- "https://ma-riviere.com/res/cv.pdf"
 my_cv_pdf_path <- download_temp_file(my_cv_url)
 ```
@@ -609,6 +634,7 @@ able to search through the PDF’s contents, so let’s create an assistant
 with that tool:
 
 ``` r
+
 pdf_assistant <- OpenAI_Assistant$new()$create_assistant(
     name = "PDF Assistant",
     model = "gpt-4o-mini",
@@ -625,6 +651,7 @@ pdf_assistant <- OpenAI_Assistant$new()$create_assistant(
 **Sending a local PDF:**
 
 ``` r
+
 pdf_assistant$chat("What's my favorite programming language?", my_cv_pdf_path)
 ```
 
@@ -646,6 +673,7 @@ helper to have
 parse the PDFs and pass their text contents to the model instead.
 
 ``` r
+
 r6_pdf_url <- "https://cran.r-project.org/web/packages/R6/R6.pdf"
 s7_pdf_url <- "https://cran.r-project.org/web/packages/S7/S7.pdf"
 
@@ -674,6 +702,7 @@ S7 is designed to be a more robust object-oriented programming system than R6, o
 You can pass any R object to `chat()` as is:
 
 ``` r
+
 lm_obj <- lm(body_mass ~ species + sex, data = datasets::penguins)
 
 openai_assistant$chat("What can we deduct from this regression model?", lm_obj, in_new_thread = TRUE)
@@ -694,6 +723,7 @@ be able to search through the files’ contents, so let’s create an
 assistant with that tool:
 
 ``` r
+
 file_assistant <- OpenAI_Assistant$new()$create_assistant(
     name = "File Assistant",
     model = "gpt-4o-mini",
@@ -704,12 +734,14 @@ file_assistant <- OpenAI_Assistant$new()$create_assistant(
 **Uploading Files**
 
 ``` r
+
 file_metadata <- file_assistant$upload_file(my_cv_url, purpose = "assistants")
 ```
 
 **Listing Files**
 
 ``` r
+
 file_assistant$list_files()
 ```
 
@@ -727,6 +759,7 @@ Use
 to reference uploaded files:
 
 ``` r
+
 file_assistant$chat("What are my two favorite frameworks/tools ?", as_file_content(file_metadata$id))
 ```
 
@@ -749,6 +782,7 @@ Your two favorite frameworks/tools are **Shiny** and **Quarto**【4:0†source�
 **Deleting Files**
 
 ``` r
+
 file_assistant$delete_file(file_metadata$id)
 #> ✔ [OpenAI] File deleted: file-B1MRQat6f1sRArT3KhFkGu
 ```
@@ -769,30 +803,35 @@ First, a quick overview of available methods to manage vector stores:
 **Creating a Vector Store**
 
 ``` r
+
 store <- file_assistant$create_store(name = "my_docs", file_ids = list("file-123", "file-456"))
 ```
 
 **Listing Vector Stores**
 
 ``` r
+
 openai_assistant$list_stores()
 ```
 
 **Adding Files to a Vector Store**
 
 ``` r
+
 openai_assistant$add_file_to_store(store$id, "file-789")
 ```
 
 **Listing Files in a Vector Store**
 
 ``` r
+
 openai_assistant$list_files_in_store(store$id)
 ```
 
 **Deleting a Vector Store**
 
 ``` r
+
 openai_assistant$delete_store(store$id)
 ```
 
@@ -808,6 +847,7 @@ First, let’s upload the files we want to search through and create a
 vector store with them:
 
 ``` r
+
 r6_file_metadata <- openai_assistant$upload_file(r6_pdf_url, purpose = "assistants")
 s7_file_metadata <- openai_assistant$upload_file(s7_pdf_url, purpose = "assistants")
 
@@ -820,6 +860,7 @@ r_oop_store <- openai_assistant$create_store(
 Then, define an output schema for the response:
 
 ``` r
+
 oop_output_schema <- schema(
     name = "oop_output",
     description = "Explanation of the R6 and S7 active bindings mechanism",
@@ -833,6 +874,7 @@ Create an assistant with `file_search` and use it with structured
 output:
 
 ``` r
+
 rag_assistant <- OpenAI_Assistant$new(rate_limit = 3 / 60)$create_assistant(
     name = "R OOP Expert",
     model = "gpt-4.1",
@@ -848,6 +890,7 @@ rag_assistant <- OpenAI_Assistant$new(rate_limit = 3 / 60)$create_assistant(
 > across all threads.
 
 ``` r
+
 res <- rag_assistant$chat(
     "What's the active bindings' R6 mechanism equivalent in S7?",
     "Important: use both the file_search and web_search & web_fetch tools to find the information.",
@@ -866,6 +909,7 @@ res <- rag_assistant$chat(
 Response
 
 ``` r
+
 purrr::walk(res, \(x) cat(x, "\n\n", sep = ""))
 ```
 
@@ -874,6 +918,7 @@ dynamically when accessed, whereas S7 uses active class methods to
 achieve similar behavior.
 
 ``` r
+
 library(R6)
 Person <- R6Class(
     "Person",
@@ -895,6 +940,7 @@ p$age # get new age
 ```
 
 ``` r
+
 library(S7)
 Person <- new_class(
     "Person",
@@ -918,6 +964,7 @@ p$age() # get new age
 View citations and supplementary information:
 
 ``` r
+
 cat(yaml::as.yaml(rag_assistant$get_supplementary()), "\n")
 ```
 
@@ -946,6 +993,7 @@ citations:
 **Cleaning up**
 
 ``` r
+
 rag_assistant$delete_store(r_oop_store$id)
 rag_assistant$delete_file(r6_file_metadata$id)
 rag_assistant$delete_file(s7_file_metadata$id)
@@ -958,5 +1006,6 @@ rag_assistant$delete_assistant()
 > assistant, and files used by the stores) with :
 >
 > ``` r
+>
 > rag_assistant$delete_assistant_and_contents()
 > ```

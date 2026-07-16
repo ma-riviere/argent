@@ -9,16 +9,19 @@ outputs, and reasoning with o1/GPT-5 models.
 ## Setup
 
 ``` r
+
 library(argent)
 ```
 
 ``` r
+
 openai_chat <- OpenAI_Chat$new(api_key = Sys.getenv("OPENAI_API_KEY"))
 ```
 
 ## Discovering Models
 
 ``` r
+
 openai_chat$list_models() |>
     dplyr::filter(stringr::str_detect(id, "-5-"))
 ```
@@ -26,6 +29,7 @@ openai_chat$list_models() |>
 ## Basic Completion
 
 ``` r
+
 openai_chat$chat(
     "What's the R programming language? Answer in three sentences.",
     model = "gpt-5-mini"
@@ -39,6 +43,7 @@ First, define some web-related tools (search & fetch):
 Web Tools Implementation
 
 ``` {r🔺
+
 web_search <- function(query) {
     #' @description Search the web for information using Tavily API. Returns a JSON array of search results with titles, URLs, and content snippets. Use this when you need current information, facts, news, or any data not in your training data.
     #' @param query:string* The search query string. Be specific and use keywords that will yield the most relevant results.
@@ -72,6 +77,7 @@ web_search_tavily <- function(query) {
 ```
 
 ``` {r🔺
+
 web_fetch <- function(url) {
     #' @description Fetch and extract the main text content from a web page as clean markdown. Returns the page content with formatting preserved, stripped of navigation, ads, and boilerplate. Use this to read articles, documentation, blog posts, or any web page content.
     #' @param url:string* The complete URL of the web page to fetch (e.g., "https://example.com/article"). Must be a valid HTTP/HTTPS URL.
@@ -218,6 +224,7 @@ web_fetch_rvest <- function(url) {
 ```
 
 ``` {r🔺
+
 web_crawl <- function(url) {
     #' @description Crawl a website/page to discover all available pages and their URLs. Returns a list of URLs found on the website by following sitemaps and internal links. Use this to explore the structure of a website or find specific pages before fetching their content. This method will only return internal links (matching the domain name of the base URL).
     #' @param url:string* The base URL of the website to crawl (e.g., "https://example.com"). Must be a valid HTTP/HTTPS URL. Clean it first if it's not a proper URL (e.g. 'https://github.com/tidyverse/ellmer/releases"}' -> https://github.com/tidyverse/ellmer/releases)
@@ -259,6 +266,7 @@ Then, let’s define a JSON schema for the structured output using
 [`schema()`](https://ma-riviere.github.io/argent/reference/tool_definitions.md):
 
 ``` r
+
 package_info_schema <- schema(
     name = "package_info",
     description = "Information about an R package release",
@@ -268,6 +276,7 @@ package_info_schema <- schema(
 ```
 
 ``` r
+
 openai_chat$chat(
     "When was the first release of the R 'ellmer' package on GitHub?",
     model = "gpt-5-mini",
@@ -310,6 +319,7 @@ for the Chat Completions API:
 **Basic usage:** `search-preview` models automatically use web search
 
 ``` r
+
 openai_chat$chat(
     "What's the latest version of the R 'ellmer' package?",
     model = "gpt-4o-mini-search-preview"
@@ -320,6 +330,7 @@ openai_chat$chat(
 tool
 
 ``` r
+
 openai_chat$chat(
     "What are the best restaurants near me?",
     model = "gpt-4o-mini-search-preview",
@@ -351,6 +362,7 @@ openai_chat$chat(
 `print(openai_chat, show_supplementary = TRUE)`.
 
 ``` r
+
 cat(yaml::as.yaml(openai_chat$get_supplementary()))
 ```
 
@@ -429,6 +441,7 @@ OpenAI Responses API supports sending:
 Downloading an example image
 
 ``` r
+
 bsg04_cast_image_url <- "https://upload.wikimedia.org/wikipedia/en/1/1a/Battlestar_Galactica_%282004%29_cast.jpg"
 bsg04_cast_image_path <- download_temp_file(bsg04_cast_image_url)
 ```
@@ -439,6 +452,7 @@ When providing a path to a local image, it will automatically be
 converted to base64 before being sent to the server.
 
 ``` r
+
 openai_chat$chat(
     "Who are the characters in this image, and what show is it from?",
     bsg04_cast_image_path,
@@ -465,6 +479,7 @@ This is a promotional shot of the main characters from the reimagined TV series 
 **Sending an image URL:**
 
 ``` r
+
 openai_chat$chat(
     "Who are the characters in this image, and what show is it from?",
     bsg04_cast_image_url,
@@ -494,6 +509,7 @@ openai_chat$chat(
 Downloading an example PDF (my CV)
 
 ``` r
+
 my_cv_url <- "https://ma-riviere.com/res/cv.pdf"
 my_cv_pdf_path <- download_temp_file(my_cv_url)
 ```
@@ -501,6 +517,7 @@ my_cv_pdf_path <- download_temp_file(my_cv_url)
 **Sending a local PDF:**
 
 ``` r
+
 openai_chat$chat(
     "What's my favorite programming language?",
     my_cv_pdf_path,
@@ -526,6 +543,7 @@ helper to have
 parse the PDFs and pass their text contents to the model instead.
 
 ``` r
+
 r6_pdf_url <- "https://cran.r-project.org/web/packages/R6/R6.pdf"
 s7_pdf_url <- "https://cran.r-project.org/web/packages/S7/S7.pdf"
 
@@ -544,6 +562,7 @@ openai_chat$chat(!!!multimodal_prompt, model = "gpt-5-mini")
 You can pass any R object to `chat()` as is:
 
 ``` r
+
 lm_obj <- lm(body_mass ~ species + sex, data = datasets::penguins)
 
 openai_chat$chat(
@@ -578,12 +597,14 @@ We can also send files directly to the model.
 **Uploading Files**
 
 ``` r
+
 file_metadata <- openai_chat$upload_file(my_cv_url)
 ```
 
 **Listing Files**
 
 ``` r
+
 openai_chat$list_files()
 ```
 
@@ -601,6 +622,7 @@ Use
 to reference uploaded files:
 
 ``` r
+
 openai_chat$chat(
     "What are my two favorite frameworks/tools ?",
     as_file_content(file_metadata$id),
@@ -619,6 +641,7 @@ So your two favorite frameworks/tools appear to be Shiny and Quarto (R Markdown)
 **Downloading Files**
 
 ``` r
+
 openai_chat$download_file(file_metadata$id, dest_path = "data")  # Downloads to data/ by default
 #> ✔ [OpenAI] File downloaded to: data/file1cc931188f797.pdf
 ```
@@ -626,6 +649,7 @@ openai_chat$download_file(file_metadata$id, dest_path = "data")  # Downloads to 
 **Deleting Files**
 
 ``` r
+
 openai_chat$delete_file(file_metadata$id)
 #> ✔ [OpenAI] File deleted: file-5LtQyoh6ZdtK71TpZdTxSn
 ```

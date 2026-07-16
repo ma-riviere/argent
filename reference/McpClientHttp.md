@@ -4,7 +4,7 @@ A client for interacting with remote MCP servers via HTTP.
 
 ## Super class
 
-[`argent::McpClient`](https://ma-riviere.github.io/argent/reference/McpClient.md)
+[`McpClient`](https://ma-riviere.github.io/argent/reference/McpClient.md)
 -\> `McpClientHttp`
 
 ## Public fields
@@ -25,7 +25,7 @@ A client for interacting with remote MCP servers via HTTP.
 
 ### Public methods
 
-- [`McpClientHttp$new()`](#method-McpClientHttp-new)
+- [`McpClientHttp$new()`](#method-McpClientHttp-initialize)
 
 - [`McpClientHttp$initialize_connection()`](#method-McpClientHttp-initialize_connection)
 
@@ -39,17 +39,17 @@ A client for interacting with remote MCP servers via HTTP.
 
 Inherited methods
 
-- [`argent::McpClient$call_tool()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-call_tool)
-- [`argent::McpClient$get_prompt()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-get_prompt)
-- [`argent::McpClient$is_closed()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-is_closed)
-- [`argent::McpClient$list_prompts()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-list_prompts)
-- [`argent::McpClient$list_resources()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-list_resources)
-- [`argent::McpClient$list_tools()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-list_tools)
-- [`argent::McpClient$read_resource()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-read_resource)
+- [`McpClient$call_tool()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-call_tool)
+- [`McpClient$get_prompt()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-get_prompt)
+- [`McpClient$is_closed()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-is_closed)
+- [`McpClient$list_prompts()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-list_prompts)
+- [`McpClient$list_resources()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-list_resources)
+- [`McpClient$list_tools()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-list_tools)
+- [`McpClient$read_resource()`](https://ma-riviere.github.io/argent/reference/McpClient.html#method-read_resource)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `McpClientHttp$new()`
 
 Initialize HTTP client
 
@@ -69,7 +69,7 @@ Initialize HTTP client
 
 ------------------------------------------------------------------------
 
-### Method `initialize_connection()`
+### `McpClientHttp$initialize_connection()`
 
 Initialize connection
 
@@ -79,7 +79,7 @@ Initialize connection
 
 ------------------------------------------------------------------------
 
-### Method `send_request()`
+### `McpClientHttp$send_request()`
 
 Send request via HTTP
 
@@ -99,7 +99,7 @@ Send request via HTTP
 
 ------------------------------------------------------------------------
 
-### Method `terminate_session()`
+### `McpClientHttp$terminate_session()`
 
 Terminate the HTTP session
 
@@ -109,7 +109,7 @@ Terminate the HTTP session
 
 ------------------------------------------------------------------------
 
-### Method [`close()`](https://rdrr.io/r/base/connections.html)
+### `McpClientHttp$close()`
 
 Close the client connection and terminate the HTTP session.
 
@@ -119,7 +119,7 @@ Close the client connection and terminate the HTTP session.
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `McpClientHttp$clone()`
 
 The objects of this class are cloneable with this method.
 

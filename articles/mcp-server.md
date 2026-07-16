@@ -24,6 +24,7 @@ MCP clients, like Claude Code.
 Zotero MCP Server Implementation
 
 ``` r
+
 # Zotero MCP Server Tools
 #
 # Tool definitions for interacting with Zotero's local API.
@@ -31,6 +32,7 @@ Zotero MCP Server Implementation
 ```
 
 ``` {r🔺
+
 # Base request function to Zotero local API (not an MCP tool)
 zotero_request <- function(endpoint, query = list(), user_id = "0", valid_statuses = 200) {
     base_url <- "http://localhost:23119/api"
@@ -72,6 +74,7 @@ zotero_request <- function(endpoint, query = list(), user_id = "0", valid_status
 ```
 
 ``` {r🔺
+
 zotero_search_items <- function(query = NULL, qmode = "titleCreatorYear", tag = NULL, item_type = NULL, limit = 25L) {
     #' @mcp tool
     #' @group papers
@@ -609,6 +612,7 @@ summarize_paper <- function(item_key) {
 ### Using the MCP Server
 
 ``` r
+
 zotero_client <- mcp_connect(
     name = "zotero",
     type = "stdio",
@@ -632,6 +636,7 @@ We could test if the MCP server is working by querying it ‘manually’:
 Testing the Zotero MCP Server manually
 
 ``` r
+
 # Getting details on all my collections
 my_collections <- execute_mcp_tool(get_mcp_tool(zotero_tools, "zotero_get_collections"))
 
@@ -669,6 +674,7 @@ cat(neuroscience_paper_fulltext)
 Now, let’s give the tools to an LLM Agent instead:
 
 ``` r
+
 gemini <- Google$new()
 
 gemini$chat(
@@ -722,6 +728,7 @@ over the network.
 Semantic Scholar MCP Server Implementation
 
 ``` r
+
 # Semantic Scholar MCP Server Tools
 #
 # Tool definitions for searching academic papers using the Semantic Scholar API.
@@ -729,6 +736,7 @@ Semantic Scholar MCP Server Implementation
 ```
 
 ``` {r🔺
+
 # Base request function for Semantic Scholar API (not an MCP tool)
 semantic_scholar_request <- function(endpoint, query = list()) {
     base_url <- "https://api.semanticscholar.org/graph/v1"
@@ -771,6 +779,7 @@ default_fields <- "title,authors,year,abstract,citationCount,url,venue,publicati
 ```
 
 ``` {r🔺
+
 search_papers <- function(query, limit = 10L, fields = NULL) {
     #' @description Search for academic papers by keywords, authors, or topics
     #'   using the Semantic Scholar API. Returns papers with metadata including
@@ -1001,6 +1010,7 @@ get_paper_references <- function(paper_id, limit = 10L, fields = NULL) {
 We can start the server **in a separate R session or terminal** with:
 
 ``` r
+
 mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "argent"), port = 8080)
 #> ✔ Starting semantic_scholar_mcp_server MCP server on <http://127.0.0.1:8080>
 ```
@@ -1030,6 +1040,7 @@ mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "
 > 'Manual' HTTP MCP Server Implementation
 >
 > ``` r
+>
 > # Semantic Scholar MCP Server - Standalone HTTP Implementation using plumber2
 > #
 > # A standalone MCP-compatible HTTP server using plumber2 for the Semantic Scholar API.
@@ -1061,6 +1072,7 @@ mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "
 > ```
 >
 > ``` r
+>
 > suppressPackageStartupMessages({
 >     library(plumber2)
 >     library(httr2)
@@ -1098,6 +1110,7 @@ mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "
 > ```
 >
 > ``` r
+>
 > semantic_scholar_request <- function(endpoint, query = list()) {
 >     base_url <- "https://api.semanticscholar.org/graph/v1"
 >     url <- paste0(base_url, endpoint)
@@ -1331,6 +1344,7 @@ mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "
 > ```
 >
 > ``` r
+>
 > jsonrpc_success <- function(id, result) {
 >     list(jsonrpc = "2.0", id = id, result = result)
 > }
@@ -1358,6 +1372,7 @@ mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "
 > ```
 >
 > ``` r
+>
 > MCP_TOOLS <- list(
 >     list(
 >         name = "search_papers",
@@ -1446,6 +1461,7 @@ mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "
 > ```
 >
 > ``` r
+>
 > handle_initialize <- function(params) {
 >     list(
 >         protocolVersion = MCP_PROTOCOL_VERSION,
@@ -1570,6 +1586,7 @@ mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "
 > ```
 >
 > ``` r
+>
 > validate_jsonrpc <- function(body) {
 >     if (is.null(body) || length(body) == 0) {
 >         return(list(code = -32700, message = "Empty or null request body"))
@@ -1641,6 +1658,7 @@ mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "
 > ```
 >
 > ``` r
+>
 > #* MCP Streamable HTTP endpoint - POST handler
 > #*
 > #* Handles all MCP JSON-RPC requests.
@@ -1819,6 +1837,7 @@ mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "
 > Which we can run **in a separate R session or terminal** with:
 >
 > ``` r
+>
 > plumber2::api(system.file("examples/semantic_scholar_mcp_server_plumber.R", package = "argent")) |>
 >     plumber2::api_run(host = "127.0.0.1", port = 8080, block = TRUE, silent = FALSE, showcase = FALSE)
 > ```
@@ -1826,6 +1845,7 @@ mcp_serve_http(system.file("examples/semantic_scholar_mcp_server.R", package = "
 Then, we can connect to it from our main session:
 
 ``` r
+
 semantic_scholar_client <- mcp_connect(name = "semantic-scholar", type = "http", url = "http://127.0.0.1:8080/mcp")
 
 semantic_scholar_tools <- mcp_tools(semantic_scholar_client)
@@ -1834,6 +1854,7 @@ semantic_scholar_tools <- mcp_tools(semantic_scholar_client)
 Test the server manually:
 
 ``` r
+
 papers <- execute_mcp_tool(
     get_mcp_tool(semantic_scholar_tools, "search_papers"),
     arguments = list(
@@ -1858,6 +1879,7 @@ execute_mcp_tool(
 Now use it with an LLM agent:
 
 ``` r
+
 gemini <- Google$new()
 
 gemini$chat(
