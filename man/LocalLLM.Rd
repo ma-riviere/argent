@@ -68,56 +68,55 @@ response <- llm$chat(
 }
 }
 \section{Super class}{
-\code{\link[argent:Provider]{argent::Provider}} -> \code{LocalLLM}
+\code{\link[argent:Provider]{Provider}} -> \code{LocalLLM}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-LocalLLM-new}{\code{LocalLLM$new()}}
-\item \href{#method-LocalLLM-get_default_model_id}{\code{LocalLLM$get_default_model_id()}}
-\item \href{#method-LocalLLM-set_default_model_id}{\code{LocalLLM$set_default_model_id()}}
-\item \href{#method-LocalLLM-get_model_name}{\code{LocalLLM$get_model_name()}}
-\item \href{#method-LocalLLM-list_models}{\code{LocalLLM$list_models()}}
-\item \href{#method-LocalLLM-chat}{\code{LocalLLM$chat()}}
-\item \href{#method-LocalLLM-embeddings}{\code{LocalLLM$embeddings()}}
-\item \href{#method-LocalLLM-clone}{\code{LocalLLM$clone()}}
+  \itemize{
+    \item \href{#method-LocalLLM-initialize}{\code{LocalLLM$new()}}
+    \item \href{#method-LocalLLM-get_default_model_id}{\code{LocalLLM$get_default_model_id()}}
+    \item \href{#method-LocalLLM-set_default_model_id}{\code{LocalLLM$set_default_model_id()}}
+    \item \href{#method-LocalLLM-get_model_name}{\code{LocalLLM$get_model_name()}}
+    \item \href{#method-LocalLLM-list_models}{\code{LocalLLM$list_models()}}
+    \item \href{#method-LocalLLM-chat}{\code{LocalLLM$chat()}}
+    \item \href{#method-LocalLLM-embeddings}{\code{LocalLLM$embeddings()}}
+    \item \href{#method-LocalLLM-clone}{\code{LocalLLM$clone()}}
+  }
 }
-}
-\if{html}{\out{
-<details><summary>Inherited methods</summary>
+\if{html}{\out{<details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="download_generated_files"><a href='../../argent/html/Provider.html#method-Provider-download_generated_files'><code>argent::Provider$download_generated_files()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="dump_history"><a href='../../argent/html/Provider.html#method-Provider-dump_history'><code>argent::Provider$dump_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-get_auto_save_history'><code>argent::Provider$get_auto_save_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_chat_history"><a href='../../argent/html/Provider.html#method-Provider-get_chat_history'><code>argent::Provider$get_chat_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_content_text"><a href='../../argent/html/Provider.html#method-Provider-get_content_text'><code>argent::Provider$get_content_text()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_code"><a href='../../argent/html/Provider.html#method-Provider-get_generated_code'><code>argent::Provider$get_generated_code()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_files"><a href='../../argent/html/Provider.html#method-Provider-get_generated_files'><code>argent::Provider$get_generated_files()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history"><a href='../../argent/html/Provider.html#method-Provider-get_history'><code>argent::Provider$get_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history_file_path"><a href='../../argent/html/Provider.html#method-Provider-get_history_file_path'><code>argent::Provider$get_history_file_path()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_last_response"><a href='../../argent/html/Provider.html#method-Provider-get_last_response'><code>argent::Provider$get_last_response()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-get_rate_limit'><code>argent::Provider$get_rate_limit()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_reasoning_text"><a href='../../argent/html/Provider.html#method-Provider-get_reasoning_text'><code>argent::Provider$get_reasoning_text()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_cumulative_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_cumulative_token_count'><code>argent::Provider$get_session_cumulative_token_count()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_history"><a href='../../argent/html/Provider.html#method-Provider-get_session_history'><code>argent::Provider$get_session_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_last_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_last_token_count'><code>argent::Provider$get_session_last_token_count()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_supplementary"><a href='../../argent/html/Provider.html#method-Provider-get_supplementary'><code>argent::Provider$get_supplementary()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="load_history"><a href='../../argent/html/Provider.html#method-Provider-load_history'><code>argent::Provider$load_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="print"><a href='../../argent/html/Provider.html#method-Provider-print'><code>argent::Provider$print()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="reset_history"><a href='../../argent/html/Provider.html#method-Provider-reset_history'><code>argent::Provider$reset_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-set_auto_save_history'><code>argent::Provider$set_auto_save_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_history"><a href='../../argent/html/Provider.html#method-Provider-set_history'><code>argent::Provider$set_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-set_rate_limit'><code>argent::Provider$set_rate_limit()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="download_generated_files"><a href='../../argent/html/Provider.html#method-Provider-download_generated_files'><code>Provider$download_generated_files()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="dump_history"><a href='../../argent/html/Provider.html#method-Provider-dump_history'><code>Provider$dump_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-get_auto_save_history'><code>Provider$get_auto_save_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_chat_history"><a href='../../argent/html/Provider.html#method-Provider-get_chat_history'><code>Provider$get_chat_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_content_text"><a href='../../argent/html/Provider.html#method-Provider-get_content_text'><code>Provider$get_content_text()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_code"><a href='../../argent/html/Provider.html#method-Provider-get_generated_code'><code>Provider$get_generated_code()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_files"><a href='../../argent/html/Provider.html#method-Provider-get_generated_files'><code>Provider$get_generated_files()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history"><a href='../../argent/html/Provider.html#method-Provider-get_history'><code>Provider$get_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history_file_path"><a href='../../argent/html/Provider.html#method-Provider-get_history_file_path'><code>Provider$get_history_file_path()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_last_response"><a href='../../argent/html/Provider.html#method-Provider-get_last_response'><code>Provider$get_last_response()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-get_rate_limit'><code>Provider$get_rate_limit()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_reasoning_text"><a href='../../argent/html/Provider.html#method-Provider-get_reasoning_text'><code>Provider$get_reasoning_text()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_cumulative_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_cumulative_token_count'><code>Provider$get_session_cumulative_token_count()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_history"><a href='../../argent/html/Provider.html#method-Provider-get_session_history'><code>Provider$get_session_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_last_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_last_token_count'><code>Provider$get_session_last_token_count()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_supplementary"><a href='../../argent/html/Provider.html#method-Provider-get_supplementary'><code>Provider$get_supplementary()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="load_history"><a href='../../argent/html/Provider.html#method-Provider-load_history'><code>Provider$load_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="print"><a href='../../argent/html/Provider.html#method-Provider-print'><code>Provider$print()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="reset_history"><a href='../../argent/html/Provider.html#method-Provider-reset_history'><code>Provider$reset_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-set_auto_save_history'><code>Provider$set_auto_save_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_history"><a href='../../argent/html/Provider.html#method-Provider-set_history'><code>Provider$set_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-set_rate_limit'><code>Provider$set_rate_limit()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-LocalLLM-new"></a>}}
-\if{latex}{\out{\hypertarget{method-LocalLLM-new}{}}}
-\subsection{Method \code{new()}}{
-Initialize a new Local LLM client
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{LocalLLM$new(
+\if{html}{\out{<a id="method-LocalLLM-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-LocalLLM-initialize}{}}}
+\subsection{\code{LocalLLM$new()}}{
+  Initialize a new Local LLM client
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{LocalLLM$new(
   base_url = "http://localhost:5000",
   api_key = "not-needed",
   provider_name = "LocalLLM",
@@ -125,92 +124,96 @@ Initialize a new Local LLM client
   server_tools = character(0),
   default_model = NULL,
   auto_save_history = TRUE
-)}\if{html}{\out{</div>}}
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{base_url}}{Character. Base URL of the local server (default: "http://localhost:5000")}
+      \item{\code{api_key}}{Character. API key (default: "not-needed")}
+      \item{\code{provider_name}}{Character. Provider name (default: "LocalLLM")}
+      \item{\code{rate_limit}}{Numeric. Rate limit in requests per second (default: 999999)}
+      \item{\code{server_tools}}{Character vector. Server-side tools available (default: character(0))}
+      \item{\code{default_model}}{Character. Default model name (auto-detected if NULL)}
+      \item{\code{auto_save_history}}{Logical. Enable/disable automatic history sync (default: TRUE)}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{base_url}}{Character. Base URL of the local server (default: "http://localhost:5000")}
-
-\item{\code{api_key}}{Character. API key (default: "not-needed")}
-
-\item{\code{provider_name}}{Character. Provider name (default: "LocalLLM")}
-
-\item{\code{rate_limit}}{Numeric. Rate limit in requests per second (default: 999999)}
-
-\item{\code{server_tools}}{Character vector. Server-side tools available (default: character(0))}
-
-\item{\code{default_model}}{Character. Default model name (auto-detected if NULL)}
-
-\item{\code{auto_save_history}}{Logical. Enable/disable automatic history sync (default: TRUE)}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-LocalLLM-get_default_model_id"></a>}}
 \if{latex}{\out{\hypertarget{method-LocalLLM-get_default_model_id}{}}}
-\subsection{Method \code{get_default_model_id()}}{
-Get the current model
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{LocalLLM$get_default_model_id()}\if{html}{\out{</div>}}
+\subsection{\code{LocalLLM$get_default_model_id()}}{
+  Get the current model
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{LocalLLM$get_default_model_id()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Character. Model name
+  }
 }
 
-\subsection{Returns}{
-Character. Model name
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-LocalLLM-set_default_model_id"></a>}}
 \if{latex}{\out{\hypertarget{method-LocalLLM-set_default_model_id}{}}}
-\subsection{Method \code{set_default_model_id()}}{
-Set the model to use
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{LocalLLM$set_default_model_id(model)}\if{html}{\out{</div>}}
+\subsection{\code{LocalLLM$set_default_model_id()}}{
+  Set the model to use
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{LocalLLM$set_default_model_id(model)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{model}}{Character. Model name}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{model}}{Character. Model name}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-LocalLLM-get_model_name"></a>}}
 \if{latex}{\out{\hypertarget{method-LocalLLM-get_model_name}{}}}
-\subsection{Method \code{get_model_name()}}{
-Get the model name (basename)
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{LocalLLM$get_model_name()}\if{html}{\out{</div>}}
+\subsection{\code{LocalLLM$get_model_name()}}{
+  Get the model name (basename)
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{LocalLLM$get_model_name()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Character. Model basename
+  }
 }
 
-\subsection{Returns}{
-Character. Model basename
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-LocalLLM-list_models"></a>}}
 \if{latex}{\out{\hypertarget{method-LocalLLM-list_models}{}}}
-\subsection{Method \code{list_models()}}{
-List all available models from the local server
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{LocalLLM$list_models()}\if{html}{\out{</div>}}
+\subsection{\code{LocalLLM$list_models()}}{
+  List all available models from the local server
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{LocalLLM$list_models()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Data frame. Available models
+  }
 }
 
-\subsection{Returns}{
-Data frame. Available models
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-LocalLLM-chat"></a>}}
 \if{latex}{\out{\hypertarget{method-LocalLLM-chat}{}}}
-\subsection{Method \code{chat()}}{
-Send a chat completion request to the local LLM
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{LocalLLM$chat(
+\subsection{\code{LocalLLM$chat()}}{
+  Send a chat completion request to the local LLM
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{LocalLLM$chat(
   ...,
   system = .default_system_prompt,
   model = self$default_model,
@@ -229,94 +232,81 @@ Send a chat completion request to the local LLM
   tools = NULL,
   tool_choice = "auto",
   output_schema = NULL
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{One or more inputs for the prompt. Can be text strings, file paths, URLs, R objects,
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{One or more inputs for the prompt. Can be text strings, file paths, URLs, R objects,
 or content wrapped with \verb{as_*_content()} functions. R objects (but not plain strings) will
 include their names and structure in the context sent to the model.}
-
-\item{\code{system}}{Character. System instructions (optional)}
-
-\item{\code{model}}{Character. Model to use (default: current model)}
-
-\item{\code{temperature}}{Numeric. Sampling temperature (default: 1)}
-
-\item{\code{max_tokens}}{Integer. Maximum tokens to generate (default: 4096)}
-
-\item{\code{top_p}}{Numeric. Top-p (nucleus) sampling (default: 0.9, 1.0 = disabled)}
-
-\item{\code{top_k}}{Integer. Top-k sampling (default: 40, 0 = disabled)}
-
-\item{\code{min_p}}{Numeric. Min-p sampling (default: 0.1, 0.0 = disabled)}
-
-\item{\code{repeat_penalty}}{Numeric. Penalize repeat sequence of tokens (default: 1.0, 1.0 = disabled)}
-
-\item{\code{presence_penalty}}{Numeric. Repeat alpha presence penalty (default: 0.0, 0.0 = disabled)}
-
-\item{\code{frequency_penalty}}{Numeric. Repeat alpha frequency penalty (default: 0.0, 0.0 = disabled)}
-
-\item{\code{mirostat}}{Integer. Use Mirostat sampling (default: 0, 0 = disabled, 1 = Mirostat,
+      \item{\code{system}}{Character. System instructions (optional)}
+      \item{\code{model}}{Character. Model to use (default: current model)}
+      \item{\code{temperature}}{Numeric. Sampling temperature (default: 1)}
+      \item{\code{max_tokens}}{Integer. Maximum tokens to generate (default: 4096)}
+      \item{\code{top_p}}{Numeric. Top-p (nucleus) sampling (default: 0.9, 1.0 = disabled)}
+      \item{\code{top_k}}{Integer. Top-k sampling (default: 40, 0 = disabled)}
+      \item{\code{min_p}}{Numeric. Min-p sampling (default: 0.1, 0.0 = disabled)}
+      \item{\code{repeat_penalty}}{Numeric. Penalize repeat sequence of tokens (default: 1.0, 1.0 = disabled)}
+      \item{\code{presence_penalty}}{Numeric. Repeat alpha presence penalty (default: 0.0, 0.0 = disabled)}
+      \item{\code{frequency_penalty}}{Numeric. Repeat alpha frequency penalty (default: 0.0, 0.0 = disabled)}
+      \item{\code{mirostat}}{Integer. Use Mirostat sampling (default: 0, 0 = disabled, 1 = Mirostat,
 2 = Mirostat 2.0)}
-
-\item{\code{mirostat_tau}}{Numeric. Mirostat target entropy, parameter tau (default: 5.0)}
-
-\item{\code{mirostat_eta}}{Numeric. Mirostat learning rate, parameter eta (default: 0.1)}
-
-\item{\code{seed}}{Integer. RNG seed (default: -1, use random seed for -1)}
-
-\item{\code{tools}}{List. Function definitions for tool calling (optional)}
-
-\item{\code{tool_choice}}{Character or List. Tool choice mode (default: "auto")}
-
-\item{\code{output_schema}}{List. JSON schema for structured output (optional)}
+      \item{\code{mirostat_tau}}{Numeric. Mirostat target entropy, parameter tau (default: 5.0)}
+      \item{\code{mirostat_eta}}{Numeric. Mirostat learning rate, parameter eta (default: 0.1)}
+      \item{\code{seed}}{Integer. RNG seed (default: -1, use random seed for -1)}
+      \item{\code{tools}}{List. Function definitions for tool calling (optional)}
+      \item{\code{tool_choice}}{Character or List. Tool choice mode (default: "auto")}
+      \item{\code{output_schema}}{List. JSON schema for structured output (optional)}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Character. Text response from the model.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Character. Text response from the model.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-LocalLLM-embeddings"></a>}}
 \if{latex}{\out{\hypertarget{method-LocalLLM-embeddings}{}}}
-\subsection{Method \code{embeddings()}}{
-Generate embeddings for text input
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{LocalLLM$embeddings(input, model = NULL)}\if{html}{\out{</div>}}
+\subsection{\code{LocalLLM$embeddings()}}{
+  Generate embeddings for text input
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{LocalLLM$embeddings(input, model = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{input}}{Character vector. Text(s) to embed}
+      \item{\code{model}}{Character. Model to use (default: current model)}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Numeric matrix. Embeddings with one row per input text
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{input}}{Character vector. Text(s) to embed}
-
-\item{\code{model}}{Character. Model to use (default: current model)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Numeric matrix. Embeddings with one row per input text
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-LocalLLM-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-LocalLLM-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{LocalLLM$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{LocalLLM$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{LocalLLM$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

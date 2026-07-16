@@ -94,7 +94,7 @@ cache_name <- google$create_cache(
 }
 
 ## ------------------------------------------------
-## Method `Google$embeddings`
+## Method `Google$embeddings()`
 ## ------------------------------------------------
 
 \dontrun{
@@ -122,69 +122,68 @@ embeddings <- google$embeddings(
 }
 }
 \section{Super class}{
-\code{\link[argent:Provider]{argent::Provider}} -> \code{Google}
+\code{\link[argent:Provider]{Provider}} -> \code{Google}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-Google-new}{\code{Google$new()}}
-\item \href{#method-Google-list_models}{\code{Google$list_models()}}
-\item \href{#method-Google-get_model_info}{\code{Google$get_model_info()}}
-\item \href{#method-Google-embeddings}{\code{Google$embeddings()}}
-\item \href{#method-Google-upload_file}{\code{Google$upload_file()}}
-\item \href{#method-Google-get_file_metadata}{\code{Google$get_file_metadata()}}
-\item \href{#method-Google-list_files}{\code{Google$list_files()}}
-\item \href{#method-Google-delete_file}{\code{Google$delete_file()}}
-\item \href{#method-Google-create_store}{\code{Google$create_store()}}
-\item \href{#method-Google-list_stores}{\code{Google$list_stores()}}
-\item \href{#method-Google-read_store}{\code{Google$read_store()}}
-\item \href{#method-Google-delete_store}{\code{Google$delete_store()}}
-\item \href{#method-Google-add_file_to_store}{\code{Google$add_file_to_store()}}
-\item \href{#method-Google-import_file_to_store}{\code{Google$import_file_to_store()}}
-\item \href{#method-Google-list_files_in_store}{\code{Google$list_files_in_store()}}
-\item \href{#method-Google-read_file_from_store}{\code{Google$read_file_from_store()}}
-\item \href{#method-Google-delete_file_from_store}{\code{Google$delete_file_from_store()}}
-\item \href{#method-Google-query_file}{\code{Google$query_file()}}
-\item \href{#method-Google-get_operation}{\code{Google$get_operation()}}
-\item \href{#method-Google-chat}{\code{Google$chat()}}
-\item \href{#method-Google-clone}{\code{Google$clone()}}
+  \itemize{
+    \item \href{#method-Google-initialize}{\code{Google$new()}}
+    \item \href{#method-Google-list_models}{\code{Google$list_models()}}
+    \item \href{#method-Google-get_model_info}{\code{Google$get_model_info()}}
+    \item \href{#method-Google-embeddings}{\code{Google$embeddings()}}
+    \item \href{#method-Google-upload_file}{\code{Google$upload_file()}}
+    \item \href{#method-Google-get_file_metadata}{\code{Google$get_file_metadata()}}
+    \item \href{#method-Google-list_files}{\code{Google$list_files()}}
+    \item \href{#method-Google-delete_file}{\code{Google$delete_file()}}
+    \item \href{#method-Google-create_store}{\code{Google$create_store()}}
+    \item \href{#method-Google-list_stores}{\code{Google$list_stores()}}
+    \item \href{#method-Google-read_store}{\code{Google$read_store()}}
+    \item \href{#method-Google-delete_store}{\code{Google$delete_store()}}
+    \item \href{#method-Google-add_file_to_store}{\code{Google$add_file_to_store()}}
+    \item \href{#method-Google-import_file_to_store}{\code{Google$import_file_to_store()}}
+    \item \href{#method-Google-list_files_in_store}{\code{Google$list_files_in_store()}}
+    \item \href{#method-Google-read_file_from_store}{\code{Google$read_file_from_store()}}
+    \item \href{#method-Google-delete_file_from_store}{\code{Google$delete_file_from_store()}}
+    \item \href{#method-Google-query_file}{\code{Google$query_file()}}
+    \item \href{#method-Google-get_operation}{\code{Google$get_operation()}}
+    \item \href{#method-Google-chat}{\code{Google$chat()}}
+    \item \href{#method-Google-clone}{\code{Google$clone()}}
+  }
 }
-}
-\if{html}{\out{
-<details><summary>Inherited methods</summary>
+\if{html}{\out{<details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="download_generated_files"><a href='../../argent/html/Provider.html#method-Provider-download_generated_files'><code>argent::Provider$download_generated_files()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="dump_history"><a href='../../argent/html/Provider.html#method-Provider-dump_history'><code>argent::Provider$dump_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-get_auto_save_history'><code>argent::Provider$get_auto_save_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_chat_history"><a href='../../argent/html/Provider.html#method-Provider-get_chat_history'><code>argent::Provider$get_chat_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_content_text"><a href='../../argent/html/Provider.html#method-Provider-get_content_text'><code>argent::Provider$get_content_text()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_code"><a href='../../argent/html/Provider.html#method-Provider-get_generated_code'><code>argent::Provider$get_generated_code()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_files"><a href='../../argent/html/Provider.html#method-Provider-get_generated_files'><code>argent::Provider$get_generated_files()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history"><a href='../../argent/html/Provider.html#method-Provider-get_history'><code>argent::Provider$get_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history_file_path"><a href='../../argent/html/Provider.html#method-Provider-get_history_file_path'><code>argent::Provider$get_history_file_path()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_last_response"><a href='../../argent/html/Provider.html#method-Provider-get_last_response'><code>argent::Provider$get_last_response()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-get_rate_limit'><code>argent::Provider$get_rate_limit()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_reasoning_text"><a href='../../argent/html/Provider.html#method-Provider-get_reasoning_text'><code>argent::Provider$get_reasoning_text()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_cumulative_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_cumulative_token_count'><code>argent::Provider$get_session_cumulative_token_count()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_history"><a href='../../argent/html/Provider.html#method-Provider-get_session_history'><code>argent::Provider$get_session_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_last_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_last_token_count'><code>argent::Provider$get_session_last_token_count()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_supplementary"><a href='../../argent/html/Provider.html#method-Provider-get_supplementary'><code>argent::Provider$get_supplementary()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="load_history"><a href='../../argent/html/Provider.html#method-Provider-load_history'><code>argent::Provider$load_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="print"><a href='../../argent/html/Provider.html#method-Provider-print'><code>argent::Provider$print()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="reset_history"><a href='../../argent/html/Provider.html#method-Provider-reset_history'><code>argent::Provider$reset_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-set_auto_save_history'><code>argent::Provider$set_auto_save_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_history"><a href='../../argent/html/Provider.html#method-Provider-set_history'><code>argent::Provider$set_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-set_rate_limit'><code>argent::Provider$set_rate_limit()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="download_generated_files"><a href='../../argent/html/Provider.html#method-Provider-download_generated_files'><code>Provider$download_generated_files()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="dump_history"><a href='../../argent/html/Provider.html#method-Provider-dump_history'><code>Provider$dump_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-get_auto_save_history'><code>Provider$get_auto_save_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_chat_history"><a href='../../argent/html/Provider.html#method-Provider-get_chat_history'><code>Provider$get_chat_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_content_text"><a href='../../argent/html/Provider.html#method-Provider-get_content_text'><code>Provider$get_content_text()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_code"><a href='../../argent/html/Provider.html#method-Provider-get_generated_code'><code>Provider$get_generated_code()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_files"><a href='../../argent/html/Provider.html#method-Provider-get_generated_files'><code>Provider$get_generated_files()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history"><a href='../../argent/html/Provider.html#method-Provider-get_history'><code>Provider$get_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history_file_path"><a href='../../argent/html/Provider.html#method-Provider-get_history_file_path'><code>Provider$get_history_file_path()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_last_response"><a href='../../argent/html/Provider.html#method-Provider-get_last_response'><code>Provider$get_last_response()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-get_rate_limit'><code>Provider$get_rate_limit()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_reasoning_text"><a href='../../argent/html/Provider.html#method-Provider-get_reasoning_text'><code>Provider$get_reasoning_text()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_cumulative_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_cumulative_token_count'><code>Provider$get_session_cumulative_token_count()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_history"><a href='../../argent/html/Provider.html#method-Provider-get_session_history'><code>Provider$get_session_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_last_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_last_token_count'><code>Provider$get_session_last_token_count()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_supplementary"><a href='../../argent/html/Provider.html#method-Provider-get_supplementary'><code>Provider$get_supplementary()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="load_history"><a href='../../argent/html/Provider.html#method-Provider-load_history'><code>Provider$load_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="print"><a href='../../argent/html/Provider.html#method-Provider-print'><code>Provider$print()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="reset_history"><a href='../../argent/html/Provider.html#method-Provider-reset_history'><code>Provider$reset_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-set_auto_save_history'><code>Provider$set_auto_save_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_history"><a href='../../argent/html/Provider.html#method-Provider-set_history'><code>Provider$set_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-set_rate_limit'><code>Provider$set_rate_limit()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-Google-new"></a>}}
-\if{latex}{\out{\hypertarget{method-Google-new}{}}}
-\subsection{Method \code{new()}}{
-Initialize a new Google Gemini client
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$new(
+\if{html}{\out{<a id="method-Google-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-Google-initialize}{}}}
+\subsection{\code{Google$new()}}{
+  Initialize a new Google Gemini client
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$new(
   base_url = "https://generativelanguage.googleapis.com",
   api_key = Sys.getenv("GEMINI_API_KEY"),
   provider_name = "Google",
@@ -193,89 +192,87 @@ Initialize a new Google Gemini client
     "file_search"),
   default_model = "gemini-2.5-flash",
   auto_save_history = TRUE
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{base_url}}{Character. Base URL for API (default:
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{base_url}}{Character. Base URL for API (default:
 "https://generativelanguage.googleapis.com")}
-
-\item{\code{api_key}}{Character. API key (default: from GEMINI_API_KEY env var)}
-
-\item{\code{provider_name}}{Character. Provider name (default: "Google")}
-
-\item{\code{rate_limit}}{Numeric. Rate limit in requests per second (default: 5/60, free tier for
+      \item{\code{api_key}}{Character. API key (default: from GEMINI_API_KEY env var)}
+      \item{\code{provider_name}}{Character. Provider name (default: "Google")}
+      \item{\code{rate_limit}}{Numeric. Rate limit in requests per second (default: 5/60, free tier for
 2.5 Pro)}
-
-\item{\code{server_tools}}{Character vector. Server-side tools available (default: c("code_execution",
+      \item{\code{server_tools}}{Character vector. Server-side tools available (default: c("code_execution",
 "google_search", "url_context", "google_maps", "file_search"))}
-
-\item{\code{default_model}}{Character. Default model to use for chat requests (default:
+      \item{\code{default_model}}{Character. Default model to use for chat requests (default:
 "gemini-2.5-flash")}
+      \item{\code{auto_save_history}}{Logical. Enable/disable automatic history sync (default: TRUE)}
+    }
+    \if{html}{\out{</div>}}
+  }
+}
 
-\item{\code{auto_save_history}}{Logical. Enable/disable automatic history sync (default: TRUE)}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-list_models"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-list_models}{}}}
-\subsection{Method \code{list_models()}}{
-List all available Google models
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$list_models()}\if{html}{\out{</div>}}
+\subsection{\code{Google$list_models()}}{
+  List all available Google models
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$list_models()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Data frame. Available models with their specifications
+  }
 }
 
-\subsection{Returns}{
-Data frame. Available models with their specifications
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-get_model_info"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-get_model_info}{}}}
-\subsection{Method \code{get_model_info()}}{
-Get information about a specific Google model
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$get_model_info(model_id)}\if{html}{\out{</div>}}
+\subsection{\code{Google$get_model_info()}}{
+  Get information about a specific Google model
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$get_model_info(model_id)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{model_id}}{Character. Model ID (e.g., "gemini-2.5-pro")}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    List. Model information
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{model_id}}{Character. Model ID (e.g., "gemini-2.5-pro")}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-List. Model information
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-embeddings"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-embeddings}{}}}
-\subsection{Method \code{embeddings()}}{
-Generate embeddings for text input using Google's embedding models
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$embeddings(
+\subsection{\code{Google$embeddings()}}{
+  Generate embeddings for text input using Google's embedding models
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$embeddings(
   input,
   model,
   task_type = NULL,
   output_dimensionality = NULL,
   return_full_response = FALSE
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{input}}{Character vector. Text(s) to embed}
-
-\item{\code{model}}{Character. Model to use (e.g., "text-embedding-004", "text-embedding-preview-0815")}
-
-\item{\code{task_type}}{Character. Task type for optimization (optional). One of:
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{input}}{Character vector. Text(s) to embed}
+      \item{\code{model}}{Character. Model to use (e.g., "text-embedding-004", "text-embedding-preview-0815")}
+      \item{\code{task_type}}{Character. Task type for optimization (optional). One of:
 \itemize{
 \item "RETRIEVAL_QUERY": For search queries
 \item "RETRIEVAL_DOCUMENT": For documents in search corpus
@@ -283,20 +280,17 @@ Generate embeddings for text input using Google's embedding models
 \item "CLASSIFICATION": For text classification
 \item "CLUSTERING": For clustering tasks
 }}
-
-\item{\code{output_dimensionality}}{Integer. Number of dimensions for output (optional, 128-3072 for supported models)}
-
-\item{\code{return_full_response}}{Logical. Return full API response (default: FALSE)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row per input text
-}
-\subsection{Examples}{
-\if{html}{\out{<div class="r example copy">}}
-\preformatted{\dontrun{
-google <- Google$new()
+      \item{\code{output_dimensionality}}{Integer. Number of dimensions for output (optional, 128-3072 for supported models)}
+      \item{\code{return_full_response}}{Logical. Return full API response (default: FALSE)}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row per input text
+  }
+  \subsection{Examples}{
+    \if{html}{\out{<div class="r example copy">}}
+    \preformatted{google <- Google$new()
 
 # Generate embeddings
 embeddings <- google$embeddings(
@@ -318,377 +312,385 @@ embeddings <- google$embeddings(
   output_dimensionality = 256
 )
 }
+    \if{html}{\out{</div>}}
+  }
 }
-\if{html}{\out{</div>}}
 
-}
-
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-upload_file"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-upload_file}{}}}
-\subsection{Method \code{upload_file()}}{
-Upload a file to Google Files API (uses resumable upload)
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$upload_file(file_path, name = NULL, mime_type = NULL)}\if{html}{\out{</div>}}
+\subsection{\code{Google$upload_file()}}{
+  Upload a file to Google Files API (uses resumable upload)
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$upload_file(file_path, name = NULL, mime_type = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{file_path}}{Character. Path to the file to upload, or URL to a remote file}
+      \item{\code{name}}{Character. Display name for the file (optional, uses filename if NULL)}
+      \item{\code{mime_type}}{Character. MIME type (optional, auto-detected if NULL)}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    List. File metadata or NULL on error
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{file_path}}{Character. Path to the file to upload, or URL to a remote file}
-
-\item{\code{name}}{Character. Display name for the file (optional, uses filename if NULL)}
-
-\item{\code{mime_type}}{Character. MIME type (optional, auto-detected if NULL)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-List. File metadata or NULL on error
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-get_file_metadata"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-get_file_metadata}{}}}
-\subsection{Method \code{get_file_metadata()}}{
-Get metadata for an uploaded file
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$get_file_metadata(file_name)}\if{html}{\out{</div>}}
+\subsection{\code{Google$get_file_metadata()}}{
+  Get metadata for an uploaded file
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$get_file_metadata(file_name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{file_name}}{Character. File name (e.g., "files/abc123")}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    List. File metadata or NULL on error
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{file_name}}{Character. File name (e.g., "files/abc123")}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-List. File metadata or NULL on error
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-list_files"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-list_files}{}}}
-\subsection{Method \code{list_files()}}{
-List all uploaded files
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$list_files(page_size = 100, page_token = NULL, as_df = TRUE)}\if{html}{\out{</div>}}
+\subsection{\code{Google$list_files()}}{
+  List all uploaded files
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$list_files(page_size = 100, page_token = NULL, as_df = TRUE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{page_size}}{Integer. Number of files per page (default: 100)}
+      \item{\code{page_token}}{Character. Page token for pagination (optional)}
+      \item{\code{as_df}}{Logical. Whether to return files as a data frame (default: TRUE). If FALSE, returns raw list.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Data frame (if as_df = TRUE) or list otherwise. Files metadata and next page token (list only).
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{page_size}}{Integer. Number of files per page (default: 100)}
-
-\item{\code{page_token}}{Character. Page token for pagination (optional)}
-
-\item{\code{as_df}}{Logical. Whether to return files as a data frame (default: TRUE). If FALSE, returns raw list.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Data frame (if as_df = TRUE) or list otherwise. Files metadata and next page token (list only).
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-delete_file"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-delete_file}{}}}
-\subsection{Method \code{delete_file()}}{
-Delete an uploaded file
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$delete_file(file_name)}\if{html}{\out{</div>}}
+\subsection{\code{Google$delete_file()}}{
+  Delete an uploaded file
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$delete_file(file_name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{file_name}}{Character. File name (e.g., "files/abc123")}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Logical. TRUE if successful, FALSE otherwise
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{file_name}}{Character. File name (e.g., "files/abc123")}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Logical. TRUE if successful, FALSE otherwise
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-create_store"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-create_store}{}}}
-\subsection{Method \code{create_store()}}{
-Create a new file search store for RAG operations
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$create_store(name = NULL)}\if{html}{\out{</div>}}
+\subsection{\code{Google$create_store()}}{
+  Create a new file search store for RAG operations
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$create_store(name = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{Character. Display name for the store (optional)}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    List. File search store metadata or NULL on error
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{Character. Display name for the store (optional)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-List. File search store metadata or NULL on error
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-list_stores"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-list_stores}{}}}
-\subsection{Method \code{list_stores()}}{
-List all file search stores
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$list_stores(page_size = 10, page_token = NULL, as_df = TRUE)}\if{html}{\out{</div>}}
+\subsection{\code{Google$list_stores()}}{
+  List all file search stores
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$list_stores(page_size = 10, page_token = NULL, as_df = TRUE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{page_size}}{Integer. Number of stores per page (default: 10, max: 100)}
+      \item{\code{page_token}}{Character. Page token for pagination (optional)}
+      \item{\code{as_df}}{Logical. Whether to return stores as a data frame (default: TRUE). If FALSE, returns raw list.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Data frame (if as_df = TRUE) or list otherwise. File search stores metadata.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{page_size}}{Integer. Number of stores per page (default: 10, max: 100)}
-
-\item{\code{page_token}}{Character. Page token for pagination (optional)}
-
-\item{\code{as_df}}{Logical. Whether to return stores as a data frame (default: TRUE). If FALSE, returns raw list.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Data frame (if as_df = TRUE) or list otherwise. File search stores metadata.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-read_store"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-read_store}{}}}
-\subsection{Method \code{read_store()}}{
-Get information about a specific file search store
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$read_store(name)}\if{html}{\out{</div>}}
+\subsection{\code{Google$read_store()}}{
+  Get information about a specific file search store
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$read_store(name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{Character. Store name (e.g., "fileSearchStores/abc123")}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    List. File search store metadata or NULL on error
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{Character. Store name (e.g., "fileSearchStores/abc123")}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-List. File search store metadata or NULL on error
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-delete_store"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-delete_store}{}}}
-\subsection{Method \code{delete_store()}}{
-Delete a file search store
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$delete_store(name, force = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{Google$delete_store()}}{
+  Delete a file search store
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$delete_store(name, force = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{Character. Store name (e.g., "fileSearchStores/abc123")}
+      \item{\code{force}}{Logical. If TRUE, delete the store even if it contains documents (default: FALSE)}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Logical. TRUE if successful, FALSE otherwise
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{Character. Store name (e.g., "fileSearchStores/abc123")}
-
-\item{\code{force}}{Logical. If TRUE, delete the store even if it contains documents (default: FALSE)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Logical. TRUE if successful, FALSE otherwise
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-add_file_to_store"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-add_file_to_store}{}}}
-\subsection{Method \code{add_file_to_store()}}{
-Upload a file directly to a file search store using resumable upload.
+\subsection{\code{Google$add_file_to_store()}}{
+  Upload a file directly to a file search store using resumable upload.
 Supports custom chunking configuration and metadata.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$add_file_to_store(
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$add_file_to_store(
   file_path,
   store_name,
   file_name = NULL,
   custom_metadata = NULL,
   chunking_config = NULL
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{file_path}}{Character. Path to the file to upload, or URL to a remote file}
-
-\item{\code{store_name}}{Character. Store name (e.g., "fileSearchStores/abc123")}
-
-\item{\code{file_name}}{Character. Display name for the file (optional, uses filename if NULL)}
-
-\item{\code{custom_metadata}}{List. Custom metadata as key-value pairs (optional)}
-
-\item{\code{chunking_config}}{List. Chunking configuration with max_tokens_per_chunk and max_overlap_tokens
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{file_path}}{Character. Path to the file to upload, or URL to a remote file}
+      \item{\code{store_name}}{Character. Store name (e.g., "fileSearchStores/abc123")}
+      \item{\code{file_name}}{Character. Display name for the file (optional, uses filename if NULL)}
+      \item{\code{custom_metadata}}{List. Custom metadata as key-value pairs (optional)}
+      \item{\code{chunking_config}}{List. Chunking configuration with max_tokens_per_chunk and max_overlap_tokens
 (optional)}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    List. Document metadata or NULL on error
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-List. Document metadata or NULL on error
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-import_file_to_store"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-import_file_to_store}{}}}
-\subsection{Method \code{import_file_to_store()}}{
-Import an existing File API file to a file search store.
+\subsection{\code{Google$import_file_to_store()}}{
+  Import an existing File API file to a file search store.
 Note: The importFile endpoint does not support custom chunking configuration.
 Files will be chunked automatically by Google's API.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$import_file_to_store(file_name, store_name, custom_metadata = NULL)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$import_file_to_store(file_name, store_name, custom_metadata = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{file_name}}{Character. File name from File API (e.g., "files/abc123")}
+      \item{\code{store_name}}{Character. Store name (e.g., "fileSearchStores/abc123")}
+      \item{\code{custom_metadata}}{List. Custom metadata as key-value pairs (optional)}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    List. Document metadata or NULL on error
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{file_name}}{Character. File name from File API (e.g., "files/abc123")}
-
-\item{\code{store_name}}{Character. Store name (e.g., "fileSearchStores/abc123")}
-
-\item{\code{custom_metadata}}{List. Custom metadata as key-value pairs (optional)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-List. Document metadata or NULL on error
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-list_files_in_store"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-list_files_in_store}{}}}
-\subsection{Method \code{list_files_in_store()}}{
-List files in a file search store
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$list_files_in_store(
+\subsection{\code{Google$list_files_in_store()}}{
+  List files in a file search store
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$list_files_in_store(
   store_name,
   page_size = 10,
   page_token = NULL,
   as_df = TRUE
-)}\if{html}{\out{</div>}}
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{store_name}}{Character. Store name (e.g., "fileSearchStores/abc123")}
+      \item{\code{page_size}}{Integer. Number of files per page (default: 10, max: 100)}
+      \item{\code{page_token}}{Character. Page token for pagination (optional)}
+      \item{\code{as_df}}{Logical. Whether to return files as a data frame (default: TRUE). If FALSE, returns raw list.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Data frame (if as_df = TRUE) or list otherwise. Files metadata.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{store_name}}{Character. Store name (e.g., "fileSearchStores/abc123")}
-
-\item{\code{page_size}}{Integer. Number of files per page (default: 10, max: 100)}
-
-\item{\code{page_token}}{Character. Page token for pagination (optional)}
-
-\item{\code{as_df}}{Logical. Whether to return files as a data frame (default: TRUE). If FALSE, returns raw list.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Data frame (if as_df = TRUE) or list otherwise. Files metadata.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-read_file_from_store"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-read_file_from_store}{}}}
-\subsection{Method \code{read_file_from_store()}}{
-Get information about a specific file in a store
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$read_file_from_store(file_name)}\if{html}{\out{</div>}}
+\subsection{\code{Google$read_file_from_store()}}{
+  Get information about a specific file in a store
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$read_file_from_store(file_name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{file_name}}{Character. File name (e.g., "fileSearchStores/xyz/documents/abc123")}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    List. File metadata or NULL on error
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{file_name}}{Character. File name (e.g., "fileSearchStores/xyz/documents/abc123")}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-List. File metadata or NULL on error
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-delete_file_from_store"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-delete_file_from_store}{}}}
-\subsection{Method \code{delete_file_from_store()}}{
-Delete a file from a file search store
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$delete_file_from_store(file_name, force = TRUE)}\if{html}{\out{</div>}}
+\subsection{\code{Google$delete_file_from_store()}}{
+  Delete a file from a file search store
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$delete_file_from_store(file_name, force = TRUE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{file_name}}{Character. File name (e.g., "fileSearchStores/xyz/documents/abc123")}
+      \item{\code{force}}{Logical. If TRUE, force deletion of non-empty documents (default: TRUE)}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Logical. TRUE if successful, FALSE otherwise
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{file_name}}{Character. File name (e.g., "fileSearchStores/xyz/documents/abc123")}
-
-\item{\code{force}}{Logical. If TRUE, force deletion of non-empty documents (default: TRUE)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Logical. TRUE if successful, FALSE otherwise
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-query_file"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-query_file}{}}}
-\subsection{Method \code{query_file()}}{
-Query a specific file in a file search store
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$query_file(
+\subsection{\code{Google$query_file()}}{
+  Query a specific file in a file search store
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$query_file(
   file_name,
   query,
   results_count = 10,
   metadata_filters = NULL
-)}\if{html}{\out{</div>}}
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{file_name}}{Character. File name (e.g., "fileSearchStores/xyz/documents/abc123")}
+      \item{\code{query}}{Character. Query string}
+      \item{\code{results_count}}{Integer. Number of results to return (default: 10)}
+      \item{\code{metadata_filters}}{Character. Metadata filter string (optional, e.g., "author=John")}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    List. Query results or NULL on error
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{file_name}}{Character. File name (e.g., "fileSearchStores/xyz/documents/abc123")}
-
-\item{\code{query}}{Character. Query string}
-
-\item{\code{results_count}}{Integer. Number of results to return (default: 10)}
-
-\item{\code{metadata_filters}}{Character. Metadata filter string (optional, e.g., "author=John")}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-List. Query results or NULL on error
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-get_operation"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-get_operation}{}}}
-\subsection{Method \code{get_operation()}}{
-Get the status of a long-running operation
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$get_operation(operation_name)}\if{html}{\out{</div>}}
+\subsection{\code{Google$get_operation()}}{
+  Get the status of a long-running operation
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$get_operation(operation_name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{operation_name}}{Character. Operation name (e.g., "fileSearchStores/xyz/operations/abc123")}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    List. Operation status or NULL on error
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{operation_name}}{Character. Operation name (e.g., "fileSearchStores/xyz/operations/abc123")}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-List. Operation status or NULL on error
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-chat"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-chat}{}}}
-\subsection{Method \code{chat()}}{
-Send a chat completion request to Google
+\subsection{\code{Google$chat()}}{
+  Send a chat completion request to Google
 
 \strong{Note on thinking with function calling}: When thinking and function calling are both enabled,
 the model returns thought signatures in the response. These encrypted representations of the
@@ -696,8 +698,9 @@ model's thought process are automatically included in subsequent turns via chat_
 allowing the model to maintain thought context across multi-turn conversations. However, thought
 signatures increase input token costs when sent back in requests. See
 \url{https://ai.google.dev/gemini-api/docs/thinking#signatures}
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$chat(
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$chat(
   ...,
   model = self$default_model,
   system = .default_system_prompt,
@@ -711,31 +714,23 @@ signatures increase input token costs when sent back in requests. See
   output_schema = NULL,
   thinking_budget = 0,
   include_thoughts = FALSE
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{One or more inputs for the prompt. Can be text strings, file paths, URLs, R objects,
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{One or more inputs for the prompt. Can be text strings, file paths, URLs, R objects,
 or content wrapped with \verb{as_*_content()} functions. R objects (but not plain strings) will
 include their names and structure in the context sent to the model.}
-
-\item{\code{model}}{Character. Model to use (default: "gemini-2.5-flash")}
-
-\item{\code{system}}{Character. System instructions (optional)}
-
-\item{\code{max_tokens}}{Integer. Maximum tokens to generate (default: 8000)}
-
-\item{\code{temperature}}{Numeric. Sampling temperature 0-2 (default: 1)}
-
-\item{\code{top_p}}{Numeric. Nucleus sampling - cumulative probability cutoff. Range: 0.0-1.0 (optional)}
-
-\item{\code{top_k}}{Integer. Top-K sampling - sample from top K options. Range: 1+ (optional)}
-
-\item{\code{stop_sequences}}{Character vector. Sequences that stop generation when encountered (optional)}
-
-\item{\code{tools}}{List. Function definitions for tool calling (optional). Supports both client-side
+      \item{\code{model}}{Character. Model to use (default: "gemini-2.5-flash")}
+      \item{\code{system}}{Character. System instructions (optional)}
+      \item{\code{max_tokens}}{Integer. Maximum tokens to generate (default: 8000)}
+      \item{\code{temperature}}{Numeric. Sampling temperature 0-2 (default: 1)}
+      \item{\code{top_p}}{Numeric. Nucleus sampling - cumulative probability cutoff. Range: 0.0-1.0 (optional)}
+      \item{\code{top_k}}{Integer. Top-K sampling - sample from top K options. Range: 1+ (optional)}
+      \item{\code{stop_sequences}}{Character vector. Sequences that stop generation when encountered (optional)}
+      \item{\code{tools}}{List. Function definitions for tool calling (optional). Supports both client-side
 functions and server-side tools:
 
 \strong{Server-side tools:}
@@ -749,8 +744,7 @@ functions and server-side tools:
 
 \strong{Client-side functions:}
 Use \code{as_tool(fn)} to wrap R functions for tool calling.}
-
-\item{\code{tool_choice}}{Character or List. Controls how the model uses function declarations
+      \item{\code{tool_choice}}{Character or List. Controls how the model uses function declarations
 (default: list(mode = "AUTO")). Only applies to client function tools, not server tools.
 
 \strong{Modes:}
@@ -771,36 +765,36 @@ When mode is "ANY" or "VALIDATED", you can specify which functions are allowed:
 \item \code{tool_choice = list(mode = "ANY")} - Force function call from any available function
 \item \code{tool_choice = list(mode = "ANY", allowed_function_names = c("get_weather"))} - Force specific function
 }}
-
-\item{\code{output_schema}}{List. JSON schema for structured output (optional)}
-
-\item{\code{thinking_budget}}{Integer. Thinking budget in tokens: 0 (disabled), -1 (dynamic),
+      \item{\code{output_schema}}{List. JSON schema for structured output (optional)}
+      \item{\code{thinking_budget}}{Integer. Thinking budget in tokens: 0 (disabled), -1 (dynamic),
 or 0-24575/32768 (fixed budget). Default: 0.}
-
-\item{\code{include_thoughts}}{Logical. Whether to include thought parts in the response (default: FALSE).
+      \item{\code{include_thoughts}}{Logical. Whether to include thought parts in the response (default: FALSE).
 If TRUE but thinking_budget is 0, a warning is issued and include_thoughts is set to FALSE.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Character. Text response from the model.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Character. Text response from the model.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Google-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-Google-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Google$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{Google$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{Google$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

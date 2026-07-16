@@ -119,5 +119,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Marc-Aurèle Rivière \email{marc.aurele.riviere@gmail.com} (\href{https://orcid.org/0000-0002-5108-3382}{ORCID})
 
+Authors:
+\itemize{
+  \item Marc-Aurèle Rivière \email{marc.aurele.riviere@gmail.com} (\href{https://orcid.org/0000-0002-5108-3382}{ORCID})
+}
+
 }
 \keyword{internal}

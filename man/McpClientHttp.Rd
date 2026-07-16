@@ -8,126 +8,134 @@ A client for interacting with remote MCP servers via HTTP.
 }
 \keyword{internal}
 \section{Super class}{
-\code{\link[argent:McpClient]{argent::McpClient}} -> \code{McpClientHttp}
+\code{\link[argent:McpClient]{McpClient}} -> \code{McpClientHttp}
 }
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{url}}{Server URL}
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{url}}{Server URL}
 
-\item{\code{headers}}{HTTP headers}
+    \item{\code{headers}}{HTTP headers}
 
-\item{\code{session_id}}{Session ID from server}
-}
-\if{html}{\out{</div>}}
+    \item{\code{session_id}}{Session ID from server}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-McpClientHttp-new}{\code{McpClientHttp$new()}}
-\item \href{#method-McpClientHttp-initialize_connection}{\code{McpClientHttp$initialize_connection()}}
-\item \href{#method-McpClientHttp-send_request}{\code{McpClientHttp$send_request()}}
-\item \href{#method-McpClientHttp-terminate_session}{\code{McpClientHttp$terminate_session()}}
-\item \href{#method-McpClientHttp-close}{\code{McpClientHttp$close()}}
-\item \href{#method-McpClientHttp-clone}{\code{McpClientHttp$clone()}}
+  \itemize{
+    \item \href{#method-McpClientHttp-initialize}{\code{McpClientHttp$new()}}
+    \item \href{#method-McpClientHttp-initialize_connection}{\code{McpClientHttp$initialize_connection()}}
+    \item \href{#method-McpClientHttp-send_request}{\code{McpClientHttp$send_request()}}
+    \item \href{#method-McpClientHttp-terminate_session}{\code{McpClientHttp$terminate_session()}}
+    \item \href{#method-McpClientHttp-close}{\code{McpClientHttp$close()}}
+    \item \href{#method-McpClientHttp-clone}{\code{McpClientHttp$clone()}}
+  }
 }
-}
-\if{html}{\out{
-<details><summary>Inherited methods</summary>
+\if{html}{\out{<details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="call_tool"><a href='../../argent/html/McpClient.html#method-McpClient-call_tool'><code>argent::McpClient$call_tool()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="get_prompt"><a href='../../argent/html/McpClient.html#method-McpClient-get_prompt'><code>argent::McpClient$get_prompt()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="is_closed"><a href='../../argent/html/McpClient.html#method-McpClient-is_closed'><code>argent::McpClient$is_closed()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="list_prompts"><a href='../../argent/html/McpClient.html#method-McpClient-list_prompts'><code>argent::McpClient$list_prompts()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="list_resources"><a href='../../argent/html/McpClient.html#method-McpClient-list_resources'><code>argent::McpClient$list_resources()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="list_tools"><a href='../../argent/html/McpClient.html#method-McpClient-list_tools'><code>argent::McpClient$list_tools()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="read_resource"><a href='../../argent/html/McpClient.html#method-McpClient-read_resource'><code>argent::McpClient$read_resource()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="call_tool"><a href='../../argent/html/McpClient.html#method-McpClient-call_tool'><code>McpClient$call_tool()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="get_prompt"><a href='../../argent/html/McpClient.html#method-McpClient-get_prompt'><code>McpClient$get_prompt()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="is_closed"><a href='../../argent/html/McpClient.html#method-McpClient-is_closed'><code>McpClient$is_closed()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="list_prompts"><a href='../../argent/html/McpClient.html#method-McpClient-list_prompts'><code>McpClient$list_prompts()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="list_resources"><a href='../../argent/html/McpClient.html#method-McpClient-list_resources'><code>McpClient$list_resources()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="list_tools"><a href='../../argent/html/McpClient.html#method-McpClient-list_tools'><code>McpClient$list_tools()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="read_resource"><a href='../../argent/html/McpClient.html#method-McpClient-read_resource'><code>McpClient$read_resource()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-McpClientHttp-new"></a>}}
-\if{latex}{\out{\hypertarget{method-McpClientHttp-new}{}}}
-\subsection{Method \code{new()}}{
-Initialize HTTP client
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClientHttp$new(url, headers = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-McpClientHttp-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-McpClientHttp-initialize}{}}}
+\subsection{\code{McpClientHttp$new()}}{
+  Initialize HTTP client
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClientHttp$new(url, headers = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{url}}{Server URL}
+      \item{\code{headers}}{Named list of headers}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{url}}{Server URL}
-
-\item{\code{headers}}{Named list of headers}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClientHttp-initialize_connection"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClientHttp-initialize_connection}{}}}
-\subsection{Method \code{initialize_connection()}}{
-Initialize connection
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClientHttp$initialize_connection()}\if{html}{\out{</div>}}
+\subsection{\code{McpClientHttp$initialize_connection()}}{
+  Initialize connection
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClientHttp$initialize_connection()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClientHttp-send_request"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClientHttp-send_request}{}}}
-\subsection{Method \code{send_request()}}{
-Send request via HTTP
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClientHttp$send_request(req, is_init = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{McpClientHttp$send_request()}}{
+  Send request via HTTP
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClientHttp$send_request(req, is_init = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{req}}{Request list}
+      \item{\code{is_init}}{Boolean, if TRUE, captures session ID}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{req}}{Request list}
-
-\item{\code{is_init}}{Boolean, if TRUE, captures session ID}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClientHttp-terminate_session"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClientHttp-terminate_session}{}}}
-\subsection{Method \code{terminate_session()}}{
-Terminate the HTTP session
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClientHttp$terminate_session()}\if{html}{\out{</div>}}
+\subsection{\code{McpClientHttp$terminate_session()}}{
+  Terminate the HTTP session
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClientHttp$terminate_session()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClientHttp-close"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClientHttp-close}{}}}
-\subsection{Method \code{close()}}{
-Close the client connection and terminate the HTTP session.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClientHttp$close()}\if{html}{\out{</div>}}
+\subsection{\code{McpClientHttp$close()}}{
+  Close the client connection and terminate the HTTP session.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClientHttp$close()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClientHttp-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClientHttp-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClientHttp$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{McpClientHttp$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClientHttp$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

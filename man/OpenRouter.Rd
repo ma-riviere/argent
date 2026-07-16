@@ -87,7 +87,7 @@ response <- openrouter$chat(
 }
 
 ## ------------------------------------------------
-## Method `OpenRouter$embeddings`
+## Method `OpenRouter$embeddings()`
 ## ------------------------------------------------
 
 \dontrun{
@@ -115,68 +115,67 @@ embeddings <- openrouter$embeddings(
 }
 }
 \section{Super class}{
-\code{\link[argent:Provider]{argent::Provider}} -> \code{OpenRouter}
+\code{\link[argent:Provider]{Provider}} -> \code{OpenRouter}
 }
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{allowed_providers}}{Character vector. Allowed provider slugs (default: NULL)}
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{allowed_providers}}{Character vector. Allowed provider slugs (default: NULL)}
 
-\item{\code{blocked_providers}}{Character vector. Blocked provider slugs (default: NULL)}
-}
-\if{html}{\out{</div>}}
+    \item{\code{blocked_providers}}{Character vector. Blocked provider slugs (default: NULL)}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-OpenRouter-new}{\code{OpenRouter$new()}}
-\item \href{#method-OpenRouter-get_allowed_providers}{\code{OpenRouter$get_allowed_providers()}}
-\item \href{#method-OpenRouter-set_allowed_providers}{\code{OpenRouter$set_allowed_providers()}}
-\item \href{#method-OpenRouter-get_blocked_providers}{\code{OpenRouter$get_blocked_providers()}}
-\item \href{#method-OpenRouter-set_blocked_providers}{\code{OpenRouter$set_blocked_providers()}}
-\item \href{#method-OpenRouter-list_providers}{\code{OpenRouter$list_providers()}}
-\item \href{#method-OpenRouter-list_models}{\code{OpenRouter$list_models()}}
-\item \href{#method-OpenRouter-get_model_info}{\code{OpenRouter$get_model_info()}}
-\item \href{#method-OpenRouter-embeddings}{\code{OpenRouter$embeddings()}}
-\item \href{#method-OpenRouter-chat}{\code{OpenRouter$chat()}}
-\item \href{#method-OpenRouter-clone}{\code{OpenRouter$clone()}}
+  \itemize{
+    \item \href{#method-OpenRouter-initialize}{\code{OpenRouter$new()}}
+    \item \href{#method-OpenRouter-get_allowed_providers}{\code{OpenRouter$get_allowed_providers()}}
+    \item \href{#method-OpenRouter-set_allowed_providers}{\code{OpenRouter$set_allowed_providers()}}
+    \item \href{#method-OpenRouter-get_blocked_providers}{\code{OpenRouter$get_blocked_providers()}}
+    \item \href{#method-OpenRouter-set_blocked_providers}{\code{OpenRouter$set_blocked_providers()}}
+    \item \href{#method-OpenRouter-list_providers}{\code{OpenRouter$list_providers()}}
+    \item \href{#method-OpenRouter-list_models}{\code{OpenRouter$list_models()}}
+    \item \href{#method-OpenRouter-get_model_info}{\code{OpenRouter$get_model_info()}}
+    \item \href{#method-OpenRouter-embeddings}{\code{OpenRouter$embeddings()}}
+    \item \href{#method-OpenRouter-chat}{\code{OpenRouter$chat()}}
+    \item \href{#method-OpenRouter-clone}{\code{OpenRouter$clone()}}
+  }
 }
-}
-\if{html}{\out{
-<details><summary>Inherited methods</summary>
+\if{html}{\out{<details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="download_generated_files"><a href='../../argent/html/Provider.html#method-Provider-download_generated_files'><code>argent::Provider$download_generated_files()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="dump_history"><a href='../../argent/html/Provider.html#method-Provider-dump_history'><code>argent::Provider$dump_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-get_auto_save_history'><code>argent::Provider$get_auto_save_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_chat_history"><a href='../../argent/html/Provider.html#method-Provider-get_chat_history'><code>argent::Provider$get_chat_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_content_text"><a href='../../argent/html/Provider.html#method-Provider-get_content_text'><code>argent::Provider$get_content_text()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_code"><a href='../../argent/html/Provider.html#method-Provider-get_generated_code'><code>argent::Provider$get_generated_code()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_files"><a href='../../argent/html/Provider.html#method-Provider-get_generated_files'><code>argent::Provider$get_generated_files()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history"><a href='../../argent/html/Provider.html#method-Provider-get_history'><code>argent::Provider$get_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history_file_path"><a href='../../argent/html/Provider.html#method-Provider-get_history_file_path'><code>argent::Provider$get_history_file_path()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_last_response"><a href='../../argent/html/Provider.html#method-Provider-get_last_response'><code>argent::Provider$get_last_response()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-get_rate_limit'><code>argent::Provider$get_rate_limit()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_reasoning_text"><a href='../../argent/html/Provider.html#method-Provider-get_reasoning_text'><code>argent::Provider$get_reasoning_text()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_cumulative_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_cumulative_token_count'><code>argent::Provider$get_session_cumulative_token_count()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_history"><a href='../../argent/html/Provider.html#method-Provider-get_session_history'><code>argent::Provider$get_session_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_last_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_last_token_count'><code>argent::Provider$get_session_last_token_count()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_supplementary"><a href='../../argent/html/Provider.html#method-Provider-get_supplementary'><code>argent::Provider$get_supplementary()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="load_history"><a href='../../argent/html/Provider.html#method-Provider-load_history'><code>argent::Provider$load_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="print"><a href='../../argent/html/Provider.html#method-Provider-print'><code>argent::Provider$print()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="reset_history"><a href='../../argent/html/Provider.html#method-Provider-reset_history'><code>argent::Provider$reset_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-set_auto_save_history'><code>argent::Provider$set_auto_save_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_history"><a href='../../argent/html/Provider.html#method-Provider-set_history'><code>argent::Provider$set_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-set_rate_limit'><code>argent::Provider$set_rate_limit()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="download_generated_files"><a href='../../argent/html/Provider.html#method-Provider-download_generated_files'><code>Provider$download_generated_files()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="dump_history"><a href='../../argent/html/Provider.html#method-Provider-dump_history'><code>Provider$dump_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-get_auto_save_history'><code>Provider$get_auto_save_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_chat_history"><a href='../../argent/html/Provider.html#method-Provider-get_chat_history'><code>Provider$get_chat_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_content_text"><a href='../../argent/html/Provider.html#method-Provider-get_content_text'><code>Provider$get_content_text()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_code"><a href='../../argent/html/Provider.html#method-Provider-get_generated_code'><code>Provider$get_generated_code()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_files"><a href='../../argent/html/Provider.html#method-Provider-get_generated_files'><code>Provider$get_generated_files()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history"><a href='../../argent/html/Provider.html#method-Provider-get_history'><code>Provider$get_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history_file_path"><a href='../../argent/html/Provider.html#method-Provider-get_history_file_path'><code>Provider$get_history_file_path()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_last_response"><a href='../../argent/html/Provider.html#method-Provider-get_last_response'><code>Provider$get_last_response()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-get_rate_limit'><code>Provider$get_rate_limit()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_reasoning_text"><a href='../../argent/html/Provider.html#method-Provider-get_reasoning_text'><code>Provider$get_reasoning_text()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_cumulative_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_cumulative_token_count'><code>Provider$get_session_cumulative_token_count()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_history"><a href='../../argent/html/Provider.html#method-Provider-get_session_history'><code>Provider$get_session_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_last_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_last_token_count'><code>Provider$get_session_last_token_count()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_supplementary"><a href='../../argent/html/Provider.html#method-Provider-get_supplementary'><code>Provider$get_supplementary()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="load_history"><a href='../../argent/html/Provider.html#method-Provider-load_history'><code>Provider$load_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="print"><a href='../../argent/html/Provider.html#method-Provider-print'><code>Provider$print()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="reset_history"><a href='../../argent/html/Provider.html#method-Provider-reset_history'><code>Provider$reset_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-set_auto_save_history'><code>Provider$set_auto_save_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_history"><a href='../../argent/html/Provider.html#method-Provider-set_history'><code>Provider$set_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-set_rate_limit'><code>Provider$set_rate_limit()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-OpenRouter-new"></a>}}
-\if{latex}{\out{\hypertarget{method-OpenRouter-new}{}}}
-\subsection{Method \code{new()}}{
-Initialize a new OpenRouter client
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenRouter$new(
+\if{html}{\out{<a id="method-OpenRouter-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-OpenRouter-initialize}{}}}
+\subsection{\code{OpenRouter$new()}}{
+  Initialize a new OpenRouter client
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenRouter$new(
   base_url = "https://openrouter.ai/api",
   api_key = Sys.getenv("OPENROUTER_API_KEY"),
   provider_name = "OpenRouter",
@@ -186,192 +185,194 @@ Initialize a new OpenRouter client
   allowed_providers = NULL,
   blocked_providers = NULL,
   auto_save_history = TRUE
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{base_url}}{Character. Base URL for API (default: "https://openrouter.ai/api")}
-
-\item{\code{api_key}}{Character. API key (default: from OPENROUTER_API_KEY env var)}
-
-\item{\code{provider_name}}{Character. Provider name (default: "OpenRouter")}
-
-\item{\code{rate_limit}}{Numeric. Rate limit in requests per second (default: 20/60)}
-
-\item{\code{server_tools}}{Character vector. Server-side tools available (default: c("web_search"))}
-
-\item{\code{default_model}}{Character. Default model to use for chat requests (default:
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{base_url}}{Character. Base URL for API (default: "https://openrouter.ai/api")}
+      \item{\code{api_key}}{Character. API key (default: from OPENROUTER_API_KEY env var)}
+      \item{\code{provider_name}}{Character. Provider name (default: "OpenRouter")}
+      \item{\code{rate_limit}}{Numeric. Rate limit in requests per second (default: 20/60)}
+      \item{\code{server_tools}}{Character vector. Server-side tools available (default: c("web_search"))}
+      \item{\code{default_model}}{Character. Default model to use for chat requests (default:
 "openrouter/auto")}
-
-\item{\code{allowed_providers}}{Character vector. Allowed provider slugs (default: NULL)}
-
-\item{\code{blocked_providers}}{Character vector. Blocked provider slugs (default: NULL)}
-
-\item{\code{auto_save_history}}{Logical. Enable/disable automatic history sync (default: TRUE)}
+      \item{\code{allowed_providers}}{Character vector. Allowed provider slugs (default: NULL)}
+      \item{\code{blocked_providers}}{Character vector. Blocked provider slugs (default: NULL)}
+      \item{\code{auto_save_history}}{Logical. Enable/disable automatic history sync (default: TRUE)}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
-\if{html}{\out{</div>}}
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenRouter-get_allowed_providers"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenRouter-get_allowed_providers}{}}}
-\subsection{Method \code{get_allowed_providers()}}{
-Get the list of allowed providers
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenRouter$get_allowed_providers()}\if{html}{\out{</div>}}
+\subsection{\code{OpenRouter$get_allowed_providers()}}{
+  Get the list of allowed providers
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenRouter$get_allowed_providers()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Character vector. Allowed provider slugs, or NULL if none set
+  }
 }
 
-\subsection{Returns}{
-Character vector. Allowed provider slugs, or NULL if none set
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenRouter-set_allowed_providers"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenRouter-set_allowed_providers}{}}}
-\subsection{Method \code{set_allowed_providers()}}{
-Set the list of allowed providers for all requests
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenRouter$set_allowed_providers(providers)}\if{html}{\out{</div>}}
+\subsection{\code{OpenRouter$set_allowed_providers()}}{
+  Set the list of allowed providers for all requests
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenRouter$set_allowed_providers(providers)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{providers}}{Character vector. Provider slugs to allow (e.g., c("anthropic", "openai"))}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{providers}}{Character vector. Provider slugs to allow (e.g., c("anthropic", "openai"))}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenRouter-get_blocked_providers"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenRouter-get_blocked_providers}{}}}
-\subsection{Method \code{get_blocked_providers()}}{
-Get the list of blocked providers
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenRouter$get_blocked_providers()}\if{html}{\out{</div>}}
+\subsection{\code{OpenRouter$get_blocked_providers()}}{
+  Get the list of blocked providers
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenRouter$get_blocked_providers()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Character vector. Blocked provider slugs, or NULL if none set
+  }
 }
 
-\subsection{Returns}{
-Character vector. Blocked provider slugs, or NULL if none set
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenRouter-set_blocked_providers"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenRouter-set_blocked_providers}{}}}
-\subsection{Method \code{set_blocked_providers()}}{
-Set the list of blocked providers for all requests
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenRouter$set_blocked_providers(providers)}\if{html}{\out{</div>}}
+\subsection{\code{OpenRouter$set_blocked_providers()}}{
+  Set the list of blocked providers for all requests
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenRouter$set_blocked_providers(providers)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{providers}}{Character vector. Provider slugs to block (e.g., c("deepinfra", "together"))}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{providers}}{Character vector. Provider slugs to block (e.g., c("deepinfra", "together"))}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenRouter-list_providers"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenRouter-list_providers}{}}}
-\subsection{Method \code{list_providers()}}{
-List all available providers from OpenRouter
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenRouter$list_providers()}\if{html}{\out{</div>}}
+\subsection{\code{OpenRouter$list_providers()}}{
+  List all available providers from OpenRouter
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenRouter$list_providers()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Data frame. Available providers with their specifications
+  }
 }
 
-\subsection{Returns}{
-Data frame. Available providers with their specifications
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenRouter-list_models"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenRouter-list_models}{}}}
-\subsection{Method \code{list_models()}}{
-List all available models from OpenRouter
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenRouter$list_models(supported_parameters = NULL)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{supported_parameters}}{Character vector. Supported parameters to filter models by.
+\subsection{\code{OpenRouter$list_models()}}{
+  List all available models from OpenRouter
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenRouter$list_models(supported_parameters = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{supported_parameters}}{Character vector. Supported parameters to filter models by.
 Options include: "tools", "temperature", "top_p", "top_k", "min_p", "top_a", "frequency_penalty",
 "presence_penalty", "repetition_penalty", "max_tokens", "logit_bias", "logprobs", "top_logprobs", "seed",
 "response_format", "structured_outputs", "stop", "parallel_tool_calls", "include_reasoning", "reasoning",
 "web_search_options", "verbosity".
 Example: c("tools", "response_format")}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Data frame. Available models with their specifications
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Data frame. Available models with their specifications
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenRouter-get_model_info"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenRouter-get_model_info}{}}}
-\subsection{Method \code{get_model_info()}}{
-Get information about a specific model
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenRouter$get_model_info(model_id)}\if{html}{\out{</div>}}
+\subsection{\code{OpenRouter$get_model_info()}}{
+  Get information about a specific model
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenRouter$get_model_info(model_id)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{model_id}}{Character. Model ID (e.g., "anthropic/claude-3.5-sonnet")}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    List. Model information
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{model_id}}{Character. Model ID (e.g., "anthropic/claude-3.5-sonnet")}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-List. Model information
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenRouter-embeddings"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenRouter-embeddings}{}}}
-\subsection{Method \code{embeddings()}}{
-Generate embeddings for text input
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenRouter$embeddings(
+\subsection{\code{OpenRouter$embeddings()}}{
+  Generate embeddings for text input
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenRouter$embeddings(
   input,
   model,
   encoding_format = "float",
   dimensions = NULL,
   provider = NULL,
   return_full_response = FALSE
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{input}}{Character vector. Text(s) to embed}
-
-\item{\code{model}}{Character. Model to use (e.g., "text-embedding-3-small", "text-embedding-3-large")}
-
-\item{\code{encoding_format}}{Character. Format of embeddings: "float" or "base64" (default: "float")}
-
-\item{\code{dimensions}}{Integer. Number of dimensions for output (only for embedding-3 models)}
-
-\item{\code{provider}}{Character. Specific provider to use (optional, enables provider routing)}
-
-\item{\code{return_full_response}}{Logical. Return full API response (default: FALSE)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row per input text
-}
-\subsection{Examples}{
-\if{html}{\out{<div class="r example copy">}}
-\preformatted{\dontrun{
-openrouter <- OpenRouter$new()
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{input}}{Character vector. Text(s) to embed}
+      \item{\code{model}}{Character. Model to use (e.g., "text-embedding-3-small", "text-embedding-3-large")}
+      \item{\code{encoding_format}}{Character. Format of embeddings: "float" or "base64" (default: "float")}
+      \item{\code{dimensions}}{Integer. Number of dimensions for output (only for embedding-3 models)}
+      \item{\code{provider}}{Character. Specific provider to use (optional, enables provider routing)}
+      \item{\code{return_full_response}}{Logical. Return full API response (default: FALSE)}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Numeric matrix (or List if return_full_response = TRUE). Embeddings with one row per input text
+  }
+  \subsection{Examples}{
+    \if{html}{\out{<div class="r example copy">}}
+    \preformatted{openrouter <- OpenRouter$new()
 
 # Generate embeddings
 embeddings <- openrouter$embeddings(
@@ -393,19 +394,18 @@ embeddings <- openrouter$embeddings(
   provider = "openai"
 )
 }
+    \if{html}{\out{</div>}}
+  }
 }
-\if{html}{\out{</div>}}
 
-}
-
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenRouter-chat"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenRouter-chat}{}}}
-\subsection{Method \code{chat()}}{
-Send a chat completion request to OpenRouter
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenRouter$chat(
+\subsection{\code{OpenRouter$chat()}}{
+  Send a chat completion request to OpenRouter
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenRouter$chat(
   ...,
   system = .default_system_prompt,
   model = self$default_model,
@@ -432,59 +432,42 @@ Send a chat completion request to OpenRouter
   verbosity = NULL,
   provider_options = NULL,
   output_schema = NULL
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{One or more inputs for the prompt. Can be text strings, file paths, URLs, R objects,
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{One or more inputs for the prompt. Can be text strings, file paths, URLs, R objects,
 or content wrapped with \verb{as_*_content()} functions. R objects (but not plain strings) will
 include their names and structure in the context sent to the model.}
-
-\item{\code{system}}{Character. System instructions (optional)}
-
-\item{\code{model}}{Character. Model to use (e.g., "anthropic/claude-3.5-sonnet")}
-
-\item{\code{temperature}}{Numeric. Sampling temperature (default: 1)}
-
-\item{\code{max_tokens}}{Integer. Maximum tokens to generate (default: 4096)}
-
-\item{\code{top_p}}{Numeric. Nucleus sampling - restricts token selection to those whose cumulative
+      \item{\code{system}}{Character. System instructions (optional)}
+      \item{\code{model}}{Character. Model to use (e.g., "anthropic/claude-3.5-sonnet")}
+      \item{\code{temperature}}{Numeric. Sampling temperature (default: 1)}
+      \item{\code{max_tokens}}{Integer. Maximum tokens to generate (default: 4096)}
+      \item{\code{top_p}}{Numeric. Nucleus sampling - restricts token selection to those whose cumulative
 probability equals top_p. Range: 0.0-1.0 (optional)}
-
-\item{\code{top_k}}{Integer. Top-K sampling - limits token choices to top N selections. Set to 1 for
+      \item{\code{top_k}}{Integer. Top-K sampling - limits token choices to top N selections. Set to 1 for
 deterministic output (optional)}
-
-\item{\code{frequency_penalty}}{Numeric. Reduces reuse of tokens appearing frequently in input.
+      \item{\code{frequency_penalty}}{Numeric. Reduces reuse of tokens appearing frequently in input.
 Range: -2.0 to 2.0 (optional)}
-
-\item{\code{presence_penalty}}{Numeric. Penalizes token reuse regardless of frequency.
+      \item{\code{presence_penalty}}{Numeric. Penalizes token reuse regardless of frequency.
 Range: -2.0 to 2.0 (optional)}
-
-\item{\code{repetition_penalty}}{Numeric. Decreases token repetition from input.
+      \item{\code{repetition_penalty}}{Numeric. Decreases token repetition from input.
 Range: 0.0-2.0 (optional)}
-
-\item{\code{min_p}}{Numeric. Minimum relative probability threshold for token consideration.
+      \item{\code{min_p}}{Numeric. Minimum relative probability threshold for token consideration.
 Range: 0.0-1.0 (optional)}
-
-\item{\code{top_a}}{Numeric. Filters tokens based on sufficiently high probabilities relative to the
+      \item{\code{top_a}}{Numeric. Filters tokens based on sufficiently high probabilities relative to the
 most likely token. Range: 0.0-1.0 (optional)}
-
-\item{\code{seed}}{Integer. Enables deterministic sampling when repeated with identical parameters
+      \item{\code{seed}}{Integer. Enables deterministic sampling when repeated with identical parameters
 (optional)}
-
-\item{\code{stop_sequences}}{Character vector. Sequences that halt generation when encountered (optional)}
-
-\item{\code{logit_bias}}{Named list. Applies bias values (-100 to 100) to token logits before sampling
+      \item{\code{stop_sequences}}{Character vector. Sequences that halt generation when encountered (optional)}
+      \item{\code{logit_bias}}{Named list. Applies bias values (-100 to 100) to token logits before sampling
 (optional)}
-
-\item{\code{logprobs}}{Logical. Returns log probabilities for output tokens when enabled (optional)}
-
-\item{\code{top_logprobs}}{Integer. Number of most probable tokens with log probabilities to return.
+      \item{\code{logprobs}}{Logical. Returns log probabilities for output tokens when enabled (optional)}
+      \item{\code{top_logprobs}}{Integer. Number of most probable tokens with log probabilities to return.
 Range: 0-20. Requires logprobs = TRUE (optional)}
-
-\item{\code{tools}}{List. Function definitions for tool calling, or server tools (optional).
+      \item{\code{tools}}{List. Function definitions for tool calling, or server tools (optional).
 Server-side tools:
 \itemize{
 \item "web_search" for web search grounding via OpenRouter's web plugin
@@ -497,8 +480,7 @@ Pricing: Exa charges $4/1000 results (~$0.02 per request with default 5 results)
 Native search pricing varies by provider.
 }
 }}
-
-\item{\code{tool_choice}}{Character or List. Tool choice mode (default: "auto").
+      \item{\code{tool_choice}}{Character or List. Tool choice mode (default: "auto").
 Note: Some models don't support "auto". If you get an error about "does not support auto tool", either:
 \itemize{
 \item Use tool_choice = "none" to disable tools
@@ -506,23 +488,17 @@ Note: Some models don't support "auto". If you get an error about "does not supp
 to force a specific tool (model will always use it)
 \item Choose a different model that supports "auto"
 }}
-
-\item{\code{parallel_tool_calls}}{Logical. Allow simultaneous tool execution (default: TRUE) (optional)}
-
-\item{\code{cache_prompt}}{Logical. Cache the user prompt (default: FALSE).
+      \item{\code{parallel_tool_calls}}{Logical. Allow simultaneous tool execution (default: TRUE) (optional)}
+      \item{\code{cache_prompt}}{Logical. Cache the user prompt (default: FALSE).
 For Anthropic/Google models, adds cache_control breakpoint. Minimum 1024 tokens for Google 2.5 Flash,
 2048 for Google 2.5 Pro, 4096 for Anthropic. Other providers cache automatically.}
-
-\item{\code{cache_system}}{Logical. Cache system instructions (default: FALSE).
+      \item{\code{cache_system}}{Logical. Cache system instructions (default: FALSE).
 For Anthropic/Google models only.}
-
-\item{\code{thinking_budget}}{Integer. Thinking budget in tokens: 0 (disabled) or any positive integer
+      \item{\code{thinking_budget}}{Integer. Thinking budget in tokens: 0 (disabled) or any positive integer
 (default: 0). Only for models that support reasoning tokens (e.g., o1, DeepSeek-R1).}
-
-\item{\code{verbosity}}{Character. Adjusts response length and detail level: "low", "medium", or "high"
+      \item{\code{verbosity}}{Character. Adjusts response length and detail level: "low", "medium", or "high"
 (default: "medium") (optional)}
-
-\item{\code{provider_options}}{List. Provider routing options (optional). See
+      \item{\code{provider_options}}{List. Provider routing options (optional). See
 https://openrouter.ai/docs/features/provider-routing for details. Possible elements:
 \itemize{
 \item order: Character vector. List of provider slugs to try in order
@@ -537,30 +513,32 @@ https://openrouter.ai/docs/features/provider-routing for details. Possible eleme
 \item sort: Character. Sort providers by "price" or "throughput"
 \item max_price: List. Maximum pricing (e.g., list(prompt = 0.001, completion = 0.002))
 }}
+      \item{\code{output_schema}}{List. JSON schema for structured output (optional)}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Character. OpenRouter API's response object.
+  }
+}
 
-\item{\code{output_schema}}{List. JSON schema for structured output (optional)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Character. OpenRouter API's response object.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenRouter-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenRouter-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenRouter$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{OpenRouter$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenRouter$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

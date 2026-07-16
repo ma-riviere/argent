@@ -101,7 +101,7 @@ response <- assistant$chat("Summarize this document", "path/to/document.pdf")
 }
 
 ## ------------------------------------------------
-## Method `OpenAI_Assistant$create_assistant`
+## Method `OpenAIAssistant$create_assistant()`
 ## ------------------------------------------------
 
 \dontrun{
@@ -114,7 +114,7 @@ assistant$create_assistant(
 }
 
 ## ------------------------------------------------
-## Method `OpenAI_Assistant$load_assistant`
+## Method `OpenAIAssistant$load_assistant()`
 ## ------------------------------------------------
 
 \dontrun{
@@ -123,7 +123,7 @@ assistant$load_assistant(id = "asst_...")
 }
 
 ## ------------------------------------------------
-## Method `OpenAI_Assistant$register_tools`
+## Method `OpenAIAssistant$register_tools()`
 ## ------------------------------------------------
 
 \dontrun{
@@ -133,104 +133,103 @@ assistant$register_tools(list(my_tool_function))
 }
 }
 \section{Super classes}{
-\code{\link[argent:Provider]{argent::Provider}} -> \code{\link[argent:OpenAI]{argent::OpenAI}} -> \code{OpenAIAssistant}
+\code{\link[argent:Provider]{Provider}} -> \code{\link[argent:OpenAI]{OpenAI}} -> \code{OpenAIAssistant}
 }
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{assistant}}{List. Current assistant object}
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{assistant}}{List. Current assistant object}
 
-\item{\code{thread}}{List. Current thread object}
-}
-\if{html}{\out{</div>}}
+    \item{\code{thread}}{List. Current thread object}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-OpenAIAssistant-new}{\code{OpenAI_Assistant$new()}}
-\item \href{#method-OpenAIAssistant-list_models}{\code{OpenAI_Assistant$list_models()}}
-\item \href{#method-OpenAIAssistant-get_chat_history}{\code{OpenAI_Assistant$get_chat_history()}}
-\item \href{#method-OpenAIAssistant-dump_chat_history}{\code{OpenAI_Assistant$dump_chat_history()}}
-\item \href{#method-OpenAIAssistant-load_chat_history}{\code{OpenAI_Assistant$load_chat_history()}}
-\item \href{#method-OpenAIAssistant-get_total_tokens}{\code{OpenAI_Assistant$get_total_tokens()}}
-\item \href{#method-OpenAIAssistant-get_assistant}{\code{OpenAI_Assistant$get_assistant()}}
-\item \href{#method-OpenAIAssistant-get_assistant_id}{\code{OpenAI_Assistant$get_assistant_id()}}
-\item \href{#method-OpenAIAssistant-set_assistant_id}{\code{OpenAI_Assistant$set_assistant_id()}}
-\item \href{#method-OpenAIAssistant-create_assistant}{\code{OpenAI_Assistant$create_assistant()}}
-\item \href{#method-OpenAIAssistant-load_assistant}{\code{OpenAI_Assistant$load_assistant()}}
-\item \href{#method-OpenAIAssistant-register_tools}{\code{OpenAI_Assistant$register_tools()}}
-\item \href{#method-OpenAIAssistant-read_assistant}{\code{OpenAI_Assistant$read_assistant()}}
-\item \href{#method-OpenAIAssistant-delete_assistant}{\code{OpenAI_Assistant$delete_assistant()}}
-\item \href{#method-OpenAIAssistant-delete_assistant_and_contents}{\code{OpenAI_Assistant$delete_assistant_and_contents()}}
-\item \href{#method-OpenAIAssistant-chat}{\code{OpenAI_Assistant$chat()}}
-\item \href{#method-OpenAIAssistant-clone}{\code{OpenAI_Assistant$clone()}}
+  \itemize{
+    \item \href{#method-OpenAIAssistant-initialize}{\code{OpenAIAssistant$new()}}
+    \item \href{#method-OpenAIAssistant-list_models}{\code{OpenAIAssistant$list_models()}}
+    \item \href{#method-OpenAIAssistant-get_chat_history}{\code{OpenAIAssistant$get_chat_history()}}
+    \item \href{#method-OpenAIAssistant-dump_chat_history}{\code{OpenAIAssistant$dump_chat_history()}}
+    \item \href{#method-OpenAIAssistant-load_chat_history}{\code{OpenAIAssistant$load_chat_history()}}
+    \item \href{#method-OpenAIAssistant-get_total_tokens}{\code{OpenAIAssistant$get_total_tokens()}}
+    \item \href{#method-OpenAIAssistant-get_assistant}{\code{OpenAIAssistant$get_assistant()}}
+    \item \href{#method-OpenAIAssistant-get_assistant_id}{\code{OpenAIAssistant$get_assistant_id()}}
+    \item \href{#method-OpenAIAssistant-set_assistant_id}{\code{OpenAIAssistant$set_assistant_id()}}
+    \item \href{#method-OpenAIAssistant-create_assistant}{\code{OpenAIAssistant$create_assistant()}}
+    \item \href{#method-OpenAIAssistant-load_assistant}{\code{OpenAIAssistant$load_assistant()}}
+    \item \href{#method-OpenAIAssistant-register_tools}{\code{OpenAIAssistant$register_tools()}}
+    \item \href{#method-OpenAIAssistant-read_assistant}{\code{OpenAIAssistant$read_assistant()}}
+    \item \href{#method-OpenAIAssistant-delete_assistant}{\code{OpenAIAssistant$delete_assistant()}}
+    \item \href{#method-OpenAIAssistant-delete_assistant_and_contents}{\code{OpenAIAssistant$delete_assistant_and_contents()}}
+    \item \href{#method-OpenAIAssistant-chat}{\code{OpenAIAssistant$chat()}}
+    \item \href{#method-OpenAIAssistant-clone}{\code{OpenAIAssistant$clone()}}
+  }
 }
-}
-\if{html}{\out{
-<details><summary>Inherited methods</summary>
+\if{html}{\out{<details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="download_generated_files"><a href='../../argent/html/Provider.html#method-Provider-download_generated_files'><code>argent::Provider$download_generated_files()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="dump_history"><a href='../../argent/html/Provider.html#method-Provider-dump_history'><code>argent::Provider$dump_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-get_auto_save_history'><code>argent::Provider$get_auto_save_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_content_text"><a href='../../argent/html/Provider.html#method-Provider-get_content_text'><code>argent::Provider$get_content_text()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_code"><a href='../../argent/html/Provider.html#method-Provider-get_generated_code'><code>argent::Provider$get_generated_code()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_files"><a href='../../argent/html/Provider.html#method-Provider-get_generated_files'><code>argent::Provider$get_generated_files()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history"><a href='../../argent/html/Provider.html#method-Provider-get_history'><code>argent::Provider$get_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history_file_path"><a href='../../argent/html/Provider.html#method-Provider-get_history_file_path'><code>argent::Provider$get_history_file_path()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_last_response"><a href='../../argent/html/Provider.html#method-Provider-get_last_response'><code>argent::Provider$get_last_response()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-get_rate_limit'><code>argent::Provider$get_rate_limit()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_reasoning_text"><a href='../../argent/html/Provider.html#method-Provider-get_reasoning_text'><code>argent::Provider$get_reasoning_text()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_cumulative_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_cumulative_token_count'><code>argent::Provider$get_session_cumulative_token_count()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_history"><a href='../../argent/html/Provider.html#method-Provider-get_session_history'><code>argent::Provider$get_session_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_last_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_last_token_count'><code>argent::Provider$get_session_last_token_count()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_supplementary"><a href='../../argent/html/Provider.html#method-Provider-get_supplementary'><code>argent::Provider$get_supplementary()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="load_history"><a href='../../argent/html/Provider.html#method-Provider-load_history'><code>argent::Provider$load_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="print"><a href='../../argent/html/Provider.html#method-Provider-print'><code>argent::Provider$print()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="reset_history"><a href='../../argent/html/Provider.html#method-Provider-reset_history'><code>argent::Provider$reset_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-set_auto_save_history'><code>argent::Provider$set_auto_save_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_history"><a href='../../argent/html/Provider.html#method-Provider-set_history'><code>argent::Provider$set_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-set_rate_limit'><code>argent::Provider$set_rate_limit()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="add_file_to_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-add_file_to_store'><code>argent::OpenAI$add_file_to_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="create_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-create_store'><code>argent::OpenAI$create_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_all_files"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_all_files'><code>argent::OpenAI$delete_all_files()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_all_files_from_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_all_files_from_store'><code>argent::OpenAI$delete_all_files_from_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_all_stores"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_all_stores'><code>argent::OpenAI$delete_all_stores()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_file'><code>argent::OpenAI$delete_file()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_file_from_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_file_from_store'><code>argent::OpenAI$delete_file_from_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_files"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_files'><code>argent::OpenAI$delete_files()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_files_from_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_files_from_store'><code>argent::OpenAI$delete_files_from_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_store'><code>argent::OpenAI$delete_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_store_and_files"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_store_and_files'><code>argent::OpenAI$delete_store_and_files()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_stores"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_stores'><code>argent::OpenAI$delete_stores()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="download_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-download_file'><code>argent::OpenAI$download_file()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="embeddings"><a href='../../argent/html/OpenAI.html#method-OpenAI-embeddings'><code>argent::OpenAI$embeddings()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_assistants"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_assistants'><code>argent::OpenAI$find_assistants()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_file'><code>argent::OpenAI$find_file()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_file_in_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_file_in_store'><code>argent::OpenAI$find_file_in_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_models"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_models'><code>argent::OpenAI$find_models()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_store'><code>argent::OpenAI$find_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="get_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-get_file'><code>argent::OpenAI$get_file()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="get_file_content"><a href='../../argent/html/OpenAI.html#method-OpenAI-get_file_content'><code>argent::OpenAI$get_file_content()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="get_model_info"><a href='../../argent/html/OpenAI.html#method-OpenAI-get_model_info'><code>argent::OpenAI$get_model_info()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="list_assistants"><a href='../../argent/html/OpenAI.html#method-OpenAI-list_assistants'><code>argent::OpenAI$list_assistants()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="list_files"><a href='../../argent/html/OpenAI.html#method-OpenAI-list_files'><code>argent::OpenAI$list_files()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="list_files_in_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-list_files_in_store'><code>argent::OpenAI$list_files_in_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="list_stores"><a href='../../argent/html/OpenAI.html#method-OpenAI-list_stores'><code>argent::OpenAI$list_stores()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="read_file_from_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-read_file_from_store'><code>argent::OpenAI$read_file_from_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="read_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-read_store'><code>argent::OpenAI$read_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="update_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-update_store'><code>argent::OpenAI$update_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="upload_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-upload_file'><code>argent::OpenAI$upload_file()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="upload_file_from_df"><a href='../../argent/html/OpenAI.html#method-OpenAI-upload_file_from_df'><code>argent::OpenAI$upload_file_from_df()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="download_generated_files"><a href='../../argent/html/Provider.html#method-Provider-download_generated_files'><code>Provider$download_generated_files()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="dump_history"><a href='../../argent/html/Provider.html#method-Provider-dump_history'><code>Provider$dump_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-get_auto_save_history'><code>Provider$get_auto_save_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_content_text"><a href='../../argent/html/Provider.html#method-Provider-get_content_text'><code>Provider$get_content_text()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_code"><a href='../../argent/html/Provider.html#method-Provider-get_generated_code'><code>Provider$get_generated_code()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_files"><a href='../../argent/html/Provider.html#method-Provider-get_generated_files'><code>Provider$get_generated_files()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history"><a href='../../argent/html/Provider.html#method-Provider-get_history'><code>Provider$get_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history_file_path"><a href='../../argent/html/Provider.html#method-Provider-get_history_file_path'><code>Provider$get_history_file_path()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_last_response"><a href='../../argent/html/Provider.html#method-Provider-get_last_response'><code>Provider$get_last_response()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-get_rate_limit'><code>Provider$get_rate_limit()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_reasoning_text"><a href='../../argent/html/Provider.html#method-Provider-get_reasoning_text'><code>Provider$get_reasoning_text()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_cumulative_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_cumulative_token_count'><code>Provider$get_session_cumulative_token_count()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_history"><a href='../../argent/html/Provider.html#method-Provider-get_session_history'><code>Provider$get_session_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_last_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_last_token_count'><code>Provider$get_session_last_token_count()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_supplementary"><a href='../../argent/html/Provider.html#method-Provider-get_supplementary'><code>Provider$get_supplementary()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="load_history"><a href='../../argent/html/Provider.html#method-Provider-load_history'><code>Provider$load_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="print"><a href='../../argent/html/Provider.html#method-Provider-print'><code>Provider$print()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="reset_history"><a href='../../argent/html/Provider.html#method-Provider-reset_history'><code>Provider$reset_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-set_auto_save_history'><code>Provider$set_auto_save_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_history"><a href='../../argent/html/Provider.html#method-Provider-set_history'><code>Provider$set_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-set_rate_limit'><code>Provider$set_rate_limit()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="add_file_to_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-add_file_to_store'><code>OpenAI$add_file_to_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="create_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-create_store'><code>OpenAI$create_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_all_files"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_all_files'><code>OpenAI$delete_all_files()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_all_files_from_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_all_files_from_store'><code>OpenAI$delete_all_files_from_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_all_stores"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_all_stores'><code>OpenAI$delete_all_stores()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_file'><code>OpenAI$delete_file()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_file_from_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_file_from_store'><code>OpenAI$delete_file_from_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_files"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_files'><code>OpenAI$delete_files()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_files_from_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_files_from_store'><code>OpenAI$delete_files_from_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_store'><code>OpenAI$delete_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_store_and_files"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_store_and_files'><code>OpenAI$delete_store_and_files()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_stores"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_stores'><code>OpenAI$delete_stores()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="download_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-download_file'><code>OpenAI$download_file()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="embeddings"><a href='../../argent/html/OpenAI.html#method-OpenAI-embeddings'><code>OpenAI$embeddings()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_assistants"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_assistants'><code>OpenAI$find_assistants()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_file'><code>OpenAI$find_file()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_file_in_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_file_in_store'><code>OpenAI$find_file_in_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_models"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_models'><code>OpenAI$find_models()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_store'><code>OpenAI$find_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="get_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-get_file'><code>OpenAI$get_file()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="get_file_content"><a href='../../argent/html/OpenAI.html#method-OpenAI-get_file_content'><code>OpenAI$get_file_content()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="get_model_info"><a href='../../argent/html/OpenAI.html#method-OpenAI-get_model_info'><code>OpenAI$get_model_info()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="list_assistants"><a href='../../argent/html/OpenAI.html#method-OpenAI-list_assistants'><code>OpenAI$list_assistants()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="list_files"><a href='../../argent/html/OpenAI.html#method-OpenAI-list_files'><code>OpenAI$list_files()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="list_files_in_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-list_files_in_store'><code>OpenAI$list_files_in_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="list_stores"><a href='../../argent/html/OpenAI.html#method-OpenAI-list_stores'><code>OpenAI$list_stores()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="read_file_from_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-read_file_from_store'><code>OpenAI$read_file_from_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="read_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-read_store'><code>OpenAI$read_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="update_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-update_store'><code>OpenAI$update_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="upload_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-upload_file'><code>OpenAI$upload_file()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="upload_file_from_df"><a href='../../argent/html/OpenAI.html#method-OpenAI-upload_file_from_df'><code>OpenAI$upload_file_from_df()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-OpenAIAssistant-new"></a>}}
-\if{latex}{\out{\hypertarget{method-OpenAIAssistant-new}{}}}
-\subsection{Method \code{new()}}{
-Initialize a new OpenAI Assistant client
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$new(
+\if{html}{\out{<a id="method-OpenAIAssistant-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-OpenAIAssistant-initialize}{}}}
+\subsection{\code{OpenAIAssistant$new()}}{
+  Initialize a new OpenAI Assistant client
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAIAssistant$new(
   base_url = "https://api.openai.com",
   api_key = Sys.getenv("OPENAI_API_KEY"),
   provider_name = "OpenAI Assistant",
@@ -239,152 +238,163 @@ Initialize a new OpenAI Assistant client
   default_model = "gpt-4o",
   org = Sys.getenv("OPENAI_ORG"),
   auto_save_history = TRUE
-)}\if{html}{\out{</div>}}
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{base_url}}{Character. Base URL for API (default: "https://api.openai.com")}
+      \item{\code{api_key}}{Character. API key (default: from OPENAI_API_KEY env var)}
+      \item{\code{provider_name}}{Character. Provider name (default: "OpenAI Assistant")}
+      \item{\code{rate_limit}}{Numeric. Rate limit in requests per second (default: 60/60)}
+      \item{\code{server_tools}}{Character vector. Server-side tools available (default: c("file_search", "code_interpreter"))}
+      \item{\code{default_model}}{Character. Default model to use for chat requests (default: "gpt-4o")}
+      \item{\code{org}}{Character. Organization ID (default: from OPENAI_ORG env var)}
+      \item{\code{auto_save_history}}{Logical. Enable/disable automatic history sync (default: TRUE)}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{base_url}}{Character. Base URL for API (default: "https://api.openai.com")}
-
-\item{\code{api_key}}{Character. API key (default: from OPENAI_API_KEY env var)}
-
-\item{\code{provider_name}}{Character. Provider name (default: "OpenAI Assistant")}
-
-\item{\code{rate_limit}}{Numeric. Rate limit in requests per second (default: 60/60)}
-
-\item{\code{server_tools}}{Character vector. Server-side tools available (default: c("file_search", "code_interpreter"))}
-
-\item{\code{default_model}}{Character. Default model to use for chat requests (default: "gpt-4o")}
-
-\item{\code{org}}{Character. Organization ID (default: from OPENAI_ORG env var)}
-
-\item{\code{auto_save_history}}{Logical. Enable/disable automatic history sync (default: TRUE)}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAIAssistant-list_models"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenAIAssistant-list_models}{}}}
-\subsection{Method \code{list_models()}}{
-Override list_models to warn about gpt-5 incompatibility
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$list_models()}\if{html}{\out{</div>}}
+\subsection{\code{OpenAIAssistant$list_models()}}{
+  Override list_models to warn about gpt-5 incompatibility
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAIAssistant$list_models()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Data frame. Available models
+  }
 }
 
-\subsection{Returns}{
-Data frame. Available models
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAIAssistant-get_chat_history"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenAIAssistant-get_chat_history}{}}}
-\subsection{Method \code{get_chat_history()}}{
-Get chat history from the current thread (server-side state).
+\subsection{\code{OpenAIAssistant$get_chat_history()}}{
+  Get chat history from the current thread (server-side state).
 Returns the content array from the thread messages.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$get_chat_history()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAIAssistant$get_chat_history()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    List. The content array from thread messages, or NULL if no thread exists.
+  }
 }
 
-\subsection{Returns}{
-List. The content array from thread messages, or NULL if no thread exists.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAIAssistant-dump_chat_history"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenAIAssistant-dump_chat_history}{}}}
-\subsection{Method \code{dump_chat_history()}}{
-Dump chat history (not applicable - server-side state)
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$dump_chat_history(file_path = NULL)}\if{html}{\out{</div>}}
+\subsection{\code{OpenAIAssistant$dump_chat_history()}}{
+  Dump chat history (not applicable - server-side state)
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAIAssistant$dump_chat_history(file_path = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{file_path}}{Character. File path}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{file_path}}{Character. File path}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAIAssistant-load_chat_history"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenAIAssistant-load_chat_history}{}}}
-\subsection{Method \code{load_chat_history()}}{
-Load chat history (not applicable - server-side state)
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$load_chat_history(file_path)}\if{html}{\out{</div>}}
+\subsection{\code{OpenAIAssistant$load_chat_history()}}{
+  Load chat history (not applicable - server-side state)
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAIAssistant$load_chat_history(file_path)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{file_path}}{Character. File path}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{file_path}}{Character. File path}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAIAssistant-get_total_tokens"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenAIAssistant-get_total_tokens}{}}}
-\subsection{Method \code{get_total_tokens()}}{
-Get total tokens (not applicable - per-run tracking)
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$get_total_tokens()}\if{html}{\out{</div>}}
+\subsection{\code{OpenAIAssistant$get_total_tokens()}}{
+  Get total tokens (not applicable - per-run tracking)
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAIAssistant$get_total_tokens()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAIAssistant-get_assistant"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenAIAssistant-get_assistant}{}}}
-\subsection{Method \code{get_assistant()}}{
-Get the current assistant.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$get_assistant()}\if{html}{\out{</div>}}
+\subsection{\code{OpenAIAssistant$get_assistant()}}{
+  Get the current assistant.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAIAssistant$get_assistant()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The current assistant.
+  }
 }
 
-\subsection{Returns}{
-The current assistant.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAIAssistant-get_assistant_id"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenAIAssistant-get_assistant_id}{}}}
-\subsection{Method \code{get_assistant_id()}}{
-Get the ID of the current assistant.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$get_assistant_id()}\if{html}{\out{</div>}}
+\subsection{\code{OpenAIAssistant$get_assistant_id()}}{
+  Get the ID of the current assistant.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAIAssistant$get_assistant_id()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The ID of the current assistant.
+  }
 }
 
-\subsection{Returns}{
-The ID of the current assistant.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAIAssistant-set_assistant_id"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenAIAssistant-set_assistant_id}{}}}
-\subsection{Method \code{set_assistant_id()}}{
-Set the current assistant by ID.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$set_assistant_id(assistant_id)}\if{html}{\out{</div>}}
+\subsection{\code{OpenAIAssistant$set_assistant_id()}}{
+  Set the current assistant by ID.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAIAssistant$set_assistant_id(assistant_id)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{assistant_id}}{The ID of the assistant to set.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{assistant_id}}{The ID of the assistant to set.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAIAssistant-create_assistant"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenAIAssistant-create_assistant}{}}}
-\subsection{Method \code{create_assistant()}}{
-Create a new assistant
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$create_assistant(
+\subsection{\code{OpenAIAssistant$create_assistant()}}{
+  Create a new assistant
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAIAssistant$create_assistant(
   name,
   model = self$default_model,
   system = .default_system_prompt,
@@ -392,242 +402,233 @@ Create a new assistant
   top_p = 1,
   tools = NULL,
   response_format = "auto"
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{Character. Name of the assistant}
-
-\item{\code{model}}{Character. Model to use (default: "gpt-4o")}
-
-\item{\code{system}}{Character. System instructions (default: .default_system_prompt)}
-
-\item{\code{temperature}}{Numeric. Sampling temperature 0-2 (default: 1)}
-
-\item{\code{top_p}}{Numeric. Nucleus sampling parameter 0-1 (default: 1). Alternative to temperature.
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{Character. Name of the assistant}
+      \item{\code{model}}{Character. Model to use (default: "gpt-4o")}
+      \item{\code{system}}{Character. System instructions (default: .default_system_prompt)}
+      \item{\code{temperature}}{Numeric. Sampling temperature 0-2 (default: 1)}
+      \item{\code{top_p}}{Numeric. Nucleus sampling parameter 0-1 (default: 1). Alternative to temperature.
 We recommend altering this or temperature but not both.}
-
-\item{\code{tools}}{List. Tool definitions (optional). Supports three formats:
+      \item{\code{tools}}{List. Tool definitions (optional). Supports three formats:
 \itemize{
 \item String form: "file_search", "code_interpreter"
 \item List form with resources: list(type = "file_search", store_ids = list("vs_123"))
 or list(type = "code_interpreter", file_ids = list("file-123"))
 \item Client-side functions: created with the \code{as_tool(fn)} or \code{tool()} helpers
 }}
-
-\item{\code{response_format}}{Character. Response format: "auto" (default), or list for JSON schema}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The assistant object (invisibly)
-}
-\subsection{Examples}{
-\if{html}{\out{<div class="r example copy">}}
-\preformatted{\dontrun{
-assistant <- OpenAI_Assistant$new()
+      \item{\code{response_format}}{Character. Response format: "auto" (default), or list for JSON schema}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The assistant object (invisibly)
+  }
+  \subsection{Examples}{
+    \if{html}{\out{<div class="r example copy">}}
+    \preformatted{assistant <- OpenAI_Assistant$new()
 assistant$create_assistant(
   name = "My Assistant",
   model = "gpt-4o",
   system = "You are a helpful assistant"
 )
 }
+    \if{html}{\out{</div>}}
+  }
 }
-\if{html}{\out{</div>}}
 
-}
-
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAIAssistant-load_assistant"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenAIAssistant-load_assistant}{}}}
-\subsection{Method \code{load_assistant()}}{
-Load an existing assistant by ID
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$load_assistant(id)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{id}}{Character. Assistant ID to load}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The assistant object (invisibly)
-}
-\subsection{Examples}{
-\if{html}{\out{<div class="r example copy">}}
-\preformatted{\dontrun{
-assistant <- OpenAI_Assistant$new()
+\subsection{\code{OpenAIAssistant$load_assistant()}}{
+  Load an existing assistant by ID
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAIAssistant$load_assistant(id)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{id}}{Character. Assistant ID to load}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The assistant object (invisibly)
+  }
+  \subsection{Examples}{
+    \if{html}{\out{<div class="r example copy">}}
+    \preformatted{assistant <- OpenAI_Assistant$new()
 assistant$load_assistant(id = "asst_...")
 }
+    \if{html}{\out{</div>}}
+  }
 }
-\if{html}{\out{</div>}}
 
-}
-
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAIAssistant-register_tools"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenAIAssistant-register_tools}{}}}
-\subsection{Method \code{register_tools()}}{
-Register client/MCP tools for use with the current assistant
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$register_tools(tools)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{tools}}{List. Tool definitions (client functions or MCP tools)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Details}{
-This method is used to register tools after loading an existing assistant.
+\subsection{\code{OpenAIAssistant$register_tools()}}{
+  Register client/MCP tools for use with the current assistant
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAIAssistant$register_tools(tools)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{tools}}{List. Tool definitions (client functions or MCP tools)}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Details}{
+    This method is used to register tools after loading an existing assistant.
 When you load an assistant that was created with client/MCP tools, you must
 call this method to re-register those tools for execution.
-}
-
-\subsection{Returns}{
-Self (invisibly) for method chaining
-}
-\subsection{Examples}{
-\if{html}{\out{<div class="r example copy">}}
-\preformatted{\dontrun{
-assistant <- OpenAI_Assistant$new()
+  }
+  \subsection{Returns}{
+    Self (invisibly) for method chaining
+  }
+  \subsection{Examples}{
+    \if{html}{\out{<div class="r example copy">}}
+    \preformatted{assistant <- OpenAI_Assistant$new()
 assistant$load_assistant(id = "asst_...")
 assistant$register_tools(list(my_tool_function))
 }
+    \if{html}{\out{</div>}}
+  }
 }
-\if{html}{\out{</div>}}
 
-}
-
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAIAssistant-read_assistant"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenAIAssistant-read_assistant}{}}}
-\subsection{Method \code{read_assistant()}}{
-Read an assistant.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$read_assistant(assistant_id = self$assistant$id)}\if{html}{\out{</div>}}
+\subsection{\code{OpenAIAssistant$read_assistant()}}{
+  Read an assistant.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAIAssistant$read_assistant(assistant_id = self$assistant$id)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{assistant_id}}{The ID of the assistant to read.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The assistant object.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{assistant_id}}{The ID of the assistant to read.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The assistant object.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAIAssistant-delete_assistant"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenAIAssistant-delete_assistant}{}}}
-\subsection{Method \code{delete_assistant()}}{
-Delete an assistant.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$delete_assistant(assistant_id = self$assistant$id)}\if{html}{\out{</div>}}
+\subsection{\code{OpenAIAssistant$delete_assistant()}}{
+  Delete an assistant.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAIAssistant$delete_assistant(assistant_id = self$assistant$id)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{assistant_id}}{The ID of the assistant to delete.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The deletion status.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{assistant_id}}{The ID of the assistant to delete.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The deletion status.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAIAssistant-delete_assistant_and_contents"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenAIAssistant-delete_assistant_and_contents}{}}}
-\subsection{Method \code{delete_assistant_and_contents()}}{
-Delete an assistant and its contents.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$delete_assistant_and_contents(
-  assistant_id = self$assistant$id
-)}\if{html}{\out{</div>}}
+\subsection{\code{OpenAIAssistant$delete_assistant_and_contents()}}{
+  Delete an assistant and its contents.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAIAssistant$delete_assistant_and_contents(assistant_id = self$assistant$id)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{assistant_id}}{The ID of the assistant to delete.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A list with the deletion status for the assistant and its contents.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{assistant_id}}{The ID of the assistant to delete.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A list with the deletion status for the assistant and its contents.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAIAssistant-chat"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenAIAssistant-chat}{}}}
-\subsection{Method \code{chat()}}{
-Send a chat message to the assistant.
+\subsection{\code{OpenAIAssistant$chat()}}{
+  Send a chat message to the assistant.
 
 Note: Unlike OpenAI$chat(), assistant configuration (model, temperature, tools, system)
 is set during initialization and cannot be changed per-chat.
 
 After sending a message, you can use base class methods like \code{get_content_text()},
 \code{get_supplementary()}, or \code{download_generated_files()} to extract information from responses.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$chat(
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAIAssistant$chat(
   ...,
   in_new_thread = FALSE,
   output_schema = NULL,
   remove_citations = TRUE
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{One or more inputs for the prompt. Can be text strings, file paths, URLs, R objects,
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{One or more inputs for the prompt. Can be text strings, file paths, URLs, R objects,
 or content wrapped with \verb{as_*_content()} functions. R objects (but not plain strings) will
 include their names and structure in the context sent to the model.}
-
-\item{\code{in_new_thread}}{Logical. Start new thread (default: FALSE).
+      \item{\code{in_new_thread}}{Logical. Start new thread (default: FALSE).
 Assistant-specific: Controls thread management. Set TRUE to start a fresh conversation.}
-
-\item{\code{output_schema}}{List. JSON schema for structured output (optional).
+      \item{\code{output_schema}}{List. JSON schema for structured output (optional).
 When assistant uses server tools, forces a second call with only the schema to ensure structured output.}
-
-\item{\code{remove_citations}}{Logical. Remove file_search citation markers (default: TRUE).
+      \item{\code{remove_citations}}{Logical. Remove file_search citation markers (default: TRUE).
 When TRUE, removes citation markers like 【35†source】 and [3:0†source] from responses.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Character. OpenAI Assistant API's response object.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Character. OpenAI Assistant API's response object.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAIAssistant-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenAIAssistant-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Assistant$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{OpenAIAssistant$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAIAssistant$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

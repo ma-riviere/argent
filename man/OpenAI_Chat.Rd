@@ -79,83 +79,82 @@ response <- openai$chat(
 }
 }
 \section{Super classes}{
-\code{\link[argent:Provider]{argent::Provider}} -> \code{\link[argent:OpenAI]{argent::OpenAI}} -> \code{OpenAI_Chat}
+\code{\link[argent:Provider]{Provider}} -> \code{\link[argent:OpenAI]{OpenAI}} -> \code{OpenAI_Chat}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-OpenAI_Chat-new}{\code{OpenAI_Chat$new()}}
-\item \href{#method-OpenAI_Chat-chat}{\code{OpenAI_Chat$chat()}}
-\item \href{#method-OpenAI_Chat-clone}{\code{OpenAI_Chat$clone()}}
+  \itemize{
+    \item \href{#method-OpenAI_Chat-initialize}{\code{OpenAI_Chat$new()}}
+    \item \href{#method-OpenAI_Chat-chat}{\code{OpenAI_Chat$chat()}}
+    \item \href{#method-OpenAI_Chat-clone}{\code{OpenAI_Chat$clone()}}
+  }
 }
-}
-\if{html}{\out{
-<details><summary>Inherited methods</summary>
+\if{html}{\out{<details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="download_generated_files"><a href='../../argent/html/Provider.html#method-Provider-download_generated_files'><code>argent::Provider$download_generated_files()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="dump_history"><a href='../../argent/html/Provider.html#method-Provider-dump_history'><code>argent::Provider$dump_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-get_auto_save_history'><code>argent::Provider$get_auto_save_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_chat_history"><a href='../../argent/html/Provider.html#method-Provider-get_chat_history'><code>argent::Provider$get_chat_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_content_text"><a href='../../argent/html/Provider.html#method-Provider-get_content_text'><code>argent::Provider$get_content_text()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_code"><a href='../../argent/html/Provider.html#method-Provider-get_generated_code'><code>argent::Provider$get_generated_code()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_files"><a href='../../argent/html/Provider.html#method-Provider-get_generated_files'><code>argent::Provider$get_generated_files()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history"><a href='../../argent/html/Provider.html#method-Provider-get_history'><code>argent::Provider$get_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history_file_path"><a href='../../argent/html/Provider.html#method-Provider-get_history_file_path'><code>argent::Provider$get_history_file_path()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_last_response"><a href='../../argent/html/Provider.html#method-Provider-get_last_response'><code>argent::Provider$get_last_response()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-get_rate_limit'><code>argent::Provider$get_rate_limit()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_reasoning_text"><a href='../../argent/html/Provider.html#method-Provider-get_reasoning_text'><code>argent::Provider$get_reasoning_text()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_cumulative_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_cumulative_token_count'><code>argent::Provider$get_session_cumulative_token_count()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_history"><a href='../../argent/html/Provider.html#method-Provider-get_session_history'><code>argent::Provider$get_session_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_last_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_last_token_count'><code>argent::Provider$get_session_last_token_count()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_supplementary"><a href='../../argent/html/Provider.html#method-Provider-get_supplementary'><code>argent::Provider$get_supplementary()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="load_history"><a href='../../argent/html/Provider.html#method-Provider-load_history'><code>argent::Provider$load_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="print"><a href='../../argent/html/Provider.html#method-Provider-print'><code>argent::Provider$print()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="reset_history"><a href='../../argent/html/Provider.html#method-Provider-reset_history'><code>argent::Provider$reset_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-set_auto_save_history'><code>argent::Provider$set_auto_save_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_history"><a href='../../argent/html/Provider.html#method-Provider-set_history'><code>argent::Provider$set_history()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-set_rate_limit'><code>argent::Provider$set_rate_limit()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="add_file_to_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-add_file_to_store'><code>argent::OpenAI$add_file_to_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="create_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-create_store'><code>argent::OpenAI$create_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_all_files"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_all_files'><code>argent::OpenAI$delete_all_files()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_all_files_from_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_all_files_from_store'><code>argent::OpenAI$delete_all_files_from_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_all_stores"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_all_stores'><code>argent::OpenAI$delete_all_stores()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_file'><code>argent::OpenAI$delete_file()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_file_from_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_file_from_store'><code>argent::OpenAI$delete_file_from_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_files"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_files'><code>argent::OpenAI$delete_files()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_files_from_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_files_from_store'><code>argent::OpenAI$delete_files_from_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_store'><code>argent::OpenAI$delete_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_store_and_files"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_store_and_files'><code>argent::OpenAI$delete_store_and_files()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_stores"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_stores'><code>argent::OpenAI$delete_stores()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="download_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-download_file'><code>argent::OpenAI$download_file()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="embeddings"><a href='../../argent/html/OpenAI.html#method-OpenAI-embeddings'><code>argent::OpenAI$embeddings()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_assistants"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_assistants'><code>argent::OpenAI$find_assistants()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_file'><code>argent::OpenAI$find_file()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_file_in_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_file_in_store'><code>argent::OpenAI$find_file_in_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_models"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_models'><code>argent::OpenAI$find_models()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_store'><code>argent::OpenAI$find_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="get_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-get_file'><code>argent::OpenAI$get_file()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="get_file_content"><a href='../../argent/html/OpenAI.html#method-OpenAI-get_file_content'><code>argent::OpenAI$get_file_content()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="get_model_info"><a href='../../argent/html/OpenAI.html#method-OpenAI-get_model_info'><code>argent::OpenAI$get_model_info()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="list_assistants"><a href='../../argent/html/OpenAI.html#method-OpenAI-list_assistants'><code>argent::OpenAI$list_assistants()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="list_files"><a href='../../argent/html/OpenAI.html#method-OpenAI-list_files'><code>argent::OpenAI$list_files()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="list_files_in_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-list_files_in_store'><code>argent::OpenAI$list_files_in_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="list_models"><a href='../../argent/html/OpenAI.html#method-OpenAI-list_models'><code>argent::OpenAI$list_models()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="list_stores"><a href='../../argent/html/OpenAI.html#method-OpenAI-list_stores'><code>argent::OpenAI$list_stores()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="read_file_from_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-read_file_from_store'><code>argent::OpenAI$read_file_from_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="read_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-read_store'><code>argent::OpenAI$read_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="update_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-update_store'><code>argent::OpenAI$update_store()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="upload_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-upload_file'><code>argent::OpenAI$upload_file()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="upload_file_from_df"><a href='../../argent/html/OpenAI.html#method-OpenAI-upload_file_from_df'><code>argent::OpenAI$upload_file_from_df()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="download_generated_files"><a href='../../argent/html/Provider.html#method-Provider-download_generated_files'><code>Provider$download_generated_files()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="dump_history"><a href='../../argent/html/Provider.html#method-Provider-dump_history'><code>Provider$dump_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-get_auto_save_history'><code>Provider$get_auto_save_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_chat_history"><a href='../../argent/html/Provider.html#method-Provider-get_chat_history'><code>Provider$get_chat_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_content_text"><a href='../../argent/html/Provider.html#method-Provider-get_content_text'><code>Provider$get_content_text()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_code"><a href='../../argent/html/Provider.html#method-Provider-get_generated_code'><code>Provider$get_generated_code()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_generated_files"><a href='../../argent/html/Provider.html#method-Provider-get_generated_files'><code>Provider$get_generated_files()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history"><a href='../../argent/html/Provider.html#method-Provider-get_history'><code>Provider$get_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_history_file_path"><a href='../../argent/html/Provider.html#method-Provider-get_history_file_path'><code>Provider$get_history_file_path()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_last_response"><a href='../../argent/html/Provider.html#method-Provider-get_last_response'><code>Provider$get_last_response()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-get_rate_limit'><code>Provider$get_rate_limit()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_reasoning_text"><a href='../../argent/html/Provider.html#method-Provider-get_reasoning_text'><code>Provider$get_reasoning_text()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_cumulative_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_cumulative_token_count'><code>Provider$get_session_cumulative_token_count()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_history"><a href='../../argent/html/Provider.html#method-Provider-get_session_history'><code>Provider$get_session_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_session_last_token_count"><a href='../../argent/html/Provider.html#method-Provider-get_session_last_token_count'><code>Provider$get_session_last_token_count()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="get_supplementary"><a href='../../argent/html/Provider.html#method-Provider-get_supplementary'><code>Provider$get_supplementary()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="load_history"><a href='../../argent/html/Provider.html#method-Provider-load_history'><code>Provider$load_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="print"><a href='../../argent/html/Provider.html#method-Provider-print'><code>Provider$print()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="reset_history"><a href='../../argent/html/Provider.html#method-Provider-reset_history'><code>Provider$reset_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_auto_save_history"><a href='../../argent/html/Provider.html#method-Provider-set_auto_save_history'><code>Provider$set_auto_save_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_history"><a href='../../argent/html/Provider.html#method-Provider-set_history'><code>Provider$set_history()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="Provider" data-id="set_rate_limit"><a href='../../argent/html/Provider.html#method-Provider-set_rate_limit'><code>Provider$set_rate_limit()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="add_file_to_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-add_file_to_store'><code>OpenAI$add_file_to_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="create_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-create_store'><code>OpenAI$create_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_all_files"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_all_files'><code>OpenAI$delete_all_files()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_all_files_from_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_all_files_from_store'><code>OpenAI$delete_all_files_from_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_all_stores"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_all_stores'><code>OpenAI$delete_all_stores()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_file'><code>OpenAI$delete_file()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_file_from_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_file_from_store'><code>OpenAI$delete_file_from_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_files"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_files'><code>OpenAI$delete_files()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_files_from_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_files_from_store'><code>OpenAI$delete_files_from_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_store'><code>OpenAI$delete_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_store_and_files"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_store_and_files'><code>OpenAI$delete_store_and_files()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="delete_stores"><a href='../../argent/html/OpenAI.html#method-OpenAI-delete_stores'><code>OpenAI$delete_stores()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="download_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-download_file'><code>OpenAI$download_file()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="embeddings"><a href='../../argent/html/OpenAI.html#method-OpenAI-embeddings'><code>OpenAI$embeddings()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_assistants"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_assistants'><code>OpenAI$find_assistants()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_file'><code>OpenAI$find_file()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_file_in_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_file_in_store'><code>OpenAI$find_file_in_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_models"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_models'><code>OpenAI$find_models()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="find_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-find_store'><code>OpenAI$find_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="get_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-get_file'><code>OpenAI$get_file()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="get_file_content"><a href='../../argent/html/OpenAI.html#method-OpenAI-get_file_content'><code>OpenAI$get_file_content()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="get_model_info"><a href='../../argent/html/OpenAI.html#method-OpenAI-get_model_info'><code>OpenAI$get_model_info()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="list_assistants"><a href='../../argent/html/OpenAI.html#method-OpenAI-list_assistants'><code>OpenAI$list_assistants()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="list_files"><a href='../../argent/html/OpenAI.html#method-OpenAI-list_files'><code>OpenAI$list_files()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="list_files_in_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-list_files_in_store'><code>OpenAI$list_files_in_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="list_models"><a href='../../argent/html/OpenAI.html#method-OpenAI-list_models'><code>OpenAI$list_models()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="list_stores"><a href='../../argent/html/OpenAI.html#method-OpenAI-list_stores'><code>OpenAI$list_stores()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="read_file_from_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-read_file_from_store'><code>OpenAI$read_file_from_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="read_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-read_store'><code>OpenAI$read_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="update_store"><a href='../../argent/html/OpenAI.html#method-OpenAI-update_store'><code>OpenAI$update_store()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="upload_file"><a href='../../argent/html/OpenAI.html#method-OpenAI-upload_file'><code>OpenAI$upload_file()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="OpenAI" data-id="upload_file_from_df"><a href='../../argent/html/OpenAI.html#method-OpenAI-upload_file_from_df'><code>OpenAI$upload_file_from_df()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-OpenAI_Chat-new"></a>}}
-\if{latex}{\out{\hypertarget{method-OpenAI_Chat-new}{}}}
-\subsection{Method \code{new()}}{
-Initialize a new OpenAI Chat client
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Chat$new(
+\if{html}{\out{<a id="method-OpenAI_Chat-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-OpenAI_Chat-initialize}{}}}
+\subsection{\code{OpenAI_Chat$new()}}{
+  Initialize a new OpenAI Chat client
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAI_Chat$new(
   base_url = "https://api.openai.com",
   api_key = Sys.getenv("OPENAI_API_KEY"),
   provider_name = "OpenAI Chat",
@@ -164,38 +163,33 @@ Initialize a new OpenAI Chat client
   default_model = "gpt-5-mini",
   org = Sys.getenv("OPENAI_ORG"),
   auto_save_history = TRUE
-)}\if{html}{\out{</div>}}
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{base_url}}{Character. Base URL for API (default: "https://api.openai.com")}
+      \item{\code{api_key}}{Character. API key (default: from OPENAI_API_KEY env var)}
+      \item{\code{provider_name}}{Character. Provider name (default: "OpenAI Chat")}
+      \item{\code{rate_limit}}{Numeric. Rate limit in requests per second (default: 60/60)}
+      \item{\code{server_tools}}{Character vector. Server-side tools available (default: c("web_search"))}
+      \item{\code{default_model}}{Character. Default model to use for chat requests (default: "gpt-5-mini")}
+      \item{\code{org}}{Character. Organization ID (default: from OPENAI_ORG env var)}
+      \item{\code{auto_save_history}}{Logical. Enable/disable automatic history sync (default: TRUE)}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{base_url}}{Character. Base URL for API (default: "https://api.openai.com")}
-
-\item{\code{api_key}}{Character. API key (default: from OPENAI_API_KEY env var)}
-
-\item{\code{provider_name}}{Character. Provider name (default: "OpenAI Chat")}
-
-\item{\code{rate_limit}}{Numeric. Rate limit in requests per second (default: 60/60)}
-
-\item{\code{server_tools}}{Character vector. Server-side tools available (default: c("web_search"))}
-
-\item{\code{default_model}}{Character. Default model to use for chat requests (default: "gpt-5-mini")}
-
-\item{\code{org}}{Character. Organization ID (default: from OPENAI_ORG env var)}
-
-\item{\code{auto_save_history}}{Logical. Enable/disable automatic history sync (default: TRUE)}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAI_Chat-chat"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenAI_Chat-chat}{}}}
-\subsection{Method \code{chat()}}{
-Send a chat completion request to OpenAI
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Chat$chat(
+\subsection{\code{OpenAI_Chat$chat()}}{
+  Send a chat completion request to OpenAI
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAI_Chat$chat(
   ...,
   system = .default_system_prompt,
   model = self$default_model,
@@ -214,44 +208,32 @@ Send a chat completion request to OpenAI
   reasoning_effort = NULL,
   verbosity = "medium",
   store = FALSE
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{One or more inputs for the prompt. Can be text strings, file paths, URLs, R objects,
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{One or more inputs for the prompt. Can be text strings, file paths, URLs, R objects,
 or content wrapped with \verb{as_*_content()} functions. R objects (but not plain strings) will
 include their names and structure in the context sent to the model.}
-
-\item{\code{system}}{Character. System instructions (optional)}
-
-\item{\code{model}}{Character. Model to use (default: "gpt-5-mini")}
-
-\item{\code{temperature}}{Numeric. Sampling temperature (default: 1)}
-
-\item{\code{max_completion_tokens}}{Integer. Maximum tokens to generate (default: 4096)}
-
-\item{\code{top_p}}{Numeric. Nucleus sampling parameter 0-1 (default: 1). Alternative to temperature.
+      \item{\code{system}}{Character. System instructions (optional)}
+      \item{\code{model}}{Character. Model to use (default: "gpt-5-mini")}
+      \item{\code{temperature}}{Numeric. Sampling temperature (default: 1)}
+      \item{\code{max_completion_tokens}}{Integer. Maximum tokens to generate (default: 4096)}
+      \item{\code{top_p}}{Numeric. Nucleus sampling parameter 0-1 (default: 1). Alternative to temperature.
 We recommend altering this or temperature but not both.}
-
-\item{\code{frequency_penalty}}{Numeric. Penalty for token frequency -2.0 to 2.0 (default: 0).
+      \item{\code{frequency_penalty}}{Numeric. Penalty for token frequency -2.0 to 2.0 (default: 0).
 Positive values decrease likelihood of repeating the same line verbatim.}
-
-\item{\code{presence_penalty}}{Numeric. Penalty for token presence -2.0 to 2.0 (default: 0).
+      \item{\code{presence_penalty}}{Numeric. Penalty for token presence -2.0 to 2.0 (default: 0).
 Positive values increase likelihood of talking about new topics.}
-
-\item{\code{logprobs}}{Logical. Whether to return log probabilities (default: FALSE)}
-
-\item{\code{top_logprobs}}{Integer. Number of most likely tokens (0-20) to return at each position (default: NULL).
+      \item{\code{logprobs}}{Logical. Whether to return log probabilities (default: FALSE)}
+      \item{\code{top_logprobs}}{Integer. Number of most likely tokens (0-20) to return at each position (default: NULL).
 Requires logprobs = TRUE.}
-
-\item{\code{n}}{Integer. Number of chat completion choices to generate (default: 1)}
-
-\item{\code{logit_bias}}{Named list. Modify likelihood of specified tokens by token ID (default: NULL).
+      \item{\code{n}}{Integer. Number of chat completion choices to generate (default: 1)}
+      \item{\code{logit_bias}}{Named list. Modify likelihood of specified tokens by token ID (default: NULL).
 Values from -100 to 100.}
-
-\item{\code{tools}}{List. Client-side function definitions for tool calling (optional). For web search with
+      \item{\code{tools}}{List. Client-side function definitions for tool calling (optional). For web search with
 search-enabled models (gpt-4o-mini-search-preview, gpt-4o-search-preview, gpt-5-search-api),
 pass as: \code{list("web_search")} or with options:
 \code{list(list(type = "web_search", user_location = list(...), search_context_size = "medium"))}.
@@ -264,39 +246,37 @@ Supported web_search options:
 
 \strong{Note}: Search models do not support standard sampling parameters (temperature, top_p,
 frequency_penalty, presence_penalty, n). These are automatically omitted when using search models.}
-
-\item{\code{tool_choice}}{Character or List. Tool choice mode (default: "auto")}
-
-\item{\code{output_schema}}{List. JSON schema for structured output (optional)}
-
-\item{\code{reasoning_effort}}{Character. Reasoning effort level for reasoning models: "low", "medium", or "high"
+      \item{\code{tool_choice}}{Character or List. Tool choice mode (default: "auto")}
+      \item{\code{output_schema}}{List. JSON schema for structured output (optional)}
+      \item{\code{reasoning_effort}}{Character. Reasoning effort level for reasoning models: "low", "medium", or "high"
 (optional). Only applicable to reasoning models (o1, o3, o4, gpt-5). Default: NULL (uses model default)}
+      \item{\code{verbosity}}{Character. Verbosity level for output: "low", "medium", or "high" (default: "medium")}
+      \item{\code{store}}{Logical. Whether or not to store the output of this chat completion request in OpenAI servers (default: FALSE)}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Character. OpenAI Chat API's response object.
+  }
+}
 
-\item{\code{verbosity}}{Character. Verbosity level for output: "low", "medium", or "high" (default: "medium")}
-
-\item{\code{store}}{Logical. Whether or not to store the output of this chat completion request in OpenAI servers (default: FALSE)}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Character. OpenAI Chat API's response object.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OpenAI_Chat-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-OpenAI_Chat-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OpenAI_Chat$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{OpenAI_Chat$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OpenAI_Chat$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

@@ -8,144 +8,154 @@ A client for interacting with local MCP servers via stdio.
 }
 \keyword{internal}
 \section{Super class}{
-\code{\link[argent:McpClient]{argent::McpClient}} -> \code{McpClientStdio}
+\code{\link[argent:McpClient]{McpClient}} -> \code{McpClientStdio}
 }
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{process}}{processx process object}
-}
-\if{html}{\out{</div>}}
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{process}}{processx process object}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-McpClientStdio-new}{\code{McpClientStdio$new()}}
-\item \href{#method-McpClientStdio-initialize_connection}{\code{McpClientStdio$initialize_connection()}}
-\item \href{#method-McpClientStdio-send_request}{\code{McpClientStdio$send_request()}}
-\item \href{#method-McpClientStdio-send_notification}{\code{McpClientStdio$send_notification()}}
-\item \href{#method-McpClientStdio-close}{\code{McpClientStdio$close()}}
-\item \href{#method-McpClientStdio-is_alive}{\code{McpClientStdio$is_alive()}}
-\item \href{#method-McpClientStdio-clone}{\code{McpClientStdio$clone()}}
+  \itemize{
+    \item \href{#method-McpClientStdio-initialize}{\code{McpClientStdio$new()}}
+    \item \href{#method-McpClientStdio-initialize_connection}{\code{McpClientStdio$initialize_connection()}}
+    \item \href{#method-McpClientStdio-send_request}{\code{McpClientStdio$send_request()}}
+    \item \href{#method-McpClientStdio-send_notification}{\code{McpClientStdio$send_notification()}}
+    \item \href{#method-McpClientStdio-close}{\code{McpClientStdio$close()}}
+    \item \href{#method-McpClientStdio-is_alive}{\code{McpClientStdio$is_alive()}}
+    \item \href{#method-McpClientStdio-clone}{\code{McpClientStdio$clone()}}
+  }
 }
-}
-\if{html}{\out{
-<details><summary>Inherited methods</summary>
+\if{html}{\out{<details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="call_tool"><a href='../../argent/html/McpClient.html#method-McpClient-call_tool'><code>argent::McpClient$call_tool()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="get_prompt"><a href='../../argent/html/McpClient.html#method-McpClient-get_prompt'><code>argent::McpClient$get_prompt()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="is_closed"><a href='../../argent/html/McpClient.html#method-McpClient-is_closed'><code>argent::McpClient$is_closed()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="list_prompts"><a href='../../argent/html/McpClient.html#method-McpClient-list_prompts'><code>argent::McpClient$list_prompts()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="list_resources"><a href='../../argent/html/McpClient.html#method-McpClient-list_resources'><code>argent::McpClient$list_resources()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="list_tools"><a href='../../argent/html/McpClient.html#method-McpClient-list_tools'><code>argent::McpClient$list_tools()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="read_resource"><a href='../../argent/html/McpClient.html#method-McpClient-read_resource'><code>argent::McpClient$read_resource()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="call_tool"><a href='../../argent/html/McpClient.html#method-McpClient-call_tool'><code>McpClient$call_tool()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="get_prompt"><a href='../../argent/html/McpClient.html#method-McpClient-get_prompt'><code>McpClient$get_prompt()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="is_closed"><a href='../../argent/html/McpClient.html#method-McpClient-is_closed'><code>McpClient$is_closed()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="list_prompts"><a href='../../argent/html/McpClient.html#method-McpClient-list_prompts'><code>McpClient$list_prompts()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="list_resources"><a href='../../argent/html/McpClient.html#method-McpClient-list_resources'><code>McpClient$list_resources()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="list_tools"><a href='../../argent/html/McpClient.html#method-McpClient-list_tools'><code>McpClient$list_tools()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="argent" data-topic="McpClient" data-id="read_resource"><a href='../../argent/html/McpClient.html#method-McpClient-read_resource'><code>McpClient$read_resource()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-McpClientStdio-new"></a>}}
-\if{latex}{\out{\hypertarget{method-McpClientStdio-new}{}}}
-\subsection{Method \code{new()}}{
-Initialize stdio client
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClientStdio$new(command, args = character(), env = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-McpClientStdio-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-McpClientStdio-initialize}{}}}
+\subsection{\code{McpClientStdio$new()}}{
+  Initialize stdio client
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClientStdio$new(command, args = character(), env = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{command}}{Command to run}
+      \item{\code{args}}{Arguments for the command}
+      \item{\code{env}}{Environment variables}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{command}}{Command to run}
-
-\item{\code{args}}{Arguments for the command}
-
-\item{\code{env}}{Environment variables}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClientStdio-initialize_connection"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClientStdio-initialize_connection}{}}}
-\subsection{Method \code{initialize_connection()}}{
-Initialize MCP connection
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClientStdio$initialize_connection()}\if{html}{\out{</div>}}
+\subsection{\code{McpClientStdio$initialize_connection()}}{
+  Initialize MCP connection
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClientStdio$initialize_connection()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClientStdio-send_request"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClientStdio-send_request}{}}}
-\subsection{Method \code{send_request()}}{
-Send request to stdio process
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClientStdio$send_request(req)}\if{html}{\out{</div>}}
+\subsection{\code{McpClientStdio$send_request()}}{
+  Send request to stdio process
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClientStdio$send_request(req)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{req}}{Request list}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{req}}{Request list}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClientStdio-send_notification"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClientStdio-send_notification}{}}}
-\subsection{Method \code{send_notification()}}{
-Send notification (no ID, no response expected)
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClientStdio$send_notification(req)}\if{html}{\out{</div>}}
+\subsection{\code{McpClientStdio$send_notification()}}{
+  Send notification (no ID, no response expected)
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClientStdio$send_notification(req)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{req}}{Request list}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{req}}{Request list}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClientStdio-close"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClientStdio-close}{}}}
-\subsection{Method \code{close()}}{
-Close the connection and terminate the server process.
+\subsection{\code{McpClientStdio$close()}}{
+  Close the connection and terminate the server process.
 Attempts graceful interrupt first, then force-kills if needed.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClientStdio$close()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClientStdio$close()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClientStdio-is_alive"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClientStdio-is_alive}{}}}
-\subsection{Method \code{is_alive()}}{
-Check if the server process is alive
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClientStdio$is_alive()}\if{html}{\out{</div>}}
+\subsection{\code{McpClientStdio$is_alive()}}{
+  Check if the server process is alive
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClientStdio$is_alive()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Logical
+  }
 }
 
-\subsection{Returns}{
-Logical
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClientStdio-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClientStdio-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClientStdio$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{McpClientStdio$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClientStdio$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

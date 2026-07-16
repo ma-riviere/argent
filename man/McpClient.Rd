@@ -9,179 +9,199 @@ Supports both stdio (local process) and HTTP transports.
 }
 \keyword{internal}
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{name}}{Client name}
-}
-\if{html}{\out{</div>}}
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{name}}{Client name}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-McpClient-new}{\code{McpClient$new()}}
-\item \href{#method-McpClient-list_tools}{\code{McpClient$list_tools()}}
-\item \href{#method-McpClient-call_tool}{\code{McpClient$call_tool()}}
-\item \href{#method-McpClient-list_resources}{\code{McpClient$list_resources()}}
-\item \href{#method-McpClient-read_resource}{\code{McpClient$read_resource()}}
-\item \href{#method-McpClient-list_prompts}{\code{McpClient$list_prompts()}}
-\item \href{#method-McpClient-get_prompt}{\code{McpClient$get_prompt()}}
-\item \href{#method-McpClient-send_request}{\code{McpClient$send_request()}}
-\item \href{#method-McpClient-close}{\code{McpClient$close()}}
-\item \href{#method-McpClient-is_closed}{\code{McpClient$is_closed()}}
-\item \href{#method-McpClient-clone}{\code{McpClient$clone()}}
-}
+  \itemize{
+    \item \href{#method-McpClient-initialize}{\code{McpClient$new()}}
+    \item \href{#method-McpClient-list_tools}{\code{McpClient$list_tools()}}
+    \item \href{#method-McpClient-call_tool}{\code{McpClient$call_tool()}}
+    \item \href{#method-McpClient-list_resources}{\code{McpClient$list_resources()}}
+    \item \href{#method-McpClient-read_resource}{\code{McpClient$read_resource()}}
+    \item \href{#method-McpClient-list_prompts}{\code{McpClient$list_prompts()}}
+    \item \href{#method-McpClient-get_prompt}{\code{McpClient$get_prompt()}}
+    \item \href{#method-McpClient-send_request}{\code{McpClient$send_request()}}
+    \item \href{#method-McpClient-close}{\code{McpClient$close()}}
+    \item \href{#method-McpClient-is_closed}{\code{McpClient$is_closed()}}
+    \item \href{#method-McpClient-clone}{\code{McpClient$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-McpClient-new"></a>}}
-\if{latex}{\out{\hypertarget{method-McpClient-new}{}}}
-\subsection{Method \code{new()}}{
-Initialize client
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClient$new()}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-McpClient-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-McpClient-initialize}{}}}
+\subsection{\code{McpClient$new()}}{
+  Initialize client
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClient$new()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClient-list_tools"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClient-list_tools}{}}}
-\subsection{Method \code{list_tools()}}{
-List tools available on the server
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClient$list_tools()}\if{html}{\out{</div>}}
+\subsection{\code{McpClient$list_tools()}}{
+  List tools available on the server
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClient$list_tools()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClient-call_tool"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClient-call_tool}{}}}
-\subsection{Method \code{call_tool()}}{
-Call a tool on the server
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClient$call_tool(tool_name, args)}\if{html}{\out{</div>}}
+\subsection{\code{McpClient$call_tool()}}{
+  Call a tool on the server
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClient$call_tool(tool_name, args)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{tool_name}}{Name of the tool}
+      \item{\code{args}}{List of arguments}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{tool_name}}{Name of the tool}
-
-\item{\code{args}}{List of arguments}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClient-list_resources"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClient-list_resources}{}}}
-\subsection{Method \code{list_resources()}}{
-List resources available on the server
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClient$list_resources()}\if{html}{\out{</div>}}
+\subsection{\code{McpClient$list_resources()}}{
+  List resources available on the server
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClient$list_resources()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClient-read_resource"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClient-read_resource}{}}}
-\subsection{Method \code{read_resource()}}{
-Read a resource from the server
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClient$read_resource(uri)}\if{html}{\out{</div>}}
+\subsection{\code{McpClient$read_resource()}}{
+  Read a resource from the server
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClient$read_resource(uri)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{uri}}{URI of the resource to read}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{uri}}{URI of the resource to read}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClient-list_prompts"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClient-list_prompts}{}}}
-\subsection{Method \code{list_prompts()}}{
-List prompts available on the server
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClient$list_prompts()}\if{html}{\out{</div>}}
+\subsection{\code{McpClient$list_prompts()}}{
+  List prompts available on the server
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClient$list_prompts()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClient-get_prompt"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClient-get_prompt}{}}}
-\subsection{Method \code{get_prompt()}}{
-Get a prompt from the server
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClient$get_prompt(name, arguments = NULL)}\if{html}{\out{</div>}}
+\subsection{\code{McpClient$get_prompt()}}{
+  Get a prompt from the server
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClient$get_prompt(name, arguments = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{Name of the prompt}
+      \item{\code{arguments}}{List of arguments for the prompt}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{Name of the prompt}
-
-\item{\code{arguments}}{List of arguments for the prompt}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClient-send_request"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClient-send_request}{}}}
-\subsection{Method \code{send_request()}}{
-Send a JSON-RPC request
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClient$send_request(req)}\if{html}{\out{</div>}}
+\subsection{\code{McpClient$send_request()}}{
+  Send a JSON-RPC request
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClient$send_request(req)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{req}}{List containing method and params}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{req}}{List containing method and params}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClient-close"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClient-close}{}}}
-\subsection{Method \code{close()}}{
-Close the client connection and release resources.
+\subsection{\code{McpClient$close()}}{
+  Close the client connection and release resources.
 Subclasses override this with transport-specific cleanup.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClient$close()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClient$close()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClient-is_closed"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClient-is_closed}{}}}
-\subsection{Method \code{is_closed()}}{
-Check if the client connection is closed
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClient$is_closed()}\if{html}{\out{</div>}}
+\subsection{\code{McpClient$is_closed()}}{
+  Check if the client connection is closed
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClient$is_closed()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Logical
+  }
 }
 
-\subsection{Returns}{
-Logical
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-McpClient-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-McpClient-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{McpClient$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{McpClient$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{McpClient$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }
